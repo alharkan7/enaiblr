@@ -19,14 +19,43 @@ export const {
   ...authConfig,
   providers: [
     Credentials({
-      credentials: {},
-      async authorize({ email, password }: any) {
-        const users = await getUser(email);
-        if (users.length === 0) return null;
-        // biome-ignore lint: Forbidden non-null assertion.
-        const passwordsMatch = await compare(password, users[0].password!);
-        if (!passwordsMatch) return null;
-        return users[0] as any;
+      credentials: {
+        email: { label: "Email", type: "email", required: true },
+        password: { label: "Password", type: "password", required: true }
+      },
+      async authorize(
+        credentials: Partial<Record<"email" | "password", unknown>>,
+        req: Request
+      ) {
+        try {
+          if (!credentials?.email || !credentials?.password) {
+            return null;
+          }
+
+          const email = credentials.email as string;
+          const password = credentials.password as string;
+
+          const users = await getUser(email);
+          
+          if (users.length === 0) {
+            console.log('No user found with email:', email);
+            return null;
+          }
+
+          const passwordsMatch = await compare(password, users[0].password ?? '');
+          
+          if (!passwordsMatch) {
+            console.log('Password does not match for user:', email);
+            return null;
+          }
+
+          // Return user without password
+          const { password: _, ...userWithoutPassword } = users[0];
+          return userWithoutPassword;
+        } catch (error) {
+          console.error('Auth error:', error);
+          return null;
+        }
       },
     }),
   ],
