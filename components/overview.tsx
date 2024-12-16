@@ -19,7 +19,7 @@ export const Overview = () => {
           <span>+</span>
           <MessageIcon size={32} />
         </p>
-        <p>
+        {/* <p>
           This is an{' '}
           <Link
             className="font-medium underline underline-offset-4"
@@ -45,7 +45,7 @@ export const Overview = () => {
             docs
           </Link>
           .
-        </p>
+        </p> */}
       </div>
     </motion.div>
   );
