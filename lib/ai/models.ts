@@ -37,9 +37,9 @@ export const models: Array<Model> = [
     provider: 'anthropic'
   },
   {
-    id: 'llama-3.1-70b-versatile',
+    id: 'llama-3.2-11b-vision-preview',
     label: 'Llama',
-    apiIdentifier: 'llama-3.1-70b-versatile',
+    apiIdentifier: 'llama-3.2-11b-vision-preview',
     description: 'Meta',
     provider: 'groq'
   }
