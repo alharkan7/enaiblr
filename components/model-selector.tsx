@@ -18,8 +18,10 @@ import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
 export function ModelSelector({
   selectedModelId,
   className,
+  disabled,
 }: {
   selectedModelId: string;
+  disabled?: boolean;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
   const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId);
@@ -50,12 +52,16 @@ export function ModelSelector({
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         asChild
-        className={cn(
-          'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
-          className,
-        )}
+        disabled={disabled}
       >
-        <Button variant="outline" className="md:px-2 md:h-[34px]" suppressHydrationWarning>
+        <Button
+          variant="outline"
+          role="combobox"
+          aria-expanded={open}
+          aria-label="Select a model"
+          className={cn('w-full justify-between', className)}
+          disabled={disabled}
+        >
           {selectedModel?.label}
           <ChevronDownIcon />
         </Button>
