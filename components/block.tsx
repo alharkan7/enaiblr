@@ -89,6 +89,7 @@ function PureBlock({
     chatRequestOptions?: ChatRequestOptions,
   ) => Promise<string | null | undefined>;
   isReadonly: boolean;
+  selectedModelId: string;
 }) {
   const {
     data: documents,
