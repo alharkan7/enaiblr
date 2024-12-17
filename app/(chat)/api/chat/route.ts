@@ -153,7 +153,26 @@ export async function POST(request: Request) {
               model,
               system:
                 'Write about the given topic. Markdown is supported. Use headings wherever appropriate.',
-              prompt: title,
+              messages: [
+                {
+                  role: 'user',
+                  content: title
+                }
+              ],
+              experimental_providerMetadata: {
+                groq: {
+                  temperature: 0.7,
+                  max_tokens: 1000,
+                },
+                anthropic: {
+                  temperature: 0.7,
+                  max_tokens_to_sample: 1000,
+                },
+                google: {
+                  temperature: 0.7,
+                  maxOutputTokens: 1000,
+                }
+              }
             });
 
             for await (const delta of fullStream) {
@@ -217,14 +236,6 @@ export async function POST(request: Request) {
               model,
               system:
                 'You are a helpful writing assistant. Based on the description, please update the piece of writing.',
-              experimental_providerMetadata: {
-                openai: {
-                  prediction: {
-                    type: 'content',
-                    content: currentContent,
-                  },
-                },
-              },
               messages: [
                 {
                   role: 'user',
@@ -232,6 +243,26 @@ export async function POST(request: Request) {
                 },
                 { role: 'user', content: currentContent },
               ],
+              experimental_providerMetadata: {
+                openai: {
+                  prediction: {
+                    type: 'content',
+                    content: currentContent,
+                  },
+                },
+                groq: {
+                  temperature: 0.7,
+                  max_tokens: 1000,
+                },
+                anthropic: {
+                  temperature: 0.7,
+                  max_tokens_to_sample: 1000,
+                },
+                google: {
+                  temperature: 0.7,
+                  maxOutputTokens: 1000,
+                }
+              }
             });
 
             for await (const delta of fullStream) {
@@ -290,7 +321,12 @@ export async function POST(request: Request) {
               model,
               system:
                 'You are a help writing assistant. Given a piece of writing, please offer suggestions to improve the piece of writing and describe the change. It is very important for the edits to contain full sentences instead of just words. Max 5 suggestions.',
-              prompt: document.content,
+              messages: [
+                {
+                  role: 'user',
+                  content: document.content
+                }
+              ],
               output: 'array',
               schema: z.object({
                 originalSentence: z.string().describe('The original sentence'),
@@ -299,6 +335,20 @@ export async function POST(request: Request) {
                   .string()
                   .describe('The description of the suggestion'),
               }),
+              experimental_providerMetadata: {
+                groq: {
+                  temperature: 0.7,
+                  max_tokens: 1000,
+                },
+                anthropic: {
+                  temperature: 0.7,
+                  max_tokens_to_sample: 1000,
+                },
+                google: {
+                  temperature: 0.7,
+                  maxOutputTokens: 1000,
+                }
+              }
             });
 
             for await (const element of elementStream) {
@@ -385,10 +435,6 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error('Error during streaming:', error);
-    streamingData.close();
     return new Response('Internal Server Error', { status: 500 });
-  } finally {
-    // Ensure the stream is always closed
-    streamingData.close();
   }
 }
