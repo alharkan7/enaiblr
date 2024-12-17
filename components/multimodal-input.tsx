@@ -312,7 +312,7 @@ function PureAttachmentsButton({
         </TooltipTrigger>
         <TooltipContent side="top" align="center">
           <p className="text-sm">
-            {isModelDisabled ? 'Use ChatGPT or Gemini to attach image' : 'Attach files'}
+            {isModelDisabled ? 'Use ChatGPT or Gemini to attach image' : 'Attach image. Note: to protect privacy, we do not save any image after chat session ends.'}
           </p>
         </TooltipContent>
       </Tooltip>
