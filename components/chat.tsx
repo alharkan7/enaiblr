@@ -139,6 +139,7 @@ export function Chat({
             reload={reload}
             votes={votes}
             isReadonly={isReadonly}
+            selectedModelId={selectedModelId}
           />
         )}
       </AnimatePresence>
