@@ -61,6 +61,7 @@ function PureBlock({
   reload,
   votes,
   isReadonly,
+  selectedModelId,
 }: {
   chatId: string;
   input: string;
@@ -311,6 +312,7 @@ function PureBlock({
                 append={append}
                 className="bg-background dark:bg-muted"
                 setMessages={setMessages}
+                selectedModelId={selectedModelId}
               />
             </form>
           </div>

@@ -133,78 +133,101 @@ export async function POST(request: Request) {
           execute: async ({ title }) => {
             const id = generateUUID();
             let draftText = '';
+            let timeoutId: NodeJS.Timeout | undefined;
 
-            streamingData.append({
-              type: 'id',
-              content: id,
+            // Set a timeout to ensure the stream doesn't hang indefinitely
+            const timeout = new Promise((_, reject) => {
+              timeoutId = setTimeout(() => {
+                reject(new Error('Document creation timed out'));
+              }, 60000); // 60 second timeout
             });
 
-            streamingData.append({
-              type: 'title',
-              content: title,
-            });
+            try {
+              streamingData.append({
+                type: 'id',
+                content: id,
+              });
 
-            streamingData.append({
-              type: 'clear',
-              content: '',
-            });
+              streamingData.append({
+                type: 'title',
+                content: title,
+              });
 
-            const { fullStream } = streamText({
-              model,
-              system:
-                'Write about the given topic. Markdown is supported. Use headings wherever appropriate.',
-              messages: [
-                {
-                  role: 'user',
-                  content: title
+              streamingData.append({
+                type: 'clear',
+                content: '',
+              });
+
+              const { fullStream } = streamText({
+                model,
+                system:
+                  'Write about the given topic. Markdown is supported. Use headings wherever appropriate.',
+                messages: [
+                  {
+                    role: 'user',
+                    content: title
+                  }
+                ],
+                experimental_providerMetadata: {
+                  groq: {
+                    temperature: 0.7,
+                    max_tokens: 1000,
+                    stream: true,
+                  },
+                  anthropic: {
+                    temperature: 0.7,
+                    max_tokens_to_sample: 1000,
+                  },
+                  google: {
+                    temperature: 0.7,
+                    maxOutputTokens: 1000,
+                  }
                 }
-              ],
-              experimental_providerMetadata: {
-                groq: {
-                  temperature: 0.7,
-                  max_tokens: 1000,
-                },
-                anthropic: {
-                  temperature: 0.7,
-                  max_tokens_to_sample: 1000,
-                },
-                google: {
-                  temperature: 0.7,
-                  maxOutputTokens: 1000,
-                }
-              }
-            });
+              });
 
-            for await (const delta of fullStream) {
-              const { type } = delta;
+              // Race between the stream and the timeout
+              await Promise.race([
+                (async () => {
+                  for await (const delta of fullStream) {
+                    const { type } = delta;
+                    if (type === 'text-delta') {
+                      const { textDelta } = delta;
+                      draftText += textDelta;
+                      streamingData.append({
+                        type: 'text-delta',
+                        content: textDelta,
+                      });
+                    }
+                  }
+                })(),
+                timeout
+              ]);
 
-              if (type === 'text-delta') {
-                const { textDelta } = delta;
-
-                draftText += textDelta;
-                streamingData.append({
-                  type: 'text-delta',
-                  content: textDelta,
+              if (session.user?.id) {
+                await saveDocument({
+                  id,
+                  title,
+                  content: draftText,
+                  userId: session.user.id,
                 });
               }
-            }
 
-            streamingData.append({ type: 'finish', content: '' });
-
-            if (session.user?.id) {
-              await saveDocument({
-                id,
-                title,
-                content: draftText,
-                userId: session.user.id,
+              streamingData.append({
+                type: 'finish',
+                content: ''
               });
-            }
 
-            return {
-              id,
-              title,
-              content: 'A document was created and is now visible to the user.',
-            };
+              return { id, title };
+            } catch (error) {
+              console.error('Document creation error:', error);
+              streamingData.append({
+                type: 'error',
+                content: 'Failed to create document'
+              });
+              throw error;
+            } finally {
+              clearTimeout(timeoutId);
+            }
           },
         },
         updateDocument: {
@@ -381,6 +404,8 @@ export async function POST(request: Request) {
                 })),
               });
             }
+
+            streamingData.close();
 
             return {
               id: documentId,

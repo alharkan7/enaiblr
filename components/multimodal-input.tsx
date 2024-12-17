@@ -27,6 +27,7 @@ import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './ui/tooltip';
 import { SuggestedActions } from './suggested-actions';
 import equal from 'fast-deep-equal';
 
@@ -43,6 +44,7 @@ function PureMultimodalInput({
   append,
   handleSubmit,
   className,
+  selectedModelId,
 }: {
   chatId: string;
   input: string;
@@ -64,6 +66,7 @@ function PureMultimodalInput({
     chatRequestOptions?: ChatRequestOptions,
   ) => void;
   className?: string;
+  selectedModelId: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const { width } = useWindowSize();
@@ -258,7 +261,11 @@ function PureMultimodalInput({
         />
       )}
 
-      <AttachmentsButton fileInputRef={fileInputRef} isLoading={isLoading} />
+      <AttachmentsButton
+        fileInputRef={fileInputRef}
+        isLoading={isLoading}
+        selectedModelId={selectedModelId}
+      />
     </div>
   );
 }
@@ -277,22 +284,39 @@ export const MultimodalInput = memo(
 function PureAttachmentsButton({
   fileInputRef,
   isLoading,
+  selectedModelId,
 }: {
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   isLoading: boolean;
+  selectedModelId: string;
 }) {
+  const isModelDisabled = selectedModelId === 'llama-3.2-11b-vision-preview' || selectedModelId === 'claude-3-5-haiku-20241022';
+
   return (
-    <Button
-      className="rounded-full p-1.5 h-fit absolute bottom-2 right-11 m-0.5 dark:border-zinc-700"
-      onClick={(event) => {
-        event.preventDefault();
-        fileInputRef.current?.click();
-      }}
-      variant="outline"
-      disabled={isLoading}
-    >
-      <PaperclipIcon size={14} />
-    </Button>
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger asChild>
+          <Button
+            className="rounded-full p-1.5 h-fit absolute bottom-2 right-11 m-0.5 dark:border-zinc-700 !pointer-events-auto"
+            onClick={(event) => {
+              event.preventDefault();
+              if (!isModelDisabled) {
+                fileInputRef.current?.click();
+              }
+            }}
+            variant="outline"
+            disabled={isLoading || isModelDisabled}
+          >
+            <PaperclipIcon size={14} />
+          </Button>
+        </TooltipTrigger>
+        <TooltipContent side="top" align="center">
+          <p className="text-sm">
+            {isModelDisabled ? 'Use ChatGPT or Gemini to attach image' : 'Attach files'}
+          </p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
   );
 }
 
