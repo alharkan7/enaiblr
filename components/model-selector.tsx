@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { startTransition, useMemo, useOptimistic, useState, useEffect } from 'react';
 
 import { saveModelId } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -22,13 +22,29 @@ export function ModelSelector({
   selectedModelId: string;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [optimisticModelId, setOptimisticModelId] =
-    useOptimistic(selectedModelId);
+  const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId);
+
+  // Use useEffect to sync with localStorage
+  useEffect(() => {
+    const storedModelId = localStorage.getItem('model-id');
+    if (storedModelId) {
+      setOptimisticModelId(storedModelId);
+    }
+  }, []);
 
   const selectedModel = useMemo(
     () => models.find((model) => model.id === optimisticModelId),
     [optimisticModelId],
   );
+
+  const handleModelChange = (modelId: string) => {
+    setOpen(false);
+    setOptimisticModelId(modelId);
+    localStorage.setItem('model-id', modelId);
+    startTransition(() => {
+      saveModelId(modelId);
+    });
+  };
 
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
@@ -39,7 +55,7 @@ export function ModelSelector({
           className,
         )}
       >
-        <Button variant="outline" className="md:px-2 md:h-[34px]">
+        <Button variant="outline" className="md:px-2 md:h-[34px]" suppressHydrationWarning>
           {selectedModel?.label}
           <ChevronDownIcon />
         </Button>
@@ -48,14 +64,7 @@ export function ModelSelector({
         {models.map((model) => (
           <DropdownMenuItem
             key={model.id}
-            onSelect={() => {
-              setOpen(false);
-
-              startTransition(() => {
-                setOptimisticModelId(model.id);
-                saveModelId(model.id);
-              });
-            }}
+            onSelect={() => handleModelChange(model.id)}
             className="gap-4 group/item flex flex-row justify-between items-center"
             data-active={model.id === optimisticModelId}
           >

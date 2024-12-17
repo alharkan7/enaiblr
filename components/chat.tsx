@@ -23,12 +23,14 @@ export function Chat({
   selectedModelId,
   selectedVisibilityType,
   isReadonly,
+  suppressHydrationWarning,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  suppressHydrationWarning?: boolean;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -78,7 +80,7 @@ export function Chat({
 
   return (
     <>
-      <div className="flex flex-col min-w-0 h-dvh bg-background">
+      <div className="flex flex-col min-w-0 h-dvh bg-background" suppressHydrationWarning={suppressHydrationWarning}>
         <ChatHeader
           chatId={id}
           selectedModelId={selectedModelId}
