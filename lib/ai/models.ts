@@ -25,7 +25,7 @@ export const models: Array<Model> = [
   {
     id: 'gemini-1.5-flash',
     label: 'Gemini',
-    apiIdentifier: 'gemini-1.5-flash',
+    apiIdentifier: 'gemini-1.5-flash-002',
     description: 'Google',
     provider: 'google'
   },
@@ -37,12 +37,12 @@ export const models: Array<Model> = [
     provider: 'anthropic'
   },
   {
-    id: 'meta-llama/Llama-Vision-Free',
+    id: 'llama-3.1-70b-versatile',
     label: 'Llama',
-    apiIdentifier: 'meta-llama/Llama-Vision-Free',
+    apiIdentifier: 'llama-3.1-70b-versatile',
     description: 'Meta',
-    provider: 'together-ai'
-  },
+    provider: 'groq'
+  }
 ] as const;
 
 export const DEFAULT_MODEL_NAME: string = 'gpt-4o-mini';
