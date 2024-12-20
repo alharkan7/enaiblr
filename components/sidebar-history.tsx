@@ -159,6 +159,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     mutate,
   } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
     fallbackData: [],
+    revalidateOnFocus: true,
+    revalidateOnMount: true,
+    refreshInterval: 3000, // Poll every 3 seconds
   });
 
   useEffect(() => {

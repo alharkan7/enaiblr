@@ -40,12 +40,34 @@ type AllowedTools =
 const blocksTools: AllowedTools[] = [
   'createDocument',
   'updateDocument',
-  'requestSuggestions',
+  'requestSuggestions'
 ];
 
-const weatherTools: AllowedTools[] = ['getWeather'];
+const weatherTools: AllowedTools[] = [];
 
 const allTools: AllowedTools[] = [...blocksTools, ...weatherTools];
+
+function getWeatherDescription(code: number): string {
+  const weatherCodes: Record<number, string> = {
+    0: 'Clear sky',
+    1: 'Mainly clear',
+    2: 'Partly cloudy',
+    3: 'Overcast',
+    45: 'Foggy',
+    48: 'Depositing rime fog',
+    51: 'Light drizzle',
+    53: 'Moderate drizzle',
+    55: 'Dense drizzle',
+    61: 'Slight rain',
+    63: 'Moderate rain',
+    65: 'Heavy rain',
+    71: 'Slight snow fall',
+    73: 'Moderate snow fall',
+    75: 'Heavy snow fall',
+    95: 'Thunderstorm',
+  };
+  return weatherCodes[code] || 'Unknown';
+}
 
 export async function POST(request: Request) {
   const {
@@ -57,7 +79,7 @@ export async function POST(request: Request) {
 
   const session = await auth();
 
-  if (!session || !session.user || !session.user.id) {
+  if (!session?.user?.id) {
     return new Response('Unauthorized', { status: 401 });
   }
 
@@ -109,20 +131,62 @@ export async function POST(request: Request) {
       maxSteps: 5,
       experimental_activeTools: allTools,
       tools: {
-
         getWeather: {
-          description: 'Get the current weather at a location',
+          description: 'Get the current weather at a location. Example: Get weather for New York (40.7128, -74.0060)',
           parameters: z.object({
-            latitude: z.number(),
-            longitude: z.number(),
+            latitude: z.number().min(-90).max(90).describe('Latitude between -90 and 90'),
+            longitude: z.number().min(-180).max(180).describe('Longitude between -180 and 180'),
           }),
           execute: async ({ latitude, longitude }) => {
-            const response = await fetch(
-              `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m&hourly=temperature_2m&daily=sunrise,sunset&timezone=auto`,
-            );
+            try {
+              const url = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&current=temperature_2m,weathercode&timezone=auto`;
+              console.log('Fetching weather data from URL:', url);
 
-            const weatherData = await response.json();
-            return weatherData;
+              const response = await fetch(url);
+              console.log('Response status:', response.status);
+              console.log('Response headers:', Object.fromEntries(response.headers.entries()));
+
+              if (!response.ok) {
+                throw new Error(`Weather API request failed with status: ${response.status}`);
+              }
+
+              const weatherData = await response.json();
+              console.log('Raw weather API response:', JSON.stringify(weatherData, null, 2));
+
+              // Log the structure of the response
+              console.log('Weather data keys:', Object.keys(weatherData));
+              if (weatherData.current) {
+                console.log('Current data keys:', Object.keys(weatherData.current));
+              } else {
+                console.log('No current data found in response');
+              }
+
+              // Validate the response data
+              if (!weatherData?.current?.temperature_2m ||
+                !weatherData?.current?.weathercode) {
+                console.error('Invalid weather data structure:', weatherData);
+                throw new Error(`Invalid weather data format received from API. Available data: ${JSON.stringify(weatherData)}`);
+              }
+
+              const formattedResponse = {
+                current: {
+                  temperature: weatherData.current.temperature_2m,
+                  unit: weatherData.current_units?.temperature_2m ?? '°C',
+                  weather: getWeatherDescription(weatherData.current.weathercode),
+                },
+                daily: {
+                  sunrise: null,
+                  sunset: null,
+                },
+              };
+
+              console.log('Formatted weather response:', formattedResponse);
+              return formattedResponse;
+
+            } catch (error) {
+              console.error('Weather API error:', error);
+              throw new Error(`Failed to fetch weather data: ${error instanceof Error ? error.message : 'Unknown error'}`);
+            }
           },
         },
         createDocument: {
@@ -134,13 +198,6 @@ export async function POST(request: Request) {
             const id = generateUUID();
             let draftText = '';
             let timeoutId: NodeJS.Timeout | undefined;
-
-            // Set a timeout to ensure the stream doesn't hang indefinitely
-            const timeout = new Promise((_, reject) => {
-              timeoutId = setTimeout(() => {
-                reject(new Error('Document creation timed out'));
-              }, 60000); // 60 second timeout
-            });
 
             try {
               streamingData.append({
@@ -185,23 +242,17 @@ export async function POST(request: Request) {
                 }
               });
 
-              // Race between the stream and the timeout
-              await Promise.race([
-                (async () => {
-                  for await (const delta of fullStream) {
-                    const { type } = delta;
-                    if (type === 'text-delta') {
-                      const { textDelta } = delta;
-                      draftText += textDelta;
-                      streamingData.append({
-                        type: 'text-delta',
-                        content: textDelta,
-                      });
-                    }
-                  }
-                })(),
-                timeout
-              ]);
+              for await (const delta of fullStream) {
+                const { type } = delta;
+                if (type === 'text-delta') {
+                  const { textDelta } = delta;
+                  draftText += textDelta;
+                  streamingData.append({
+                    type: 'text-delta',
+                    content: textDelta,
+                  });
+                }
+              }
 
               if (session.user?.id) {
                 await saveDocument({
@@ -225,18 +276,14 @@ export async function POST(request: Request) {
                 content: 'Failed to create document'
               });
               throw error;
-            } finally {
-              clearTimeout(timeoutId);
             }
           },
         },
         updateDocument: {
-          description: 'Update a document with the given description',
+          description: 'Update an existing document',
           parameters: z.object({
-            id: z.string().describe('The ID of the document to update'),
-            description: z
-              .string()
-              .describe('The description of changes that need to be made'),
+            id: z.string(),
+            description: z.string(),
           }),
           execute: async ({ id, description }) => {
             const document = await getDocumentById({ id });
@@ -321,11 +368,9 @@ export async function POST(request: Request) {
           },
         },
         requestSuggestions: {
-          description: 'Request suggestions for a document',
+          description: 'Request suggestions for improving a document',
           parameters: z.object({
-            documentId: z
-              .string()
-              .describe('The ID of the document to request edits'),
+            documentId: z.string(),
           }),
           execute: async ({ documentId }) => {
             const document = await getDocumentById({ id: documentId });
@@ -444,7 +489,15 @@ export async function POST(request: Request) {
             });
           } catch (error) {
             console.error('Failed to save chat:', error);
+            streamingData.append({
+              type: 'error',
+              content: 'Failed to save chat'
+            });
+          } finally {
+            streamingData.close();
           }
+        } else {
+          streamingData.close();
         }
       },
       experimental_telemetry: {
@@ -460,6 +513,34 @@ export async function POST(request: Request) {
     return response;
   } catch (error) {
     console.error('Error during streaming:', error);
+    streamingData.append({
+      type: 'error',
+      content: 'Internal Server Error'
+    });
+    streamingData.close();
     return new Response('Internal Server Error', { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  if (!id) {
+    return new Response('Chat ID is required', { status: 400 });
+  }
+
+  try {
+    await deleteChatById({ id });
+    return new Response('Chat deleted successfully', { status: 200 });
+  } catch (error) {
+    console.error('Error deleting chat:', error);
+    return new Response('Failed to delete chat', { status: 500 });
   }
 }

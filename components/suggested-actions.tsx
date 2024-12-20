@@ -16,14 +16,18 @@ interface SuggestedActionsProps {
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'What is the weather',
-      label: 'in Jakarta?',
-      action: 'What is the weather in Jakarta?',
+      title: 'Write a Python script',
+      label: 'to calculate the value of Pi',
+      get action(): string { 
+        return `${this.title} ${this.label}`; 
+      },
     },
     {
       title: 'Help me draft an essay',
       label: 'about the history of Indonesia',
-      action: 'Help me draft a short essay about the history of Indonesia',
+      get action(): string { 
+        return `${this.title} ${this.label}`; 
+      },
     },
   ];
 

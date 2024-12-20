@@ -1,22 +1,26 @@
 import { compare } from 'bcrypt-ts';
-import NextAuth, { type User, type Session } from 'next-auth';
+import NextAuth, { type DefaultSession, type Session } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import Google from 'next-auth/providers/google';
 
 import { getUser, createUser } from '@/lib/db/queries';
-import { authConfig } from './auth.config';
+import { authConfig as baseAuthConfig } from './auth.config';
 
-interface ExtendedSession extends Session {
-  user: User;
+declare module 'next-auth' {
+  interface Session {
+    user: {
+      id: string;
+    } & DefaultSession['user']
+  }
 }
 
 export const {
   handlers: { GET, POST },
-  auth,
+  auth: authHandler,
   signIn,
   signOut,
 } = NextAuth({
-  ...authConfig,
+  ...baseAuthConfig,
   providers: [
     Google({
       clientId: process.env.GOOGLE_CLIENT_ID!,
@@ -37,13 +41,13 @@ export const {
           const password = credentials.password;
 
           const users = await getUser(email);
-          
+
           if (users.length === 0) {
             return null;
           }
 
           const passwordsMatch = await compare(password, users[0].password ?? '');
-          
+
           if (!passwordsMatch) {
             return null;
           }
@@ -62,10 +66,18 @@ export const {
       if (account?.provider === 'google') {
         try {
           const existingUser = await getUser(user.email!);
-          
+
           if (existingUser.length === 0) {
             // Create new user for Google login with empty password
             await createUser(user.email!, '');
+            // Get the newly created user to get their ID
+            const newUser = await getUser(user.email!);
+            if (newUser.length > 0) {
+              user.id = newUser[0].id;
+            }
+          } else {
+            // Set the ID from existing user
+            user.id = existingUser[0].id;
           }
           return true;
         } catch (error) {
@@ -76,22 +88,23 @@ export const {
       return true;
     },
     async jwt({ token, user, account }) {
-      if (user) {
+      // Initial sign in
+      if (account && user) {
         token.id = user.id;
+        token.email = user.email;
       }
       return token;
     },
-    async session({
-      session,
-      token,
-    }: {
-      session: ExtendedSession;
-      token: any;
-    }) {
-      if (session.user) {
-        session.user.id = token.id as string;
+    async session({ session, token }) {
+      if (token.sub) {
+        session.user.id = token.sub;
       }
       return session;
-    },
+    }
   },
 });
+
+export const auth = async () => {
+  const session = await authHandler();
+  return session;
+};
