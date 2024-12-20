@@ -1,20 +1,25 @@
-import NextAuth from 'next-auth';
+import { auth } from '@/app/(auth)/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-import { authConfig } from '@/app/(auth)/auth.config';
+export async function middleware(request: NextRequest) {
+  const session = await auth();
+  const isLoginPage = request.nextUrl.pathname.startsWith('/login');
 
-export default NextAuth(authConfig).auth;
+  if (!session && !isLoginPage) {
+    return NextResponse.redirect(new URL('/login', request.url));
+  }
+
+  if (session && isLoginPage) {
+    return NextResponse.redirect(new URL('/', request.url));
+  }
+
+  return NextResponse.next();
+}
 
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for:
-     * - api/auth/* (auth endpoints)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public/* (public files)
-     */
     '/((?!api/auth|_next/static|_next/image|favicon.ico|public).*)',
+    '/api/(?!auth).*',
   ],
 };

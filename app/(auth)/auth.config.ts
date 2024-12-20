@@ -3,43 +3,39 @@ import { type DefaultSession } from 'next-auth';
 export const authConfig = {
   pages: {
     signIn: '/login',
-    newUser: '/',
     error: '/login',
   },
   providers: [],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }: { auth: { user: any } | null, request: { nextUrl: URL } }) {
+    authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
-      const isOnRegister = nextUrl.pathname.startsWith('/register');
-      const isOnLogin = nextUrl.pathname.startsWith('/login');
-
-      if (isLoggedIn && (isOnLogin || isOnRegister)) {
+      const isOnLogin = nextUrl.pathname === '/login';
+      
+      if (isLoggedIn && isOnLogin) {
         return Response.redirect(new URL('/', nextUrl));
       }
-
-      if (isOnRegister || isOnLogin) {
+      
+      if (isOnLogin) {
         return true;
       }
-
-      if (isOnChat) {
-        if (isLoggedIn) return true;
-        return false;
+      
+      if (!isLoggedIn) {
+        return Response.redirect(new URL('/login', nextUrl));
       }
-
+      
       return true;
     },
-    jwt({ token, user, account }: { token: any, user?: any, account?: any }) {
-      if (account && user) {
+    jwt({ token, user }) {
+      if (user) {
         token.id = user.id;
       }
       return token;
     },
-    session({ session, token }: { session: DefaultSession, token: any }) {
+    session({ session, token }) {
       if (session.user) {
-        (session.user as any).id = token.id as string;
+        session.user.id = token.id;
       }
       return session;
     }
   }
-}
+};
