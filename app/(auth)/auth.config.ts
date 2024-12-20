@@ -1,39 +1,24 @@
-import type { NextAuthConfig } from 'next-auth';
+import { type DefaultSession } from 'next-auth';
 
 export const authConfig = {
   pages: {
     signIn: '/login',
     newUser: '/',
+    error: '/login',
   },
-  providers: [
-    // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
-    // while this file is also used in non-Node.js environments
-  ],
+  providers: [],
   callbacks: {
-    authorized({ auth, request: { nextUrl } }) {
-      const isLoggedIn = !!auth?.user;
-      const isOnChat = nextUrl.pathname.startsWith('/');
-      const isOnRegister = nextUrl.pathname.startsWith('/register');
-      const isOnLogin = nextUrl.pathname.startsWith('/login');
-
-      if (isLoggedIn && (isOnLogin || isOnRegister)) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
+    jwt({ token, user, account }) {
+      if (account && user) {
+        token.id = user.id;
       }
-
-      if (isOnRegister || isOnLogin) {
-        return true; // Always allow access to register and login pages
-      }
-
-      if (isOnChat) {
-        if (isLoggedIn) return true;
-        return false; // Redirect unauthenticated users to login page
-      }
-
-      if (isLoggedIn) {
-        return Response.redirect(new URL('/', nextUrl as unknown as URL));
-      }
-
-      return true;
+      return token;
     },
-  },
-} satisfies NextAuthConfig;
+    session({ session, token }: { session: DefaultSession, token: any }) {
+      if (session.user) {
+        (session.user as any).id = token.id as string;
+      }
+      return session;
+    }
+  }
+}
