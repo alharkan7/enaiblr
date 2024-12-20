@@ -1,41 +1,40 @@
-import { type DefaultSession } from 'next-auth';
+import type { NextAuthConfig } from 'next-auth';
 
 export const authConfig = {
   pages: {
     signIn: '/login',
-    error: '/login',
+    newUser: '/',
   },
-  providers: [],
+  providers: [], // added later in auth.ts
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isOnLogin = nextUrl.pathname === '/login';
-      
-      if (isLoggedIn && isOnLogin) {
-        return Response.redirect(new URL('/', nextUrl));
-      }
-      
-      if (isOnLogin) {
+      const isPublicRoute = nextUrl.pathname.startsWith('/api/auth') || 
+                           nextUrl.pathname.startsWith('/_next') ||
+                           nextUrl.pathname.startsWith('/public');
+      const isAuthPage = nextUrl.pathname === '/login' || 
+                        nextUrl.pathname === '/register';
+
+      // Always allow public routes and assets
+      if (isPublicRoute) {
         return true;
       }
-      
-      if (!isLoggedIn) {
-        return Response.redirect(new URL('/login', nextUrl));
+
+      // Redirect to home if logged in and trying to access auth pages
+      if (isLoggedIn && isAuthPage) {
+        return Response.redirect(new URL('/', nextUrl));
       }
-      
-      return true;
+
+      // Allow access to auth pages if not logged in
+      if (isAuthPage) {
+        return true;
+      }
+
+      // For all other routes, require authentication
+      return isLoggedIn;
     },
-    jwt({ token, user }) {
-      if (user) {
-        token.id = user.id;
-      }
-      return token;
-    },
-    session({ session, token }) {
-      if (session.user) {
-        session.user.id = token.id;
-      }
-      return session;
-    }
-  }
-};
+  },
+  session: {
+    strategy: 'jwt',
+  },
+} satisfies NextAuthConfig;
