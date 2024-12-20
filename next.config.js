@@ -10,9 +10,10 @@ const nextConfig = {
   async redirects() {
     return [
       {
-        source: 'https://access.enaiblr.org/login',
-        destination: 'https://access.enaiblr.org/login',
+        source: '/login',
+        destination: '/login',
         permanent: true,
+        basePath: false,
       },
     ];
   },
