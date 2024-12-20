@@ -100,7 +100,7 @@ export function Chat({
           isReadonly={isReadonly}
         />
 
-        <form className="fixed bottom-0 left-0 right-0 flex px-4 bg-background/80 backdrop-blur-sm pb-4 md:pb-6 gap-2 w-full md:max-w-3xl mx-auto z-50">
+        <form className="sticky bottom-0 flex px-4 bg-background/80 backdrop-blur-sm pb-4 md:pb-6 gap-2 w-full md:max-w-3xl mx-auto z-50">
           {!isReadonly && (
             <MultimodalInput
               chatId={id}
