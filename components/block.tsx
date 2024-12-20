@@ -325,52 +325,52 @@ function PureBlock({
         initial={
           isMobile
             ? {
-                opacity: 0,
-                x: 0,
-                y: 0,
-                width: windowWidth,
-                height: windowHeight,
-                borderRadius: 50,
-              }
+              opacity: 0,
+              x: 0,
+              y: 0,
+              width: windowWidth,
+              height: windowHeight,
+              borderRadius: 50,
+            }
             : {
-                opacity: 0,
-                x: block.boundingBox.left,
-                y: block.boundingBox.top,
-                height: block.boundingBox.height,
-                width: block.boundingBox.width,
-                borderRadius: 50,
-              }
+              opacity: 0,
+              x: block.boundingBox.left,
+              y: block.boundingBox.top,
+              height: block.boundingBox.height,
+              width: block.boundingBox.width,
+              borderRadius: 50,
+            }
         }
         animate={
           isMobile
             ? {
-                opacity: 1,
-                x: 0,
-                y: 0,
-                width: windowWidth,
-                height: '100dvh',
-                borderRadius: 0,
-                transition: {
-                  delay: 0,
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 30,
-                },
-              }
+              opacity: 1,
+              x: 0,
+              y: 0,
+              width: windowWidth,
+              height: '100dvh',
+              borderRadius: 0,
+              transition: {
+                delay: 0,
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+              },
+            }
             : {
-                opacity: 1,
-                x: 400,
-                y: 0,
-                height: windowHeight,
-                width: windowWidth ? windowWidth - 400 : 'calc(100dvw-400px)',
-                borderRadius: 0,
-                transition: {
-                  delay: 0,
-                  type: 'spring',
-                  stiffness: 200,
-                  damping: 30,
-                },
-              }
+              opacity: 1,
+              x: 400,
+              y: 0,
+              height: windowHeight,
+              width: windowWidth ? windowWidth - 400 : 'calc(100dvw-400px)',
+              borderRadius: 0,
+              transition: {
+                delay: 0,
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+              },
+            }
         }
         exit={{
           opacity: 0,
@@ -421,8 +421,8 @@ function PureBlock({
           />
         </div>
 
-        <div className="prose dark:prose-invert dark:bg-muted bg-background h-full overflow-y-scroll px-4 py-8 md:p-20 !max-w-full pb-40 items-center">
-          <div className="flex flex-row max-w-[600px] mx-auto">
+        <div className="prose dark:prose-invert dark:bg-muted bg-background h-full overflow-y-scroll px-4 py-6 md:px-8 lg:px-20 !max-w-none pb-40">
+          <div className="container mx-auto max-w-[800px]">
             {isDocumentsFetching && !block.content ? (
               <DocumentSkeleton />
             ) : mode === 'edit' ? (

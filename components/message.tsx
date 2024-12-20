@@ -49,7 +49,7 @@ const PurePreviewMessage = ({
 
   return (
     <motion.div
-      className="w-full mx-auto max-w-3xl px-4 group/message"
+      className="w-full mx-auto max-w-3xl group/message"
       initial={{ y: 5, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       data-role={message.role}
@@ -69,7 +69,7 @@ const PurePreviewMessage = ({
           </div>
         )}
 
-        <div className="flex flex-col gap-2 w-full">
+        <div className="flex flex-col gap-2 min-w-0 max-w-full">
           {message.experimental_attachments && (
             <div className="flex flex-row justify-end gap-2">
               {message.experimental_attachments.map((attachment) => (
@@ -82,7 +82,7 @@ const PurePreviewMessage = ({
           )}
 
           {message.content && mode === 'view' && (
-            <div className="flex flex-row gap-2 items-start">
+            <div className="flex flex-row gap-2 items-start min-w-0 w-full">
               {message.role === 'user' && !isReadonly && (
                 <Tooltip>
                   <TooltipTrigger asChild>
@@ -101,7 +101,7 @@ const PurePreviewMessage = ({
               )}
 
               <div
-                className={cn('flex flex-col gap-4', {
+                className={cn('flex flex-col gap-4 min-w-0 overflow-hidden', {
                   'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
                     message.role === 'user',
                 })}
@@ -112,7 +112,7 @@ const PurePreviewMessage = ({
           )}
 
           {message.content && mode === 'edit' && (
-            <div className="flex flex-row gap-2 items-start">
+            <div className="flex flex-row gap-2 items-start min-w-0 w-full">
               <div className="size-8" />
 
               <MessageEditor
