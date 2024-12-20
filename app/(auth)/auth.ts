@@ -40,14 +40,26 @@ export const {
           const email = credentials.email;
           const password = credentials.password;
 
+          if (typeof email !== 'string') {
+            throw new Error('Email must be a string');
+          }
+
           const users = await getUser(email);
 
           if (users.length === 0) {
             return null;
           }
 
-          const passwordsMatch = await compare(password, users[0].password ?? '');
+          if (typeof password !== 'string') {
+            return null;
+          }
 
+          if (!users[0]?.password) {
+            return null;
+          }
+
+          const passwordsMatch = await compare(password, users[0].password);
+          
           if (!passwordsMatch) {
             return null;
           }
@@ -96,8 +108,8 @@ export const {
       return token;
     },
     async session({ session, token }) {
-      if (token.sub) {
-        session.user.id = token.sub;
+      if (token && session.user) {
+        session.user.id = token.sub as string;
       }
       return session;
     }
