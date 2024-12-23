@@ -16,23 +16,29 @@ interface SuggestedActionsProps {
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
     {
-      title: 'Write a Python script',
-      label: 'to calculate the value of Pi',
-      get action(): string { 
-        return `${this.title} ${this.label}`; 
-      },
+      title: 'What are the advantages',
+      label: 'of using Next.js?',
+      action: 'What are the advantages of using Next.js?',
     },
     {
-      title: 'Help me draft an essay',
-      label: 'about the history of Indonesia',
-      get action(): string { 
-        return `${this.title} ${this.label}`; 
-      },
+      title: 'Write code that',
+      label: `demonstrates djikstra's algorithm`,
+      action: `Write code that demonstrates djikstra's algorithm`,
+    },
+    {
+      title: 'Help me write an essay',
+      label: `about silicon valley`,
+      action: `Help me write an essay about silicon valley`,
+    },
+    {
+      title: 'What is the weather',
+      label: 'in San Francisco?',
+      action: 'What is the weather in San Francisco?',
     },
   ];
 
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 w-full px-2" suppressHydrationWarning>
+    <div className="grid sm:grid-cols-2 gap-2 w-full">
       {suggestedActions.map((suggestedAction, index) => (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
@@ -40,7 +46,7 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
           exit={{ opacity: 0, y: 20 }}
           transition={{ delay: 0.05 * index }}
           key={`suggested-action-${suggestedAction.title}-${index}`}
-          className={index > 1 ? 'hidden sm:block' : 'block w-full'}
+          className={index > 1 ? 'hidden sm:block' : 'block'}
         >
           <Button
             variant="ghost"
@@ -52,14 +58,12 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm w-full h-auto justify-start items-start whitespace-normal break-words"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
           >
-            <div className="flex flex-col gap-1 w-full">
-              <span className="font-medium truncate">{suggestedAction.title}</span>
-              <span className="text-muted-foreground truncate">
-                {suggestedAction.label}
-              </span>
-            </div>
+            <span className="font-medium">{suggestedAction.title}</span>
+            <span className="text-muted-foreground">
+              {suggestedAction.label}
+            </span>
           </Button>
         </motion.div>
       ))}

@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 
 import { ModelSelector } from '@/components/model-selector';
@@ -25,11 +25,9 @@ function PureChatHeader({
   isReadonly: boolean;
 }) {
   const router = useRouter();
-  const pathname = usePathname();
   const { open } = useSidebar();
-  const { width: windowWidth } = useWindowSize();
 
-  const isOnChatPage = pathname?.startsWith('/chat/');
+  const { width: windowWidth } = useWindowSize();
 
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
@@ -54,30 +52,22 @@ function PureChatHeader({
         </Tooltip>
       )}
 
-      <div className="flex items-center gap-2">
-        <Tooltip>
-          <TooltipTrigger asChild>
-            <span>
-              <ModelSelector
-                selectedModelId={selectedModelId}
-                className="order-1 md:order-2"
-                disabled={isOnChatPage}
-              />
-            </span>
-          </TooltipTrigger>
-          {isOnChatPage && <TooltipContent>Open a new chat to select model</TooltipContent>}
-        </Tooltip>
+      {!isReadonly && (
+        <ModelSelector
+          selectedModelId={selectedModelId}
+          className="order-1 md:order-2"
+        />
+      )}
 
-        {!isReadonly && (
-          <VisibilitySelector
-            chatId={chatId}
-            selectedVisibilityType={selectedVisibilityType}
-            className="order-1 md:order-3"
-          />
-        )}
-      </div>
+      {!isReadonly && (
+        <VisibilitySelector
+          chatId={chatId}
+          selectedVisibilityType={selectedVisibilityType}
+          className="order-1 md:order-3"
+        />
+      )}
 
-      {/* <Button
+      <Button
         className="bg-zinc-900 dark:bg-zinc-100 hover:bg-zinc-800 dark:hover:bg-zinc-200 text-zinc-50 dark:text-zinc-900 hidden md:flex py-1.5 px-2 h-fit md:h-[34px] order-4 md:ml-auto"
         asChild
       >
@@ -88,7 +78,7 @@ function PureChatHeader({
           <VercelIcon size={16} />
           Deploy with Vercel
         </Link>
-      </Button> */}
+      </Button>
     </header>
   );
 }

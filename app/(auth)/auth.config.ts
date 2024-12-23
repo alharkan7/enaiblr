@@ -5,36 +5,35 @@ export const authConfig = {
     signIn: '/login',
     newUser: '/',
   },
-  providers: [], // added later in auth.ts
+  providers: [
+    // added later in auth.ts since it requires bcrypt which is only compatible with Node.js
+    // while this file is also used in non-Node.js environments
+  ],
   callbacks: {
     authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isPublicRoute = nextUrl.pathname.startsWith('/api/auth') || 
-                           nextUrl.pathname.startsWith('/_next') ||
-                           nextUrl.pathname.startsWith('/public');
-      const isAuthPage = nextUrl.pathname === '/login' || 
-                        nextUrl.pathname === '/register';
+      const isOnChat = nextUrl.pathname.startsWith('/');
+      const isOnRegister = nextUrl.pathname.startsWith('/register');
+      const isOnLogin = nextUrl.pathname.startsWith('/login');
 
-      // Always allow public routes and assets
-      if (isPublicRoute) {
-        return true;
+      if (isLoggedIn && (isOnLogin || isOnRegister)) {
+        return Response.redirect(new URL('/', nextUrl as unknown as URL));
       }
 
-      // Redirect to home if logged in and trying to access auth pages
-      if (isLoggedIn && isAuthPage) {
-        return Response.redirect(new URL('/', nextUrl));
+      if (isOnRegister || isOnLogin) {
+        return true; // Always allow access to register and login pages
       }
 
-      // Allow access to auth pages if not logged in
-      if (isAuthPage) {
-        return true;
+      if (isOnChat) {
+        if (isLoggedIn) return true;
+        return false; // Redirect unauthenticated users to login page
       }
 
-      // For all other routes, require authentication
-      return isLoggedIn;
+      if (isLoggedIn) {
+        return Response.redirect(new URL('/', nextUrl as unknown as URL));
+      }
+
+      return true;
     },
-  },
-  session: {
-    strategy: 'jwt',
   },
 } satisfies NextAuthConfig;

@@ -50,14 +50,14 @@ export function SidebarUserNav({ user }: { user: User }) {
             </DropdownMenuItem>
             <DropdownMenuSeparator />
             <DropdownMenuItem asChild>
-            <button
+              <button
                 type="button"
                 className="w-full cursor-pointer"
                 onClick={() => {
                   signOut({
                     redirect: true,
-                    callbackUrl: '/'
                   });
+                  window.location.href = '/';
                 }}
               >
                 Sign out

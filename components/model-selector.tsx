@@ -1,6 +1,6 @@
 'use client';
 
-import { startTransition, useMemo, useOptimistic, useState, useEffect } from 'react';
+import { startTransition, useMemo, useOptimistic, useState } from 'react';
 
 import { saveModelId } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -18,59 +18,44 @@ import { CheckCircleFillIcon, ChevronDownIcon } from './icons';
 export function ModelSelector({
   selectedModelId,
   className,
-  disabled,
 }: {
   selectedModelId: string;
-  disabled?: boolean;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
-  const [optimisticModelId, setOptimisticModelId] = useState(selectedModelId);
-
-  // Use useEffect to sync with localStorage
-  useEffect(() => {
-    const storedModelId = localStorage.getItem('model-id');
-    if (storedModelId) {
-      setOptimisticModelId(storedModelId);
-    }
-  }, []);
+  const [optimisticModelId, setOptimisticModelId] =
+    useOptimistic(selectedModelId);
 
   const selectedModel = useMemo(
     () => models.find((model) => model.id === optimisticModelId),
     [optimisticModelId],
   );
 
-  const handleModelChange = (modelId: string) => {
-    setOpen(false);
-    setOptimisticModelId(modelId);
-    localStorage.setItem('model-id', modelId);
-    startTransition(() => {
-      saveModelId(modelId);
-    });
-  };
-
   return (
     <DropdownMenu open={open} onOpenChange={setOpen}>
       <DropdownMenuTrigger
         asChild
-        disabled={disabled}
+        className={cn(
+          'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+          className,
+        )}
       >
-        <Button
-          variant="outline"
-          role="combobox"
-          aria-expanded={open}
-          aria-label="Select a model"
-          className={cn('w-full justify-between', className)}
-          disabled={disabled}
-        >
+        <Button variant="outline" className="md:px-2 md:h-[34px]">
           {selectedModel?.label}
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[100px]">
+      <DropdownMenuContent align="start" className="min-w-[300px]">
         {models.map((model) => (
           <DropdownMenuItem
             key={model.id}
-            onSelect={() => handleModelChange(model.id)}
+            onSelect={() => {
+              setOpen(false);
+
+              startTransition(() => {
+                setOptimisticModelId(model.id);
+                saveModelId(model.id);
+              });
+            }}
             className="gap-4 group/item flex flex-row justify-between items-center"
             data-active={model.id === optimisticModelId}
           >
@@ -82,7 +67,7 @@ export function ModelSelector({
                 </div>
               )}
             </div>
-            <div className="text-primary dark:text-primary-foreground opacity-0 group-data-[active=true]/item:opacity-100">
+            <div className="text-foreground dark:text-foreground opacity-0 group-data-[active=true]/item:opacity-100">
               <CheckCircleFillIcon />
             </div>
           </DropdownMenuItem>
