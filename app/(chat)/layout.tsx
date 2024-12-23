@@ -21,6 +21,9 @@ export default async function Layout({
       <Script
         src="https://cdn.jsdelivr.net/pyodide/v0.23.4/full/pyodide.js"
         strategy="beforeInteractive"
+        onLoad={() => {
+          window.loadPyodide = (window as any).loadPyodide;
+        }}
       />
       <SidebarProvider defaultOpen={!isCollapsed}>
         <AppSidebar user={session?.user} />
