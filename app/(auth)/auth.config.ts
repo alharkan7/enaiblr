@@ -4,6 +4,7 @@ export const authConfig = {
   pages: {
     signIn: '/login',
     newUser: '/',
+    error: '/login', // Redirect back to login page on error
   },
   providers: [
     // added later in auth.ts since it requires bcrypt which is only compatible with Node.js

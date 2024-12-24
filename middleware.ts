@@ -1,9 +1,19 @@
-import NextAuth from 'next-auth';
+import { NextResponse } from 'next/server';
+import { auth } from './app/(auth)/auth';
 
-import { authConfig } from '@/app/(auth)/auth.config';
+export default auth((req) => {
+  const isLoggedIn = !!req.auth;
+  const isOnAuthPage = req.nextUrl.pathname.startsWith('/login') || 
+                      req.nextUrl.pathname.startsWith('/register');
 
-export default NextAuth(authConfig).auth;
+  if (isLoggedIn && isOnAuthPage) {
+    return NextResponse.redirect(new URL('/', req.nextUrl));
+  }
 
+  return NextResponse.next();
+});
+
+// Optionally configure protected routes
 export const config = {
   matcher: ['/', '/:id', '/api/:path*', '/login', '/register'],
 };

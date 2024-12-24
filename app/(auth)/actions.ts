@@ -1,5 +1,6 @@
 'use server';
 
+import { hash } from 'bcrypt-ts';
 import { z } from 'zod';
 
 import { createUser, getUser } from '@/lib/db/queries';
@@ -11,74 +12,49 @@ const authFormSchema = z.object({
   password: z.string().min(6),
 });
 
-export interface LoginActionState {
-  status: 'idle' | 'in_progress' | 'success' | 'failed' | 'invalid_data';
-}
+export async function register(formData: FormData) {
+  const validatedFields = authFormSchema.safeParse({
+    email: formData.get('email'),
+    password: formData.get('password'),
+  });
 
-export const login = async (
-  _: LoginActionState,
-  formData: FormData,
-): Promise<LoginActionState> => {
+  if (!validatedFields.success) {
+    return { error: 'Invalid fields!' };
+  }
+
+  const { email, password } = validatedFields.data;
+
+  const existingUsers = await getUser(email);
+
+  if (existingUsers.length > 0) {
+    return { error: 'Email already exists!' };
+  }
+
+  const hashedPassword = await hash(password, 10);
+
+  await createUser(email, hashedPassword);
+
   try {
-    const validatedData = authFormSchema.parse({
-      email: formData.get('email'),
-      password: formData.get('password'),
-    });
-
     await signIn('credentials', {
-      email: validatedData.email,
-      password: validatedData.password,
+      email,
+      password,
       redirect: false,
     });
-
-    return { status: 'success' };
+    return { success: true };
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { status: 'invalid_data' };
-    }
-
-    return { status: 'failed' };
+    return { error: 'Could not authenticate user.' };
   }
-};
-
-export interface RegisterActionState {
-  status:
-    | 'idle'
-    | 'in_progress'
-    | 'success'
-    | 'failed'
-    | 'user_exists'
-    | 'invalid_data';
 }
 
-export const register = async (
-  _: RegisterActionState,
-  formData: FormData,
-): Promise<RegisterActionState> => {
+export async function authenticate(formData: FormData) {
   try {
-    const validatedData = authFormSchema.parse({
+    await signIn('credentials', {
       email: formData.get('email'),
       password: formData.get('password'),
-    });
-
-    const [user] = await getUser(validatedData.email);
-
-    if (user) {
-      return { status: 'user_exists' } as RegisterActionState;
-    }
-    await createUser(validatedData.email, validatedData.password);
-    await signIn('credentials', {
-      email: validatedData.email,
-      password: validatedData.password,
       redirect: false,
     });
-
-    return { status: 'success' };
+    return { success: true };
   } catch (error) {
-    if (error instanceof z.ZodError) {
-      return { status: 'invalid_data' };
-    }
-
-    return { status: 'failed' };
+    return { error: 'Could not authenticate user.' };
   }
-};
+}
