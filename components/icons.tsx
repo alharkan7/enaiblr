@@ -1119,6 +1119,7 @@ export const FullscreenIcon = ({ size = 16 }: { size?: number }) => (
     ></path>
   </svg>
 );
+
 export const PinIcon = ({ size = 16 }: { size?: number }) => {
   return (
     <svg
@@ -1137,3 +1138,24 @@ export const PinIcon = ({ size = 16 }: { size?: number }) => {
     </svg>
   );
 };
+
+export const EnaiblrIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1 0.5v14h12V0.5H1zm1 1h10v12H2v-12z"
+      fill="currentColor"
+    ></path>
+    <path
+      d="M14.5 0.5h-0.6v14h0.6v-14z"
+      fill="currentColor"
+    ></path>
+  </svg>
+);

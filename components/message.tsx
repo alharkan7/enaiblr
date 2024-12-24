@@ -8,7 +8,7 @@ import { memo, useMemo, useState } from 'react';
 import type { Vote } from '@/lib/db/schema';
 
 import { DocumentToolCall, DocumentToolResult } from './document';
-import { PencilEditIcon, SparklesIcon } from './icons';
+import { EnaiblrIcon, PencilEditIcon, SparklesIcon } from './icons';
 import { Markdown } from './markdown';
 import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';
@@ -19,6 +19,7 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { MessageEditor } from './message-editor';
 import { DocumentPreview } from './document-preview';
+
 
 const PurePreviewMessage = ({
   chatId,
