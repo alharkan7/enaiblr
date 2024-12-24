@@ -7,6 +7,7 @@ import GoogleProvider from 'next-auth/providers/google';
 import { getUser } from '@/lib/db/queries';
 
 export const config = {
+  trustHost: true,
   pages: {
     signIn: '/login',
     error: '/login',
@@ -49,6 +50,23 @@ export const config = {
         session.user.id = token.id;
       }
       return session;
+    },
+    async authorized({ auth, request: { nextUrl } }) {
+      const isLoggedIn = !!auth?.user;
+      const isAuthPage = nextUrl.pathname.startsWith('/login') ||
+                        nextUrl.pathname.startsWith('/register');
+
+      // Redirect to login if accessing protected routes while not logged in
+      if (!isLoggedIn && !isAuthPage) {
+        return false;
+      }
+
+      // Redirect to home if accessing auth pages while logged in
+      if (isLoggedIn && isAuthPage) {
+        return Response.redirect(new URL('/', nextUrl));
+      }
+
+      return true;
     },
   },
 } satisfies NextAuthConfig;
