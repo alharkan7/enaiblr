@@ -90,12 +90,12 @@ export default function AuthForm({ type, action }: AuthFormProps) {
           />
         </div>
         
-        {error && (
+        {/* {error && (
           <div className="flex items-center gap-x-2 rounded-md bg-red-50 p-2 text-red-500">
             <AlertCircle className="h-4 w-4" />
             <p className="text-sm">{error}</p>
           </div>
-        )}
+        )} */}
 
         <Button
           className="w-full"
