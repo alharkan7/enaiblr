@@ -14,6 +14,8 @@ import {
   useState,
 } from 'react';
 
+declare function loadPyodide(config: { indexURL: string }): Promise<any>;
+
 interface BlockActionsProps {
   block: UIBlock;
   handleVersionChange: (type: 'next' | 'prev' | 'toggle' | 'latest') => void;
@@ -70,7 +72,6 @@ export function RunCodeButton({
 
     if (isPython) {
       if (!currentPyodideInstance) {
-        // @ts-expect-error - pyodide is not defined
         const newPyodideInstance = await loadPyodide({
           indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
         });
