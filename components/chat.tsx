@@ -8,6 +8,7 @@ import useSWR, { useSWRConfig } from 'swr';
 import { ChatHeader } from '@/components/chat-header';
 import type { Vote } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
+import { models } from '@/lib/ai/models';
 
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
@@ -57,6 +58,7 @@ export function Chat({
 
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isBlockVisible = useBlockSelector((state) => state.isVisible);
+  const selectedModel = models.find((model) => model.id === selectedModelId);
 
   return (
     <>
@@ -93,6 +95,7 @@ export function Chat({
               messages={messages}
               setMessages={setMessages}
               append={append}
+              selectedModel={selectedModel}
             />
           )}
         </form>

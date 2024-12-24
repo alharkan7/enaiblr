@@ -6,6 +6,7 @@ import type {
   CreateMessage,
   Message,
 } from 'ai';
+import type { Model } from '@/lib/ai/models';
 import cx from 'classnames';
 import type React from 'react';
 import {
@@ -42,6 +43,7 @@ function PureMultimodalInput({
   setMessages,
   append,
   handleSubmit,
+  selectedModel,
   className,
 }: {
   chatId: string;
@@ -63,6 +65,7 @@ function PureMultimodalInput({
     },
     chatRequestOptions?: ChatRequestOptions,
   ) => void;
+  selectedModel?: Model;
   className?: string;
 }) {
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -135,6 +138,7 @@ function PureMultimodalInput({
   const uploadFile = async (file: File) => {
     const formData = new FormData();
     formData.append('file', file);
+    formData.append('modelId', selectedModel?.id || '');
 
     try {
       const response = await fetch('/api/files/upload', {
@@ -142,18 +146,20 @@ function PureMultimodalInput({
         body: formData,
       });
 
-      if (response.ok) {
-        const data = await response.json();
-        const { url, pathname, contentType } = data;
-
-        return {
-          url,
-          name: pathname,
-          contentType: contentType,
-        };
+      if (!response.ok) {
+        const error = await response.text();
+        toast.error(error || 'Failed to upload file');
+        return;
       }
-      const { error } = await response.json();
-      toast.error(error);
+
+      const data = await response.json();
+      const { url, pathname, contentType } = data;
+
+      return {
+        url,
+        name: pathname,
+        contentType: contentType,
+      };
     } catch (error) {
       toast.error('Failed to upload file, please try again!');
     }
@@ -182,7 +188,7 @@ function PureMultimodalInput({
         setUploadQueue([]);
       }
     },
-    [setAttachments],
+    [setAttachments, selectedModel],
   );
 
   return (
@@ -247,7 +253,11 @@ function PureMultimodalInput({
       />
 
       <div className="absolute bottom-0 p-2 w-fit flex flex-row justify-start">
-        <AttachmentsButton fileInputRef={fileInputRef} isLoading={isLoading} />
+        <AttachmentsButton
+          fileInputRef={fileInputRef}
+          isLoading={isLoading}
+          selectedModel={selectedModel}
+        />
       </div>
 
       <div className="absolute bottom-0 right-0 p-2 w-fit flex flex-row justify-end">
@@ -270,8 +280,10 @@ export const MultimodalInput = memo(
   (prevProps, nextProps) => {
     if (prevProps.input !== nextProps.input) return false;
     if (prevProps.isLoading !== nextProps.isLoading) return false;
+    if (prevProps.chatId !== nextProps.chatId) return false;
     if (!equal(prevProps.attachments, nextProps.attachments)) return false;
-
+    if (!equal(prevProps.messages, nextProps.messages)) return false;
+    if (!equal(prevProps.selectedModel, nextProps.selectedModel)) return false;
     return true;
   },
 );
@@ -279,10 +291,17 @@ export const MultimodalInput = memo(
 function PureAttachmentsButton({
   fileInputRef,
   isLoading,
+  selectedModel,
 }: {
   fileInputRef: React.MutableRefObject<HTMLInputElement | null>;
   isLoading: boolean;
+  selectedModel?: Model;
 }) {
+  const hasAttachmentCapability =
+    selectedModel?.capabilities?.images || selectedModel?.capabilities?.files;
+
+  if (!hasAttachmentCapability) return null;
+
   return (
     <Button
       className="rounded-md rounded-bl-lg p-[7px] h-fit dark:border-zinc-700 hover:dark:bg-zinc-900 hover:bg-zinc-200"
