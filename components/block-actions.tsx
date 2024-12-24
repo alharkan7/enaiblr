@@ -57,6 +57,7 @@ export function RunCodeButton({
   );
 
   const loadAndRunPython = useCallback(async () => {
+    console.log('Environment:', typeof window !== 'undefined' ? 'Browser' : 'Server');
     const runId = generateUUID();
 
     setConsoleOutputs((consoleOutputs) => [
@@ -72,12 +73,20 @@ export function RunCodeButton({
 
     if (isPython) {
       if (!currentPyodideInstance) {
-        const newPyodideInstance = await loadPyodide({
-          indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
-        });
-
-        setPyodide(newPyodideInstance);
-        currentPyodideInstance = newPyodideInstance;
+        try {
+          console.log('Loading Pyodide...');
+          const newPyodideInstance = await loadPyodide({
+            indexURL: 'https://cdn.jsdelivr.net/pyodide/v0.23.4/full/',
+          });
+          console.log('Pyodide loaded successfully');
+          setPyodide(newPyodideInstance);
+          currentPyodideInstance = newPyodideInstance;
+        } catch (error) {
+          console.error('Failed to load Pyodide:', error);
+          const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
+          updateConsoleOutput(runId, 'Failed to load Python environment: ' + errorMessage, 'failed');
+          return;
+        }
       }
 
       try {
