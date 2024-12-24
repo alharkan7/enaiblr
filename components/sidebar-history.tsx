@@ -6,13 +6,14 @@ import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
 import { memo, useEffect, useState } from 'react';
 import { toast } from 'sonner';
-import useSWR from 'swr';
+import useSWR, { useSWRConfig } from 'swr';
 
 import {
   CheckCircleFillIcon,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
+  PinIcon,
   ShareIcon,
   TrashIcon,
 } from '@/components/icons';
@@ -51,6 +52,7 @@ import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 
 type GroupedChats = {
+  pinned: Chat[];
   today: Chat[];
   yesterday: Chat[];
   lastWeek: Chat[];
@@ -63,11 +65,13 @@ const PureChatItem = ({
   isActive,
   onDelete,
   setOpenMobile,
+  mutate,
 }: {
   chat: Chat;
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
+  mutate: () => void;
 }) => {
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
@@ -132,6 +136,25 @@ const PureChatItem = ({
           </DropdownMenuSub>
 
           <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={async () => {
+              const response = await fetch(`/api/chat?id=${chat.id}`, {
+                method: 'PATCH',
+                headers: {
+                  'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ pinned: !chat.pinned }),
+              });
+              if (response.ok) {
+                mutate();
+              }
+            }}
+          >
+            <PinIcon />
+            <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+          </DropdownMenuItem>
+
+          <DropdownMenuItem
             className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
             onSelect={() => onDelete(chat.id)}
           >
@@ -153,17 +176,18 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const { setOpenMobile } = useSidebar();
   const { id } = useParams();
   const pathname = usePathname();
+  const { mutate: globalMutate } = useSWRConfig();
   const {
     data: history,
     isLoading,
-    mutate,
+    mutate: historyMutate,
   } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
     fallbackData: [],
   });
 
   useEffect(() => {
-    mutate();
-  }, [pathname, mutate]);
+    historyMutate();
+  }, [pathname, historyMutate]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -176,11 +200,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     toast.promise(deletePromise, {
       loading: 'Deleting chat...',
       success: () => {
-        mutate((history) => {
-          if (history) {
-            return history.filter((h) => h.id !== id);
-          }
-        });
+        globalMutate('/api/history');
         return 'Chat deleted successfully';
       },
       error: 'Failed to delete chat',
@@ -253,6 +273,11 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
     return chats.reduce(
       (groups, chat) => {
+        if (chat.pinned) {
+          groups.pinned.push(chat);
+          return groups;
+        }
+
         const chatDate = new Date(chat.createdAt);
 
         if (isToday(chatDate)) {
@@ -270,6 +295,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
         return groups;
       },
       {
+        pinned: [],
         today: [],
         yesterday: [],
         lastWeek: [],
@@ -290,6 +316,29 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                 return (
                   <>
+                    {groupedChats.pinned.length > 0 && (
+                      <>
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+                          Pinned
+                        </div>
+                        {groupedChats.pinned.map((chat) => (
+                          <ChatItem
+                            key={chat.id}
+                            chat={chat}
+                            isActive={chat.id === id}
+                            onDelete={(chatId) => {
+                              setDeleteId(chatId);
+                              setShowDeleteDialog(true);
+                            }}
+                            setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
+                          />
+                        ))}
+                      </>
+                    )}
+
                     {groupedChats.today.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
@@ -305,6 +354,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
                           />
                         ))}
                       </>
@@ -325,6 +377,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
                           />
                         ))}
                       </>
@@ -345,6 +400,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
                           />
                         ))}
                       </>
@@ -365,6 +423,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
                           />
                         ))}
                       </>
@@ -385,6 +446,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                               setShowDeleteDialog(true);
                             }}
                             setOpenMobile={setOpenMobile}
+                            mutate={() => {
+                              globalMutate('/api/history');
+                            }}
                           />
                         ))}
                       </>

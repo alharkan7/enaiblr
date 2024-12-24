@@ -23,6 +23,7 @@ import {
   saveDocument,
   saveMessages,
   saveSuggestions,
+  updateChatPinned,
 } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import {
@@ -450,6 +451,42 @@ export async function POST(request: Request) {
       result.mergeIntoDataStream(dataStream);
     },
   });
+}
+
+export async function PATCH(request: Request) {
+  const session = await auth();
+
+  if (!session || !session.user || !session.user.id) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  const { searchParams } = new URL(request.url);
+  const id = searchParams.get('id');
+
+  if (!id) {
+    return new Response('Missing chat ID', { status: 400 });
+  }
+
+  const body = await request.json();
+  const { pinned } = body;
+
+  if (typeof pinned !== 'boolean') {
+    return new Response('Invalid pinned value', { status: 400 });
+  }
+
+  const chat = await getChatById({ id });
+
+  if (!chat) {
+    return new Response('Chat not found', { status: 404 });
+  }
+
+  if (chat.userId !== session.user.id) {
+    return new Response('Unauthorized', { status: 401 });
+  }
+
+  await updateChatPinned({ id, pinned });
+
+  return new Response('OK');
 }
 
 export async function DELETE(request: Request) {

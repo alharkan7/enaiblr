@@ -325,3 +325,18 @@ export async function updateChatVisiblityById({
     throw error;
   }
 }
+
+export async function updateChatPinned({
+  id,
+  pinned,
+}: {
+  id: string;
+  pinned: boolean;
+}) {
+  try {
+    await db.update(chat).set({ pinned }).where(eq(chat.id, id));
+  } catch (error) {
+    console.error('Failed to update chat pinned status');
+    throw error;
+  }
+}
