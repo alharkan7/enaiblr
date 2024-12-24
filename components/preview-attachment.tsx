@@ -1,6 +1,6 @@
 import type { Attachment } from 'ai';
 
-import { LoaderIcon } from './icons';
+import { LoaderIcon, FileIcon } from './icons';
 
 export const PreviewAttachment = ({
   attachment,
@@ -25,10 +25,14 @@ export const PreviewAttachment = ({
               className="rounded-md size-full object-cover"
             />
           ) : (
-            <div className="" />
+            <div className="flex flex-col items-center justify-center p-1 text-center">
+              <FileIcon size={16} className="text-zinc-500 mb-1" />
+            </div>
           )
         ) : (
-          <div className="" />
+          <div className="flex items-center justify-center">
+            <FileIcon size={16} className="text-zinc-500" />
+          </div>
         )}
 
         {isUploading && (

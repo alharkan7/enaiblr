@@ -265,13 +265,14 @@ export const RouteIcon = ({ size = 16 }: { size?: number }) => {
   );
 };
 
-export const FileIcon = ({ size = 16 }: { size?: number }) => {
+export const FileIcon = ({ size = 16, className }: { size?: number; className?: string }) => {
   return (
     <svg
       height={size}
       strokeLinejoin="round"
       viewBox="0 0 16 16"
       width={size}
+      className={className}
       style={{ color: 'currentcolor' }}
     >
       <path
