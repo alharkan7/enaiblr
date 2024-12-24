@@ -1,5 +1,7 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 
 import { ThemeProvider } from '@/components/theme-provider';
 
@@ -43,6 +45,7 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
+      className={`${GeistSans.variable} ${GeistMono.variable}`}
       // `next-themes` injects an extra classname to the body element to avoid
       // visual flicker before hydration. Hence the `suppressHydrationWarning`
       // prop is necessary to avoid the React hydration mismatch warning.
