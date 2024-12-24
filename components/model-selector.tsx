@@ -35,7 +35,7 @@ export function ModelSelector({
       <DropdownMenuTrigger
         asChild
         className={cn(
-          'w-fit data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
+          'w-auto data-[state=open]:bg-accent data-[state=open]:text-accent-foreground',
           className,
         )}
       >
@@ -44,7 +44,7 @@ export function ModelSelector({
           <ChevronDownIcon />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="min-w-[300px]">
+      <DropdownMenuContent align="start" className="min-auto">
         {models.map((model) => (
           <DropdownMenuItem
             key={model.id}

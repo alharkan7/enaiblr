@@ -5,23 +5,33 @@ export interface Model {
   label: string;
   apiIdentifier: string;
   description: string;
-  provider: 'openai' | 'anthropic' | 'google';
+  provider: 'openai' | 'anthropic' | 'google' | 'togetherai';
+  capabilities: {
+    images?: boolean;
+    files?: boolean;
+  };
 }
 
 export const models: Array<Model> = [
   {
     id: 'gpt-4o-mini',
-    label: 'GPT-4o',
+    label: 'ChatGPT 4o',
     apiIdentifier: 'gpt-4o-mini',
     description: 'OpenAI',
     provider: 'openai',
+    capabilities: {
+      images: true,
+    },
   },
   {
-    id: 'claude-3-5-haiku',
+    id: 'claude-3-haiku',
     label: 'Claude 3.5',
-    apiIdentifier: 'claude-3-5-haiku-20241022',
+    apiIdentifier: 'claude-3-haiku-20240307',
     description: 'Anthropic',
     provider: 'anthropic',
+    capabilities: {
+      images: true,
+    },
   },
   {
     id: 'gemini-1.5-flash',
@@ -29,6 +39,19 @@ export const models: Array<Model> = [
     apiIdentifier: 'gemini-1.5-flash',
     description: 'Google',
     provider: 'google',
+    capabilities: {
+      images: true,
+    },
+  },
+  {
+    id: 'llama-vision',
+    label: 'Llama 3.2',
+    apiIdentifier: 'meta-llama/Llama-Vision-Free',
+    description: 'Meta',
+    provider: 'togetherai',
+    capabilities: {
+      images: true,
+    },
   }
 ] as const;
 
