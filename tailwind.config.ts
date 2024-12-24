@@ -9,8 +9,8 @@ const config: Config = {
   ],
   theme: {
     fontFamily: {
-      sans: ['var(--font-geist-sans)'],
-      mono: ['var(--font-geist-mono)'],
+      sans: ['var(--font-inter)'],
+      mono: ['ui-monospace', 'SFMono-Regular'],
     },
     extend: {
       borderRadius: {
