@@ -1,11 +1,32 @@
 import { openai } from '@ai-sdk/openai';
+import { anthropic } from '@ai-sdk/anthropic';
+import { google } from '@ai-sdk/google';
 import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 
 import { customMiddleware } from './custom-middleware';
+import { models } from './models';
 
 export const customModel = (apiIdentifier: string) => {
+  const model = models.find(m => m.apiIdentifier === apiIdentifier);
+  if (!model) throw new Error(`Model ${apiIdentifier} not found`);
+
+  let provider;
+  switch (model.provider) {
+    case 'openai':
+      provider = openai(apiIdentifier);
+      break;
+    case 'anthropic':
+      provider = anthropic(apiIdentifier);
+      break;
+    case 'google':
+      provider = google(apiIdentifier);
+      break;
+    default:
+      throw new Error(`Unknown provider ${model.provider}`);
+  }
+
   return wrapLanguageModel({
-    model: openai(apiIdentifier),
+    model: provider,
     middleware: customMiddleware,
   });
 };
