@@ -463,12 +463,11 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-            <AlertDialogDescription>
-              This action cannot be undone. This will permanently delete your
-              chat and remove it from our servers.
-            </AlertDialogDescription>
+            <AlertDialogTitle id="delete-dialog-title">Are you absolutely sure?</AlertDialogTitle>
           </AlertDialogHeader>
+          <AlertDialogDescription aria-labelledby="delete-dialog-title">
+            This action cannot be undone. This will permanently delete your chat and remove it from our servers.
+          </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction onClick={handleDelete}>
