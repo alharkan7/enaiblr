@@ -58,12 +58,14 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
                 content: suggestedAction.action,
               });
             }}
-            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 sm:flex-col w-full h-auto justify-start items-start"
+            className="text-left border rounded-xl px-4 py-3.5 text-sm flex-1 gap-1 w-full h-auto justify-start items-start whitespace-normal break-words"
           >
-            <span className="font-medium">{suggestedAction.title}</span>
-            <span className="text-muted-foreground">
-              {suggestedAction.label}
-            </span>
+            <div className="inline">
+              <span className="font-medium">{suggestedAction.title}</span>{' '}
+              <span className="text-muted-foreground">
+                {suggestedAction.label}
+              </span>
+            </div>
           </Button>
         </motion.div>
       ))}
