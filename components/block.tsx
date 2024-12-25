@@ -353,69 +353,54 @@ function PureBlock({
 
           <motion.div
             className="fixed dark:bg-muted bg-background h-dvh flex flex-col overflow-y-scroll border-l dark:border-zinc-700 border-zinc-200"
-            initial={
-              isMobile
-                ? {
-                    opacity: 1,
-                    x: block.boundingBox.left,
-                    y: block.boundingBox.top,
-                    height: block.boundingBox.height,
-                    width: block.boundingBox.width,
-                    borderRadius: 50,
-                  }
-                : {
-                    opacity: 1,
-                    x: block.boundingBox.left,
-                    y: block.boundingBox.top,
-                    height: block.boundingBox.height,
-                    width: block.boundingBox.width,
-                    borderRadius: 50,
-                  }
-            }
-            animate={
-              isMobile
-                ? {
-                    opacity: 1,
-                    x: 0,
-                    y: 0,
-                    height: windowHeight,
-                    width: windowWidth ? windowWidth : 'calc(100dvw)',
-                    borderRadius: 0,
-                    transition: {
-                      delay: 0,
-                      type: 'spring',
-                      stiffness: 200,
-                      damping: 30,
-                      duration: 5000,
-                    },
-                  }
-                : {
-                    opacity: 1,
-                    x: 400,
-                    y: 0,
-                    height: windowHeight,
-                    width: windowWidth
-                      ? windowWidth - 400
-                      : 'calc(100dvw-400px)',
-                    borderRadius: 0,
-                    transition: {
-                      delay: 0,
-                      type: 'spring',
-                      stiffness: 200,
-                      damping: 30,
-                      duration: 5000,
-                    },
-                  }
-            }
+            initial={isMobile ? {
+              opacity: 1,
+              x: block.boundingBox.left,
+              y: block.boundingBox.top,
+              height: block.boundingBox.height,
+              width: block.boundingBox.width,
+              borderRadius: 50,
+            } : {
+              opacity: 1,
+              x: block.boundingBox.left,
+              y: block.boundingBox.top,
+              height: block.boundingBox.height,
+              width: block.boundingBox.width,
+              borderRadius: 50,
+            }}
+            animate={isMobile ? {
+              opacity: 1,
+              x: 0,
+              y: 0,
+              height: windowHeight,
+              width: windowWidth ? windowWidth : 'calc(100dvw)',
+              borderRadius: 0,
+              transition: {
+                delay: 0,
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+                duration: 5000,
+              },
+            } : {
+              opacity: 1,
+              x: 400,
+              y: 0,
+              height: windowHeight,
+              width: windowWidth ? windowWidth - 400 : 'calc(100dvw-400px)',
+              borderRadius: 0,
+              transition: {
+                delay: 0,
+                type: 'spring',
+                stiffness: 200,
+                damping: 30,
+                duration: 5000,
+              },
+            }}
             exit={{
               opacity: 0,
-              scale: 0.5,
-              transition: {
-                delay: 0.1,
-                type: 'spring',
-                stiffness: 600,
-                damping: 30,
-              },
+              scale: 0.8,
+              transition: { duration: 0.2 },
             }}
           >
             <div className="p-2 flex flex-row justify-between items-start">
@@ -467,67 +452,59 @@ function PureBlock({
               )}
             >
               <div
-                className={cn('flex flex-row', {
-                  '': block.kind === 'code',
+                className={cn('flex flex-row w-full', {
+                  'overflow-x-auto whitespace-pre-wrap break-words': block.kind === 'code',
                   'mx-auto max-w-[600px]': block.kind === 'text',
                 })}
               >
-                {isDocumentsFetching && !block.content ? (
-                  <DocumentSkeleton />
-                ) : block.kind === 'code' ? (
-                  <CodeEditor
-                    content={
-                      isCurrentVersion
-                        ? block.content
-                        : getDocumentContentById(currentVersionIndex)
-                    }
-                    isCurrentVersion={isCurrentVersion}
-                    currentVersionIndex={currentVersionIndex}
-                    suggestions={suggestions ?? []}
-                    status={block.status}
-                    saveContent={saveContent}
-                  />
-                ) : block.kind === 'text' ? (
-                  mode === 'edit' ? (
-                    <Editor
-                      content={
-                        isCurrentVersion
-                          ? block.content
-                          : getDocumentContentById(currentVersionIndex)
-                      }
-                      isCurrentVersion={isCurrentVersion}
-                      currentVersionIndex={currentVersionIndex}
-                      status={block.status}
-                      saveContent={saveContent}
-                      suggestions={isCurrentVersion ? (suggestions ?? []) : []}
-                    />
+                <div className="w-full">
+                  {isDocumentsFetching && !block.content ? (
+                    <DocumentSkeleton />
                   ) : (
-                    <DiffView
-                      oldContent={getDocumentContentById(
-                        currentVersionIndex - 1,
-                      )}
-                      newContent={getDocumentContentById(currentVersionIndex)}
-                    />
-                  )
-                ) : null}
-
-                {suggestions ? (
-                  <div className="md:hidden h-dvh w-12 shrink-0" />
-                ) : null}
-
-                <AnimatePresence>
-                  {isCurrentVersion && (
-                    <Toolbar
-                      isToolbarVisible={isToolbarVisible}
-                      setIsToolbarVisible={setIsToolbarVisible}
-                      append={append}
-                      isLoading={isLoading}
-                      stop={stop}
-                      setMessages={setMessages}
-                      blockKind={block.kind}
-                    />
+                    block.kind === 'code' ? (
+                      <CodeEditor
+                        content={isCurrentVersion ? block.content : getDocumentContentById(currentVersionIndex)}
+                        isCurrentVersion={isCurrentVersion}
+                        currentVersionIndex={currentVersionIndex}
+                        suggestions={suggestions ?? []}
+                        status={block.status}
+                        saveContent={saveContent}
+                      />
+                    ) : (
+                      mode === 'edit' ? (
+                        <Editor
+                          content={isCurrentVersion ? block.content : getDocumentContentById(currentVersionIndex)}
+                          isCurrentVersion={isCurrentVersion}
+                          currentVersionIndex={currentVersionIndex}
+                          status={block.status}
+                          saveContent={saveContent}
+                          suggestions={isCurrentVersion ? (suggestions ?? []) : []}
+                        />
+                      ) : (
+                        <DiffView
+                          oldContent={getDocumentContentById(currentVersionIndex - 1)}
+                          newContent={getDocumentContentById(currentVersionIndex)}
+                        />
+                      )
+                    )
                   )}
-                </AnimatePresence>
+                  {suggestions ? (
+                    <div className="md:hidden h-dvh w-12 shrink-0" />
+                  ) : null}
+                  <AnimatePresence>
+                    {isCurrentVersion && (
+                      <Toolbar
+                        isToolbarVisible={isToolbarVisible}
+                        setIsToolbarVisible={setIsToolbarVisible}
+                        append={append}
+                        isLoading={isLoading}
+                        stop={stop}
+                        setMessages={setMessages}
+                        blockKind={block.kind}
+                      />
+                    )}
+                  </AnimatePresence>
+                </div>
               </div>
             </div>
 

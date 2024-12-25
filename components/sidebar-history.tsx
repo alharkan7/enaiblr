@@ -98,7 +98,8 @@ const PureChatItem = ({
         </DropdownMenuTrigger>
 
         <DropdownMenuContent side="bottom" align="end">
-          <DropdownMenuSub>
+          <span id="chat-options-title" className="sr-only">Chat options</span>
+          <DropdownMenuSub aria-labelledby="chat-options-title">
             <DropdownMenuSubTrigger className="cursor-pointer">
               <ShareIcon />
               <span>Share</span>

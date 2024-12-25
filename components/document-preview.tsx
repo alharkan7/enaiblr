@@ -119,9 +119,6 @@ const LoadingSkeleton = () => (
         </div>
         <div className="animate-pulse rounded-lg h-4 bg-muted-foreground/20 w-24" />
       </div>
-      <div>
-        <FullscreenIcon />
-      </div>
     </div>
     <div className="overflow-y-scroll border rounded-b-2xl p-8 pt-4 bg-muted border-t-0 dark:border-zinc-700">
       <InlineDocumentSkeleton />
@@ -205,9 +202,6 @@ const PureDocumentHeader = ({
       <div className="text-sm dark:text-zinc-50 text-zinc-800 break-all">
         {title}
       </div>
-    </div>
-    <div>
-      <FullscreenIcon />
     </div>
   </div>
 );

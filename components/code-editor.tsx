@@ -8,6 +8,21 @@ import { basicSetup } from 'codemirror';
 import React, { memo, useEffect, useRef } from 'react';
 import { Suggestion } from '@/lib/db/schema';
 
+const codeTheme = EditorView.theme({
+  "&": {
+    fontFamily: "var(--font-mono)",
+  },
+  ".cm-content": {
+    fontFamily: "var(--font-mono)",
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+  },
+  ".cm-line": {
+    whiteSpace: "pre-wrap",
+    wordBreak: "break-word",
+  }
+});
+
 type EditorProps = {
   content: string;
   saveContent: (updatedContent: string, debounce: boolean) => void;
@@ -25,7 +40,7 @@ function PureCodeEditor({ content, saveContent, status }: EditorProps) {
     if (containerRef.current && !editorRef.current) {
       const startState = EditorState.create({
         doc: content,
-        extensions: [basicSetup, python(), oneDark],
+        extensions: [basicSetup, python(), oneDark, codeTheme],
       });
 
       editorRef.current = new EditorView({
@@ -61,7 +76,7 @@ function PureCodeEditor({ content, saveContent, status }: EditorProps) {
 
       const newState = EditorState.create({
         doc: editorRef.current.state.doc,
-        extensions: [basicSetup, python(), oneDark, updateListener],
+        extensions: [basicSetup, python(), oneDark, codeTheme, updateListener],
       });
 
       editorRef.current.setState(newState);
