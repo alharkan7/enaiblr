@@ -17,6 +17,9 @@ importers:
       '@ai-sdk/openai':
         specifier: 1.0.6
         version: 1.0.6(zod@3.23.8)
+      '@ai-sdk/togetherai':
+        specifier: ^0.0.14
+        version: 0.0.14(zod@3.23.8)
       '@codemirror/lang-javascript':
         specifier: ^6.2.2
         version: 6.2.2
@@ -258,6 +261,12 @@ packages:
     peerDependencies:
       zod: ^3.0.0
 
+  '@ai-sdk/openai-compatible@0.0.13':
+    resolution: {integrity: sha512-fuauXYKac6PBuf8m52tWcWQW0UCScEkwTaOyr00TcPeK3dd8nPP+ZJzSYE5QhFg7rwi9EH3ahIFqSX1biXhdkQ==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
+
   '@ai-sdk/openai@1.0.6':
     resolution: {integrity: sha512-AhNILXn/hVD91mrokg9Wph78BiWNP/N0tJiua+UCS5TYXCbSeeqKqiodRiNxw6tDA5sGnrC6yCv8TjgY1CwzWg==}
     engines: {node: '>=18'}
@@ -314,6 +323,12 @@ packages:
         optional: true
       zod:
         optional: true
+
+  '@ai-sdk/togetherai@0.0.14':
+    resolution: {integrity: sha512-M6qrrD28GnoOh/L38+RR0qk9TQ57+9vI0B4bwLCsSGTzvS5K6gq3v3hoj1H7YfkXTBEOs4FENvQOoWKc6NdkQw==}
+    engines: {node: '>=18'}
+    peerDependencies:
+      zod: ^3.0.0
 
   '@ai-sdk/ui-utils@1.0.5':
     resolution: {integrity: sha512-DGJSbDf+vJyWmFNexSPUsS1AAy7gtsmFmoSyNbNbJjwl9hRIf2dknfA1V0ahx6pg3NNklNYFm53L8Nphjovfvg==}
@@ -3794,6 +3809,12 @@ snapshots:
       '@ai-sdk/provider-utils': 2.0.5(zod@3.23.8)
       zod: 3.23.8
 
+  '@ai-sdk/openai-compatible@0.0.13(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/provider': 1.0.3
+      '@ai-sdk/provider-utils': 2.0.5(zod@3.23.8)
+      zod: 3.23.8
+
   '@ai-sdk/openai@1.0.6(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider': 1.0.1
@@ -3847,6 +3868,13 @@ snapshots:
       throttleit: 2.1.0
     optionalDependencies:
       react: 19.0.0-rc-45804af1-20241021
+      zod: 3.23.8
+
+  '@ai-sdk/togetherai@0.0.14(zod@3.23.8)':
+    dependencies:
+      '@ai-sdk/openai-compatible': 0.0.13(zod@3.23.8)
+      '@ai-sdk/provider': 1.0.3
+      '@ai-sdk/provider-utils': 2.0.5(zod@3.23.8)
       zod: 3.23.8
 
   '@ai-sdk/ui-utils@1.0.5(zod@3.23.8)':
