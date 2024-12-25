@@ -1,6 +1,7 @@
 'use client';
 
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 import { saveModelId } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -22,6 +23,7 @@ export function ModelSelector({
   selectedModelId: string;
 } & React.ComponentProps<typeof Button>) {
   const [open, setOpen] = useState(false);
+  const router = useRouter();
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
 
@@ -54,6 +56,8 @@ export function ModelSelector({
               startTransition(() => {
                 setOptimisticModelId(model.id);
                 saveModelId(model.id);
+                router.push('/');
+                router.refresh();
               });
             }}
             className="gap-4 group/item flex flex-row justify-between items-center"

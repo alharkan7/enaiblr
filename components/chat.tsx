@@ -19,7 +19,7 @@ import { useBlockSelector } from '@/hooks/use-block';
 export function Chat({
   id,
   initialMessages,
-  selectedModelId,
+  selectedModelId,  // This would come from the chat.llm_id or default
   selectedVisibilityType,
   isReadonly,
 }: {

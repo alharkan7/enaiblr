@@ -30,6 +30,7 @@ export const chat = pgTable('Chat', {
     .notNull()
     .default('private'),
   pinned: boolean('pinned').notNull().default(false),
+  llm_id: text('llm_id'),
 });
 
 export type Chat = InferSelectModel<typeof chat>;
