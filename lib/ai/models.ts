@@ -5,7 +5,7 @@ export interface Model {
   label: string;
   apiIdentifier: string;
   description: string;
-  provider: 'openai' | 'anthropic' | 'google' | 'togetherai';
+  provider: 'openai' | 'anthropic' | 'google' | 'groq' | 'togetherai';
   capabilities: {
     images?: boolean;
     files?: boolean;
@@ -47,11 +47,11 @@ export const models: Array<Model> = [
     },
   },
   {
-    id: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
+    id: 'llama-3.3-70b-versatile',
     label: 'Llama 3.3',
-    apiIdentifier: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
+    apiIdentifier: 'llama-3.3-70b-versatile',
     description: 'Text Only',
-    provider: 'togetherai',
+    provider: 'groq',
     capabilities: {
       images: false,
       files: false,
