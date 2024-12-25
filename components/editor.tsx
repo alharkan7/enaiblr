@@ -4,7 +4,11 @@ import { exampleSetup } from 'prosemirror-example-setup';
 import { inputRules } from 'prosemirror-inputrules';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import React, { memo, useEffect, useRef } from 'react';
+import React, { memo, useEffect, useRef, useCallback } from 'react';
+import ReactMarkdown from 'react-markdown';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
+import 'katex/dist/katex.min.css';
 
 import type { Suggestion } from '@/lib/db/schema';
 import {
@@ -143,9 +147,36 @@ function PureEditor({
 
   return (
     <div 
-      className="relative prose dark:prose-invert [&_pre]:!whitespace-pre-wrap [&_pre]:!break-words [&_code]:!whitespace-pre-wrap [&_code]:!break-words [&_pre_code]:!font-['geist-mono'] [&_code]:!font-['geist-mono']" 
+      className="relative prose dark:prose-invert [&_pre]:!whitespace-pre-wrap [&_pre]:!break-words [&_code]:!whitespace-pre-wrap [&_code]:!break-words [&_pre_code]:!font-['geist-mono'] [&_code]:!font-['geist-mono'] [&_.math]:!overflow-x-auto [&_.math-display]:!overflow-x-auto" 
       ref={containerRef} 
-    />
+    >
+      <ReactMarkdown 
+        remarkPlugins={[remarkMath]} 
+        rehypePlugins={[rehypeKatex]}
+        components={{
+          code({ className, children, ...props }) {
+            return <code className={className} {...props}>{children}</code>;
+          },
+          p({ children, ...props }) {
+            const text = String(children);
+            // Remove quotes if present
+            const cleanText = text.replace(/^"|"$/g, '');
+            
+            // Handle both $...$ and [...]
+            if ((cleanText.startsWith('$') && cleanText.endsWith('$')) || 
+                (cleanText.startsWith('[') && cleanText.endsWith(']') && cleanText.includes('\\'))) {
+              const mathContent = cleanText.startsWith('$') ? 
+                cleanText.slice(1, -1) : 
+                cleanText.slice(1, -1);
+              return <div className="math math-display">{mathContent}</div>;
+            }
+            return <p {...props}>{children}</p>;
+          }
+        }}
+      >
+        {content}
+      </ReactMarkdown>
+    </div>
   );
 }
 

@@ -404,7 +404,7 @@ function PureBlock({
             }}
           >
             <div className="p-2 flex flex-row justify-between items-start">
-              <div className="flex flex-row gap-4 items-start">
+              <div className="flex flex-row gap-4 items-center">
                 <BlockCloseButton />
 
                 <div className="flex flex-col">
