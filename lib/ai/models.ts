@@ -17,7 +17,7 @@ export const models: Array<Model> = [
     id: 'gpt-4o-mini',
     label: 'ChatGPT 4o',
     apiIdentifier: 'gpt-4o-mini',
-    description: 'Text and Images',
+    description: 'Text, Images, Editor, Code',
     provider: 'openai',
     capabilities: {
       images: true,
@@ -28,7 +28,7 @@ export const models: Array<Model> = [
     id: 'claude-3-haiku',
     label: 'Claude 3',
     apiIdentifier: 'claude-3-haiku-20240307',
-    description: 'Text and Images',
+    description: 'Text, Images, Editor, Code',
     provider: 'anthropic',
     capabilities: {
       images: true,
@@ -47,10 +47,10 @@ export const models: Array<Model> = [
     },
   },
   {
-    id: 'llama-3.3-70b-versatile',
-    label: 'Llama 3.3',
-    apiIdentifier: 'llama-3.3-70b-versatile',
-    description: 'Text Only',
+    id: 'llama3-70b-8192',
+    label: 'Llama 3',
+    apiIdentifier: 'llama3-70b-8192',
+    description: 'Text, Editor, Code',
     provider: 'groq',
     capabilities: {
       images: false,
@@ -59,4 +59,4 @@ export const models: Array<Model> = [
   }
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'gemini-1.5-flash';
+export const DEFAULT_MODEL_NAME: string = 'llama3-70b-8192';

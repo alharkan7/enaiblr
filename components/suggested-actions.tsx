@@ -15,26 +15,28 @@ interface SuggestedActionsProps {
 
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
+
     {
-      title: 'How can we combat',
-      label: 'misinformation effectively?',
-      action: 'How can we combat misinformation effectively?',
+      title: 'Help me write an essay',
+      label: `about Indonesian street food`,
+      action: `Help me write an essay about Indonesian street food`,
+    },
+    {
+      title: "What's the difference",	
+      label: 'between cappuccino and latte?',
+      action: "What's the difference between cappuccino and latte?",
     },
     {
       title: 'Write a Python script',
-      label: `to calculate the first 50 digits of Pi`,
-      action: `Write a Python script to calculate the first 50 digits of Pi`,
-    },
-    {
-      title: 'Help me write an essay',
-      label: `about the history of Indonesia`,
-      action: `Help me write an essay about the history of Indonesia`,
+      label: `to plan my weekly grocery budget`,
+      action: `Write a Python script to plan my weekly grocery budget`,
     },
     {
       title: 'What is the weather',
       label: 'in Greater Jakarta?',
       action: 'What is the weather in Greater Jakarta?',
     },
+
   ];
 
   return (
