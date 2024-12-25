@@ -47,9 +47,9 @@ export const models: Array<Model> = [
     },
   },
   {
-    id: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    id: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
     label: 'Llama 3.3',
-    apiIdentifier: 'meta-llama/Llama-3.3-70B-Instruct-Turbo',
+    apiIdentifier: 'meta-llama/Llama-3.2-3B-Instruct-Turbo',
     description: 'Text Only',
     provider: 'togetherai',
     capabilities: {

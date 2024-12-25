@@ -1,15 +1,11 @@
 import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
-import { createTogetherAI } from '@ai-sdk/togetherai';
+import { togetherai } from '@ai-sdk/togetherai';
 import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 
 import { customMiddleware } from './custom-middleware';
 import { models } from './models';
-
-const togetherai = createTogetherAI({
-  apiKey: process.env.TOGETHER_AI_API_KEY ?? '',
-});
 
 export const customModel = (apiIdentifier: string) => {
   const model = models.find(m => m.apiIdentifier === apiIdentifier);
