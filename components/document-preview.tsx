@@ -1,5 +1,6 @@
 'use client';
 
+import type { ReactNode } from 'react';
 import {
   memo,
   MouseEvent,
@@ -7,6 +8,7 @@ import {
   useEffect,
   useMemo,
   useRef,
+  Component,
 } from 'react';
 import { UIBlock } from './block';
 import { FileIcon, FullscreenIcon, LoaderIcon } from './icons';
@@ -145,8 +147,8 @@ const PureHitboxLayer = ({
           ? { ...block, isVisible: true }
           : {
               ...block,
-              documentId: result.id,
-              kind: result.kind,
+              documentId: result?.id,
+              kind: result?.kind || 'text',
               isVisible: true,
               boundingBox: {
                 left: boundingBox.x,
@@ -200,16 +202,19 @@ const PureDocumentHeader = ({
           <FileIcon />
         )}
       </div>
-      <div className="-translate-y-1 sm:translate-y-0 font-medium">{title}</div>
+      <div className="text-sm dark:text-zinc-50 text-zinc-800 break-all">
+        {title}
+      </div>
     </div>
-    <div className="w-8" />
+    <div>
+      <FullscreenIcon />
+    </div>
   </div>
 );
 
 const DocumentHeader = memo(PureDocumentHeader, (prevProps, nextProps) => {
   if (prevProps.title !== nextProps.title) return false;
   if (prevProps.isStreaming !== nextProps.isStreaming) return false;
-
   return true;
 });
 
@@ -224,8 +229,9 @@ const DocumentContent = ({ document }: { document: Document }) => {
     },
   );
 
+  const content = document.content ?? '';
   const commonProps = {
-    content: document.content ?? '',
+    content: typeof content === 'string' ? content : '',
     isCurrentVersion: true,
     currentVersionIndex: 0,
     status: block.status,
