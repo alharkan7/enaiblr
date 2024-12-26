@@ -36,7 +36,11 @@ function PureMessages({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4"
+      className="flex flex-col min-w-0 gap-6 flex-1 overflow-y-scroll pt-4
+        [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600
+        [&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
+        dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500"
     >
       {/* {messages.length === 0 && <Overview />} */}
 

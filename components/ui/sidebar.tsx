@@ -406,19 +406,23 @@ SidebarSeparator.displayName = 'SidebarSeparator';
 const SidebarContent = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<'div'>
->(({ className, ...props }, ref) => {
-  return (
-    <div
-      ref={ref}
-      data-sidebar="content"
-      className={cn(
-        'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
-        className,
-      )}
-      {...props}
-    />
-  );
-});
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    data-sidebar="content"
+    className={cn(
+      'flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+      '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full',
+      '[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600',
+      '[&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400',
+      'dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500',
+      'scrollbar-thin scrollbar-thumb-gray-300 dark:scrollbar-thumb-gray-600 scrollbar-track-transparent hover:scrollbar-thumb-gray-400 dark:hover:scrollbar-thumb-gray-500',
+      'scrollbar-thumb-rounded-full',
+      className,
+    )}
+    {...props}
+  />
+));
 SidebarContent.displayName = 'SidebarContent';
 
 const SidebarGroup = React.forwardRef<

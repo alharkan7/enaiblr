@@ -36,7 +36,11 @@ function PureBlockMessages({
   return (
     <div
       ref={messagesContainerRef}
-      className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-4 pt-20"
+      className="flex flex-col gap-4 h-full items-center overflow-y-scroll px-4 pt-20
+        [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600
+        [&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
+        dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500"
     >
       {messages.map((message, index) => (
         <PreviewMessage
