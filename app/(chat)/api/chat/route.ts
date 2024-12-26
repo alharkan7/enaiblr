@@ -24,6 +24,7 @@ import {
   saveMessages,
   saveSuggestions,
   updateChatPinned,
+  updateChatTitle,
 } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import {
@@ -478,11 +479,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { pinned } = body;
-
-  if (typeof pinned !== 'boolean') {
-    return new Response('Invalid pinned value', { status: 400 });
-  }
+  const { pinned, title } = body;
 
   const chat = await getChatById({ id });
 
@@ -494,7 +491,13 @@ export async function PATCH(request: Request) {
     return new Response('Unauthorized', { status: 401 });
   }
 
-  await updateChatPinned({ id, pinned });
+  if (typeof pinned === 'boolean') {
+    await updateChatPinned({ id, pinned });
+  }
+
+  if (typeof title === 'string' && title.trim()) {
+    await updateChatTitle({ id, title: title.trim() });
+  }
 
   return new Response('OK');
 }

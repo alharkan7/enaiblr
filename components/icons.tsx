@@ -815,6 +815,29 @@ export const FolderIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
+export const FolderXIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1.75 1.5C1.05964 1.5 0.5 2.05964 0.5 2.75V13.25C0.5 13.9404 1.05964 14.5 1.75 14.5H14.25C14.9404 14.5 15.5 13.9404 15.5 13.25V4.75C15.5 4.05964 14.9404 3.5 14.25 3.5H7.5L5.5 1.5H1.75ZM2 3H4.75L6.75 5H14V13H2V3Z"
+      fill="currentColor"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M10.3536 7.64645L9.64645 6.93934L8 8.58579L6.35355 6.93934L5.64645 7.64645L7.29289 9.29289L5.64645 10.9393L6.35355 11.6464L8 10L9.64645 11.6464L10.3536 10.9393L8.70711 9.29289L10.3536 7.64645Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const ThumbUpIcon = ({ size = 16 }: { size?: number }) => (
   <svg
     height={size}

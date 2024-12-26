@@ -4,7 +4,7 @@ import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
-import { memo, useEffect, useState } from 'react';
+import { memo, useEffect, useState, useRef } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -21,6 +21,7 @@ import {
   TrashIcon,
   FolderIcon,
   PencilEditIcon,
+  FolderXIcon,
 } from '@/components/icons';
 import {
   AlertDialog,
@@ -75,17 +76,54 @@ interface FolderSectionProps {
   setIsAddingFolder: (isAddingFolder: boolean) => void;
 }
 
-const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
+const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, folders, setFolders }: {
   chat: Chat;
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
   mutate: () => void;
+  folders: Folder[];
+  setFolders: (folders: Folder[]) => void;
 }) => {
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
     initialVisibility: chat.visibility,
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState(chat.title);
+  const { mutate: globalMutate } = useSWRConfig();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleRename = async () => {
+    if (!newTitle.trim()) {
+      setIsEditing(false);
+      setNewTitle(chat.title);
+      return;
+    }
+
+    const response = await fetch(`/api/chat?id=${chat.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title: newTitle }),
+    });
+    if (response.ok) {
+      setIsEditing(false);
+      chat.title = newTitle; // Update local state immediately
+      globalMutate('/api/history'); // Refresh from server
+    } else {
+      toast.error('Failed to rename chat');
+      setNewTitle(chat.title);
+    }
+  };
 
   return (
     <SidebarMenuItem className="ml-6 list-none">
@@ -98,7 +136,27 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
       >
         <SidebarMenuButton asChild isActive={isActive}>
           <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-            <span>{chat.title}</span>
+            {isEditing ? (
+              <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+                <Input
+                  ref={inputRef}
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleRename();
+                    } else if (e.key === 'Escape') {
+                      setIsEditing(false);
+                      setNewTitle(chat.title);
+                    }
+                  }}
+                  onBlur={handleRename}
+                  className="h-6 py-0 px-1"
+                />
+              </div>
+            ) : (
+              <span>{chat.title}</span>
+            )}
           </Link>
         </SidebarMenuButton>
 
@@ -115,6 +173,16 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
 
           <DropdownMenuContent side="bottom" align="end">
             <span id="chat-options-title" className="sr-only">Chat options</span>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              <PencilEditIcon />
+              <span>Rename</span>
+            </DropdownMenuItem>
+
             <DropdownMenuSub aria-labelledby="chat-options-title">
               <DropdownMenuSubTrigger className="cursor-pointer">
                 <ShareIcon />
@@ -163,7 +231,8 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
                   body: JSON.stringify({ pinned: !chat.pinned }),
                 });
                 if (response.ok) {
-                  mutate();
+                  chat.pinned = !chat.pinned; // Update local state immediately
+                  globalMutate('/api/history');
                 }
               }}
             >
@@ -178,6 +247,21 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
               <TrashIcon />
               <span>Delete</span>
             </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                const updatedFolders = folders.map(folder => ({
+                  ...folder,
+                  chats: folder.chats.filter(c => c.id !== chat.id)
+                }));
+                setFolders(updatedFolders);
+              }}
+            >
+              <FolderXIcon />
+              <span>Unfolder</span>
+            </DropdownMenuItem>
+
           </DropdownMenuContent>
         </DropdownMenu>
       </div>
@@ -403,6 +487,8 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
                 onDelete={onDeleteChat}
                 setOpenMobile={setOpenMobile}
                 mutate={mutate}
+                folders={folders}
+                setFolders={setFolders}
               />
             ))}
           </div>
@@ -461,6 +547,41 @@ const PureChatItem = ({
     chatId: chat.id,
     initialVisibility: chat.visibility,
   });
+  const [isEditing, setIsEditing] = useState(false);
+  const [newTitle, setNewTitle] = useState(chat.title);
+  const { mutate: globalMutate } = useSWRConfig();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  useEffect(() => {
+    if (isEditing && inputRef.current) {
+      inputRef.current.focus();
+      inputRef.current.select();
+    }
+  }, [isEditing]);
+
+  const handleRename = async () => {
+    if (!newTitle.trim()) {
+      setIsEditing(false);
+      setNewTitle(chat.title);
+      return;
+    }
+
+    const response = await fetch(`/api/chat?id=${chat.id}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ title: newTitle }),
+    });
+    if (response.ok) {
+      setIsEditing(false);
+      chat.title = newTitle; // Update local state immediately
+      globalMutate('/api/history'); // Refresh from server
+    } else {
+      toast.error('Failed to rename chat');
+      setNewTitle(chat.title);
+    }
+  };
 
   return (
     <SidebarMenuItem>
@@ -473,7 +594,27 @@ const PureChatItem = ({
       >
         <SidebarMenuButton asChild isActive={isActive}>
           <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-            <span>{chat.title}</span>
+            {isEditing ? (
+              <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+                <Input
+                  ref={inputRef}
+                  value={newTitle}
+                  onChange={(e) => setNewTitle(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      handleRename();
+                    } else if (e.key === 'Escape') {
+                      setIsEditing(false);
+                      setNewTitle(chat.title);
+                    }
+                  }}
+                  onBlur={handleRename}
+                  className="h-6 py-0 px-1"
+                />
+              </div>
+            ) : (
+              <span>{chat.title}</span>
+            )}
           </Link>
         </SidebarMenuButton>
 
@@ -490,6 +631,16 @@ const PureChatItem = ({
 
           <DropdownMenuContent side="bottom" align="end">
             <span id="chat-options-title" className="sr-only">Chat options</span>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                setIsEditing(true);
+              }}
+            >
+              <PencilEditIcon />
+              <span>Rename</span>
+            </DropdownMenuItem>
+
             <DropdownMenuSub aria-labelledby="chat-options-title">
               <DropdownMenuSubTrigger className="cursor-pointer">
                 <ShareIcon />
@@ -538,7 +689,8 @@ const PureChatItem = ({
                   body: JSON.stringify({ pinned: !chat.pinned }),
                 });
                 if (response.ok) {
-                  mutate();
+                  chat.pinned = !chat.pinned; // Update local state immediately
+                  globalMutate('/api/history');
                 }
               }}
             >

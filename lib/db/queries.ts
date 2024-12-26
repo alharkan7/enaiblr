@@ -343,3 +343,21 @@ export async function updateChatPinned({
     throw error;
   }
 }
+
+export async function updateChatTitle({
+  id,
+  title,
+}: {
+  id: string;
+  title: string;
+}) {
+  try {
+    return await db
+      .update(chat)
+      .set({ title })
+      .where(eq(chat.id, id));
+  } catch (error) {
+    console.error('Failed to update chat title in database');
+    throw error;
+  }
+}
