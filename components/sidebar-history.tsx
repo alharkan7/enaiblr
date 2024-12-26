@@ -14,8 +14,10 @@ import {
   LockIcon,
   MoreHorizontalIcon,
   PinIcon,
+  PlusIcon,
   ShareIcon,
   TrashIcon,
+  FolderIcon,
 } from '@/components/icons';
 import {
   AlertDialog,
@@ -50,6 +52,125 @@ import {
 import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+
+interface Folder {
+  id: string;
+  name: string;
+}
+
+interface FolderSectionProps {
+  folders: Folder[];
+  onAddFolder: () => void;
+  setFolders: (folders: Folder[]) => void;
+}
+
+const FolderSection = ({ folders, onAddFolder, setFolders }: FolderSectionProps) => {
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
+  const [newFolderName, setNewFolderName] = useState('');
+  const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
+  const [showDeleteFolderDialog, setShowDeleteFolderDialog] = useState(false);
+
+  const handleAddFolder = () => {
+    if (newFolderName.trim()) {
+      const newFolder: Folder = {
+        id: crypto.randomUUID(),
+        name: newFolderName.trim()
+      };
+      setFolders([...folders, newFolder]);
+      setNewFolderName('');
+      setIsAddingFolder(false);
+    }
+  };
+
+  const handleDeleteFolder = () => {
+    if (folderToDelete) {
+      setFolders(folders.filter(f => f.id !== folderToDelete.id));
+      setFolderToDelete(null);
+      setShowDeleteFolderDialog(false);
+    }
+  };
+
+  return (
+    <div className="mb-2">
+      <div className="max-h-[120px] overflow-y-auto scrollbar-none hover:scrollbar-thin
+        [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full
+        [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600
+        [&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
+        dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500
+        hover:scrollbar-thumb-gray-300 dark:hover:scrollbar-thumb-gray-600 
+        hover:scrollbar-track-transparent hover:scrollbar-thumb-gray-400 
+        dark:hover:scrollbar-thumb-gray-500 hover:scrollbar-thumb-rounded-full">
+        {folders.map((folder) => (
+          <div
+            key={folder.id}
+            className="flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer"
+          >
+            <div className="flex-1 flex items-center gap-2">
+              <FolderIcon />
+              <span>{folder.name}</span>
+            </div>
+            <button 
+              onClick={(e) => {
+                e.stopPropagation();
+                setFolderToDelete(folder);
+                setShowDeleteFolderDialog(true);
+              }}
+              className="opacity-0 hover:text-destructive [div:hover>&]:opacity-100 transition-opacity"
+            >
+              <TrashIcon size={14} />
+            </button>
+          </div>
+        ))}
+        {isAddingFolder && (
+          <div className="flex items-center gap-2 px-2 py-1.5">
+            <FolderIcon />
+            <input
+              type="text"
+              value={newFolderName}
+              onChange={(e) => setNewFolderName(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') {
+                  handleAddFolder();
+                } else if (e.key === 'Escape') {
+                  setIsAddingFolder(false);
+                  setNewFolderName('');
+                }
+              }}
+              placeholder="Folder name"
+              className="flex-1 bg-transparent border-none outline-none text-sm"
+              autoFocus
+            />
+          </div>
+        )}
+      </div>
+      {!isAddingFolder && (
+        <button
+          onClick={() => setIsAddingFolder(true)}
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md mt-1"
+        >
+          <PlusIcon size={16} />
+          <span>New Folder</span>
+        </button>
+      )}
+      <AlertDialog open={showDeleteFolderDialog} onOpenChange={setShowDeleteFolderDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            Are you sure you want to delete the folder "{folderToDelete?.name}"? This action cannot be undone.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setFolderToDelete(null)}>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDeleteFolder}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
+  );
+};
 
 type GroupedChats = {
   pinned: Chat[];
@@ -192,6 +313,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [folders, setFolders] = useState<Folder[]>([]);
   const router = useRouter();
   const handleDelete = async () => {
     const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
@@ -310,6 +432,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     <>
       <SidebarGroup>
         <SidebarGroupContent>
+          <FolderSection folders={folders} onAddFolder={() => setFolders([...folders, { id: crypto.randomUUID(), name: 'New Folder' }])} setFolders={setFolders} />
           <SidebarMenu>
             {history &&
               (() => {
