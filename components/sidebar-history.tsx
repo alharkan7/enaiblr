@@ -57,6 +57,7 @@ import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { Input } from './ui/input';
+import styles from './sidebar-history.module.css';
 
 interface Folder {
   id: string;
@@ -125,13 +126,51 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
     }
   };
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('chatId', chat.id);
+    
+    // Create ghost element
+    const ghost = document.createElement('div');
+    ghost.className = styles.chatDragGhost;
+    ghost.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>${chat.title}</span>
+    `;
+    
+    document.body.appendChild(ghost);
+    
+    // Create an empty transparent image for the default drag ghost
+    const emptyImage = new Image();
+    emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(emptyImage, 0, 0);
+    
+    // Position the ghost element near the cursor
+    const updateGhostPosition = (e: MouseEvent) => {
+      ghost.style.left = e.pageX + 15 + 'px';
+      ghost.style.top = e.pageY + 15 + 'px';
+    };
+    
+    document.addEventListener('dragover', updateGhostPosition as any);
+    
+    // Remove the ghost element and event listener after drag ends
+    const cleanup = () => {
+      ghost.remove();
+      document.removeEventListener('dragover', updateGhostPosition as any);
+      window.removeEventListener('dragend', cleanup);
+      window.removeEventListener('drop', cleanup);
+    };
+    
+    window.addEventListener('dragend', cleanup);
+    window.addEventListener('drop', cleanup);
+  };
+
   return (
     <SidebarMenuItem className="ml-6 list-none">
       <div
         draggable
-        onDragStart={(e) => {
-          e.dataTransfer.setData('chatId', chat.id);
-        }}
+        onDragStart={handleDragStart}
         className="flex w-full items-center"
       >
         <SidebarMenuButton asChild isActive={isActive}>
@@ -288,6 +327,7 @@ const FolderItem = ({
 }) => {
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(folder.name);
+  const [isDragOver, setIsDragOver] = useState(false);
 
   if (isRenaming) {
     return (
@@ -321,14 +361,19 @@ const FolderItem = ({
 
   return (
     <div
-      className="group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer"
+      className={`group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer ${styles.folderDropTarget} ${isDragOver ? styles.canDrop : ''}`}
       onClick={onToggle}
       onDragOver={(e: React.DragEvent) => {
         e.preventDefault();
         e.dataTransfer.dropEffect = 'move';
+        setIsDragOver(true);
+      }}
+      onDragLeave={() => {
+        setIsDragOver(false);
       }}
       onDrop={(e: React.DragEvent) => {
         e.preventDefault();
+        setIsDragOver(false);
         const chatId = e.dataTransfer.getData('chatId');
         if (chatId) {
           const chat = chats.find(c => c.id === chatId);
@@ -583,13 +628,51 @@ const PureChatItem = ({
     }
   };
 
+  const handleDragStart = (e: React.DragEvent) => {
+    e.dataTransfer.setData('chatId', chat.id);
+    
+    // Create ghost element
+    const ghost = document.createElement('div');
+    ghost.className = styles.chatDragGhost;
+    ghost.innerHTML = `
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+      </svg>
+      <span>${chat.title}</span>
+    `;
+    
+    document.body.appendChild(ghost);
+    
+    // Create an empty transparent image for the default drag ghost
+    const emptyImage = new Image();
+    emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(emptyImage, 0, 0);
+    
+    // Position the ghost element near the cursor
+    const updateGhostPosition = (e: MouseEvent) => {
+      ghost.style.left = e.pageX + 15 + 'px';
+      ghost.style.top = e.pageY + 15 + 'px';
+    };
+    
+    document.addEventListener('dragover', updateGhostPosition as any);
+    
+    // Remove the ghost element and event listener after drag ends
+    const cleanup = () => {
+      ghost.remove();
+      document.removeEventListener('dragover', updateGhostPosition as any);
+      window.removeEventListener('dragend', cleanup);
+      window.removeEventListener('drop', cleanup);
+    };
+    
+    window.addEventListener('dragend', cleanup);
+    window.addEventListener('drop', cleanup);
+  };
+
   return (
     <SidebarMenuItem>
       <div
         draggable
-        onDragStart={(e) => {
-          e.dataTransfer.setData('chatId', chat.id);
-        }}
+        onDragStart={handleDragStart}
         className="flex w-full"
       >
         <SidebarMenuButton asChild isActive={isActive}>
