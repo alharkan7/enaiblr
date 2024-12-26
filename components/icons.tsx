@@ -866,6 +866,23 @@ export const ChevronDownIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
+export const ChevronRightIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M6.75001 3.93933L7.28034 4.46966L10.1036 7.29288C10.4941 7.68341 10.4941 7.68341 10.1036 8.07393L7.28034 10.8972L6.75001 11.4275L5.68935 10.3668L6.21968 9.83651L8.69001 7.36618L6.21968 4.89585L5.68935 4.36552L6.75001 3.93933Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const SparklesIcon = ({ size = 16 }: { size?: number }) => (
   <svg
     height={size}

@@ -1,6 +1,6 @@
 'use client';
 
-import { isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
+import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
@@ -10,6 +10,8 @@ import useSWR, { useSWRConfig } from 'swr';
 
 import {
   CheckCircleFillIcon,
+  ChevronDownIcon,
+  ChevronRightIcon,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
@@ -52,117 +54,326 @@ import {
 import type { Chat } from '@/lib/db/schema';
 import { fetcher } from '@/lib/utils';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
+import { Input } from './ui/input';
 
 interface Folder {
   id: string;
   name: string;
+  chats: Chat[];
+  isExpanded?: boolean;
 }
 
 interface FolderSectionProps {
   folders: Folder[];
-  onAddFolder: () => void;
   setFolders: (folders: Folder[]) => void;
+  chats: Chat[];
+  setOpenMobile: (open: boolean) => void;
+  onDeleteChat: (chatId: string) => void;
+  activeChatId?: string;
+  isAddingFolder: boolean;
+  setIsAddingFolder: (isAddingFolder: boolean) => void;
 }
 
-const FolderSection = ({ folders, onAddFolder, setFolders }: FolderSectionProps) => {
-  const [isAddingFolder, setIsAddingFolder] = useState(false);
+const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
+  chat: Chat;
+  isActive: boolean;
+  onDelete: (chatId: string) => void;
+  setOpenMobile: (open: boolean) => void;
+  mutate: () => void;
+}) => {
+  const { visibilityType, setVisibilityType } = useChatVisibility({
+    chatId: chat.id,
+    initialVisibility: chat.visibility,
+  });
+
+  return (
+    <SidebarMenuItem className="ml-6">
+      <div
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData('chatId', chat.id);
+        }}
+        className="flex w-full"
+      >
+        <SidebarMenuButton asChild isActive={isActive}>
+          <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
+            <span>{chat.title}</span>
+          </Link>
+        </SidebarMenuButton>
+
+        <DropdownMenu modal={true}>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuAction
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
+              showOnHover={!isActive}
+            >
+              <MoreHorizontalIcon />
+              <span className="sr-only">More</span>
+            </SidebarMenuAction>
+          </DropdownMenuTrigger>
+
+          <DropdownMenuContent side="bottom" align="end">
+            <span id="chat-options-title" className="sr-only">Chat options</span>
+            <DropdownMenuSub aria-labelledby="chat-options-title">
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <ShareIcon />
+                <span>Share</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex-row justify-between"
+                    onClick={() => {
+                      setVisibilityType('private');
+                    }}
+                  >
+                    <div className="flex flex-row gap-2 items-center">
+                      <LockIcon size={12} />
+                      <span>Private</span>
+                    </div>
+                    {visibilityType === 'private' ? (
+                      <CheckCircleFillIcon />
+                    ) : null}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex-row justify-between"
+                    onClick={() => {
+                      setVisibilityType('public');
+                    }}
+                  >
+                    <div className="flex flex-row gap-2 items-center">
+                      <GlobeIcon />
+                      <span>Public</span>
+                    </div>
+                    {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                const response = await fetch(`/api/chat?id=${chat.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ pinned: !chat.pinned }),
+                });
+                if (response.ok) {
+                  mutate();
+                }
+              }}
+            >
+              <PinIcon />
+              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+              onSelect={() => onDelete(chat.id)}
+            >
+              <TrashIcon />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+    </SidebarMenuItem>
+  );
+};
+
+const FolderItem = ({ 
+  folder, 
+  isExpanded, 
+  onToggle, 
+  onDelete,
+  folders,
+  chats,
+  setFolders 
+}: {
+  folder: Folder;
+  isExpanded: boolean;
+  onToggle: () => void;
+  onDelete: () => void;
+  folders: Folder[];
+  chats: Chat[];
+  setFolders: (folders: Folder[]) => void;
+}) => {
+  return (
+    <div
+      className="flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer group"
+      onClick={onToggle}
+      onDragOver={(e: React.DragEvent) => {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+      }}
+      onDrop={(e: React.DragEvent) => {
+        e.preventDefault();
+        const chatId = e.dataTransfer.getData('chatId');
+        if (chatId) {
+          const chat = chats.find(c => c.id === chatId);
+          if (chat) {
+            const updatedFolders = folders.map(f => {
+              if (f.id === folder.id) {
+                return {
+                  ...f,
+                  chats: [...f.chats.filter(c => c.id !== chatId), chat]
+                };
+              }
+              return {
+                ...f,
+                chats: f.chats.filter(c => c.id !== chatId)
+              };
+            });
+            setFolders(updatedFolders);
+          }
+        }
+      }}
+    >
+      <button className="flex items-center gap-2 flex-1">
+        {isExpanded ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
+        <FolderIcon size={14} />
+        <span>{folder.name}</span>
+        {folder.chats.length > 0 && (
+          <span className="text-xs text-muted-foreground">({folder.chats.length})</span>
+        )}
+      </button>
+      <button
+        onClick={(e) => {
+          e.stopPropagation();
+          onDelete();
+        }}
+        className="opacity-0 hover:text-destructive group-hover:opacity-100 transition-opacity"
+      >
+        <TrashIcon size={14} />
+      </button>
+    </div>
+  );
+};
+
+const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat, activeChatId, isAddingFolder, setIsAddingFolder }: FolderSectionProps) => {
   const [newFolderName, setNewFolderName] = useState('');
   const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
   const [showDeleteFolderDialog, setShowDeleteFolderDialog] = useState(false);
+  const { mutate } = useSWR('/api/chat');
 
-  const handleAddFolder = () => {
-    if (newFolderName.trim()) {
-      const newFolder: Folder = {
-        id: crypto.randomUUID(),
-        name: newFolderName.trim()
-      };
-      setFolders([...folders, newFolder]);
-      setNewFolderName('');
-      setIsAddingFolder(false);
+  const handleDrop = (e: React.DragEvent, folderId: string) => {
+    e.preventDefault();
+    const chatId = e.dataTransfer.getData('chatId');
+    if (chatId) {
+      const chat = chats.find(c => c.id === chatId);
+      if (chat) {
+        const updatedFolders = folders.map(f => {
+          if (f.id === folderId) {
+            return {
+              ...f,
+              chats: [...f.chats.filter(c => c.id !== chatId), chat]
+            };
+          }
+          return {
+            ...f,
+            chats: f.chats.filter(c => c.id !== chatId)
+          };
+        });
+        setFolders(updatedFolders);
+      }
     }
   };
 
-  const handleDeleteFolder = () => {
-    if (folderToDelete) {
-      setFolders(folders.filter(f => f.id !== folderToDelete.id));
-      setFolderToDelete(null);
-      setShowDeleteFolderDialog(false);
-    }
+  const toggleFolder = (folderId: string) => {
+    setFolders(folders.map(f => 
+      f.id === folderId ? { ...f, isExpanded: f.isExpanded ? false : true } : f
+    ));
   };
 
   return (
-    <div className="mb-2">
-      <div className="max-h-[120px] overflow-y-auto scrollbar-none hover:scrollbar-thin
-        [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full
-        [&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600
-        [&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400
-        dark:hover:[&::-webkit-scrollbar-thumb]:bg-gray-500
-        hover:scrollbar-thumb-gray-300 dark:hover:scrollbar-thumb-gray-600 
-        hover:scrollbar-track-transparent hover:scrollbar-thumb-gray-400 
-        dark:hover:scrollbar-thumb-gray-500 hover:scrollbar-thumb-rounded-full">
-        {folders.map((folder) => (
-          <div
-            key={folder.id}
-            className="flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer"
-          >
-            <div className="flex-1 flex items-center gap-2">
-              <FolderIcon />
-              <span>{folder.name}</span>
-            </div>
-            <button 
-              onClick={(e) => {
-                e.stopPropagation();
-                setFolderToDelete(folder);
-                setShowDeleteFolderDialog(true);
-              }}
-              className="opacity-0 hover:text-destructive [div:hover>&]:opacity-100 transition-opacity"
-            >
-              <TrashIcon size={14} />
-            </button>
-          </div>
-        ))}
-        {isAddingFolder && (
-          <div className="flex items-center gap-2 px-2 py-1.5">
-            <FolderIcon />
-            <input
-              type="text"
-              value={newFolderName}
-              onChange={(e) => setNewFolderName(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter') {
-                  handleAddFolder();
-                } else if (e.key === 'Escape') {
-                  setIsAddingFolder(false);
-                  setNewFolderName('');
-                }
-              }}
-              placeholder="Folder name"
-              className="flex-1 bg-transparent border-none outline-none text-sm"
-              autoFocus
-            />
-          </div>
-        )}
+    <div className="mt-4">
+      <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+        Folders
       </div>
       {!isAddingFolder && (
         <button
           onClick={() => setIsAddingFolder(true)}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md mt-1"
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md"
         >
           <PlusIcon size={16} />
           <span>New Folder</span>
         </button>
       )}
+      {isAddingFolder && (
+        <form
+          onSubmit={(e: React.FormEvent) => {
+            e.preventDefault();
+            if (newFolderName.trim()) {
+              setFolders([...folders, { id: crypto.randomUUID(), name: newFolderName.trim(), chats: [], isExpanded: false }]);
+              setNewFolderName('');
+              setIsAddingFolder(false);
+            }
+          }}
+          className="px-2 mb-2"
+        >
+          <Input
+            type="text"
+            placeholder="Folder name"
+            value={newFolderName}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewFolderName(e.target.value)}
+            autoFocus
+            onBlur={() => {
+              setNewFolderName('');
+              setIsAddingFolder(false);
+            }}
+          />
+        </form>
+      )}
+      <div className="space-y-1 overflow-y-auto max-h-[50vh] hover:scrollbar hover:scrollbar-thumb-gray-300 hover:scrollbar-track-gray-100 
+        dark:hover:scrollbar-thumb-gray-500 hover:scrollbar-thumb-rounded-full">
+        {folders.map((folder) => (
+          <div key={folder.id}>
+            <FolderItem 
+              folder={folder} 
+              isExpanded={folder.isExpanded ?? false}
+              onToggle={() => toggleFolder(folder.id)} 
+              onDelete={() => {
+                setFolderToDelete(folder);
+                setShowDeleteFolderDialog(true);
+              }}
+              folders={folders}
+              chats={chats}
+              setFolders={setFolders}
+            />
+            {folder.isExpanded && folder.chats.map(chat => (
+              <ChatItemInFolder
+                key={chat.id}
+                chat={chat}
+                isActive={chat.id === activeChatId}
+                onDelete={onDeleteChat}
+                setOpenMobile={setOpenMobile}
+                mutate={mutate}
+              />
+            ))}
+          </div>
+        ))}
+      </div>
       <AlertDialog open={showDeleteFolderDialog} onOpenChange={setShowDeleteFolderDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this folder? The chats inside will not be deleted.
+            </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogDescription>
-            Are you sure you want to delete the folder "{folderToDelete?.name}"? This action cannot be undone.
-          </AlertDialogDescription>
           <AlertDialogFooter>
-            <AlertDialogCancel onClick={() => setFolderToDelete(null)}>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDeleteFolder}>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                if (folderToDelete) {
+                  setFolders(folders.filter(f => f.id !== folderToDelete.id));
+                  setFolderToDelete(null);
+                }
+              }}
+            >
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>
@@ -172,14 +383,14 @@ const FolderSection = ({ folders, onAddFolder, setFolders }: FolderSectionProps)
   );
 };
 
-type GroupedChats = {
+interface GroupedChats {
   pinned: Chat[];
   today: Chat[];
   yesterday: Chat[];
   lastWeek: Chat[];
   lastMonth: Chat[];
   older: Chat[];
-};
+}
 
 const PureChatItem = ({
   chat,
@@ -201,90 +412,98 @@ const PureChatItem = ({
 
   return (
     <SidebarMenuItem>
-      <SidebarMenuButton asChild isActive={isActive}>
-        <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-          <span>{chat.title}</span>
-        </Link>
-      </SidebarMenuButton>
+      <div
+        draggable
+        onDragStart={(e) => {
+          e.dataTransfer.setData('chatId', chat.id);
+        }}
+        className="flex w-full"
+      >
+        <SidebarMenuButton asChild isActive={isActive}>
+          <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
+            <span>{chat.title}</span>
+          </Link>
+        </SidebarMenuButton>
 
-      <DropdownMenu modal={true}>
-        <DropdownMenuTrigger asChild>
-          <SidebarMenuAction
-            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
-            showOnHover={!isActive}
-          >
-            <MoreHorizontalIcon />
-            <span className="sr-only">More</span>
-          </SidebarMenuAction>
-        </DropdownMenuTrigger>
+        <DropdownMenu modal={true}>
+          <DropdownMenuTrigger asChild>
+            <SidebarMenuAction
+              className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
+              showOnHover={!isActive}
+            >
+              <MoreHorizontalIcon />
+              <span className="sr-only">More</span>
+            </SidebarMenuAction>
+          </DropdownMenuTrigger>
 
-        <DropdownMenuContent side="bottom" align="end">
-          <span id="chat-options-title" className="sr-only">Chat options</span>
-          <DropdownMenuSub aria-labelledby="chat-options-title">
-            <DropdownMenuSubTrigger className="cursor-pointer">
-              <ShareIcon />
-              <span>Share</span>
-            </DropdownMenuSubTrigger>
-            <DropdownMenuPortal>
-              <DropdownMenuSubContent>
-                <DropdownMenuItem
-                  className="cursor-pointer flex-row justify-between"
-                  onClick={() => {
-                    setVisibilityType('private');
-                  }}
-                >
-                  <div className="flex flex-row gap-2 items-center">
-                    <LockIcon size={12} />
-                    <span>Private</span>
-                  </div>
-                  {visibilityType === 'private' ? (
-                    <CheckCircleFillIcon />
-                  ) : null}
-                </DropdownMenuItem>
-                <DropdownMenuItem
-                  className="cursor-pointer flex-row justify-between"
-                  onClick={() => {
-                    setVisibilityType('public');
-                  }}
-                >
-                  <div className="flex flex-row gap-2 items-center">
-                    <GlobeIcon />
-                    <span>Public</span>
-                  </div>
-                  {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
-                </DropdownMenuItem>
-              </DropdownMenuSubContent>
-            </DropdownMenuPortal>
-          </DropdownMenuSub>
+          <DropdownMenuContent side="bottom" align="end">
+            <span id="chat-options-title" className="sr-only">Chat options</span>
+            <DropdownMenuSub aria-labelledby="chat-options-title">
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <ShareIcon />
+                <span>Share</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex-row justify-between"
+                    onClick={() => {
+                      setVisibilityType('private');
+                    }}
+                  >
+                    <div className="flex flex-row gap-2 items-center">
+                      <LockIcon size={12} />
+                      <span>Private</span>
+                    </div>
+                    {visibilityType === 'private' ? (
+                      <CheckCircleFillIcon />
+                    ) : null}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    className="cursor-pointer flex-row justify-between"
+                    onClick={() => {
+                      setVisibilityType('public');
+                    }}
+                  >
+                    <div className="flex flex-row gap-2 items-center">
+                      <GlobeIcon />
+                      <span>Public</span>
+                    </div>
+                    {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
+                  </DropdownMenuItem>
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
 
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={async () => {
-              const response = await fetch(`/api/chat?id=${chat.id}`, {
-                method: 'PATCH',
-                headers: {
-                  'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ pinned: !chat.pinned }),
-              });
-              if (response.ok) {
-                mutate();
-              }
-            }}
-          >
-            <PinIcon />
-            <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
-          </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={async () => {
+                const response = await fetch(`/api/chat?id=${chat.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ pinned: !chat.pinned }),
+                });
+                if (response.ok) {
+                  mutate();
+                }
+              }}
+            >
+              <PinIcon />
+              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+            </DropdownMenuItem>
 
-          <DropdownMenuItem
-            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-            onSelect={() => onDelete(chat.id)}
-          >
-            <TrashIcon />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+              onSelect={() => onDelete(chat.id)}
+            >
+              <TrashIcon />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
     </SidebarMenuItem>
   );
 };
@@ -314,6 +533,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const [folders, setFolders] = useState<Folder[]>([]);
+  const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
   const handleDelete = async () => {
     const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
@@ -394,37 +614,37 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     const oneWeekAgo = subWeeks(now, 1);
     const oneMonthAgo = subMonths(now, 1);
 
-    return chats.reduce(
-      (groups, chat) => {
+    // Get all chat IDs that are in folders (except pinned chats)
+    const chatIdsInFolders = new Set(
+      folders.flatMap(folder => folder.chats)
+        .filter(chat => !chat.pinned)
+        .map(chat => chat.id)
+    );
+
+    // Filter out chats that are in folders (except pinned chats)
+    const chatsToGroup = chats.filter(chat => !chatIdsInFolders.has(chat.id) || chat.pinned);
+
+    return chatsToGroup.reduce(
+      (groups: GroupedChats, chat: Chat) => {
         if (chat.pinned) {
           groups.pinned.push(chat);
-          return groups;
-        }
-
-        const chatDate = new Date(chat.createdAt);
-
-        if (isToday(chatDate)) {
-          groups.today.push(chat);
-        } else if (isYesterday(chatDate)) {
-          groups.yesterday.push(chat);
-        } else if (chatDate > oneWeekAgo) {
-          groups.lastWeek.push(chat);
-        } else if (chatDate > oneMonthAgo) {
-          groups.lastMonth.push(chat);
         } else {
-          groups.older.push(chat);
+          const chatDate = new Date(chat.createdAt);
+          if (isToday(chatDate)) {
+            groups.today.push(chat);
+          } else if (isYesterday(chatDate)) {
+            groups.yesterday.push(chat);
+          } else if (isAfter(chatDate, oneWeekAgo)) {
+            groups.lastWeek.push(chat);
+          } else if (isAfter(chatDate, oneMonthAgo)) {
+            groups.lastMonth.push(chat);
+          } else {
+            groups.older.push(chat);
+          }
         }
-
         return groups;
       },
-      {
-        pinned: [],
-        today: [],
-        yesterday: [],
-        lastWeek: [],
-        lastMonth: [],
-        older: [],
-      } as GroupedChats,
+      { pinned: [], today: [], yesterday: [], lastWeek: [], lastMonth: [], older: [] }
     );
   };
 
@@ -432,7 +652,19 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     <>
       <SidebarGroup>
         <SidebarGroupContent>
-          <FolderSection folders={folders} onAddFolder={() => setFolders([...folders, { id: crypto.randomUUID(), name: 'New Folder' }])} setFolders={setFolders} />
+          <FolderSection 
+            folders={folders} 
+            setFolders={setFolders} 
+            chats={history ?? []} 
+            setOpenMobile={setOpenMobile} 
+            onDeleteChat={(chatId) => {
+              setDeleteId(chatId);
+              setShowDeleteDialog(true);
+            }} 
+            activeChatId={typeof id === 'string' ? id : undefined} 
+            isAddingFolder={isAddingFolder}
+            setIsAddingFolder={setIsAddingFolder}
+          />
           <SidebarMenu>
             {history &&
               (() => {
@@ -445,7 +677,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Pinned
                         </div>
-                        {groupedChats.pinned.map((chat) => (
+                        {groupedChats.pinned.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
@@ -468,7 +700,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
                           Today
                         </div>
-                        {groupedChats.today.map((chat) => (
+                        {groupedChats.today.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
@@ -491,7 +723,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
                           Yesterday
                         </div>
-                        {groupedChats.yesterday.map((chat) => (
+                        {groupedChats.yesterday.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
@@ -514,7 +746,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
                           Last 7 days
                         </div>
-                        {groupedChats.lastWeek.map((chat) => (
+                        {groupedChats.lastWeek.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
@@ -537,7 +769,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
                           Last 30 days
                         </div>
-                        {groupedChats.lastMonth.map((chat) => (
+                        {groupedChats.lastMonth.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
@@ -560,7 +792,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
                           Older
                         </div>
-                        {groupedChats.older.map((chat) => (
+                        {groupedChats.older.map((chat: Chat) => (
                           <ChatItem
                             key={chat.id}
                             chat={chat}
