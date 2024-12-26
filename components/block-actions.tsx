@@ -1,10 +1,13 @@
 import { cn, generateUUID } from '@/lib/utils';
-import { ClockRewind, CopyIcon, PlayIcon, RedoIcon, UndoIcon } from './icons';
+import { ClockRewind, CopyIcon, PlayIcon, RedoIcon, UndoIcon, DownloadIcon } from './icons';
 import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { toast } from 'sonner';
 import { ConsoleOutput, UIBlock } from './block';
+import type { Document } from '@/lib/db/schema';
+import { defaultMarkdownParser } from 'prosemirror-markdown';
+import { DOMSerializer } from 'prosemirror-model';
 import {
   Dispatch,
   memo,
@@ -13,6 +16,12 @@ import {
   useCallback,
   useState,
 } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
 
 declare function loadPyodide(config: { indexURL: string }): Promise<any>;
 
@@ -23,6 +32,7 @@ interface BlockActionsProps {
   isCurrentVersion: boolean;
   mode: 'read-only' | 'edit' | 'diff';
   setConsoleOutputs: Dispatch<SetStateAction<Array<ConsoleOutput>>>;
+  document: Document | null;
 }
 
 export function RunCodeButton({
@@ -132,6 +142,7 @@ function PureBlockActions({
   isCurrentVersion,
   mode,
   setConsoleOutputs,
+  document: currentDocument,
 }: BlockActionsProps) {
   const [_, copyToClipboard] = useCopyToClipboard();
 
@@ -196,6 +207,95 @@ function PureBlockActions({
           </Button>
         </TooltipTrigger>
         <TooltipContent>View Next version</TooltipContent>
+      </Tooltip>
+
+      <Tooltip>
+        <TooltipTrigger asChild>
+          {block.kind === 'text' ? (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button
+                  variant="outline"
+                  className="p-2 h-fit !pointer-events-auto dark:hover:bg-zinc-700"
+                >
+                  <DownloadIcon size={18} />
+                  <span className="sr-only">Download</span>
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const fileName = currentDocument?.title ?? block.title;
+                    const blob = new Blob([block.content], { type: 'text/markdown' });
+                    const url = URL.createObjectURL(blob);
+                    const a = window.document.createElement('a');
+                    a.href = url;
+                    a.download = `${fileName}.md`;
+                    window.document.body.appendChild(a);
+                    a.click();
+                    window.document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Markdown (.md)
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const fileName = currentDocument?.title ?? block.title;
+                    // Convert markdown to HTML
+                    const state = defaultMarkdownParser.parse(block.content);
+                    const div = window.document.createElement('div');
+                    const fragment = DOMSerializer.fromSchema(state.type.schema).serializeFragment(state.content);
+                    div.appendChild(fragment);
+                    
+                    // Create Word-compatible HTML
+                    const htmlContent = `
+                      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                      <head><meta charset='utf-8'></head>
+                      <body>
+                        ${div.innerHTML}
+                      </body>
+                      </html>
+                    `;
+
+                    const blob = new Blob([htmlContent], { type: 'application/msword' });
+                    const url = URL.createObjectURL(blob);
+                    const a = window.document.createElement('a');
+                    a.href = url;
+                    a.download = `${fileName}.doc`;
+                    window.document.body.appendChild(a);
+                    a.click();
+                    window.document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                  }}
+                >
+                  Word (.doc)
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          ) : (
+            <Button
+              variant="outline"
+              className="p-2 h-fit !pointer-events-auto dark:hover:bg-zinc-700"
+              onClick={() => {
+                const fileName = currentDocument?.title ?? block.title;
+                const blob = new Blob([block.content], { type: 'text/x-python' });
+                const url = URL.createObjectURL(blob);
+                const a = window.document.createElement('a');
+                a.href = url;
+                a.download = `${fileName}.py`;
+                window.document.body.appendChild(a);
+                a.click();
+                window.document.body.removeChild(a);
+                URL.revokeObjectURL(url);
+              }}
+            >
+              <DownloadIcon size={18} />
+              <span className="sr-only">Download</span>
+            </Button>
+          )}
+        </TooltipTrigger>
+        <TooltipContent>Download</TooltipContent>
       </Tooltip>
 
       <Tooltip>

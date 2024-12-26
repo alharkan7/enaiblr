@@ -764,6 +764,23 @@ export const PlusIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
+export const DownloadIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M7.25 1V1.75V9.25L4.75 6.75L4.22 6.22L3.15 7.28L3.68 7.81L7.47 11.6L8 12.13L8.53 11.6L12.32 7.81L12.85 7.28L11.78 6.22L11.25 6.75L8.75 9.25V1.75V1H7.25ZM2.25 13.25H13.75H14.5V14.75H13.75H2.25H1.5V13.25H2.25Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const CopyIcon = ({ size = 16 }: { size?: number }) => (
   <svg
     height={size}

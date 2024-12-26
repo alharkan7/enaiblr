@@ -439,6 +439,7 @@ function PureBlock({
                 isCurrentVersion={isCurrentVersion}
                 mode={mode}
                 setConsoleOutputs={setConsoleOutputs}
+                document={document}
               />
             </div>
 
