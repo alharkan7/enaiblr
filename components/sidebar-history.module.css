@@ -13,6 +13,15 @@
   width: 200px;
   z-index: 9999;
   opacity: 0.9;
+  -webkit-user-drag: none;
+  user-select: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+}
+
+.chatDragging {
+  opacity: 0;
 }
 
 .folderDropTarget {

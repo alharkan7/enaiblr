@@ -3,6 +3,8 @@ import { Toaster } from 'sonner';
 import { Inter } from 'next/font/google';
 
 import { ThemeProvider } from '@/components/theme-provider';
+import { cn } from '@/lib/utils';
+import { TooltipProvider } from '@/components/ui/tooltip';
 
 import './globals.css';
 
@@ -49,11 +51,6 @@ export default async function RootLayout({
   return (
     <html
       lang="en"
-      className={`${inter.variable}`}
-      // `next-themes` injects an extra classname to the body element to avoid
-      // visual flicker before hydration. Hence the `suppressHydrationWarning`
-      // prop is necessary to avoid the React hydration mismatch warning.
-      // https://github.com/pacocoursey/next-themes?tab=readme-ov-file#with-app
       suppressHydrationWarning
     >
       <head>
@@ -63,7 +60,7 @@ export default async function RootLayout({
           }}
         />
       </head>
-      <body className="antialiased">
+      <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
         <ThemeProvider
           attribute="class"
           defaultTheme="system"
@@ -71,7 +68,9 @@ export default async function RootLayout({
           disableTransitionOnChange
         >
           <Toaster position="top-center" />
-          {children}
+          <TooltipProvider delayDuration={700}>
+            {children}
+          </TooltipProvider>
         </ThemeProvider>
       </body>
     </html>

@@ -43,7 +43,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                 <Button
                   variant="ghost"
                   type="button"
-                  className="p-2 h-fit"
+                  className="p-2 h-fit hidden md:flex"
                   onClick={() => {
                     setOpenMobile(false);
                     router.push('/');
@@ -53,8 +53,20 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   <PlusIcon />
                 </Button>
               </TooltipTrigger>
-              <TooltipContent align="end">New Chat</TooltipContent>
+              <TooltipContent align="end" side="bottom">New Chat</TooltipContent>
             </Tooltip>
+            <Button
+              variant="ghost"
+              type="button"
+              className="p-2 h-fit md:hidden"
+              onClick={() => {
+                setOpenMobile(false);
+                router.push('/');
+                router.refresh();
+              }}
+            >
+              <PlusIcon />
+            </Button>
           </div>
         </SidebarMenu>
       </SidebarHeader>

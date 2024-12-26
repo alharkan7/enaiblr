@@ -189,7 +189,7 @@ const PureDocumentHeader = ({
   isStreaming: boolean;
 }) => (
   <div className="p-4 border rounded-t-2xl flex flex-row gap-2 items-start sm:items-center justify-between dark:bg-muted border-b-0 dark:border-zinc-700">
-    <div className="flex flex-row items-start sm:items-center gap-3">
+    <div className="flex flex-row items-start sm:items-center gap-3 pr-6">
       <div className="text-muted-foreground">
         {isStreaming ? (
           <div className="animate-spin">
@@ -199,7 +199,7 @@ const PureDocumentHeader = ({
           <FileIcon />
         )}
       </div>
-      <div className="text-sm dark:text-zinc-50 text-zinc-800 break-all">
+      <div className="text-sm dark:text-zinc-50 text-zinc-800 break-words">
         {title}
       </div>
     </div>

@@ -59,4 +59,4 @@ export const models: Array<Model> = [
   }
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'llama3-70b-8192';
+export const DEFAULT_MODEL_NAME: string = 'gpt-4o-mini';

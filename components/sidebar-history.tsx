@@ -4,7 +4,7 @@ import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
-import { memo, useEffect, useState, useRef } from 'react';
+import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -38,7 +38,6 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuPortal,
-  DropdownMenuSeparator,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
@@ -94,6 +93,12 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
   const [newTitle, setNewTitle] = useState(chat.title);
   const { mutate: globalMutate } = useSWRConfig();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    // Check if device supports touch
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -127,6 +132,8 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
   };
 
   const handleDragStart = (e: React.DragEvent) => {
+    const element = e.currentTarget as HTMLElement;
+    element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
     
     // Create ghost element
@@ -157,6 +164,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
     // Remove the ghost element and event listener after drag ends
     const cleanup = () => {
       ghost.remove();
+      element.classList.remove(styles.chatDragging);
       document.removeEventListener('dragover', updateGhostPosition as any);
       window.removeEventListener('dragend', cleanup);
       window.removeEventListener('drop', cleanup);
@@ -169,7 +177,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
   return (
     <SidebarMenuItem className="ml-6 list-none">
       <div
-        draggable
+        draggable={!isTouchDevice}
         onDragStart={handleDragStart}
         className="flex w-full items-center"
       >
@@ -222,6 +230,95 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
               <span>Rename</span>
             </DropdownMenuItem>
 
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                globalMutate('/api/history', (currentData: any) => {
+                  if (!currentData) return currentData;
+                  
+                  const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
+                  const updatedChats = chats.map((c: Chat) => 
+                    c.id === chat.id ? { ...c, pinned: !c.pinned } : c
+                  );
+                  
+                  return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
+                }, false);
+
+                // Perform server update asynchronously
+                fetch(`/api/chat?id=${chat.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ pinned: !chat.pinned }),
+                }).catch(() => {
+                  // Revert the optimistic update if the server request fails
+                  globalMutate('/api/history', (currentData: any) => {
+                    if (!currentData) return currentData;
+                    
+                    const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
+                    const revertedChats = chats.map((c: Chat) => 
+                      c.id === chat.id ? { ...c, pinned: chat.pinned } : c
+                    );
+                    
+                    return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
+                  }, false);
+                });
+              }}
+            >
+              <PinIcon />
+              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <FolderIcon size={14} />
+                <span>Folder</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent key={folders.length}>
+                  {folders.length === 0 ? (
+                    <DropdownMenuItem className="text-muted-foreground" disabled>
+                      No folders created yet
+                    </DropdownMenuItem>
+                  ) : (
+                    folders.map((folder) => (
+                      <DropdownMenuItem
+                        key={folder.id}
+                        className="cursor-pointer flex-row justify-between"
+                        onClick={() => {
+                          const isInFolder = folder.chats.some(c => c.id === chat.id);
+                          const updatedFolders = folders.map(f => {
+                            if (f.id === folder.id) {
+                              return {
+                                ...f,
+                                chats: isInFolder 
+                                  ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
+                                  : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
+                              };
+                            }
+                            return {
+                              ...f,
+                              chats: f.chats.filter(c => c.id !== chat.id)
+                            };
+                          });
+                          setFolders(updatedFolders);
+                        }}
+                      >
+                        <div className="flex flex-row gap-2 items-center">
+                          <FolderIcon size={14} />
+                          <span>{folder.name}</span>
+                        </div>
+                        {folder.chats.some(c => c.id === chat.id) && (
+                          <CheckCircleFillIcon />
+                        )}
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+
             <DropdownMenuSub aria-labelledby="chat-options-title">
               <DropdownMenuSubTrigger className="cursor-pointer">
                 <ShareIcon />
@@ -260,45 +357,11 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
             </DropdownMenuSub>
 
             <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={async () => {
-                const response = await fetch(`/api/chat?id=${chat.id}`, {
-                  method: 'PATCH',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ pinned: !chat.pinned }),
-                });
-                if (response.ok) {
-                  chat.pinned = !chat.pinned; // Update local state immediately
-                  globalMutate('/api/history');
-                }
-              }}
-            >
-              <PinIcon />
-              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
               className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
               onSelect={() => onDelete(chat.id)}
             >
               <TrashIcon />
               <span>Delete</span>
-            </DropdownMenuItem>
-
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => {
-                const updatedFolders = folders.map(folder => ({
-                  ...folder,
-                  chats: folder.chats.filter(c => c.id !== chat.id)
-                }));
-                setFolders(updatedFolders);
-              }}
-            >
-              <FolderXIcon />
-              <span>Unfolder</span>
             </DropdownMenuItem>
 
           </DropdownMenuContent>
@@ -470,19 +533,11 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
   };
 
   return (
-    <div className="mb-6">
-      <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+    <div className="mt-6">
+      <div className="px-2 py-1 mb-1 text-xs text-sidebar-foreground/50">
         Folders
       </div>
-      {!isAddingFolder && (
-        <button
-          onClick={() => setIsAddingFolder(true)}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md"
-        >
-          <PlusIcon size={16} />
-          <span>New Folder</span>
-        </button>
-      )}
+
       {isAddingFolder && (
         <form
           onSubmit={(e: React.FormEvent) => {
@@ -562,6 +617,15 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+      {!isAddingFolder && (
+        <button
+          onClick={() => setIsAddingFolder(true)}
+          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md mt-1"
+        >
+          <PlusIcon size={16} />
+          <span>New Folder</span>
+        </button>
+      )}
     </div>
   );
 };
@@ -581,12 +645,16 @@ const PureChatItem = ({
   onDelete,
   setOpenMobile,
   mutate,
+  folders,
+  setFolders,
 }: {
   chat: Chat;
   isActive: boolean;
   onDelete: (chatId: string) => void;
   setOpenMobile: (open: boolean) => void;
   mutate: () => void;
+  folders: Folder[];
+  setFolders: (folders: Folder[]) => void;
 }) => {
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
@@ -596,6 +664,12 @@ const PureChatItem = ({
   const [newTitle, setNewTitle] = useState(chat.title);
   const { mutate: globalMutate } = useSWRConfig();
   const inputRef = useRef<HTMLInputElement>(null);
+  const [isTouchDevice, setIsTouchDevice] = useState(false);
+
+  useEffect(() => {
+    // Check if device supports touch
+    setIsTouchDevice('ontouchstart' in window || navigator.maxTouchPoints > 0);
+  }, []);
 
   useEffect(() => {
     if (isEditing && inputRef.current) {
@@ -629,6 +703,8 @@ const PureChatItem = ({
   };
 
   const handleDragStart = (e: React.DragEvent) => {
+    const element = e.currentTarget as HTMLElement;
+    element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
     
     // Create ghost element
@@ -659,6 +735,7 @@ const PureChatItem = ({
     // Remove the ghost element and event listener after drag ends
     const cleanup = () => {
       ghost.remove();
+      element.classList.remove(styles.chatDragging);
       document.removeEventListener('dragover', updateGhostPosition as any);
       window.removeEventListener('dragend', cleanup);
       window.removeEventListener('drop', cleanup);
@@ -671,7 +748,7 @@ const PureChatItem = ({
   return (
     <SidebarMenuItem>
       <div
-        draggable
+        draggable={!isTouchDevice}
         onDragStart={handleDragStart}
         className="flex w-full"
       >
@@ -724,6 +801,95 @@ const PureChatItem = ({
               <span>Rename</span>
             </DropdownMenuItem>
 
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => {
+                globalMutate('/api/history', (currentData: any) => {
+                  if (!currentData) return currentData;
+                  
+                  const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
+                  const updatedChats = chats.map((c: Chat) => 
+                    c.id === chat.id ? { ...c, pinned: !c.pinned } : c
+                  );
+                  
+                  return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
+                }, false);
+
+                // Perform server update asynchronously
+                fetch(`/api/chat?id=${chat.id}`, {
+                  method: 'PATCH',
+                  headers: {
+                    'Content-Type': 'application/json',
+                  },
+                  body: JSON.stringify({ pinned: !chat.pinned }),
+                }).catch(() => {
+                  // Revert the optimistic update if the server request fails
+                  globalMutate('/api/history', (currentData: any) => {
+                    if (!currentData) return currentData;
+                    
+                    const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
+                    const revertedChats = chats.map((c: Chat) => 
+                      c.id === chat.id ? { ...c, pinned: chat.pinned } : c
+                    );
+                    
+                    return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
+                  }, false);
+                });
+              }}
+            >
+              <PinIcon />
+              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+            </DropdownMenuItem>
+
+            <DropdownMenuSub>
+              <DropdownMenuSubTrigger className="cursor-pointer">
+                <FolderIcon size={14} />
+                <span>Folder</span>
+              </DropdownMenuSubTrigger>
+              <DropdownMenuPortal>
+                <DropdownMenuSubContent key={folders.length}>
+                  {folders.length === 0 ? (
+                    <DropdownMenuItem className="text-muted-foreground" disabled>
+                      No folders created yet
+                    </DropdownMenuItem>
+                  ) : (
+                    folders.map((folder) => (
+                      <DropdownMenuItem
+                        key={folder.id}
+                        className="cursor-pointer flex-row justify-between"
+                        onClick={() => {
+                          const isInFolder = folder.chats.some(c => c.id === chat.id);
+                          const updatedFolders = folders.map(f => {
+                            if (f.id === folder.id) {
+                              return {
+                                ...f,
+                                chats: isInFolder 
+                                  ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
+                                  : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
+                              };
+                            }
+                            return {
+                              ...f,
+                              chats: f.chats.filter(c => c.id !== chat.id)
+                            };
+                          });
+                          setFolders(updatedFolders);
+                        }}
+                      >
+                        <div className="flex flex-row gap-2 items-center">
+                          <FolderIcon size={14} />
+                          <span>{folder.name}</span>
+                        </div>
+                        {folder.chats.some(c => c.id === chat.id) && (
+                          <CheckCircleFillIcon />
+                        )}
+                      </DropdownMenuItem>
+                    ))
+                  )}
+                </DropdownMenuSubContent>
+              </DropdownMenuPortal>
+            </DropdownMenuSub>
+
             <DropdownMenuSub aria-labelledby="chat-options-title">
               <DropdownMenuSubTrigger className="cursor-pointer">
                 <ShareIcon />
@@ -760,26 +926,6 @@ const PureChatItem = ({
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
             </DropdownMenuSub>
-
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={async () => {
-                const response = await fetch(`/api/chat?id=${chat.id}`, {
-                  method: 'PATCH',
-                  headers: {
-                    'Content-Type': 'application/json',
-                  },
-                  body: JSON.stringify({ pinned: !chat.pinned }),
-                });
-                if (response.ok) {
-                  chat.pinned = !chat.pinned; // Update local state immediately
-                  globalMutate('/api/history');
-                }
-              }}
-            >
-              <PinIcon />
-              <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
-            </DropdownMenuItem>
 
             <DropdownMenuItem
               className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
@@ -819,9 +965,20 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [folders, setFolders] = useState<Folder[]>([]);
+  const [folders, setFolders] = useState<Folder[]>(() => {
+    if (typeof window !== 'undefined') {
+      const savedFolders = localStorage.getItem('folders');
+      return savedFolders ? JSON.parse(savedFolders) : [];
+    }
+    return [];
+  });
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    localStorage.setItem('folders', JSON.stringify(folders));
+  }, [folders]);
+
   const handleDelete = async () => {
     const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
       method: 'DELETE',
@@ -939,6 +1096,40 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     <>
       <SidebarGroup>
         <SidebarGroupContent>
+          {history &&
+            (() => {
+              const groupedChats = groupChatsByDate(history);
+
+              return (
+                <SidebarMenu>
+                  {groupedChats.pinned.length > 0 && (
+                    <>
+                      <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+                        Pinned
+                      </div>
+                      {groupedChats.pinned.map((chat: Chat) => (
+                        <ChatItem
+                          key={chat.id}
+                          chat={chat}
+                          isActive={chat.id === id}
+                          onDelete={(chatId) => {
+                            setDeleteId(chatId);
+                            setShowDeleteDialog(true);
+                          }}
+                          setOpenMobile={setOpenMobile}
+                          mutate={() => {
+                            globalMutate('/api/history');
+                          }}
+                          folders={folders}
+                          setFolders={setFolders}
+                        />
+                      ))}
+                    </>
+                  )}
+                </SidebarMenu>
+              );
+            })()}
+
           <FolderSection 
             folders={folders} 
             setFolders={setFolders} 
@@ -959,29 +1150,6 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                 return (
                   <>
-                    {groupedChats.pinned.length > 0 && (
-                      <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-                          Pinned
-                        </div>
-                        {groupedChats.pinned.map((chat: Chat) => (
-                          <ChatItem
-                            key={chat.id}
-                            chat={chat}
-                            isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
-                            setOpenMobile={setOpenMobile}
-                            mutate={() => {
-                              globalMutate('/api/history');
-                            }}
-                          />
-                        ))}
-                      </>
-                    )}
-
                     {groupedChats.today.length > 0 && (
                       <>
                         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
@@ -1000,6 +1168,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
+                            folders={folders}
+                            setFolders={setFolders}
                           />
                         ))}
                       </>
@@ -1023,6 +1193,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
+                            folders={folders}
+                            setFolders={setFolders}
                           />
                         ))}
                       </>
@@ -1046,6 +1218,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
+                            folders={folders}
+                            setFolders={setFolders}
                           />
                         ))}
                       </>
@@ -1069,6 +1243,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
+                            folders={folders}
+                            setFolders={setFolders}
                           />
                         ))}
                       </>
@@ -1092,6 +1268,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
+                            folders={folders}
+                            setFolders={setFolders}
                           />
                         ))}
                       </>
