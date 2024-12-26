@@ -271,7 +271,7 @@ const FolderItem = ({
         <FolderIcon size={14} />
         <span>{folder.name}</span>
         {folder.chats.length > 0 && (
-          <span className="text-xs text-muted-foreground">({folder.chats.length})</span>
+          <span className="text-m text-muted-foreground">({folder.chats.length})</span>
         )}
       </button>
 
