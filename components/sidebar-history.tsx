@@ -20,6 +20,7 @@ import {
   ShareIcon,
   TrashIcon,
   FolderIcon,
+  PencilEditIcon,
 } from '@/components/icons';
 import {
   AlertDialog,
@@ -87,13 +88,13 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate }: {
   });
 
   return (
-    <SidebarMenuItem className="ml-6">
+    <SidebarMenuItem className="ml-6 list-none">
       <div
         draggable
         onDragStart={(e) => {
           e.dataTransfer.setData('chatId', chat.id);
         }}
-        className="flex w-full"
+        className="flex w-full items-center"
       >
         <SidebarMenuButton asChild isActive={isActive}>
           <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
@@ -201,9 +202,42 @@ const FolderItem = ({
   chats: Chat[];
   setFolders: (folders: Folder[]) => void;
 }) => {
+  const [isRenaming, setIsRenaming] = useState(false);
+  const [newName, setNewName] = useState(folder.name);
+
+  if (isRenaming) {
+    return (
+      <form
+        onSubmit={(e: React.FormEvent) => {
+          e.preventDefault();
+          if (newName.trim()) {
+            setFolders(folders.map(f => 
+              f.id === folder.id ? { ...f, name: newName.trim() } : f
+            ));
+            setIsRenaming(false);
+          }
+        }}
+        className="px-2 py-1.5"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <Input
+          type="text"
+          value={newName}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
+          autoFocus
+          onBlur={() => {
+            setNewName(folder.name);
+            setIsRenaming(false);
+          }}
+          className="h-6 text-sm"
+        />
+      </form>
+    );
+  }
+
   return (
     <div
-      className="flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer group"
+      className="group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer"
       onClick={onToggle}
       onDragOver={(e: React.DragEvent) => {
         e.preventDefault();
@@ -240,15 +274,33 @@ const FolderItem = ({
           <span className="text-xs text-muted-foreground">({folder.chats.length})</span>
         )}
       </button>
-      <button
-        onClick={(e) => {
-          e.stopPropagation();
-          onDelete();
-        }}
-        className="opacity-0 hover:text-destructive group-hover:opacity-100 transition-opacity"
-      >
-        <TrashIcon size={14} />
-      </button>
+
+      <DropdownMenu modal={true}>
+        <DropdownMenuTrigger asChild>
+          <button 
+            className="opacity-0 group-hover/folder:opacity-100 transition-opacity"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <MoreHorizontalIcon size={14} />
+          </button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent side="bottom" align="end">
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={() => setIsRenaming(true)}
+          >
+            <PencilEditIcon size={14} />
+            <span>Rename</span>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+            onSelect={onDelete}
+          >
+            <TrashIcon size={14} />
+            <span>Delete</span>
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </div>
   );
 };
@@ -289,7 +341,7 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
   };
 
   return (
-    <div className="mt-4">
+    <div className="mb-6">
       <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
         Folders
       </div>
