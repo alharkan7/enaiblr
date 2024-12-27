@@ -177,6 +177,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     const element = e.currentTarget as HTMLElement;
     element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
+    e.dataTransfer.effectAllowed = 'move';
 
     // Create ghost element
     const ghost = document.createElement('div');
@@ -190,10 +191,10 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
 
     document.body.appendChild(ghost);
 
-    // Create an empty transparent image for the default drag ghost
-    const emptyImage = new Image();
-    emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-    e.dataTransfer.setDragImage(emptyImage, 0, 0);
+    // Set empty image as drag image to hide default ghost
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(img, 0, 0);
 
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
@@ -216,6 +217,10 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     window.addEventListener('drop', cleanup);
   };
 
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent click from bubbling up to parent elements
+  };
+
   return (
     <SidebarMenuItem className="ml-6 list-none">
       <div
@@ -224,29 +229,30 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
         className="flex w-full items-center"
       >
         <SidebarMenuButton asChild isActive={isActive}>
-          <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-            {isEditing ? (
-              <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
-                <Input
-                  ref={inputRef}
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleRename();
-                    } else if (e.key === 'Escape') {
-                      setIsEditing(false);
-                      setNewTitle(chat.title);
-                    }
-                  }}
-                  onBlur={handleRename}
-                  className="h-6 py-0 px-1"
-                />
-              </div>
-            ) : (
+          {isEditing ? (
+            <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+              <Input
+                ref={inputRef}
+                value={newTitle}
+                onClick={handleInputClick}
+                onChange={(e) => setNewTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleRename();
+                  } else if (e.key === 'Escape') {
+                    setIsEditing(false);
+                    setNewTitle(chat.title);
+                  }
+                }}
+                onBlur={handleRename}
+                className="h-6 py-0 px-1"
+              />
+            </div>
+          ) : (
+            <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
               <span>{chat.title}</span>
-            )}
-          </Link>
+            </Link>
+          )}
         </SidebarMenuButton>
 
         <DropdownMenu modal={true}>
@@ -568,19 +574,22 @@ const FolderItem = ({
               />
             </form>
           ) : (
-            <div className="group relative w-full flex items-center">
+            <div className="group relative w-full flex items-center group/folder">
               <SidebarMenuButton onClick={onToggle} className="flex-1">
                 <div className="flex items-center gap-2">
                   {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
                   <FolderIcon size={14} />
-                  <span>{folder.name}</span>
+                  <span className="flex items-center gap-1">
+                    {folder.name}
+                    <span className="text-[10px] text-sidebar-foreground/50">({folder.chats.length})</span>
+                  </span>
                 </div>
               </SidebarMenuButton>
 
               <DropdownMenu modal={true}>
                 <DropdownMenuTrigger asChild>
                   <SidebarMenuAction
-                    className="absolute right-2 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    className="absolute right-2 hidden group-hover/folder:block group-hover/folder:opacity-100 data-[state=open]:opacity-100 data-[state=open]:block data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     showOnHover={true}
                   >
                     <MoreHorizontalIcon size={16} />
@@ -701,9 +710,17 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
   };
 
   return (
-    <div className="mt-6">
-      <div className="px-2 py-1 mb-1 text-xs text-sidebar-foreground/50">
-        Folders
+    <div className="mt-3">
+      <div className="px-2 py-1 mb-1 text-xs text-sidebar-foreground/50 flex justify-between items-center">
+        <span>Folders</span>
+        {!isAddingFolder && (
+          <button
+            onClick={() => setIsAddingFolder(true)}
+            className="hover:bg-muted rounded-md p-1"
+          >
+            <PlusIcon size={12} />
+          </button>
+        )}
       </div>
 
       {isAddingFolder && (
@@ -767,15 +784,6 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-      {!isAddingFolder && (
-        <button
-          onClick={() => setIsAddingFolder(true)}
-          className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md mt-1"
-        >
-          <PlusIcon size={12} />
-          <span>New Folder</span>
-        </button>
-      )}
     </div>
   );
 };
@@ -856,6 +864,7 @@ const PureChatItem = ({
     const element = e.currentTarget as HTMLElement;
     element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
+    e.dataTransfer.effectAllowed = 'move';
 
     // Create ghost element
     const ghost = document.createElement('div');
@@ -869,10 +878,10 @@ const PureChatItem = ({
 
     document.body.appendChild(ghost);
 
-    // Create an empty transparent image for the default drag ghost
-    const emptyImage = new Image();
-    emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-    e.dataTransfer.setDragImage(emptyImage, 0, 0);
+    // Set empty image as drag image to hide default ghost
+    const img = new Image();
+    img.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+    e.dataTransfer.setDragImage(img, 0, 0);
 
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
@@ -895,6 +904,10 @@ const PureChatItem = ({
     window.addEventListener('drop', cleanup);
   };
 
+  const handleInputClick = (e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent click from bubbling up to parent elements
+  };
+
   return (
     <SidebarMenuItem>
       <div
@@ -903,29 +916,30 @@ const PureChatItem = ({
         className="flex w-full"
       >
         <SidebarMenuButton asChild isActive={isActive}>
-          <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-            {isEditing ? (
-              <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
-                <Input
-                  ref={inputRef}
-                  value={newTitle}
-                  onChange={(e) => setNewTitle(e.target.value)}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter') {
-                      handleRename();
-                    } else if (e.key === 'Escape') {
-                      setIsEditing(false);
-                      setNewTitle(chat.title);
-                    }
-                  }}
-                  onBlur={handleRename}
-                  className="h-6 py-0 px-1"
-                />
-              </div>
-            ) : (
+          {isEditing ? (
+            <div className="flex items-center gap-2 w-full" onClick={(e) => e.preventDefault()}>
+              <Input
+                ref={inputRef}
+                value={newTitle}
+                onClick={handleInputClick}
+                onChange={(e) => setNewTitle(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleRename();
+                  } else if (e.key === 'Escape') {
+                    setIsEditing(false);
+                    setNewTitle(chat.title);
+                  }
+                }}
+                onBlur={handleRename}
+                className="h-6 py-0 px-1"
+              />
+            </div>
+          ) : (
+            <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
               <span>{chat.title}</span>
-            )}
-          </Link>
+            </Link>
+          )}
         </SidebarMenuButton>
 
         <DropdownMenu modal={true}>
@@ -1372,7 +1386,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.yesterday.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-3">
                           Yesterday
                         </div>
                         {groupedChats.yesterday.map((chat: Chat) => (
@@ -1397,7 +1411,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.lastWeek.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-3">
                           Last 7 days
                         </div>
                         {groupedChats.lastWeek.map((chat: Chat) => (
@@ -1422,7 +1436,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.lastMonth.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-3">
                           Last 30 days
                         </div>
                         {groupedChats.lastMonth.map((chat: Chat) => (
@@ -1447,7 +1461,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
                     {groupedChats.older.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-6">
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-3">
                           Older
                         </div>
                         {groupedChats.older.map((chat: Chat) => (
