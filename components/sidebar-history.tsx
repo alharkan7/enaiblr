@@ -7,6 +7,7 @@ import type { User } from 'next-auth';
 import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
+import { Button } from "@/components/ui/button";
 
 import {
   CheckCircleFillIcon,
@@ -95,7 +96,7 @@ const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFolder: bo
         if (f.id === folder.id) {
           return {
             ...f,
-            chats: isInFolder 
+            chats: isInFolder
               ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
               : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
           };
@@ -176,7 +177,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     const element = e.currentTarget as HTMLElement;
     element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
-    
+
     // Create ghost element
     const ghost = document.createElement('div');
     ghost.className = styles.chatDragGhost;
@@ -186,22 +187,22 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
       </svg>
       <span>${chat.title}</span>
     `;
-    
+
     document.body.appendChild(ghost);
-    
+
     // Create an empty transparent image for the default drag ghost
     const emptyImage = new Image();
     emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
     e.dataTransfer.setDragImage(emptyImage, 0, 0);
-    
+
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
       ghost.style.left = e.pageX + 15 + 'px';
       ghost.style.top = e.pageY + 15 + 'px';
     };
-    
+
     document.addEventListener('dragover', updateGhostPosition as any);
-    
+
     // Remove the ghost element and event listener after drag ends
     const cleanup = () => {
       ghost.remove();
@@ -210,7 +211,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
       window.removeEventListener('dragend', cleanup);
       window.removeEventListener('drop', cleanup);
     };
-    
+
     window.addEventListener('dragend', cleanup);
     window.addEventListener('drop', cleanup);
   };
@@ -277,12 +278,12 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                 chatMutate();
                 globalMutate('/api/history', (currentData: any) => {
                   if (!currentData) return currentData;
-                  
+
                   const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                  const updatedChats = chats.map((c: Chat) => 
+                  const updatedChats = chats.map((c: Chat) =>
                     c.id === chat.id ? { ...c, pinned: !c.pinned } : c
                   );
-                  
+
                   return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
                 }, false);
 
@@ -298,12 +299,12 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                   chatMutate();
                   globalMutate('/api/history', (currentData: any) => {
                     if (!currentData) return currentData;
-                    
+
                     const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                    const revertedChats = chats.map((c: Chat) => 
+                    const revertedChats = chats.map((c: Chat) =>
                       c.id === chat.id ? { ...c, pinned: chat.pinned } : c
                     );
-                    
+
                     return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
                   }, false);
                 });
@@ -403,13 +404,13 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
   );
 };
 
-const FolderItem = ({ 
-  folder, 
-  isExpanded, 
-  onToggle, 
+const FolderItem = ({
+  folder,
+  isExpanded,
+  onToggle,
   folders,
   chats,
-  setFolders 
+  setFolders
 }: {
   folder: Folder;
   isExpanded: boolean;
@@ -419,7 +420,71 @@ const FolderItem = ({
   setFolders: (folders: Folder[]) => void;
 }) => {
   const [isDropTarget, setIsDropTarget] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const [newName, setNewName] = useState(folder.name);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: globalMutate } = useSWRConfig();
+
+  const handleRename = async () => {
+    try {
+      // Optimistic update
+      const updatedFolders = folders.map(f => 
+        f.id === folder.id ? { ...f, name: newName } : f
+      );
+      setFolders(updatedFolders);
+      setIsEditing(false);
+
+      // Update server
+      const response = await fetch(`/api/folder`, {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: folder.id,
+          action: 'rename',
+          name: newName
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to rename folder');
+      }
+
+      toast.success('Folder renamed successfully');
+      globalMutate('/api/folder');
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+      toast.error('Failed to rename folder');
+      // Revert optimistic update
+      globalMutate('/api/folder');
+    }
+  };
+
+  const handleDelete = async () => {
+    try {
+      // Optimistic update
+      const updatedFolders = folders.filter(f => f.id !== folder.id);
+      setFolders(updatedFolders);
+      setShowDeleteDialog(false);
+
+      // Update server
+      const response = await fetch(`/api/folder?id=${folder.id}`, {
+        method: 'DELETE',
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to delete folder');
+      }
+
+      toast.success('Folder deleted successfully');
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      toast.error('Failed to delete folder');
+      // Revert optimistic update
+      globalMutate('/api/folder');
+    }
+  };
 
   const handleDrop = async (e: React.DragEvent) => {
     e.preventDefault();
@@ -431,7 +496,7 @@ const FolderItem = ({
     if (!chat) return;
 
     const isInFolder = folder.chats?.some(c => c.id === chatId) ?? false;
-    if (isInFolder) return; // Don't do anything if the chat is already in this folder
+    if (isInFolder) return;
 
     try {
       // Optimistic update
@@ -469,13 +534,13 @@ const FolderItem = ({
     } catch (error) {
       console.error('Failed to update chat in folder:', error);
       toast.error('Failed to update folder');
-      // Revert optimistic update on error
+      // Revert optimistic update
       globalMutate('/api/history');
     }
   };
 
   return (
-    <div 
+    <div
       className={`relative ${isDropTarget ? 'bg-accent/50' : ''}`}
       onDragOver={(e) => {
         e.preventDefault();
@@ -485,13 +550,63 @@ const FolderItem = ({
       onDrop={handleDrop}
     >
       <SidebarGroup>
-        <SidebarMenuButton onClick={onToggle}>
-          <div className="flex items-center gap-2">
-            {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
-            <FolderIcon size={14} />
-            <span>{folder.name}</span>
-          </div>
-        </SidebarMenuButton>
+        <div className="flex items-center justify-between">
+          {isEditing ? (
+            <form
+              onSubmit={(e) => {
+                e.preventDefault();
+                handleRename();
+              }}
+              className="px-2"
+            >
+              <Input
+                type="text"
+                value={newName}
+                onChange={(e) => setNewName(e.target.value)}
+                autoFocus
+                onBlur={handleRename}
+              />
+            </form>
+          ) : (
+            <div className="group relative w-full flex items-center">
+              <SidebarMenuButton onClick={onToggle} className="flex-1">
+                <div className="flex items-center gap-2">
+                  {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+                  <FolderIcon size={14} />
+                  <span>{folder.name}</span>
+                </div>
+              </SidebarMenuButton>
+
+              <DropdownMenu modal={true}>
+                <DropdownMenuTrigger asChild>
+                  <SidebarMenuAction
+                    className="absolute right-2 opacity-0 group-hover:opacity-100 data-[state=open]:opacity-100 data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                    showOnHover={true}
+                  >
+                    <MoreHorizontalIcon size={16} />
+                    <span className="sr-only">More</span>
+                  </SidebarMenuAction>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => {
+                    setNewName(folder.name);
+                    setIsEditing(true);
+                  }}>
+                    <PencilEditIcon size={16} />
+                    <span>Rename</span>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem 
+                    onClick={() => setShowDeleteDialog(true)}
+                    className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+                  >
+                    <TrashIcon size={16} />
+                    <span>Delete</span>
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+        </div>
 
         {isExpanded && (
           <SidebarGroupContent>
@@ -500,8 +615,8 @@ const FolderItem = ({
                 key={chat.id}
                 chat={chat}
                 isActive={false}
-                onDelete={() => {}}
-                setOpenMobile={() => {}}
+                onDelete={() => { }}
+                setOpenMobile={() => { }}
                 mutate={() => globalMutate('/api/history')}
                 folders={folders}
                 setFolders={setFolders}
@@ -510,6 +625,23 @@ const FolderItem = ({
           </SidebarGroupContent>
         )}
       </SidebarGroup>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            Are you sure you want to delete this folder? The chats inside will not be deleted.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleDelete}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
@@ -544,7 +676,7 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
   };
 
   const toggleFolder = (folderId: string) => {
-    setFolders(folders.map(f => 
+    setFolders(folders.map(f =>
       f.id === folderId ? { ...f, isExpanded: f.isExpanded ? false : true } : f
     ));
   };
@@ -558,9 +690,9 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
         },
         body: JSON.stringify({ name }),
       });
-      
+
       if (!response.ok) throw new Error('Failed to create folder');
-      
+
       const newFolder = await response.json();
       setFolders([...folders, { ...newFolder, chats: [] }]);
     } catch (error) {
@@ -601,10 +733,10 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
         dark:hover:scrollbar-thumb-gray-500 hover:scrollbar-thumb-rounded-full">
         {folders.map((folder) => (
           <div key={folder.id}>
-            <FolderItem 
-              folder={folder} 
+            <FolderItem
+              folder={folder}
               isExpanded={folder.isExpanded ?? false}
-              onToggle={() => toggleFolder(folder.id)} 
+              onToggle={() => toggleFolder(folder.id)}
               folders={folders}
               chats={chats}
               setFolders={setFolders}
@@ -640,7 +772,7 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
           onClick={() => setIsAddingFolder(true)}
           className="w-full flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md mt-1"
         >
-          <PlusIcon size={16} />
+          <PlusIcon size={12} />
           <span>New Folder</span>
         </button>
       )}
@@ -724,7 +856,7 @@ const PureChatItem = ({
     const element = e.currentTarget as HTMLElement;
     element.classList.add(styles.chatDragging);
     e.dataTransfer.setData('chatId', chat.id);
-    
+
     // Create ghost element
     const ghost = document.createElement('div');
     ghost.className = styles.chatDragGhost;
@@ -734,22 +866,22 @@ const PureChatItem = ({
       </svg>
       <span>${chat.title}</span>
     `;
-    
+
     document.body.appendChild(ghost);
-    
+
     // Create an empty transparent image for the default drag ghost
     const emptyImage = new Image();
     emptyImage.src = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
     e.dataTransfer.setDragImage(emptyImage, 0, 0);
-    
+
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
       ghost.style.left = e.pageX + 15 + 'px';
       ghost.style.top = e.pageY + 15 + 'px';
     };
-    
+
     document.addEventListener('dragover', updateGhostPosition as any);
-    
+
     // Remove the ghost element and event listener after drag ends
     const cleanup = () => {
       ghost.remove();
@@ -758,7 +890,7 @@ const PureChatItem = ({
       window.removeEventListener('dragend', cleanup);
       window.removeEventListener('drop', cleanup);
     };
-    
+
     window.addEventListener('dragend', cleanup);
     window.addEventListener('drop', cleanup);
   };
@@ -825,12 +957,12 @@ const PureChatItem = ({
                 chatMutate();
                 globalMutate('/api/history', (currentData: any) => {
                   if (!currentData) return currentData;
-                  
+
                   const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                  const updatedChats = chats.map((c: Chat) => 
+                  const updatedChats = chats.map((c: Chat) =>
                     c.id === chat.id ? { ...c, pinned: !c.pinned } : c
                   );
-                  
+
                   return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
                 }, false);
 
@@ -846,12 +978,12 @@ const PureChatItem = ({
                   chatMutate();
                   globalMutate('/api/history', (currentData: any) => {
                     if (!currentData) return currentData;
-                    
+
                     const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                    const revertedChats = chats.map((c: Chat) => 
+                    const revertedChats = chats.map((c: Chat) =>
                       c.id === chat.id ? { ...c, pinned: chat.pinned } : c
                     );
-                    
+
                     return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
                   }, false);
                 });
@@ -886,7 +1018,7 @@ const PureChatItem = ({
                                 if (f.id === folder.id) {
                                   return {
                                     ...f,
-                                    chats: isInFolder 
+                                    chats: isInFolder
                                       ? (f.chats || []).filter(c => c.id !== chat.id)
                                       : [...(f.chats || []).filter(c => c.id !== chat.id), chat]
                                   };
@@ -897,7 +1029,7 @@ const PureChatItem = ({
                                 };
                               });
                               setFolders(updatedFolders);
-                              
+
                               // Update server
                               const response = await fetch(`/api/chat?id=${chat.id}`, {
                                 method: 'PATCH',
@@ -1081,7 +1213,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     return (
       <SidebarGroup>
         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-          Today
+          Pinned
         </div>
         <SidebarGroupContent>
           <div className="flex flex-col">
@@ -1193,16 +1325,16 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
               );
             })()}
 
-          <FolderSection 
-            folders={folders} 
-            setFolders={setFolders} 
-            chats={history ?? []} 
-            setOpenMobile={setOpenMobile} 
+          <FolderSection
+            folders={folders}
+            setFolders={setFolders}
+            chats={history ?? []}
+            setOpenMobile={setOpenMobile}
             onDeleteChat={(chatId) => {
               setDeleteId(chatId);
               setShowDeleteDialog(true);
-            }} 
-            activeChatId={typeof id === 'string' ? id : undefined} 
+            }}
+            activeChatId={typeof id === 'string' ? id : undefined}
             isAddingFolder={isAddingFolder}
             setIsAddingFolder={setIsAddingFolder}
           />
