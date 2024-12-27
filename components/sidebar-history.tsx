@@ -4,7 +4,7 @@ import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
-import { memo, useEffect, useState, useRef, useCallback, useMemo } from 'react';
+import { memo, useEffect, useState, useRef, useCallback } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -76,7 +76,48 @@ interface FolderSectionProps {
   setIsAddingFolder: (isAddingFolder: boolean) => void;
 }
 
-const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, folders, setFolders }: {
+const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFolder: boolean, folders: Folder[], setFolders: (folders: Folder[]) => void, mutate: () => void) => {
+  try {
+    const response = await fetch('/api/folder', {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        id: folder.id,
+        chatId: chat.id,
+        action: isInFolder ? 'removeChat' : 'addChat'
+      }),
+    });
+
+    if (response.ok) {
+      const updatedFolders = folders.map(f => {
+        if (f.id === folder.id) {
+          return {
+            ...f,
+            chats: isInFolder 
+              ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
+              : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
+          };
+        }
+        return {
+          ...f,
+          chats: f.chats.filter(c => c.id !== chat.id)
+        };
+      });
+      setFolders(updatedFolders);
+      mutate(); // Refresh folders data
+      toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
+    } else {
+      throw new Error('Failed to update folder');
+    }
+  } catch (error) {
+    console.error('Failed to update chat in folder:', error);
+    toast.error('Failed to update folder');
+  }
+};
+
+const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: chatMutate, folders, setFolders }: {
   chat: Chat;
   isActive: boolean;
   onDelete: (chatId: string) => void;
@@ -85,13 +126,13 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
   folders: Folder[];
   setFolders: (folders: Folder[]) => void;
 }) => {
+  const { mutate: globalMutate } = useSWRConfig();
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
     initialVisibility: chat.visibility,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(chat.title);
-  const { mutate: globalMutate } = useSWRConfig();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
@@ -124,7 +165,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
     if (response.ok) {
       setIsEditing(false);
       chat.title = newTitle; // Update local state immediately
-      globalMutate('/api/history'); // Refresh from server
+      chatMutate(); // Refresh from server
     } else {
       toast.error('Failed to rename chat');
       setNewTitle(chat.title);
@@ -233,6 +274,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => {
+                chatMutate();
                 globalMutate('/api/history', (currentData: any) => {
                   if (!currentData) return currentData;
                   
@@ -253,6 +295,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
                   body: JSON.stringify({ pinned: !chat.pinned }),
                 }).catch(() => {
                   // Revert the optimistic update if the server request fails
+                  chatMutate();
                   globalMutate('/api/history', (currentData: any) => {
                     if (!currentData) return currentData;
                     
@@ -288,21 +331,10 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
                         className="cursor-pointer flex-row justify-between"
                         onClick={() => {
                           const isInFolder = folder.chats.some(c => c.id === chat.id);
-                          const updatedFolders = folders.map(f => {
-                            if (f.id === folder.id) {
-                              return {
-                                ...f,
-                                chats: isInFolder 
-                                  ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
-                                  : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
-                              };
-                            }
-                            return {
-                              ...f,
-                              chats: f.chats.filter(c => c.id !== chat.id)
-                            };
+                          handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
+                            globalMutate('/api/folder');
+                            chatMutate();
                           });
-                          setFolders(updatedFolders);
                         }}
                       >
                         <div className="flex flex-row gap-2 items-center">
@@ -390,6 +422,7 @@ const FolderItem = ({
   const [newName, setNewName] = useState(folder.name);
   const [isDragOver, setIsDragOver] = useState(false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const { mutate } = useSWRConfig();
 
   const onDeleteFolder = async () => {
     try {
@@ -398,9 +431,9 @@ const FolderItem = ({
       });
       
       if (response.ok) {
-        // Only update expanded state, actual folder list will be updated via SWR
         const updatedFolders = folders.filter(f => f.id !== folder.id);
         setFolders(updatedFolders);
+        mutate('/api/folder'); // Refresh folders data
         toast.success('Folder deleted successfully');
       }
     } catch (error) {
@@ -433,11 +466,11 @@ const FolderItem = ({
       });
 
       if (response.ok) {
-        // Only update expanded state, actual folder list will be updated via SWR
         const updatedFolders = folders.map(f =>
-          f.id === folder.id ? { ...f, isExpanded: f.isExpanded } : f
+          f.id === folder.id ? { ...f, name: newName.trim() } : f
         );
         setFolders(updatedFolders);
+        mutate('/api/folder'); // Refresh folders data
       } else {
         throw new Error('Failed to rename folder');
       }
@@ -573,7 +606,7 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
   const [newFolderName, setNewFolderName] = useState('');
   const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
   const [showDeleteFolderDialog, setShowDeleteFolderDialog] = useState(false);
-  const { mutate } = useSWR('/api/chat');
+  const { mutate: globalMutate } = useSWRConfig();
 
   const handleDrop = (e: React.DragEvent, folderId: string) => {
     e.preventDefault();
@@ -671,7 +704,9 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
                 isActive={chat.id === activeChatId}
                 onDelete={onDeleteChat}
                 setOpenMobile={setOpenMobile}
-                mutate={mutate}
+                mutate={() => {
+                  globalMutate('/api/history');
+                }}
                 folders={folders}
                 setFolders={setFolders}
               />
@@ -729,7 +764,7 @@ const PureChatItem = ({
   isActive,
   onDelete,
   setOpenMobile,
-  mutate,
+  mutate: chatMutate,
   folders,
   setFolders,
 }: {
@@ -741,13 +776,13 @@ const PureChatItem = ({
   folders: Folder[];
   setFolders: (folders: Folder[]) => void;
 }) => {
+  const { mutate: globalMutate } = useSWRConfig();
   const { visibilityType, setVisibilityType } = useChatVisibility({
     chatId: chat.id,
     initialVisibility: chat.visibility,
   });
   const [isEditing, setIsEditing] = useState(false);
   const [newTitle, setNewTitle] = useState(chat.title);
-  const { mutate: globalMutate } = useSWRConfig();
   const inputRef = useRef<HTMLInputElement>(null);
   const [isTouchDevice, setIsTouchDevice] = useState(false);
 
@@ -780,7 +815,7 @@ const PureChatItem = ({
     if (response.ok) {
       setIsEditing(false);
       chat.title = newTitle; // Update local state immediately
-      globalMutate('/api/history'); // Refresh from server
+      chatMutate(); // Refresh from server
     } else {
       toast.error('Failed to rename chat');
       setNewTitle(chat.title);
@@ -889,6 +924,7 @@ const PureChatItem = ({
             <DropdownMenuItem
               className="cursor-pointer"
               onClick={() => {
+                chatMutate();
                 globalMutate('/api/history', (currentData: any) => {
                   if (!currentData) return currentData;
                   
@@ -909,6 +945,7 @@ const PureChatItem = ({
                   body: JSON.stringify({ pinned: !chat.pinned }),
                 }).catch(() => {
                   // Revert the optimistic update if the server request fails
+                  chatMutate();
                   globalMutate('/api/history', (currentData: any) => {
                     if (!currentData) return currentData;
                     
@@ -933,43 +970,69 @@ const PureChatItem = ({
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
                 <DropdownMenuSubContent key={folders.length}>
-                  {folders.length === 0 ? (
+                  {!folders || folders.length === 0 ? (
                     <DropdownMenuItem className="text-muted-foreground whitespace-normal max-w-[100px]" disabled>
                       No folders created yet
                     </DropdownMenuItem>
                   ) : (
-                    folders.map((folder) => (
-                      <DropdownMenuItem
-                        key={folder.id}
-                        className="cursor-pointer flex-row justify-between"
-                        onClick={() => {
-                          const isInFolder = folder.chats.some(c => c.id === chat.id);
-                          const updatedFolders = folders.map(f => {
-                            if (f.id === folder.id) {
-                              return {
-                                ...f,
-                                chats: isInFolder 
-                                  ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
-                                  : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
-                              };
+                    folders.map((folder) => {
+                      const isInFolder = folder.chats?.some(c => c.id === chat.id) ?? false;
+                      return (
+                        <DropdownMenuItem
+                          key={folder.id}
+                          className="cursor-pointer flex-row justify-between"
+                          onClick={async () => {
+                            try {
+                              const response = await fetch('/api/folder', {
+                                method: 'PATCH',
+                                headers: {
+                                  'Content-Type': 'application/json',
+                                },
+                                body: JSON.stringify({
+                                  id: folder.id,
+                                  chatId: chat.id,
+                                  action: isInFolder ? 'removeChat' : 'addChat'
+                                }),
+                              });
+
+                              if (response.ok) {
+                                const updatedFolders = folders.map(f => {
+                                  if (f.id === folder.id) {
+                                    return {
+                                      ...f,
+                                      chats: isInFolder 
+                                        ? (f.chats || []).filter(c => c.id !== chat.id)
+                                        : [...(f.chats || []).filter(c => c.id !== chat.id), chat]
+                                    };
+                                  }
+                                  return {
+                                    ...f,
+                                    chats: (f.chats || []).filter(c => c.id !== chat.id)
+                                  };
+                                });
+                                setFolders(updatedFolders);
+                                globalMutate('/api/folder');
+                                chatMutate();
+                                toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
+                              } else {
+                                throw new Error('Failed to update folder');
+                              }
+                            } catch (error) {
+                              console.error('Failed to update chat in folder:', error);
+                              toast.error('Failed to update folder');
                             }
-                            return {
-                              ...f,
-                              chats: f.chats.filter(c => c.id !== chat.id)
-                            };
-                          });
-                          setFolders(updatedFolders);
-                        }}
-                      >
-                        <div className="flex flex-row gap-2 items-center">
-                          <FolderIcon size={14} />
-                          <span>{folder.name}</span>
-                        </div>
-                        {folder.chats.some(c => c.id === chat.id) && (
-                          <CheckCircleFillIcon />
-                        )}
-                      </DropdownMenuItem>
-                    ))
+                          }}
+                        >
+                          <div className="flex flex-row gap-2 items-center">
+                            <FolderIcon size={14} />
+                            <span>{folder.name}</span>
+                          </div>
+                          {isInFolder && (
+                            <CheckCircleFillIcon />
+                          )}
+                        </DropdownMenuItem>
+                      );
+                    })
                   )}
                 </DropdownMenuSubContent>
               </DropdownMenuPortal>
@@ -1038,57 +1101,67 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const { mutate: globalMutate } = useSWRConfig();
   const {
     data: history,
-    isLoading,
+    isLoading: isLoadingHistory,
     mutate: historyMutate,
   } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetcher, {
     fallbackData: [],
   });
 
   const {
-    data: fetchedFolders,
+    data: dbFolders,
+    isLoading: isLoadingFolders,
     mutate: foldersMutate,
-  } = useSWR<Array<Folder>>(user ? '/api/folder' : null, fetcher, {
-    fallbackData: [],
-  });
-
-  useEffect(() => {
-    historyMutate();
-  }, [pathname, historyMutate]);
+  } = useSWR<Array<Folder>>(
+    user ? '/api/folder' : null,
+    fetcher,
+    {
+      fallbackData: [],
+      onSuccess: (data) => {
+        // Update folders when data changes
+        if (data) {
+          const updatedFolders = data.map(folder => ({
+            ...folder,
+            chats: Array.isArray(folder.chats) ? folder.chats : [],
+            isExpanded: false
+          }));
+          setFolders(updatedFolders);
+        }
+      }
+    }
+  );
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-
-  // Get expanded state from localStorage
-  const [expandedFolderIds, setExpandedFolderIds] = useState<string[]>(() => {
-    if (typeof window !== 'undefined') {
-      const savedState = localStorage.getItem('expandedFolderIds');
-      return savedState ? JSON.parse(savedState) : [];
-    }
-    return [];
-  });
-
-  // Combine fetched folders with expanded state
-  const folders = useMemo(() => {
-    return fetchedFolders?.map(folder => ({
-      ...folder,
-      isExpanded: expandedFolderIds.includes(folder.id)
-    })) || [];
-  }, [fetchedFolders, expandedFolderIds]);
-
-  const setFolders = useCallback((newFolders: Folder[]) => {
-    // Update expanded state in localStorage
-    const newExpandedIds = newFolders
-      .filter(f => f.isExpanded)
-      .map(f => f.id);
-    localStorage.setItem('expandedFolderIds', JSON.stringify(newExpandedIds));
-    setExpandedFolderIds(newExpandedIds);
-    
-    // Trigger refetch of folders
-    foldersMutate();
-  }, [foldersMutate]);
-
+  const [folders, setFolders] = useState<Folder[]>([]);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
+
+  // Only mutate on pathname change
+  useEffect(() => {
+    historyMutate();
+    foldersMutate();
+  }, [pathname]);
+
+  const handleDelete = async () => {
+    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
+      method: 'DELETE',
+    });
+
+    toast.promise(deletePromise, {
+      loading: 'Deleting chat...',
+      success: () => {
+        globalMutate('/api/history');
+        return 'Chat deleted successfully';
+      },
+      error: 'Failed to delete chat',
+    });
+
+    setShowDeleteDialog(false);
+
+    if (deleteId === id) {
+      router.push('/');
+    }
+  };
 
   if (!user) {
     return (
@@ -1102,7 +1175,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     );
   }
 
-  if (isLoading) {
+  if (isLoadingHistory || isLoadingFolders) {
     return (
       <SidebarGroup>
         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
@@ -1380,28 +1453,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-                  method: 'DELETE',
-                });
-
-                toast.promise(deletePromise, {
-                  loading: 'Deleting chat...',
-                  success: () => {
-                    globalMutate('/api/history');
-                    return 'Chat deleted successfully';
-                  },
-                  error: 'Failed to delete chat',
-                });
-
-                setShowDeleteDialog(false);
-
-                if (deleteId === id) {
-                  router.push('/');
-                }
-              }}
-            >
+            <AlertDialogAction onClick={handleDelete}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
