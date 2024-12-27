@@ -1,30 +1,31 @@
 import 'server-only';
 
 import { genSaltSync, hashSync } from 'bcrypt-ts';
-import { and, asc, desc, eq, gt, gte } from 'drizzle-orm';
-import { drizzle } from 'drizzle-orm/postgres-js';
-import postgres from 'postgres';
+import { eq, and, asc, desc, gt, gte } from 'drizzle-orm';
+import { type InferSelectModel } from 'drizzle-orm';
 
+import { db } from './';
 import {
   user,
   chat,
+  message,
+  vote,
+  folder,
+  chatToFolder,
   type User,
+  type Chat,
+  type Folder,
+  type ChatToFolder,
+  type Message,
   document,
   type Suggestion,
   suggestion,
-  type Message,
-  message,
-  vote,
 } from './schema';
 import { BlockKind } from '@/components/block';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
-
-// biome-ignore lint: Forbidden non-null assertion.
-const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client);
 
 export async function getUser(email: string): Promise<Array<User>> {
   try {
@@ -360,4 +361,76 @@ export async function updateChatTitle({
     console.error('Failed to update chat title in database');
     throw error;
   }
+}
+
+// Folder queries
+export async function getFoldersByUserId(userId: string) {
+  return await db
+    .select()
+    .from(folder)
+    .where(eq(folder.userId, userId));
+}
+
+export async function getFolderWithChats(folderId: string) {
+  const result = await db
+    .select({
+      folder: folder,
+      chat: chat,
+    })
+    .from(folder)
+    .leftJoin(chatToFolder, eq(folder.id, chatToFolder.folderId))
+    .leftJoin(chat, eq(chatToFolder.chatId, chat.id))
+    .where(eq(folder.id, folderId));
+
+  // Group chats by folder
+  const folderWithChats = result.reduce<{ folder: Folder | null; chats: Chat[] }>((acc, row) => {
+    if (!acc.folder && row.folder) {
+      acc.folder = row.folder;
+    }
+    if (row.chat) {
+      acc.chats.push(row.chat);
+    }
+    return acc;
+  }, { folder: null, chats: [] });
+
+  return folderWithChats;
+}
+
+export async function createFolder(data: { name: string; userId: string }) {
+  const [newFolder] = await db
+    .insert(folder)
+    .values({
+      ...data,
+      createdAt: new Date(),
+    })
+    .returning();
+  return newFolder;
+}
+
+export async function updateFolder(id: string, data: { name: string }) {
+  const [updatedFolder] = await db
+    .update(folder)
+    .set(data)
+    .where(eq(folder.id, id))
+    .returning();
+  return updatedFolder;
+}
+
+export async function deleteFolder(id: string) {
+  await db.delete(folder).where(eq(folder.id, id));
+}
+
+export async function addChatToFolder(chatId: string, folderId: string) {
+  await db.insert(chatToFolder).values({ chatId, folderId });
+}
+
+export async function removeChatFromFolder(chatId: string, folderId: string) {
+  await db
+    .delete(chatToFolder)
+    .where(
+      and(
+        eq(chatToFolder.chatId, chatId),
+        eq(chatToFolder.folderId, folderId)
+      )
+    );
 }

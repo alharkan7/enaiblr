@@ -278,7 +278,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate, fol
               <DropdownMenuPortal>
                 <DropdownMenuSubContent key={folders.length}>
                   {folders.length === 0 ? (
-                    <DropdownMenuItem className="text-muted-foreground" disabled>
+                    <DropdownMenuItem className="text-muted-foreground whitespace-normal max-w-[200px]" disabled>
                       No folders created yet
                     </DropdownMenuItem>
                   ) : (
@@ -375,7 +375,6 @@ const FolderItem = ({
   folder, 
   isExpanded, 
   onToggle, 
-  onDelete,
   folders,
   chats,
   setFolders 
@@ -383,7 +382,6 @@ const FolderItem = ({
   folder: Folder;
   isExpanded: boolean;
   onToggle: () => void;
-  onDelete: () => void;
   folders: Folder[];
   chats: Chat[];
   setFolders: (folders: Folder[]) => void;
@@ -391,109 +389,181 @@ const FolderItem = ({
   const [isRenaming, setIsRenaming] = useState(false);
   const [newName, setNewName] = useState(folder.name);
   const [isDragOver, setIsDragOver] = useState(false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+
+  const onDeleteFolder = async () => {
+    try {
+      const response = await fetch(`/api/folder?id=${folder.id}`, {
+        method: 'DELETE',
+      });
+      
+      if (response.ok) {
+        const updatedFolders = folders.filter(f => f.id !== folder.id);
+        setFolders(updatedFolders);
+        toast.success('Folder deleted successfully');
+      }
+    } catch (error) {
+      console.error('Failed to delete folder:', error);
+      toast.error('Failed to delete folder');
+    }
+    setShowDeleteDialog(false);
+  };
+
+  const handleRename = async () => {
+    if (newName.trim() === folder.name || !newName.trim()) {
+      setIsRenaming(false);
+      setNewName(folder.name);
+      return;
+    }
+
+    const oldName = folder.name;
+    
+    try {
+      const response = await fetch('/api/folder', {
+        method: 'PATCH',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          id: folder.id,
+          name: newName.trim(),
+          action: 'rename'
+        }),
+      });
+
+      if (response.ok) {
+        const updatedFolders = folders.map(f =>
+          f.id === folder.id ? { ...f, name: newName.trim() } : f
+        );
+        setFolders(updatedFolders);
+      } else {
+        throw new Error('Failed to rename folder');
+      }
+    } catch (error) {
+      console.error('Failed to rename folder:', error);
+      setNewName(oldName);
+      toast.error('Failed to rename folder');
+    }
+    setIsRenaming(false);
+  };
 
   if (isRenaming) {
     return (
       <form
         onSubmit={(e: React.FormEvent) => {
           e.preventDefault();
-          if (newName.trim()) {
-            setFolders(folders.map(f => 
-              f.id === folder.id ? { ...f, name: newName.trim() } : f
-            ));
-            setIsRenaming(false);
-          }
+          handleRename();
         }}
         className="px-2 py-1.5"
         onClick={(e) => e.stopPropagation()}
       >
         <Input
-          type="text"
           value={newName}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewName(e.target.value)}
-          autoFocus
-          onBlur={() => {
-            setNewName(folder.name);
-            setIsRenaming(false);
+          onChange={(e) => setNewName(e.target.value)}
+          onBlur={handleRename}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') {
+              setIsRenaming(false);
+              setNewName(folder.name);
+            }
           }}
-          className="h-6 text-sm"
+          className="h-6 py-0 px-1"
         />
       </form>
     );
   }
 
   return (
-    <div
-      className={`group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer ${styles.folderDropTarget} ${isDragOver ? styles.canDrop : ''}`}
-      onClick={onToggle}
-      onDragOver={(e: React.DragEvent) => {
-        e.preventDefault();
-        e.dataTransfer.dropEffect = 'move';
-        setIsDragOver(true);
-      }}
-      onDragLeave={() => {
-        setIsDragOver(false);
-      }}
-      onDrop={(e: React.DragEvent) => {
-        e.preventDefault();
-        setIsDragOver(false);
-        const chatId = e.dataTransfer.getData('chatId');
-        if (chatId) {
-          const chat = chats.find(c => c.id === chatId);
-          if (chat) {
-            const updatedFolders = folders.map(f => {
-              if (f.id === folder.id) {
+    <>
+      <div
+        className={`group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer ${styles.folderDropTarget} ${isDragOver ? styles.canDrop : ''}`}
+        onClick={onToggle}
+        onDragOver={(e: React.DragEvent) => {
+          e.preventDefault();
+          e.dataTransfer.dropEffect = 'move';
+          setIsDragOver(true);
+        }}
+        onDragLeave={() => {
+          setIsDragOver(false);
+        }}
+        onDrop={(e: React.DragEvent) => {
+          e.preventDefault();
+          setIsDragOver(false);
+          const chatId = e.dataTransfer.getData('chatId');
+          if (chatId) {
+            const chat = chats.find(c => c.id === chatId);
+            if (chat) {
+              const updatedFolders = folders.map(f => {
+                if (f.id === folder.id) {
+                  return {
+                    ...f,
+                    chats: [...f.chats.filter(c => c.id !== chatId), chat]
+                  };
+                }
                 return {
                   ...f,
-                  chats: [...f.chats.filter(c => c.id !== chatId), chat]
+                  chats: f.chats.filter(c => c.id !== chatId)
                 };
-              }
-              return {
-                ...f,
-                chats: f.chats.filter(c => c.id !== chatId)
-              };
-            });
-            setFolders(updatedFolders);
+              });
+              setFolders(updatedFolders);
+            }
           }
-        }
-      }}
-    >
-      <button className="flex items-center gap-2 flex-1">
-        {isExpanded ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
-        <FolderIcon size={14} />
-        <span>{folder.name}</span>
-        {folder.chats.length > 0 && (
-          <span className="text-m text-muted-foreground">({folder.chats.length})</span>
-        )}
-      </button>
+        }}
+      >
+        <button className="flex items-center gap-2 flex-1">
+          {isExpanded ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
+          <FolderIcon size={14} />
+          <span>{folder.name}</span>
+          {folder.chats.length > 0 && (
+            <span className="text-m text-muted-foreground">({folder.chats.length})</span>
+          )}
+        </button>
 
-      <DropdownMenu modal={true}>
-        <DropdownMenuTrigger asChild>
-          <button 
-            className="opacity-0 group-hover/folder:opacity-100 transition-opacity"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <MoreHorizontalIcon size={14} />
-          </button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent side="bottom" align="end">
-          <DropdownMenuItem
-            className="cursor-pointer"
-            onClick={() => setIsRenaming(true)}
-          >
-            <PencilEditIcon size={14} />
-            <span>Rename</span>
-          </DropdownMenuItem>
-          <DropdownMenuItem
-            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-            onSelect={onDelete}
-          >
-            <TrashIcon size={14} />
-            <span>Delete</span>
-          </DropdownMenuItem>
-        </DropdownMenuContent>
-      </DropdownMenu>
-    </div>
+        <DropdownMenu modal={true}>
+          <DropdownMenuTrigger asChild>
+            <button 
+              className="opacity-0 group-hover/folder:opacity-100 transition-opacity"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <MoreHorizontalIcon size={14} />
+            </button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent side="bottom" align="end">
+            <DropdownMenuItem
+              className="cursor-pointer"
+              onClick={() => setIsRenaming(true)}
+            >
+              <PencilEditIcon size={14} />
+              <span>Rename</span>
+            </DropdownMenuItem>
+            <DropdownMenuItem
+              className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+              onSelect={() => setShowDeleteDialog(true)}
+            >
+              <TrashIcon size={14} />
+              <span>Delete</span>
+            </DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
+      </div>
+
+      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Delete folder?</AlertDialogTitle>
+          </AlertDialogHeader>
+          <AlertDialogDescription>
+            This will delete the folder. The chats inside the folder will not be deleted.
+          </AlertDialogDescription>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={onDeleteFolder}>
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 };
 
@@ -532,6 +602,25 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
     ));
   };
 
+  const handleCreateFolder = async (name: string) => {
+    try {
+      const response = await fetch('/api/folder', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ name }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to create folder');
+      
+      const newFolder = await response.json();
+      setFolders([...folders, { ...newFolder, chats: [] }]);
+    } catch (error) {
+      console.error('Failed to create folder:', error);
+    }
+  };
+
   return (
     <div className="mt-6">
       <div className="px-2 py-1 mb-1 text-xs text-sidebar-foreground/50">
@@ -542,11 +631,9 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
         <form
           onSubmit={(e: React.FormEvent) => {
             e.preventDefault();
-            if (newFolderName.trim()) {
-              setFolders([...folders, { id: crypto.randomUUID(), name: newFolderName.trim(), chats: [], isExpanded: false }]);
-              setNewFolderName('');
-              setIsAddingFolder(false);
-            }
+            handleCreateFolder(newFolderName);
+            setNewFolderName('');
+            setIsAddingFolder(false);
           }}
           className="px-2 mb-2"
         >
@@ -571,10 +658,6 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
               folder={folder} 
               isExpanded={folder.isExpanded ?? false}
               onToggle={() => toggleFolder(folder.id)} 
-              onDelete={() => {
-                setFolderToDelete(folder);
-                setShowDeleteFolderDialog(true);
-              }}
               folders={folders}
               chats={chats}
               setFolders={setFolders}
@@ -598,10 +681,10 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Delete Folder</AlertDialogTitle>
-            <AlertDialogDescription>
-              Are you sure you want to delete this folder? The chats inside will not be deleted.
-            </AlertDialogDescription>
           </AlertDialogHeader>
+          <AlertDialogDescription>
+            Are you sure you want to delete this folder? The chats inside will not be deleted.
+          </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
@@ -849,7 +932,7 @@ const PureChatItem = ({
               <DropdownMenuPortal>
                 <DropdownMenuSubContent key={folders.length}>
                   {folders.length === 0 ? (
-                    <DropdownMenuItem className="text-muted-foreground" disabled>
+                    <DropdownMenuItem className="text-muted-foreground whitespace-normal max-w-[100px]" disabled>
                       No folders created yet
                     </DropdownMenuItem>
                   ) : (
@@ -1283,9 +1366,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle id="delete-dialog-title">Are you absolutely sure?</AlertDialogTitle>
+            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           </AlertDialogHeader>
-          <AlertDialogDescription aria-labelledby="delete-dialog-title">
+          <AlertDialogDescription>
             This action cannot be undone. This will permanently delete your chat and remove it from our servers.
           </AlertDialogDescription>
           <AlertDialogFooter>
