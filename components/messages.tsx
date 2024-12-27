@@ -9,7 +9,7 @@ import equal from 'fast-deep-equal';
 interface MessagesProps {
   chatId: string;
   isLoading: boolean;
-  votes: Array<Vote> | undefined;
+  // votes: Array<Vote> | undefined;
   messages: Array<Message>;
   setMessages: (
     messages: Message[] | ((messages: Message[]) => Message[]),
@@ -24,7 +24,7 @@ interface MessagesProps {
 function PureMessages({
   chatId,
   isLoading,
-  votes,
+  // votes,
   messages,
   setMessages,
   reload,
@@ -50,11 +50,11 @@ function PureMessages({
           chatId={chatId}
           message={message}
           isLoading={isLoading && messages.length - 1 === index}
-          vote={
-            votes
-              ? votes.find((vote) => vote.messageId === message.id)
-              : undefined
-          }
+          // vote={
+          //   votes
+          //     ? votes.find((vote) => vote.messageId === message.id)
+          //     : undefined
+          // }
           setMessages={setMessages}
           reload={reload}
           isReadonly={isReadonly}
@@ -79,7 +79,7 @@ export const Messages = memo(PureMessages, (prevProps, nextProps) => {
   if (prevProps.isLoading !== nextProps.isLoading) return false;
   if (prevProps.isLoading && nextProps.isLoading) return false;
   if (prevProps.messages.length !== nextProps.messages.length) return false;
-  if (!equal(prevProps.votes, nextProps.votes)) return false;
+  // if (!equal(prevProps.votes, nextProps.votes)) return false;
 
   return true;
 });

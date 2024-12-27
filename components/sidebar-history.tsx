@@ -418,187 +418,99 @@ const FolderItem = ({
   chats: Chat[];
   setFolders: (folders: Folder[]) => void;
 }) => {
-  const [isRenaming, setIsRenaming] = useState(false);
-  const [newName, setNewName] = useState(folder.name);
-  const [isDragOver, setIsDragOver] = useState(false);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const { mutate } = useSWRConfig();
+  const [isDropTarget, setIsDropTarget] = useState(false);
+  const { mutate: globalMutate } = useSWRConfig();
 
-  const onDeleteFolder = async () => {
+  const handleDrop = async (e: React.DragEvent) => {
+    e.preventDefault();
+    setIsDropTarget(false);
+    const chatId = e.dataTransfer.getData('chatId');
+    if (!chatId) return;
+
+    const chat = chats.find(c => c.id === chatId);
+    if (!chat) return;
+
+    const isInFolder = folder.chats?.some(c => c.id === chatId) ?? false;
+    if (isInFolder) return; // Don't do anything if the chat is already in this folder
+
     try {
-      const response = await fetch(`/api/folder?id=${folder.id}`, {
-        method: 'DELETE',
+      // Optimistic update
+      const updatedFolders = folders.map(f => {
+        if (f.id === folder.id) {
+          return {
+            ...f,
+            chats: [...(f.chats || []).filter(c => c.id !== chatId), chat]
+          };
+        }
+        return {
+          ...f,
+          chats: (f.chats || []).filter(c => c.id !== chatId)
+        };
       });
-      
-      if (response.ok) {
-        const updatedFolders = folders.filter(f => f.id !== folder.id);
-        setFolders(updatedFolders);
-        mutate('/api/folder'); // Refresh folders data
-        toast.success('Folder deleted successfully');
-      }
-    } catch (error) {
-      console.error('Failed to delete folder:', error);
-      toast.error('Failed to delete folder');
-    }
-    setShowDeleteDialog(false);
-  };
+      setFolders(updatedFolders);
 
-  const handleRename = async () => {
-    if (newName.trim() === folder.name || !newName.trim()) {
-      setIsRenaming(false);
-      setNewName(folder.name);
-      return;
-    }
-
-    const oldName = folder.name;
-    
-    try {
-      const response = await fetch('/api/folder', {
+      // Update server
+      const response = await fetch(`/api/chat?id=${chatId}`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          id: folder.id,
-          name: newName.trim(),
-          action: 'rename'
+          folderId: folder.id
         }),
       });
 
       if (response.ok) {
-        const updatedFolders = folders.map(f =>
-          f.id === folder.id ? { ...f, name: newName.trim() } : f
-        );
-        setFolders(updatedFolders);
-        mutate('/api/folder'); // Refresh folders data
+        globalMutate('/api/history');
+        toast.success('Chat added to folder');
       } else {
-        throw new Error('Failed to rename folder');
+        throw new Error('Failed to update folder');
       }
     } catch (error) {
-      console.error('Failed to rename folder:', error);
-      setNewName(oldName);
-      toast.error('Failed to rename folder');
+      console.error('Failed to update chat in folder:', error);
+      toast.error('Failed to update folder');
+      // Revert optimistic update on error
+      globalMutate('/api/history');
     }
-    setIsRenaming(false);
   };
 
-  if (isRenaming) {
-    return (
-      <form
-        onSubmit={(e: React.FormEvent) => {
-          e.preventDefault();
-          handleRename();
-        }}
-        className="px-2 py-1.5"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <Input
-          value={newName}
-          onChange={(e) => setNewName(e.target.value)}
-          onBlur={handleRename}
-          onKeyDown={(e) => {
-            if (e.key === 'Escape') {
-              setIsRenaming(false);
-              setNewName(folder.name);
-            }
-          }}
-          className="h-6 py-0 px-1"
-        />
-      </form>
-    );
-  }
-
   return (
-    <>
-      <div
-        className={`group/folder flex items-center gap-2 px-2 py-1.5 text-sm hover:bg-muted rounded-md cursor-pointer ${styles.folderDropTarget} ${isDragOver ? styles.canDrop : ''}`}
-        onClick={onToggle}
-        onDragOver={(e: React.DragEvent) => {
-          e.preventDefault();
-          e.dataTransfer.dropEffect = 'move';
-          setIsDragOver(true);
-        }}
-        onDragLeave={() => {
-          setIsDragOver(false);
-        }}
-        onDrop={(e: React.DragEvent) => {
-          e.preventDefault();
-          setIsDragOver(false);
-          const chatId = e.dataTransfer.getData('chatId');
-          if (chatId) {
-            const chat = chats.find(c => c.id === chatId);
-            if (chat) {
-              const updatedFolders = folders.map(f => {
-                if (f.id === folder.id) {
-                  return {
-                    ...f,
-                    chats: [...f.chats.filter(c => c.id !== chatId), chat]
-                  };
-                }
-                return {
-                  ...f,
-                  chats: f.chats.filter(c => c.id !== chatId)
-                };
-              });
-              setFolders(updatedFolders);
-            }
-          }
-        }}
-      >
-        <button className="flex items-center gap-2 flex-1">
-          {isExpanded ? <ChevronDownIcon size={14} /> : <ChevronRightIcon size={14} />}
-          <FolderIcon size={14} />
-          <span>{folder.name}</span>
-          {folder.chats.length > 0 && (
-            <span className="text-m text-muted-foreground">({folder.chats.length})</span>
-          )}
-        </button>
+    <div 
+      className={`relative ${isDropTarget ? 'bg-accent/50' : ''}`}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setIsDropTarget(true);
+      }}
+      onDragLeave={() => setIsDropTarget(false)}
+      onDrop={handleDrop}
+    >
+      <SidebarGroup>
+        <SidebarMenuButton onClick={onToggle}>
+          <div className="flex items-center gap-2">
+            {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+            <FolderIcon size={14} />
+            <span>{folder.name}</span>
+          </div>
+        </SidebarMenuButton>
 
-        <DropdownMenu modal={true}>
-          <DropdownMenuTrigger asChild>
-            <button 
-              className="opacity-0 group-hover/folder:opacity-100 transition-opacity"
-              onClick={(e) => e.stopPropagation()}
-            >
-              <MoreHorizontalIcon size={14} />
-            </button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent side="bottom" align="end">
-            <DropdownMenuItem
-              className="cursor-pointer"
-              onClick={() => setIsRenaming(true)}
-            >
-              <PencilEditIcon size={14} />
-              <span>Rename</span>
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-              onSelect={() => setShowDeleteDialog(true)}
-            >
-              <TrashIcon size={14} />
-              <span>Delete</span>
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </div>
-
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete folder?</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>
-            This will delete the folder. The chats inside the folder will not be deleted.
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={onDeleteFolder}>
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </>
+        {isExpanded && (
+          <SidebarGroupContent>
+            {folder.chats?.map((chat) => (
+              <ChatItemInFolder
+                key={chat.id}
+                chat={chat}
+                isActive={false}
+                onDelete={() => {}}
+                setOpenMobile={() => {}}
+                mutate={() => globalMutate('/api/history')}
+                folders={folders}
+                setFolders={setFolders}
+              />
+            ))}
+          </SidebarGroupContent>
+        )}
+      </SidebarGroup>
+    </div>
   );
 };
 
@@ -983,36 +895,37 @@ const PureChatItem = ({
                           className="cursor-pointer flex-row justify-between"
                           onClick={async () => {
                             try {
-                              const response = await fetch('/api/folder', {
+                              // Optimistic update
+                              const updatedFolders = folders.map(f => {
+                                if (f.id === folder.id) {
+                                  return {
+                                    ...f,
+                                    chats: isInFolder 
+                                      ? (f.chats || []).filter(c => c.id !== chat.id)
+                                      : [...(f.chats || []).filter(c => c.id !== chat.id), chat]
+                                  };
+                                }
+                                return {
+                                  ...f,
+                                  chats: (f.chats || []).filter(c => c.id !== chat.id)
+                                };
+                              });
+                              setFolders(updatedFolders);
+                              
+                              // Update server
+                              const response = await fetch(`/api/chat?id=${chat.id}`, {
                                 method: 'PATCH',
                                 headers: {
                                   'Content-Type': 'application/json',
                                 },
                                 body: JSON.stringify({
-                                  id: folder.id,
-                                  chatId: chat.id,
-                                  action: isInFolder ? 'removeChat' : 'addChat'
+                                  folderId: isInFolder ? null : folder.id
                                 }),
                               });
 
                               if (response.ok) {
-                                const updatedFolders = folders.map(f => {
-                                  if (f.id === folder.id) {
-                                    return {
-                                      ...f,
-                                      chats: isInFolder 
-                                        ? (f.chats || []).filter(c => c.id !== chat.id)
-                                        : [...(f.chats || []).filter(c => c.id !== chat.id), chat]
-                                    };
-                                  }
-                                  return {
-                                    ...f,
-                                    chats: (f.chats || []).filter(c => c.id !== chat.id)
-                                  };
-                                });
-                                setFolders(updatedFolders);
-                                globalMutate('/api/folder');
                                 chatMutate();
+                                globalMutate('/api/history');
                                 toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
                               } else {
                                 throw new Error('Failed to update folder');
@@ -1020,6 +933,9 @@ const PureChatItem = ({
                             } catch (error) {
                               console.error('Failed to update chat in folder:', error);
                               toast.error('Failed to update folder');
+                              // Revert optimistic update on error
+                              chatMutate();
+                              globalMutate('/api/history');
                             }
                           }}
                         >

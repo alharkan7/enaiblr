@@ -363,6 +363,24 @@ export async function updateChatTitle({
   }
 }
 
+export async function updateChatFolder({
+  id,
+  folderId,
+}: {
+  id: string;
+  folderId: string | null;
+}) {
+  try {
+    return await db
+      .update(chat)
+      .set({ folderId })
+      .where(eq(chat.id, id));
+  } catch (error) {
+    console.error('Failed to update chat folder');
+    throw error;
+  }
+}
+
 // Folder queries
 export async function getFoldersByUserId(userId: string) {
   return await db

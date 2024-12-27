@@ -25,6 +25,7 @@ import {
   saveSuggestions,
   updateChatPinned,
   updateChatTitle,
+  updateChatFolder,
 } from '@/lib/db/queries';
 import type { Suggestion } from '@/lib/db/schema';
 import {
@@ -479,7 +480,7 @@ export async function PATCH(request: Request) {
   }
 
   const body = await request.json();
-  const { pinned, title } = body;
+  const { pinned, title, folderId } = body;
 
   const chat = await getChatById({ id });
 
@@ -497,6 +498,10 @@ export async function PATCH(request: Request) {
 
   if (typeof title === 'string' && title.trim()) {
     await updateChatTitle({ id, title: title.trim() });
+  }
+
+  if (typeof folderId === 'string' || folderId === null) {
+    await updateChatFolder({ id, folderId });
   }
 
   return new Response('OK');

@@ -24,7 +24,7 @@ import { DocumentPreview } from './document-preview';
 const PurePreviewMessage = ({
   chatId,
   message,
-  vote,
+  // vote,
   isLoading,
   setMessages,
   reload,
@@ -32,7 +32,7 @@ const PurePreviewMessage = ({
 }: {
   chatId: string;
   message: Message;
-  vote: Vote | undefined;
+  // vote: Vote | undefined;
   isLoading: boolean;
   setMessages: (
     messages: Message[] | ((messages: Message[]) => Message[]),
@@ -195,7 +195,7 @@ const PurePreviewMessage = ({
                 key={`action-${message.id}`}
                 chatId={chatId}
                 message={message}
-                vote={vote}
+                // vote={vote}
                 isLoading={isLoading}
               />
             )}
@@ -218,7 +218,7 @@ export const PreviewMessage = memo(
       )
     )
       return false;
-    if (!equal(prevProps.vote, nextProps.vote)) return false;
+    // if (!equal(prevProps.vote, nextProps.vote)) return false;
 
     return true;
   },

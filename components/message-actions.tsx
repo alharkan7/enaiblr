@@ -20,12 +20,12 @@ import equal from 'fast-deep-equal';
 export function PureMessageActions({
   chatId,
   message,
-  vote,
+  // vote,
   isLoading,
 }: {
   chatId: string;
   message: Message;
-  vote: Vote | undefined;
+  // vote: Vote | undefined;
   isLoading: boolean;
 }) {
   const { mutate } = useSWRConfig();
@@ -55,7 +55,7 @@ export function PureMessageActions({
           <TooltipContent>Copy</TooltipContent>
         </Tooltip>
 
-        <Tooltip>
+        {/* <Tooltip>
           <TooltipTrigger asChild>
             <Button
               className="py-1 px-2 h-fit text-muted-foreground !pointer-events-auto"
@@ -161,7 +161,7 @@ export function PureMessageActions({
             </Button>
           </TooltipTrigger>
           <TooltipContent>Downvote Response</TooltipContent>
-        </Tooltip>
+        </Tooltip> */}
       </div>
     </TooltipProvider>
   );
@@ -170,7 +170,7 @@ export function PureMessageActions({
 export const MessageActions = memo(
   PureMessageActions,
   (prevProps, nextProps) => {
-    if (!equal(prevProps.vote, nextProps.vote)) return false;
+    // if (!equal(prevProps.vote, nextProps.vote)) return false;
     if (prevProps.isLoading !== nextProps.isLoading) return false;
 
     return true;
