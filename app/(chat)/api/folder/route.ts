@@ -3,9 +3,8 @@ import {
   createFolder,
   updateFolder,
   deleteFolder,
-  addChatToFolder,
-  removeChatFromFolder,
   getFoldersByUserId,
+  updateChatFolder,
 } from '@/lib/db/queries';
 
 export const runtime = 'nodejs';
@@ -72,10 +71,10 @@ export async function PATCH(request: Request) {
         headers: { 'Content-Type': 'application/json' },
       });
     } else if (action === 'addChat') {
-      await addChatToFolder(chatId, id);
+      await updateChatFolder({ id: chatId, folderId: id });
       return new Response(null, { status: 204 });
     } else if (action === 'removeChat') {
-      await removeChatFromFolder(chatId, id);
+      await updateChatFolder({ id: chatId, folderId: null });
       return new Response(null, { status: 204 });
     }
 

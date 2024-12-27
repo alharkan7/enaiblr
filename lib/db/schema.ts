@@ -19,6 +19,17 @@ export const user = pgTable('User', {
 
 export type User = InferSelectModel<typeof user>;
 
+export const folder = pgTable('Folder', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  name: text('name').notNull(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+});
+
+export type Folder = InferSelectModel<typeof folder>;
+
 export const chat = pgTable('Chat', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   createdAt: timestamp('createdAt').notNull(),
@@ -117,31 +128,3 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
-
-export const folder = pgTable('Folder', {
-  id: uuid('id').primaryKey().notNull().defaultRandom(),
-  createdAt: timestamp('createdAt').notNull().defaultNow(),
-  name: text('name').notNull(),
-  userId: uuid('userId')
-    .notNull()
-    .references(() => user.id),
-});
-
-export type Folder = InferSelectModel<typeof folder>;
-
-export const chatToFolder = pgTable(
-  'ChatToFolder',
-  {
-    chatId: uuid('chatId')
-      .notNull()
-      .references(() => chat.id),
-    folderId: uuid('folderId')
-      .notNull()
-      .references(() => folder.id),
-  },
-  (t) => ({
-    pk: primaryKey(t.chatId, t.folderId),
-  })
-);
-
-export type ChatToFolder = InferSelectModel<typeof chatToFolder>;

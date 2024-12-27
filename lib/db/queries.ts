@@ -11,12 +11,10 @@ import {
   message,
   vote,
   folder,
-  chatToFolder,
   type User,
+  type Message,
   type Chat,
   type Folder,
-  type ChatToFolder,
-  type Message,
   document,
   type Suggestion,
   suggestion,
@@ -383,35 +381,41 @@ export async function updateChatFolder({
 
 // Folder queries
 export async function getFoldersByUserId(userId: string) {
-  return await db
+  const folders = await db
     .select()
     .from(folder)
     .where(eq(folder.userId, userId));
+
+  // For each folder, get its chats
+  const foldersWithChats = await Promise.all(
+    folders.map(async (f) => {
+      const chats = await db
+        .select()
+        .from(chat)
+        .where(eq(chat.folderId, f.id));
+      return { ...f, chats };
+    })
+  );
+
+  return foldersWithChats;
 }
 
 export async function getFolderWithChats(folderId: string) {
-  const result = await db
-    .select({
-      folder: folder,
-      chat: chat,
-    })
+  const [folderData] = await db
+    .select()
     .from(folder)
-    .leftJoin(chatToFolder, eq(folder.id, chatToFolder.folderId))
-    .leftJoin(chat, eq(chatToFolder.chatId, chat.id))
     .where(eq(folder.id, folderId));
 
-  // Group chats by folder
-  const folderWithChats = result.reduce<{ folder: Folder | null; chats: Chat[] }>((acc, row) => {
-    if (!acc.folder && row.folder) {
-      acc.folder = row.folder;
-    }
-    if (row.chat) {
-      acc.chats.push(row.chat);
-    }
-    return acc;
-  }, { folder: null, chats: [] });
+  if (!folderData) {
+    return { folder: null, chats: [] };
+  }
 
-  return folderWithChats;
+  const chats = await db
+    .select()
+    .from(chat)
+    .where(eq(chat.folderId, folderId));
+
+  return { folder: folderData, chats };
 }
 
 export async function createFolder(data: { name: string; userId: string }) {
@@ -422,7 +426,7 @@ export async function createFolder(data: { name: string; userId: string }) {
       createdAt: new Date(),
     })
     .returning();
-  return newFolder;
+  return { ...newFolder, chats: [] };
 }
 
 export async function updateFolder(id: string, data: { name: string }) {
@@ -431,24 +435,22 @@ export async function updateFolder(id: string, data: { name: string }) {
     .set(data)
     .where(eq(folder.id, id))
     .returning();
-  return updatedFolder;
+  
+  const chats = await db
+    .select()
+    .from(chat)
+    .where(eq(chat.folderId, id));
+
+  return { ...updatedFolder, chats };
 }
 
 export async function deleteFolder(id: string) {
-  await db.delete(folder).where(eq(folder.id, id));
-}
-
-export async function addChatToFolder(chatId: string, folderId: string) {
-  await db.insert(chatToFolder).values({ chatId, folderId });
-}
-
-export async function removeChatFromFolder(chatId: string, folderId: string) {
+  // First update all chats in this folder to have no folder
   await db
-    .delete(chatToFolder)
-    .where(
-      and(
-        eq(chatToFolder.chatId, chatId),
-        eq(chatToFolder.folderId, folderId)
-      )
-    );
+    .update(chat)
+    .set({ folderId: null })
+    .where(eq(chat.folderId, id));
+
+  // Then delete the folder
+  await db.delete(folder).where(eq(folder.id, id));
 }

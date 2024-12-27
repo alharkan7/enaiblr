@@ -609,20 +609,6 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
               chats={chats}
               setFolders={setFolders}
             />
-            {folder.isExpanded && folder.chats.map(chat => (
-              <ChatItemInFolder
-                key={chat.id}
-                chat={chat}
-                isActive={chat.id === activeChatId}
-                onDelete={onDeleteChat}
-                setOpenMobile={setOpenMobile}
-                mutate={() => {
-                  globalMutate('/api/history');
-                }}
-                folders={folders}
-                setFolders={setFolders}
-              />
-            ))}
           </div>
         ))}
       </div>
@@ -1137,14 +1123,12 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     const oneWeekAgo = subWeeks(now, 1);
     const oneMonthAgo = subMonths(now, 1);
 
-    // Get all chat IDs that are in folders (except pinned chats)
+    // Get all chat IDs that are in folders
     const chatIdsInFolders = new Set(
-      folders.flatMap(folder => folder.chats)
-        .filter(chat => !chat.pinned)
-        .map(chat => chat.id)
+      folders.flatMap(folder => folder.chats?.map(chat => chat.id) ?? [])
     );
 
-    // Filter out chats that are in folders (except pinned chats)
+    // Filter out chats that are in folders, except pinned chats
     const chatsToGroup = chats.filter(chat => !chatIdsInFolders.has(chat.id) || chat.pinned);
 
     return chatsToGroup.reduce(
