@@ -4,7 +4,7 @@ import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
-import { memo, useEffect, useState, useRef, useCallback } from 'react';
+import { memo, useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
 
@@ -398,6 +398,7 @@ const FolderItem = ({
       });
       
       if (response.ok) {
+        // Only update expanded state, actual folder list will be updated via SWR
         const updatedFolders = folders.filter(f => f.id !== folder.id);
         setFolders(updatedFolders);
         toast.success('Folder deleted successfully');
@@ -432,8 +433,9 @@ const FolderItem = ({
       });
 
       if (response.ok) {
+        // Only update expanded state, actual folder list will be updated via SWR
         const updatedFolders = folders.map(f =>
-          f.id === folder.id ? { ...f, name: newName.trim() } : f
+          f.id === folder.id ? { ...f, isExpanded: f.isExpanded } : f
         );
         setFolders(updatedFolders);
       } else {
@@ -1042,46 +1044,51 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     fallbackData: [],
   });
 
+  const {
+    data: fetchedFolders,
+    mutate: foldersMutate,
+  } = useSWR<Array<Folder>>(user ? '/api/folder' : null, fetcher, {
+    fallbackData: [],
+  });
+
   useEffect(() => {
     historyMutate();
   }, [pathname, historyMutate]);
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [folders, setFolders] = useState<Folder[]>(() => {
+
+  // Get expanded state from localStorage
+  const [expandedFolderIds, setExpandedFolderIds] = useState<string[]>(() => {
     if (typeof window !== 'undefined') {
-      const savedFolders = localStorage.getItem('folders');
-      return savedFolders ? JSON.parse(savedFolders) : [];
+      const savedState = localStorage.getItem('expandedFolderIds');
+      return savedState ? JSON.parse(savedState) : [];
     }
     return [];
   });
+
+  // Combine fetched folders with expanded state
+  const folders = useMemo(() => {
+    return fetchedFolders?.map(folder => ({
+      ...folder,
+      isExpanded: expandedFolderIds.includes(folder.id)
+    })) || [];
+  }, [fetchedFolders, expandedFolderIds]);
+
+  const setFolders = useCallback((newFolders: Folder[]) => {
+    // Update expanded state in localStorage
+    const newExpandedIds = newFolders
+      .filter(f => f.isExpanded)
+      .map(f => f.id);
+    localStorage.setItem('expandedFolderIds', JSON.stringify(newExpandedIds));
+    setExpandedFolderIds(newExpandedIds);
+    
+    // Trigger refetch of folders
+    foldersMutate();
+  }, [foldersMutate]);
+
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
-
-  useEffect(() => {
-    localStorage.setItem('folders', JSON.stringify(folders));
-  }, [folders]);
-
-  const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-      method: 'DELETE',
-    });
-
-    toast.promise(deletePromise, {
-      loading: 'Deleting chat...',
-      success: () => {
-        globalMutate('/api/history');
-        return 'Chat deleted successfully';
-      },
-      error: 'Failed to delete chat',
-    });
-
-    setShowDeleteDialog(false);
-
-    if (deleteId === id) {
-      router.push('/');
-    }
-  };
 
   if (!user) {
     return (
@@ -1373,7 +1380,28 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
+            <AlertDialogAction
+              onClick={() => {
+                const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
+                  method: 'DELETE',
+                });
+
+                toast.promise(deletePromise, {
+                  loading: 'Deleting chat...',
+                  success: () => {
+                    globalMutate('/api/history');
+                    return 'Chat deleted successfully';
+                  },
+                  error: 'Failed to delete chat',
+                });
+
+                setShowDeleteDialog(false);
+
+                if (deleteId === id) {
+                  router.push('/');
+                }
+              }}
+            >
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
