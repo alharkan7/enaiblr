@@ -17,12 +17,12 @@ import {
   LockIcon,
   MoreHorizontalIcon,
   PinIcon,
-  PlusIcon,
   ShareIcon,
   TrashIcon,
   FolderIcon,
   PencilEditIcon,
-  FolderXIcon,
+  FolderPlusIcon,
+  FolderOpenIcon,
 } from '@/components/icons';
 import {
   AlertDialog,
@@ -68,13 +68,22 @@ interface Folder {
 
 interface FolderSectionProps {
   folders: Folder[];
-  setFolders: (folders: Folder[]) => void;
+  setFolders: (folders: Folder[] | ((prev: Folder[]) => Folder[])) => void;
   chats: Chat[];
   setOpenMobile: (open: boolean) => void;
   onDeleteChat: (chatId: string) => void;
   activeChatId?: string;
   isAddingFolder: boolean;
   setIsAddingFolder: (isAddingFolder: boolean) => void;
+}
+
+interface GroupedChats {
+  pinned: Chat[];
+  today: Chat[];
+  yesterday: Chat[];
+  lastWeek: Chat[];
+  lastMonth: Chat[];
+  older: Chat[];
 }
 
 const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFolder: boolean, folders: Folder[], setFolders: (folders: Folder[]) => void, mutate: () => void) => {
@@ -577,8 +586,7 @@ const FolderItem = ({
             <div className="group relative w-full flex items-center group/folder">
               <SidebarMenuButton onClick={onToggle} className="flex-1">
                 <div className="flex items-center gap-2">
-                  {isExpanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
-                  <FolderIcon size={14} />
+                  {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
                   <span className="flex items-center gap-1">
                     {folder.name}
                     <span className="text-[10px] text-sidebar-foreground/50">({folder.chats.length})</span>
@@ -655,40 +663,16 @@ const FolderItem = ({
   );
 };
 
-const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat, activeChatId, isAddingFolder, setIsAddingFolder }: FolderSectionProps) => {
+const NewFolderInput = ({ 
+  folders,
+  setFolders,
+  setIsAddingFolder 
+}: {
+  folders: Folder[];
+  setFolders: (folders: Folder[]) => void;
+  setIsAddingFolder: (isAdding: boolean) => void;
+}) => {
   const [newFolderName, setNewFolderName] = useState('');
-  const [folderToDelete, setFolderToDelete] = useState<Folder | null>(null);
-  const [showDeleteFolderDialog, setShowDeleteFolderDialog] = useState(false);
-  const { mutate: globalMutate } = useSWRConfig();
-
-  const handleDrop = (e: React.DragEvent, folderId: string) => {
-    e.preventDefault();
-    const chatId = e.dataTransfer.getData('chatId');
-    if (chatId) {
-      const chat = chats.find(c => c.id === chatId);
-      if (chat) {
-        const updatedFolders = folders.map(f => {
-          if (f.id === folderId) {
-            return {
-              ...f,
-              chats: [...f.chats.filter(c => c.id !== chatId), chat]
-            };
-          }
-          return {
-            ...f,
-            chats: f.chats.filter(c => c.id !== chatId)
-          };
-        });
-        setFolders(updatedFolders);
-      }
-    }
-  };
-
-  const toggleFolder = (folderId: string) => {
-    setFolders(folders.map(f =>
-      f.id === folderId ? { ...f, isExpanded: f.isExpanded ? false : true } : f
-    ));
-  };
 
   const handleCreateFolder = async (name: string) => {
     try {
@@ -704,98 +688,110 @@ const FolderSection = ({ folders, setFolders, chats, setOpenMobile, onDeleteChat
 
       const newFolder = await response.json();
       setFolders([...folders, { ...newFolder, chats: [] }]);
+      setIsAddingFolder(false);
     } catch (error) {
       console.error('Failed to create folder:', error);
+      toast.error('Failed to create folder');
     }
   };
 
   return (
-    <div className="mt-3">
-      <div className="px-2 py-1 mb-1 text-xs text-sidebar-foreground/50 flex justify-between items-center">
-        <span>Folders</span>
-        {!isAddingFolder && (
-          <button
-            onClick={() => setIsAddingFolder(true)}
-            className="hover:bg-muted rounded-md p-1"
-          >
-            <PlusIcon size={12} />
-          </button>
-        )}
-      </div>
-
-      {isAddingFolder && (
-        <form
-          onSubmit={(e: React.FormEvent) => {
-            e.preventDefault();
-            handleCreateFolder(newFolderName);
-            setNewFolderName('');
-            setIsAddingFolder(false);
-          }}
-          className="px-2 mb-2"
-        >
-          <Input
-            type="text"
-            placeholder="Folder name"
-            value={newFolderName}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewFolderName(e.target.value)}
-            autoFocus
-            onBlur={() => {
-              setNewFolderName('');
-              setIsAddingFolder(false);
-            }}
-          />
-        </form>
-      )}
-      <div className="space-y-1 overflow-y-auto max-h-[50vh] hover:scrollbar hover:scrollbar-thumb-gray-300 hover:scrollbar-track-gray-100 
-        dark:hover:scrollbar-thumb-gray-500 hover:scrollbar-thumb-rounded-full">
-        {folders.map((folder) => (
-          <div key={folder.id}>
-            <FolderItem
-              folder={folder}
-              isExpanded={folder.isExpanded ?? false}
-              onToggle={() => toggleFolder(folder.id)}
-              folders={folders}
-              chats={chats}
-              setFolders={setFolders}
-            />
-          </div>
-        ))}
-      </div>
-      <AlertDialog open={showDeleteFolderDialog} onOpenChange={setShowDeleteFolderDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Delete Folder</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>
-            Are you sure you want to delete this folder? The chats inside will not be deleted.
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction
-              onClick={() => {
-                if (folderToDelete) {
-                  setFolders(folders.filter(f => f.id !== folderToDelete.id));
-                  setFolderToDelete(null);
-                }
-              }}
-            >
-              Delete
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
-    </div>
+    <form
+      onSubmit={(e: React.FormEvent) => {
+        e.preventDefault();
+        if (newFolderName.trim()) {
+          handleCreateFolder(newFolderName.trim());
+        }
+        setNewFolderName('');
+      }}
+      className="px-2 mb-2"
+    >
+      <Input
+        type="text"
+        placeholder="Folder name"
+        value={newFolderName}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewFolderName(e.target.value)}
+        autoFocus
+        onBlur={() => {
+          setNewFolderName('');
+          setIsAddingFolder(false);
+        }}
+      />
+    </form>
   );
 };
 
-interface GroupedChats {
-  pinned: Chat[];
-  today: Chat[];
-  yesterday: Chat[];
-  lastWeek: Chat[];
-  lastMonth: Chat[];
-  older: Chat[];
-}
+export const FolderSection = memo(({ 
+  folders, 
+  setFolders, 
+  chats, 
+  setOpenMobile, 
+  onDeleteChat, 
+  activeChatId, 
+  isAddingFolder, 
+  setIsAddingFolder 
+}: FolderSectionProps) => {
+  // Use useRef to maintain expandedFolders state across re-renders
+  const expandedFoldersRef = useRef<Record<string, boolean>>({});
+
+  const handleFolderToggle = useCallback((folderId: string) => {
+    expandedFoldersRef.current = {
+      ...expandedFoldersRef.current,
+      [folderId]: !expandedFoldersRef.current[folderId]
+    };
+    // Force re-render only this folder by creating a new reference
+    const newFolders = folders.map(f => 
+      f.id === folderId ? { ...f } : f
+    );
+    setFolders(newFolders);
+  }, [folders, setFolders]);
+
+  return (
+    <div className="mt-3">
+      <div className="flex items-center justify-between">
+        <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+          Folders
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="h-6 w-6 mr-2"
+          onClick={() => setIsAddingFolder(true)}
+        >
+          <FolderPlusIcon />
+        </Button>
+      </div>
+
+      {isAddingFolder && (
+        <NewFolderInput
+          folders={folders}
+          setFolders={setFolders}
+          setIsAddingFolder={setIsAddingFolder}
+        />
+      )}
+
+      {folders.map((folder) => (
+        <FolderItem
+          key={folder.id}
+          folder={folder}
+          isExpanded={expandedFoldersRef.current[folder.id] || false}
+          onToggle={() => handleFolderToggle(folder.id)}
+          folders={folders}
+          chats={chats}
+          setFolders={setFolders}
+        />
+      ))}
+    </div>
+  );
+}, (prevProps, nextProps) => {
+  // Custom comparison function to prevent unnecessary re-renders
+  return (
+    prevProps.folders === nextProps.folders &&
+    prevProps.chats === nextProps.chats &&
+    prevProps.isAddingFolder === nextProps.isAddingFolder &&
+    prevProps.activeChatId === nextProps.activeChatId
+  );
+});
 
 const PureChatItem = ({
   chat,
@@ -1025,50 +1021,12 @@ const PureChatItem = ({
                         <DropdownMenuItem
                           key={folder.id}
                           className="cursor-pointer flex-row justify-between"
-                          onClick={async () => {
-                            try {
-                              // Optimistic update
-                              const updatedFolders = folders.map(f => {
-                                if (f.id === folder.id) {
-                                  return {
-                                    ...f,
-                                    chats: isInFolder
-                                      ? (f.chats || []).filter(c => c.id !== chat.id)
-                                      : [...(f.chats || []).filter(c => c.id !== chat.id), chat]
-                                  };
-                                }
-                                return {
-                                  ...f,
-                                  chats: (f.chats || []).filter(c => c.id !== chat.id)
-                                };
-                              });
-                              setFolders(updatedFolders);
-
-                              // Update server
-                              const response = await fetch(`/api/chat?id=${chat.id}`, {
-                                method: 'PATCH',
-                                headers: {
-                                  'Content-Type': 'application/json',
-                                },
-                                body: JSON.stringify({
-                                  folderId: isInFolder ? null : folder.id
-                                }),
-                              });
-
-                              if (response.ok) {
-                                chatMutate();
-                                globalMutate('/api/history');
-                                toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
-                              } else {
-                                throw new Error('Failed to update folder');
-                              }
-                            } catch (error) {
-                              console.error('Failed to update chat in folder:', error);
-                              toast.error('Failed to update folder');
-                              // Revert optimistic update on error
+                          onClick={() => {
+                            handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
                               chatMutate();
+                              globalMutate('/api/folder');
                               globalMutate('/api/history');
-                            }
+                            });
                           }}
                         >
                           <div className="flex flex-row gap-2 items-center">
@@ -1139,6 +1097,7 @@ const PureChatItem = ({
 
 export const ChatItem = memo(PureChatItem, (prevProps, nextProps) => {
   if (prevProps.isActive !== nextProps.isActive) return false;
+  if (prevProps.folders !== nextProps.folders) return false;
   return true;
 });
 

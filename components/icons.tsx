@@ -838,6 +838,52 @@ export const FolderXIcon = ({ size = 16 }: { size?: number }) => (
   </svg>
 );
 
+export const FolderPlusIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1.75 1.5C1.05964 1.5 0.5 2.05964 0.5 2.75V13.25C0.5 13.9404 1.05964 14.5 1.75 14.5H14.25C14.9404 14.5 15.5 13.9404 15.5 13.25V4.75C15.5 4.05964 14.9404 3.5 14.25 3.5H7.5L5.5 1.5H1.75ZM2 3H4.75L6.75 5H14V13H2V3Z"
+      fill="currentColor"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M8.75 6.5H7.25V8.75H5V10.25H7.25V12.5H8.75V10.25H11V8.75H8.75V6.5Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
+export const FolderOpenIcon = ({ size = 16 }: { size?: number }) => (
+  <svg
+    height={size}
+    strokeLinejoin="round"
+    viewBox="0 0 16 16"
+    width={size}
+    style={{ color: 'currentcolor' }}
+  >
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1.75 1.5C1.05964 1.5 0.5 2.05964 0.5 2.75V13.25C0.5 13.9404 1.05964 14.5 1.75 14.5H14.25C14.9404 14.5 15.5 13.9404 15.5 13.25V4.75C15.5 4.05964 14.9404 3.5 14.25 3.5H7.5L5.5 1.5H1.75ZM14.25 13L2.75 13C2.61193 13 2.5 12.8881 2.5 12.75V3H4.75L6.75 5H14V12.75C14 12.8881 14.1119 13 14.25 13Z"
+      fill="currentColor"
+    />
+    <path
+      fillRule="evenodd"
+      clipRule="evenodd"
+      d="M1.02876 7.5C0.745913 7.5 0.520116 7.72579 0.520116 8.00864C0.520116 8.0646 0.529421 8.12004 0.547596 8.17277L2.29751 13.4228C2.39305 13.7183 2.67063 13.9167 2.98393 13.9167H13.9711C14.254 13.9167 14.4798 13.6909 14.4798 13.408C14.4798 13.3521 14.4705 13.2966 14.4523 13.2439L12.7024 7.99386C12.6069 7.69833 12.3293 7.5 12.016 7.5H1.02876Z"
+      fill="currentColor"
+    />
+  </svg>
+);
+
 export const ThumbUpIcon = ({ size = 16 }: { size?: number }) => (
   <svg
     height={size}
