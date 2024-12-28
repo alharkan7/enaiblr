@@ -150,7 +150,7 @@ function PureEditor({
       className="relative prose dark:prose-invert [&_pre]:!whitespace-pre-wrap [&_pre]:!break-words [&_code]:!whitespace-pre-wrap [&_code]:!break-words [&_pre_code]:!font-['geist-mono'] [&_code]:!font-['geist-mono'] [&_.math]:!overflow-x-auto [&_.math-display]:!overflow-x-auto" 
       ref={containerRef} 
     >
-      <ReactMarkdown 
+      {/* <ReactMarkdown 
         remarkPlugins={[remarkMath]} 
         rehypePlugins={[rehypeKatex]}
         components={{
@@ -175,7 +175,7 @@ function PureEditor({
         }}
       >
         {content}
-      </ReactMarkdown>
+      </ReactMarkdown> */}
     </div>
   );
 }
