@@ -1,10 +1,8 @@
 'use client';
-
-import { AlertCircle } from 'lucide-react';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { FormEvent, useState } from 'react';
+import { type FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';

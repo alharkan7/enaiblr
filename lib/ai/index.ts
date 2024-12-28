@@ -1,7 +1,6 @@
 import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
-import { togetherai } from '@ai-sdk/togetherai';
 import { groq } from '@ai-sdk/groq';
 import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 

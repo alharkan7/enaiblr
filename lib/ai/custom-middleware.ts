@@ -1,4 +1,4 @@
-import type { Experimental_LanguageModelV1Middleware, LanguageModelV1 } from 'ai';
+import type { Experimental_LanguageModelV1Middleware, } from 'ai';
 
 export const customMiddleware: Experimental_LanguageModelV1Middleware = {
   wrapStream: async ({ doStream, params, model }) => {

@@ -11,8 +11,6 @@ import { Button } from "@/components/ui/button";
 
 import {
   CheckCircleFillIcon,
-  ChevronDownIcon,
-  ChevronRightIcon,
   GlobeIcon,
   LockIcon,
   MoreHorizontalIcon,
@@ -207,8 +205,8 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
 
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
-      ghost.style.left = e.pageX + 15 + 'px';
-      ghost.style.top = e.pageY + 15 + 'px';
+      ghost.style.left = `${e.pageX + 15}px`;
+      ghost.style.top = `${e.pageY + 15}px`;
     };
 
     document.addEventListener('dragover', updateGhostPosition as any);
@@ -883,8 +881,8 @@ const PureChatItem = ({
 
     // Position the ghost element near the cursor
     const updateGhostPosition = (e: MouseEvent) => {
-      ghost.style.left = e.pageX + 15 + 'px';
-      ghost.style.top = e.pageY + 15 + 'px';
+      ghost.style.left = `${e.pageX + 15}px`;
+      ghost.style.top = `${e.pageY + 15}px`;
     };
 
     document.addEventListener('dragover', updateGhostPosition as any);

@@ -1,19 +1,16 @@
 'use client';
-
-import type { ReactNode } from 'react';
 import {
   memo,
-  MouseEvent,
+  type MouseEvent,
   useCallback,
   useEffect,
   useMemo,
   useRef,
-  Component,
 } from 'react';
-import { UIBlock } from './block';
+import type { UIBlock } from './block';
 import { FileIcon, FullscreenIcon, LoaderIcon } from './icons';
 import { cn, fetcher } from '@/lib/utils';
-import { Document } from '@/lib/db/schema';
+import type { Document } from '@/lib/db/schema';
 import { InlineDocumentSkeleton } from './document-skeleton';
 import useSWR from 'swr';
 import { Editor } from './editor';

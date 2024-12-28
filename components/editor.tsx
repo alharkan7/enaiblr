@@ -4,10 +4,7 @@ import { exampleSetup } from 'prosemirror-example-setup';
 import { inputRules } from 'prosemirror-inputrules';
 import { EditorState } from 'prosemirror-state';
 import { EditorView } from 'prosemirror-view';
-import React, { memo, useEffect, useRef, useCallback } from 'react';
-import ReactMarkdown from 'react-markdown';
-import remarkMath from 'remark-math';
-import rehypeKatex from 'rehype-katex';
+import React, { memo, useEffect, useRef, } from 'react';
 import 'katex/dist/katex.min.css';
 
 import type { Suggestion } from '@/lib/db/schema';

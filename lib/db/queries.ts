@@ -1,8 +1,5 @@
 import 'server-only';
-
-import { genSaltSync, hashSync } from 'bcrypt-ts';
 import { eq, and, asc, desc, gt, gte } from 'drizzle-orm';
-import { type InferSelectModel } from 'drizzle-orm';
 
 import { db } from './';
 import {
@@ -13,13 +10,11 @@ import {
   folder,
   type User,
   type Message,
-  type Chat,
-  type Folder,
   document,
   type Suggestion,
   suggestion,
 } from './schema';
-import { BlockKind } from '@/components/block';
+import type { BlockKind } from '@/components/block';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth

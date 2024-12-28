@@ -4,14 +4,14 @@ import { Button } from './ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { useCopyToClipboard } from 'usehooks-ts';
 import { toast } from 'sonner';
-import { ConsoleOutput, UIBlock } from './block';
+import type { ConsoleOutput, UIBlock } from './block';
 import type { Document } from '@/lib/db/schema';
 import { defaultMarkdownParser } from 'prosemirror-markdown';
 import { DOMSerializer } from 'prosemirror-model';
 import {
-  Dispatch,
+  type Dispatch,
   memo,
-  SetStateAction,
+  type SetStateAction,
   startTransition,
   useCallback,
   useState,
@@ -94,7 +94,7 @@ export function RunCodeButton({
         } catch (error) {
           console.error('Failed to load Pyodide:', error);
           const errorMessage = error instanceof Error ? error.message : 'Unknown error occurred';
-          updateConsoleOutput(runId, 'Failed to load Python environment: ' + errorMessage, 'failed');
+          updateConsoleOutput(runId, `Failed to load Python environment: ${errorMessage}`, 'failed');
           return;
         }
       }

@@ -3,12 +3,10 @@
 import type { ChatRequestOptions, Message } from 'ai';
 import cx from 'classnames';
 import { AnimatePresence, motion } from 'framer-motion';
-import { memo, useMemo, useState } from 'react';
-
-import type { Vote } from '@/lib/db/schema';
+import { memo, useState } from 'react';
 
 import { DocumentToolCall, DocumentToolResult } from './document';
-import { EnaiblrIcon, PencilEditIcon, SparklesIcon } from './icons';
+import { PencilEditIcon, SparklesIcon } from './icons';
 import { Markdown } from './markdown';
 import { MessageActions } from './message-actions';
 import { PreviewAttachment } from './preview-attachment';

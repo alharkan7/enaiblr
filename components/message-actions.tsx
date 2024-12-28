@@ -3,10 +3,7 @@ import { toast } from 'sonner';
 import { useSWRConfig } from 'swr';
 import { useCopyToClipboard } from 'usehooks-ts';
 
-import type { Vote } from '@/lib/db/schema';
-import { getMessageIdFromAnnotations } from '@/lib/utils';
-
-import { CopyIcon, ThumbDownIcon, ThumbUpIcon } from './icons';
+import { CopyIcon, } from './icons';
 import { Button } from './ui/button';
 import {
   Tooltip,
@@ -15,7 +12,6 @@ import {
   TooltipTrigger,
 } from './ui/tooltip';
 import { memo } from 'react';
-import equal from 'fast-deep-equal';
 
 export function PureMessageActions({
   chatId,
