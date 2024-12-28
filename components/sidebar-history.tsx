@@ -556,7 +556,7 @@ const FolderItem = ({
 
   return (
     <div
-      className={`relative ${isDropTarget ? 'bg-accent/50' : ''}`}
+      className={`relative ${styles.folderDropTarget} ${isDropTarget ? styles.canDrop : ''}`}
       onDragOver={(e) => {
         e.preventDefault();
         setIsDropTarget(true);
@@ -1320,7 +1320,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                   <>
                     {groupedChats.today.length > 0 && (
                       <>
-                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+                        <div className="px-2 py-1 text-xs text-sidebar-foreground/50 mt-3">
                           Today
                         </div>
                         {groupedChats.today.map((chat: Chat) => (
