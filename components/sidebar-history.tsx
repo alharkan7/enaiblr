@@ -755,7 +755,7 @@ export const FolderSection = memo(({
         <Button
           variant="ghost"
           size="icon"
-          className="h-6 w-6 mr-2"
+          className="size-6 mr-2"
           onClick={() => setIsAddingFolder(true)}
         >
           <FolderPlusIcon />
@@ -792,6 +792,8 @@ export const FolderSection = memo(({
     prevProps.activeChatId === nextProps.activeChatId
   );
 });
+
+FolderSection.displayName = 'FolderSection';
 
 const PureChatItem = ({
   chat,
@@ -1147,7 +1149,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   useEffect(() => {
     historyMutate();
     foldersMutate();
-  }, [pathname]);
+  }, [pathname, historyMutate, foldersMutate]);
 
   const handleDelete = async () => {
     const deletePromise = fetch(`/api/chat?id=${deleteId}`, {

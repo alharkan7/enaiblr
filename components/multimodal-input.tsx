@@ -188,7 +188,7 @@ function PureMultimodalInput({
         setUploadQueue([]);
       }
     },
-    [setAttachments, selectedModel],
+    [setAttachments, selectedModel, uploadFile],
   );
 
   return (
