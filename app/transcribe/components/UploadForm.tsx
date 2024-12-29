@@ -4,7 +4,7 @@ import { Upload, FileAudio, Check, AlertCircle, X } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { Progress } from './ui/Progress';
 import { Groq } from 'groq-sdk';
-import type { TranscriptionApiResponse, TranscriptionResult, TranscriptionSegment } from '../types';
+import type { TranscriptionResult, TranscriptionSegment, GroqTranscription, GroqTranscriptionSegment } from '../types';
 
 interface UploadFormProps {
   onTranscriptionComplete: (result: TranscriptionResult) => void;
@@ -59,61 +59,54 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
     setProcessingProgress(0);
 
     try {
-      const formData = new FormData();
-      formData.append('file', file);
-      formData.append('language', selectedLanguage);
+      // Get Groq API key
+      const tokenResponse = await fetch('/api/groq-token');
+      const tokenData = await tokenResponse.json();
+      
+      if (!tokenResponse.ok || !tokenData.apiKey) {
+        throw new Error(tokenData.error || 'Failed to get API token');
+      }
 
-      // Create XMLHttpRequest to track upload progress
-      const xhr = new XMLHttpRequest();
-      const promise = new Promise((resolve, reject) => {
-        xhr.upload.addEventListener('progress', (event) => {
-          if (event.lengthComputable) {
-            const progress = Math.round((event.loaded / event.total) * 100);
-            setUploadProgress(progress);
-          }
-        });
-
-        xhr.addEventListener('load', () => {
-          if (xhr.status >= 200 && xhr.status < 300) {
-            resolve(JSON.parse(xhr.responseText));
-          } else {
-            reject(new Error(`HTTP ${xhr.status}: ${xhr.statusText}`));
-          }
-        });
-
-        xhr.addEventListener('error', () => {
-          reject(new Error('Network error occurred'));
-        });
-
-        xhr.open('POST', '/api/transcribe');
-        xhr.send(formData);
+      // Initialize Groq client
+      const groq = new Groq({
+        apiKey: tokenData.apiKey,
+        dangerouslyAllowBrowser: true
       });
 
-      // Simulate processing progress
-      const startProcessing = () => {
-        let progress = 0;
-        const interval = setInterval(() => {
-          progress += 5;
-          setProcessingProgress(Math.min(progress, 95)); // Cap at 95% until complete
+      // Create a new File object with the required properties
+      const audioFile = new File(
+        [file], 
+        file.name, 
+        { 
+          type: file.type,
+          lastModified: file.lastModified 
+        }
+      );
 
-          if (progress >= 95) {
-            clearInterval(interval);
-          }
-        }, 500);
+      // Start processing progress simulation
+      let progress = 0;
+      const processingInterval = setInterval(() => {
+        progress += 5;
+        setProcessingProgress(Math.min(progress, 95));
+        if (progress >= 95) clearInterval(processingInterval);
+      }, 500);
 
-        return interval;
-      };
+      // Create transcription directly using Groq
+      const transcription = await groq.audio.transcriptions.create({
+        file: audioFile,
+        model: "whisper-large-v3",
+        temperature: 0.2,
+        language: selectedLanguage,
+        response_format: "verbose_json",
+      }) as GroqTranscription;
 
-      const processingInterval = startProcessing();
-
-      const result = (await promise) as TranscriptionApiResponse;
-
+      // Transform Groq response to match TranscriptionResult type
       const processedResult: TranscriptionResult = {
         fileName: file.name,
-        audioDuration: formatDuration(result.duration),
-        textLength: result.text.length,
+        audioDuration: formatDuration(transcription.duration),
+        textLength: transcription.text.length,
         transcriptionDate: new Date(),
-        segments: result.segments.map((segment): TranscriptionSegment => ({
+        segments: transcription.segments.map((segment: GroqTranscriptionSegment): TranscriptionSegment => ({
           startTime: segment.start,
           endTime: segment.end,
           text: segment.text.trim(),
@@ -127,7 +120,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         }))
       };
 
-      // Clear the processing interval and set final progress
+      // Clear interval and set final progress
       clearInterval(processingInterval);
       setProcessingProgress(100);
 

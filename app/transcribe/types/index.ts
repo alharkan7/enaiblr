@@ -40,3 +40,25 @@ export interface Language {
   code: string;
   name: string;
 }
+
+export interface GroqTranscriptionSegment {
+  id: number;
+  seek: number;
+  start: number;
+  end: number;
+  text: string;
+  tokens: number[];
+  temperature: number;
+  avg_logprob: number;
+  compression_ratio: number;
+  no_speech_prob: number;
+}
+
+export interface GroqTranscription {
+  text: string;
+  task: string;
+  language: string;
+  duration: number;
+  segments: GroqTranscriptionSegment[];
+  model_name?: string;
+}
