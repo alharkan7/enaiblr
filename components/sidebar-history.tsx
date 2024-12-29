@@ -4,7 +4,7 @@ import { isAfter, isToday, isYesterday, subMonths, subWeeks } from 'date-fns';
 import Link from 'next/link';
 import { useParams, usePathname, useRouter } from 'next/navigation';
 import type { User } from 'next-auth';
-import { memo, useEffect, useState, useRef, useCallback } from 'react';
+import { memo, useEffect, useState, useRef, useCallback, useMemo } from 'react';
 import { toast } from 'sonner';
 import useSWR, { useSWRConfig } from 'swr';
 import { Button } from "@/components/ui/button";
@@ -729,20 +729,14 @@ export const FolderSection = memo(({
   isAddingFolder, 
   setIsAddingFolder 
 }: FolderSectionProps) => {
-  // Use useRef to maintain expandedFolders state across re-renders
-  const expandedFoldersRef = useRef<Record<string, boolean>>({});
+  const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
 
   const handleFolderToggle = useCallback((folderId: string) => {
-    expandedFoldersRef.current = {
-      ...expandedFoldersRef.current,
-      [folderId]: !expandedFoldersRef.current[folderId]
-    };
-    // Force re-render only this folder by creating a new reference
-    const newFolders = folders.map(f => 
-      f.id === folderId ? { ...f } : f
-    );
-    setFolders(newFolders);
-  }, [folders, setFolders]);
+    setExpandedFolders(prev => ({
+      ...prev,
+      [folderId]: !prev[folderId]
+    }));
+  }, []);
 
   return (
     <div className="mt-3">
@@ -772,7 +766,7 @@ export const FolderSection = memo(({
         <FolderItem
           key={folder.id}
           folder={folder}
-          isExpanded={expandedFoldersRef.current[folder.id] || false}
+          isExpanded={expandedFolders[folder.id] || false}
           onToggle={() => handleFolderToggle(folder.id)}
           folders={folders}
           chats={chats}
@@ -782,13 +776,14 @@ export const FolderSection = memo(({
     </div>
   );
 }, (prevProps, nextProps) => {
-  // Custom comparison function to prevent unnecessary re-renders
-  return (
-    prevProps.folders === nextProps.folders &&
-    prevProps.chats === nextProps.chats &&
-    prevProps.isAddingFolder === nextProps.isAddingFolder &&
-    prevProps.activeChatId === nextProps.activeChatId
-  );
+  if (prevProps.isAddingFolder !== nextProps.isAddingFolder) return false;
+  if (prevProps.activeChatId !== nextProps.activeChatId) return false;
+  if (prevProps.folders.length !== nextProps.folders.length) return false;
+  if (prevProps.chats.length !== nextProps.chats.length) return false;
+  
+  const prevFolderIds = prevProps.folders.map(f => f.id).join(',');
+  const nextFolderIds = nextProps.folders.map(f => f.id).join(',');
+  return prevFolderIds === nextFolderIds;
 });
 
 FolderSection.displayName = 'FolderSection';
@@ -1115,7 +1110,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   });
 
   const {
-    data: dbFolders,
+    data: dbFolders = [],
     isLoading: isLoadingFolders,
     mutate: foldersMutate,
   } = useSWR<Array<Folder>>(
@@ -1123,52 +1118,39 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     fetcher,
     {
       fallbackData: [],
-      onSuccess: (data) => {
-        // Update folders when data changes
-        if (data) {
-          const updatedFolders = data.map(folder => ({
-            ...folder,
-            chats: Array.isArray(folder.chats) ? folder.chats : [],
-            isExpanded: false
-          }));
-          setFolders(updatedFolders);
-        }
-      }
+      revalidateOnFocus: false,
+      revalidateIfStale: false
     }
   );
 
   const [deleteId, setDeleteId] = useState<string | null>(null);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
-  const [folders, setFolders] = useState<Folder[]>([]);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
+
+  // Memoize folders with expanded state
+  const folders = useMemo(() => {
+    return dbFolders.map(folder => ({
+      ...folder,
+      chats: Array.isArray(folder.chats) ? folder.chats : [],
+      isExpanded: false
+    }));
+  }, [dbFolders]);
+
+  const setFolders = useCallback((newFolders: Folder[] | ((prev: Folder[]) => Folder[])) => {
+    if (typeof newFolders === 'function') {
+      const updatedFolders = newFolders(folders);
+      foldersMutate(updatedFolders, false);
+    } else {
+      foldersMutate(newFolders, false);
+    }
+  }, [folders, foldersMutate]);
 
   // Only mutate on pathname change
   useEffect(() => {
     historyMutate();
     foldersMutate();
   }, [pathname, historyMutate, foldersMutate]);
-
-  const handleDelete = async () => {
-    const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-      method: 'DELETE',
-    });
-
-    toast.promise(deletePromise, {
-      loading: 'Deleting chat...',
-      success: () => {
-        globalMutate('/api/history');
-        return 'Chat deleted successfully';
-      },
-      error: 'Failed to delete chat',
-    });
-
-    setShowDeleteDialog(false);
-
-    if (deleteId === id) {
-      router.push('/');
-    }
-  };
 
   if (!user) {
     return (
@@ -1458,7 +1440,26 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </AlertDialogDescription>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={handleDelete}>
+            <AlertDialogAction onClick={() => {
+              const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
+                method: 'DELETE',
+              });
+
+              toast.promise(deletePromise, {
+                loading: 'Deleting chat...',
+                success: () => {
+                  globalMutate('/api/history');
+                  return 'Chat deleted successfully';
+                },
+                error: 'Failed to delete chat',
+              });
+
+              setShowDeleteDialog(false);
+
+              if (deleteId === id) {
+                router.push('/');
+              }
+            }}>
               Continue
             </AlertDialogAction>
           </AlertDialogFooter>
