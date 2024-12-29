@@ -73,6 +73,7 @@ interface FolderSectionProps {
   activeChatId?: string;
   isAddingFolder: boolean;
   setIsAddingFolder: (isAddingFolder: boolean) => void;
+  foldersMutate: () => Promise<any>;
 }
 
 interface GroupedChats {
@@ -423,7 +424,8 @@ const FolderItem = ({
   onToggle,
   folders,
   chats,
-  setFolders
+  setFolders,
+  foldersMutate
 }: {
   folder: Folder;
   isExpanded: boolean;
@@ -431,23 +433,32 @@ const FolderItem = ({
   folders: Folder[];
   chats: Chat[];
   setFolders: (folders: Folder[]) => void;
+  foldersMutate: () => Promise<any>;
 }) => {
   const [isDropTarget, setIsDropTarget] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const [newName, setNewName] = useState(folder.name);
+  const [displayName, setDisplayName] = useState(folder.name);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
   const { mutate: globalMutate } = useSWRConfig();
 
-  const handleRename = async () => {
+  useEffect(() => {
+    setDisplayName(folder.name);
+  }, [folder.name]);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newName.trim()) return;
+    setIsEditing(false);
+
     try {
-      // Optimistic update
+      setDisplayName(newName);
+
       const updatedFolders = folders.map(f => 
         f.id === folder.id ? { ...f, name: newName } : f
       );
       setFolders(updatedFolders);
-      setIsEditing(false);
 
-      // Update server
       const response = await fetch(`/api/folder`, {
         method: 'PATCH',
         headers: {
@@ -465,23 +476,21 @@ const FolderItem = ({
       }
 
       toast.success('Folder renamed successfully');
-      globalMutate('/api/folder');
+      foldersMutate(); // Force revalidation after successful update
     } catch (error) {
       console.error('Failed to rename folder:', error);
       toast.error('Failed to rename folder');
-      // Revert optimistic update
-      globalMutate('/api/folder');
+      setDisplayName(folder.name);
+      foldersMutate();
     }
   };
 
   const handleDelete = async () => {
     try {
-      // Optimistic update
       const updatedFolders = folders.filter(f => f.id !== folder.id);
       setFolders(updatedFolders);
       setShowDeleteDialog(false);
 
-      // Update server
       const response = await fetch(`/api/folder?id=${folder.id}`, {
         method: 'DELETE',
       });
@@ -494,8 +503,7 @@ const FolderItem = ({
     } catch (error) {
       console.error('Failed to delete folder:', error);
       toast.error('Failed to delete folder');
-      // Revert optimistic update
-      globalMutate('/api/folder');
+      foldersMutate();
     }
   };
 
@@ -512,7 +520,6 @@ const FolderItem = ({
     if (isInFolder) return;
 
     try {
-      // Optimistic update
       const updatedFolders = folders.map(f => {
         if (f.id === folder.id) {
           return {
@@ -527,7 +534,6 @@ const FolderItem = ({
       });
       setFolders(updatedFolders);
 
-      // Update server
       const response = await fetch(`/api/chat?id=${chatId}`, {
         method: 'PATCH',
         headers: {
@@ -547,7 +553,6 @@ const FolderItem = ({
     } catch (error) {
       console.error('Failed to update chat in folder:', error);
       toast.error('Failed to update folder');
-      // Revert optimistic update
       globalMutate('/api/history');
     }
   };
@@ -566,10 +571,7 @@ const FolderItem = ({
         <div className="flex items-center justify-between">
           {isEditing ? (
             <form
-              onSubmit={(e) => {
-                e.preventDefault();
-                handleRename();
-              }}
+              onSubmit={handleSubmit}
               className="px-2"
             >
               <Input
@@ -577,7 +579,7 @@ const FolderItem = ({
                 value={newName}
                 onChange={(e) => setNewName(e.target.value)}
                 autoFocus
-                onBlur={handleRename}
+                onBlur={handleSubmit}
               />
             </form>
           ) : (
@@ -586,7 +588,7 @@ const FolderItem = ({
                 <div className="flex items-center gap-2">
                   {isExpanded ? <FolderOpenIcon /> : <FolderIcon />}
                   <span className="flex items-center gap-1">
-                    {folder.name}
+                    {displayName}
                     <span className="text-[10px] text-sidebar-foreground/50">({folder.chats.length})</span>
                   </span>
                 </div>
@@ -598,7 +600,7 @@ const FolderItem = ({
                     className="absolute right-2 hidden group-hover/folder:block group-hover/folder:opacity-100 data-[state=open]:opacity-100 data-[state=open]:block data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                     showOnHover={true}
                   >
-                    <MoreHorizontalIcon size={16} />
+                    <MoreHorizontalIcon size={14} />
                     <span className="sr-only">More</span>
                   </SidebarMenuAction>
                 </DropdownMenuTrigger>
@@ -607,14 +609,14 @@ const FolderItem = ({
                     setNewName(folder.name);
                     setIsEditing(true);
                   }}>
-                    <PencilEditIcon size={16} />
+                    <PencilEditIcon size={14} />
                     <span>Rename</span>
                   </DropdownMenuItem>
                   <DropdownMenuItem 
                     onClick={() => setShowDeleteDialog(true)}
                     className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
                   >
-                    <TrashIcon size={16} />
+                    <TrashIcon size={14} />
                     <span>Delete</span>
                   </DropdownMenuItem>
                 </DropdownMenuContent>
@@ -727,8 +729,9 @@ export const FolderSection = memo(({
   onDeleteChat, 
   activeChatId, 
   isAddingFolder, 
-  setIsAddingFolder 
-}: FolderSectionProps) => {
+  setIsAddingFolder,
+  foldersMutate 
+}: FolderSectionProps & { foldersMutate: () => Promise<any> }) => {
   const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
 
   const handleFolderToggle = useCallback((folderId: string) => {
@@ -771,6 +774,7 @@ export const FolderSection = memo(({
           folders={folders}
           chats={chats}
           setFolders={setFolders}
+          foldersMutate={foldersMutate}
         />
       ))}
     </div>
@@ -1140,9 +1144,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const setFolders = useCallback((newFolders: Folder[] | ((prev: Folder[]) => Folder[])) => {
     if (typeof newFolders === 'function') {
       const updatedFolders = newFolders(folders);
-      foldersMutate(updatedFolders, false);
+      foldersMutate(updatedFolders, { revalidate: false });
     } else {
-      foldersMutate(newFolders, false);
+      foldersMutate(newFolders, { revalidate: false });
     }
   }, [folders, foldersMutate]);
 
@@ -1283,7 +1287,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           <FolderSection
             folders={folders}
             setFolders={setFolders}
-            chats={history ?? []}
+            chats={history || []}
             setOpenMobile={setOpenMobile}
             onDeleteChat={(chatId) => {
               setDeleteId(chatId);
@@ -1292,6 +1296,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             activeChatId={typeof id === 'string' ? id : undefined}
             isAddingFolder={isAddingFolder}
             setIsAddingFolder={setIsAddingFolder}
+            foldersMutate={foldersMutate}
           />
           <SidebarMenu>
             {history &&
