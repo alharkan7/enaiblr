@@ -3,32 +3,20 @@
 import { Clock, FileAudio, TextQuote, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AudioPlayer from "./audio-player";
-import { useEffect, useState, useRef } from "react";
+import { useState, useRef } from "react";
 
 interface ResultViewProps {
   text: string;
   audioUrl: string;
   size: number;
+  blob?: Blob;
   onReset: () => void;
 }
 
-export function ResultView({ text, audioUrl, size, onReset }: ResultViewProps) {
+export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewProps) {
   const [duration, setDuration] = useState(0);
-  const audioRef = useRef<HTMLAudioElement>(null);
   const wordCount = text.trim().split(/\s+/).length;
   
-  useEffect(() => {
-    // Create an audio element to get duration
-    const audio = new Audio(audioUrl);
-    audio.addEventListener('loadedmetadata', () => {
-      setDuration(audio.duration);
-    });
-
-    return () => {
-      audio.remove();
-    };
-  }, [audioUrl]);
-
   const formatDuration = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.floor(seconds % 60);
@@ -36,12 +24,23 @@ export function ResultView({ text, audioUrl, size, onReset }: ResultViewProps) {
   };
   
   const handleDownload = () => {
-    const link = document.createElement('a');
-    link.href = audioUrl;
-    link.download = 'synthesized-speech.wav';
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (blob) {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'synthesized-speech.wav';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    } else {
+      const link = document.createElement('a');
+      link.href = audioUrl;
+      link.download = 'synthesized-speech.wav';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   };
 
   return (
@@ -76,7 +75,7 @@ export function ResultView({ text, audioUrl, size, onReset }: ResultViewProps) {
         </div>
       </div>
 
-      <AudioPlayer audioUrl={audioUrl} />
+      <AudioPlayer audioUrl={audioUrl} onDurationChange={setDuration} />
 
       <Button
         variant="outline"

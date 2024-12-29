@@ -14,6 +14,9 @@ export async function POST(request: Request) {
     // Set the voice
     speechConfig.speechSynthesisVoiceName = voice;
 
+    // Set output format to WAV
+    speechConfig.speechSynthesisOutputFormat = sdk.SpeechSynthesisOutputFormat.Riff24Khz16BitMonoPcm;
+
     // Create the synthesizer
     const synthesizer = new sdk.SpeechSynthesizer(speechConfig);
 
@@ -37,9 +40,14 @@ export async function POST(request: Request) {
       );
     });
 
+    // Log audio data size for debugging
+    console.log('Audio data size:', audioData.byteLength);
+
     return new NextResponse(audioData, {
       headers: {
         'Content-Type': 'audio/wav',
+        'Content-Length': audioData.byteLength.toString(),
+        'Accept-Ranges': 'bytes'
       },
     });
 

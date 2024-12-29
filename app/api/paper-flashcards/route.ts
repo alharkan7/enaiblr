@@ -76,7 +76,7 @@ ${content}
     Remember: Respond ONLY with the JSON object. No introductory text, no explanations outside the JSON structure.`;
 
     const result = await model.generateContent(prompt);
-    const response = await result.response;
+    const response = result.response;
     const text = response.text();
     
     // Try to extract JSON from the response
