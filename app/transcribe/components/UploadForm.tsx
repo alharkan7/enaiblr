@@ -60,11 +60,21 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
     try {
       // Get Groq API key
-      const tokenResponse = await fetch('/api/groq-token');
+      const tokenResponse = await fetch('/api/groq-token', {
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+
+      if (!tokenResponse.ok) {
+        const errorData = await tokenResponse.json();
+        throw new Error(`Failed to get API token: ${errorData.error || tokenResponse.statusText}`);
+      }
+
       const tokenData = await tokenResponse.json();
       
-      if (!tokenResponse.ok || !tokenData.apiKey) {
-        throw new Error(tokenData.error || 'Failed to get API token');
+      if (!tokenData.apiKey) {
+        throw new Error('No API key received from server');
       }
 
       // Initialize Groq client
