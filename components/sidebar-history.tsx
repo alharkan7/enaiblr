@@ -452,13 +452,16 @@ const FolderItem = ({
     setIsEditing(false);
 
     try {
+      // Update local display immediately
       setDisplayName(newName);
 
-      const updatedFolders = folders.map(f => 
-        f.id === folder.id ? { ...f, name: newName } : f
-      );
+      // Optimistic update with sorting
+      const updatedFolders = folders
+        .map(f => f.id === folder.id ? { ...f, name: newName } : f)
+        .sort((a, b) => a.name.localeCompare(b.name));
       setFolders(updatedFolders);
 
+      // Update server
       const response = await fetch(`/api/folder`, {
         method: 'PATCH',
         headers: {
@@ -480,6 +483,7 @@ const FolderItem = ({
     } catch (error) {
       console.error('Failed to rename folder:', error);
       toast.error('Failed to rename folder');
+      // Revert local display name and optimistic update
       setDisplayName(folder.name);
       foldersMutate();
     }
@@ -1132,21 +1136,27 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
 
-  // Memoize folders with expanded state
+  // Memoize folders with expanded state and sort alphabetically
   const folders = useMemo(() => {
-    return dbFolders.map(folder => ({
-      ...folder,
-      chats: Array.isArray(folder.chats) ? folder.chats : [],
-      isExpanded: false
-    }));
+    return dbFolders
+      .map(folder => ({
+        ...folder,
+        chats: Array.isArray(folder.chats) ? folder.chats : [],
+        isExpanded: false
+      }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }, [dbFolders]);
 
   const setFolders = useCallback((newFolders: Folder[] | ((prev: Folder[]) => Folder[])) => {
     if (typeof newFolders === 'function') {
       const updatedFolders = newFolders(folders);
-      foldersMutate(updatedFolders, { revalidate: false });
+      // Sort before updating
+      const sortedFolders = [...updatedFolders].sort((a, b) => a.name.localeCompare(b.name));
+      foldersMutate(sortedFolders, { revalidate: false });
     } else {
-      foldersMutate(newFolders, { revalidate: false });
+      // Sort before updating
+      const sortedFolders = [...newFolders].sort((a, b) => a.name.localeCompare(b.name));
+      foldersMutate(sortedFolders, { revalidate: false });
     }
   }, [folders, foldersMutate]);
 
