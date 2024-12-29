@@ -7,7 +7,7 @@ export const config = {
       sizeLimit: '40mb'
     },
   },
-  maxDuration: 300,
+  maxDuration: 60,
 };
 
 export async function POST(request: NextRequest) {
