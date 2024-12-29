@@ -22,14 +22,14 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
       action: `Help me write an essay about Indonesian street food`,
     },
     {
-      title: "What's the difference",	
-      label: 'between cappuccino and latte?',
-      action: "What's the difference between cappuccino and latte?",
-    },
-    {
       title: 'Write a Python script',
       label: `to plan my weekly grocery budget`,
       action: `Write a Python script to plan my weekly grocery budget`,
+    },
+    {
+      title: "What's the difference",	
+      label: 'between cappuccino and latte?',
+      action: "What's the difference between cappuccino and latte?",
     },
     {
       title: 'What is the weather',

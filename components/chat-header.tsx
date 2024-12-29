@@ -5,11 +5,12 @@ import { useWindowSize } from 'usehooks-ts';
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
 import { Button } from '@/components/ui/button';
-import { PlusIcon, } from './icons';
+import { PlusIcon, AppGridIcon } from './icons';
 import { useSidebar } from './ui/sidebar';
 import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
+import { AppsGrid } from './ui/apps-grid';
 
 function PureChatHeader({
   chatId,
@@ -42,8 +43,8 @@ function PureChatHeader({
                 router.refresh();
               }}
             >
-              <PlusIcon />
-              <span className="md:sr-only">New Chat</span>
+              <PlusIcon size={14} />
+              <span className="md:sr-only">Chat</span>
             </Button>
           </TooltipTrigger>
           <TooltipContent>New Chat</TooltipContent>
@@ -77,6 +78,18 @@ function PureChatHeader({
           Deploy with Vercel
         </Link>
       </Button> */}
+
+      <AppsGrid
+        trigger={
+          <Button
+            variant="outline"
+            className="order-last md:px-2 px-2 md:h-fit md:ml-auto"
+          >
+            <AppGridIcon size={14} />
+            <span className="hidden md:inline ml-2">Apps</span>
+          </Button>
+        }
+      />
     </header>
   );
 }
