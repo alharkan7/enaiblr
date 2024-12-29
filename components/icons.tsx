@@ -56,7 +56,7 @@ export const AttachmentIcon = () => {
   );
 };
 
-export const VercelIcon = ({ size = 17 }) => {
+export const VercelIcon = ({ size = 16 }) => {
   return (
     <svg
       height={size}
