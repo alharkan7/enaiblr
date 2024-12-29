@@ -333,16 +333,16 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                 <span>Folder</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
-                <DropdownMenuSubContent key={folders.length}>
+                <DropdownMenuSubContent key={folders.length} className="min-w-[150px] max-w-[100px]">
                   {folders.length === 0 ? (
-                    <DropdownMenuItem className="text-muted-foreground whitespace-normal max-w-[200px]" disabled>
+                    <DropdownMenuItem className="text-muted-foreground whitespace-normal" disabled>
                       No folders created yet
                     </DropdownMenuItem>
                   ) : (
                     folders.map((folder) => (
                       <DropdownMenuItem
                         key={folder.id}
-                        className="cursor-pointer flex-row justify-between"
+                        className="cursor-pointer flex-row justify-between gap-2"
                         onClick={() => {
                           const isInFolder = folder.chats.some(c => c.id === chat.id);
                           handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
@@ -351,12 +351,12 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                           });
                         }}
                       >
-                        <div className="flex flex-row gap-2 items-center">
+                        <div className="flex flex-row gap-2 items-center min-w-0 flex-1">
                           <FolderIcon size={14} />
-                          <span>{folder.name}</span>
+                          <span className="truncate">{folder.name}</span>
                         </div>
                         {folder.chats.some(c => c.id === chat.id) && (
-                          <CheckCircleFillIcon />
+                          <CheckCircleFillIcon size={14} />
                         )}
                       </DropdownMenuItem>
                     ))
@@ -1004,9 +1004,9 @@ const PureChatItem = ({
                 <span>Folder</span>
               </DropdownMenuSubTrigger>
               <DropdownMenuPortal>
-                <DropdownMenuSubContent key={folders.length}>
+                <DropdownMenuSubContent key={folders.length} className="min-w-[150px] max-w-[100px]">
                   {!folders || folders.length === 0 ? (
-                    <DropdownMenuItem className="text-muted-foreground whitespace-normal max-w-[100px]" disabled>
+                    <DropdownMenuItem className="text-muted-foreground whitespace-normal" disabled>
                       No folders created yet
                     </DropdownMenuItem>
                   ) : (
@@ -1015,7 +1015,7 @@ const PureChatItem = ({
                       return (
                         <DropdownMenuItem
                           key={folder.id}
-                          className="cursor-pointer flex-row justify-between"
+                          className="cursor-pointer flex-row justify-between gap-2"
                           onClick={() => {
                             handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
                               chatMutate();
@@ -1024,12 +1024,12 @@ const PureChatItem = ({
                             });
                           }}
                         >
-                          <div className="flex flex-row gap-2 items-center">
+                          <div className="flex flex-row gap-2 items-center min-w-0 flex-1">
                             <FolderIcon size={14} />
-                            <span>{folder.name}</span>
+                            <span className="truncate">{folder.name}</span>
                           </div>
-                          {isInFolder && (
-                            <CheckCircleFillIcon />
+                          {folder.chats.some(c => c.id === chat.id) && (
+                            <CheckCircleFillIcon size={14} />
                           )}
                         </DropdownMenuItem>
                       );
