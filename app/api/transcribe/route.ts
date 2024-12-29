@@ -3,7 +3,9 @@ import Groq from 'groq-sdk';
 
 export const config = {
   api: {
-    bodyParser: false,
+    bodyParser: {
+      sizeLimit: '40mb'
+    },
   },
   maxDuration: 300,
 };
