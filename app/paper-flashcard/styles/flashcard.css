@@ -1,0 +1,93 @@
+.card-container {
+  position: relative;
+  height: calc(100% - 4rem);
+  margin-bottom: 1rem;
+}
+
+.card-enter {
+  transform: translateY(100%);
+}
+
+.card-enter.-translate-y-full {
+  transform: translateY(-100%);
+}
+
+.card-enter.translate-y-full {
+  transform: translateY(100%);
+}
+
+.card-enter-active {
+  transform: translateY(0) !important;
+  transition: transform 300ms ease;
+}
+
+.card-exit {
+  transform: translateY(0);
+}
+
+.card-exit-active.-translate-y-full {
+  transform: translateY(-100%) !important;
+  transition: transform 300ms ease;
+}
+
+.card-exit-active.translate-y-full {
+  transform: translateY(100%) !important;
+  transition: transform 300ms ease;
+}
+
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+.transition-transform {
+  transition-property: transform, opacity;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.duration-300 {
+  transition-duration: 300ms;
+}
+
+.-translate-y-full {
+  transform: translateY(-100%);
+}
+
+.translate-y-full {
+  transform: translateY(100%);
+}
+
+.translate-y-0 {
+  transform: translateY(0);
+}
+
+.opacity-0 {
+  opacity: 0;
+}
+
+.opacity-100 {
+  opacity: 1;
+}
+
+/* Ensure content is scrollable */
+.overflow-y-auto {
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: thin;
+  scrollbar-color: #93C5FD transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar {
+  width: 6px;
+}
+
+.overflow-y-auto::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.overflow-y-auto::-webkit-scrollbar-thumb {
+  background-color: #93C5FD;
+  border-radius: 3px;
+}
