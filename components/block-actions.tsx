@@ -271,6 +271,56 @@ function PureBlockActions({
                 >
                   Word (.doc)
                 </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => {
+                    const fileName = currentDocument?.title ?? block.title;
+                    // Convert markdown to HTML
+                    const state = defaultMarkdownParser.parse(block.content);
+                    const div = window.document.createElement('div');
+                    const fragment = DOMSerializer.fromSchema(state.type.schema).serializeFragment(state.content);
+                    div.appendChild(fragment);
+                    
+                    // Create PDF-compatible HTML
+                    const htmlContent = `
+                      <html>
+                      <head>
+                        <meta charset='utf-8'>
+                        <style>
+                          body { font-family: Arial, sans-serif; }
+                          pre { background-color: #f5f5f5; padding: 1em; }
+                          code { font-family: monospace; }
+                        </style>
+                      </head>
+                      <body>
+                        ${div.innerHTML}
+                      </body>
+                      </html>
+                    `;
+
+                    // Create a hidden iframe to render the HTML
+                    const iframe = document.createElement('iframe');
+                    iframe.style.position = 'absolute';
+                    iframe.style.left = '-9999px';
+                    document.body.appendChild(iframe);
+
+                    const iframeDoc = iframe.contentWindow?.document;
+                    if (iframeDoc) {
+                      iframeDoc.open();
+                      iframeDoc.write(htmlContent);
+                      iframeDoc.close();
+
+                      // Use browser's print functionality to save as PDF
+                      iframe.contentWindow?.print();
+                      
+                      // Clean up
+                      setTimeout(() => {
+                        document.body.removeChild(iframe);
+                      }, 100);
+                    }
+                  }}
+                >
+                  PDF (.pdf)
+                </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
           ) : (
