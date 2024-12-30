@@ -227,6 +227,9 @@ importers:
       react-dropzone:
         specifier: ^14.3.5
         version: 14.3.5(react@19.0.0-rc-45804af1-20241021)
+      react-feather:
+        specifier: ^2.0.10
+        version: 2.0.10(react@19.0.0-rc-45804af1-20241021)
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.3.12)(react@19.0.0-rc-45804af1-20241021)
@@ -3987,6 +3990,11 @@ packages:
     engines: {node: '>= 10.13'}
     peerDependencies:
       react: '>= 16.8 || 18.0.0'
+
+  react-feather@2.0.10:
+    resolution: {integrity: sha512-BLhukwJ+Z92Nmdcs+EMw6dy1Z/VLiJTzEQACDUEnWMClhYnFykJCGWQx+NmwP/qQHGX/5CzQ+TGi8ofg2+HzVQ==}
+    peerDependencies:
+      react: '>=16.8.6'
 
   react-is@16.13.1:
     resolution: {integrity: sha512-24e6ynE2H+OKt4kqsOvNd8kBpV65zoxbA4BVsEOB3ARVWQki/DHzaUoC5KuON/BiccDaCCTZBuOcfZs70kR8bQ==}
@@ -8515,6 +8523,11 @@ snapshots:
     dependencies:
       attr-accept: 2.2.5
       file-selector: 2.1.2
+      prop-types: 15.8.1
+      react: 19.0.0-rc-45804af1-20241021
+
+  react-feather@2.0.10(react@19.0.0-rc-45804af1-20241021):
+    dependencies:
       prop-types: 15.8.1
       react: 19.0.0-rc-45804af1-20241021
 

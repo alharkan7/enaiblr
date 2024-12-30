@@ -1,6 +1,9 @@
 import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 import { Inter } from 'next/font/google';
+import { SessionProvider } from 'next-auth/react';
+import { headers } from 'next/headers';
+import { auth } from './(auth)/auth';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
@@ -48,6 +51,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const session = await auth();
   return (
     <html
       lang="en"
@@ -61,17 +65,19 @@ export default async function RootLayout({
         />
       </head>
       <body className={cn('min-h-screen bg-background font-sans antialiased', inter.variable)}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Toaster position="top-center" />
-          <TooltipProvider delayDuration={700}>
-            {children}
-          </TooltipProvider>
-        </ThemeProvider>
+        <SessionProvider session={session}>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Toaster position="top-center" />
+            <TooltipProvider delayDuration={700}>
+              {children}
+            </TooltipProvider>
+          </ThemeProvider>
+        </SessionProvider>
       </body>
     </html>
   );

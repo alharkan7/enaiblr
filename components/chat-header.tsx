@@ -1,6 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
+import { useSession } from 'next-auth/react';
 
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
@@ -25,6 +26,7 @@ function PureChatHeader({
 }) {
   const router = useRouter();
   const { open } = useSidebar();
+  const { data: session } = useSession();
 
   const { width: windowWidth } = useWindowSize();
 
@@ -86,9 +88,10 @@ function PureChatHeader({
             className="order-last md:px-2 px-2 md:h-fit md:ml-auto"
           >
             <AppGridIcon size={14} />
-            <span className="hidden md:inline ml-2">Apps</span>
+            <span className="hidden md:inline ml-2">Apps & Settings</span>
           </Button>
         }
+        user={session?.user}
       />
     </header>
   );

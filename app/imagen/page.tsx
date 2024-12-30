@@ -1,13 +1,12 @@
 'use client'
 
-import { Sidebar } from '@/components/Sidebar'
 import { ImageForm } from "./components/image-form"
-import { AnimatedBackground } from "../../components/animated-background"
 import { EXAMPLE_PROMPTS } from "./components/constants"
 import RenderFooter from '@/components/RenderFooter'
 import { useState } from 'react'
 import { Download } from 'lucide-react';
 import { ImageModal } from "./components/image-modal"
+import { AppsHeader } from '@/components/apps-header'
 
 export default function Home() {
   const [defaultPrompt, setDefaultPrompt] = useState("")
@@ -42,19 +41,15 @@ export default function Home() {
 
   return (
     <>
-      <Sidebar />
-      <div className="flex flex-col min-h-[100dvh] imagen-layout pt-0"> {/* Removed any top padding */}
-        <AnimatedBackground />
-        {hasInteracted && (
-          <div className="fixed top-0 left-0 right-0 z-10 w-full backdrop-blur-sm border-b border-gray-200 sm:pt-0 pt-2">
-            <div className="max-w-4xl mx-auto px-4 py-2 sm:py-4 md:px-6 text-center relative">
-              <h1 className="text-xl font-semibold">
-                <span className="text-blue-600">Image</span> Creator AI
-              </h1>
-            </div>
-          </div>
-        )}
-        <div className={`flex-grow flex flex-col items-center justify-center w-full px-4 overflow-y-auto ${hasInteracted ? 'pt-20' : ''}`}>
+      <div className="flex flex-col min-h-[100dvh] imagen-layout pt-0"> 
+        <AppsHeader 
+          title={(isGenerating || generatedImage) ? (
+            <>
+              <span className="text-blue-600">Image</span> Creator AI
+            </>
+          ) : undefined} 
+        />
+        <div className={`flex-grow flex flex-col items-center justify-center w-full px-4 overflow-y-auto ${hasInteracted ? 'pt-4' : ''}`}>
           {isGenerating ? (
             <div className="relative w-full max-w-[640px] flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={getAspectRatioClass(imageAspectRatio)} style={{ maxWidth: '100%', maxHeight: '100%' }}>

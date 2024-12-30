@@ -2,8 +2,8 @@
 
 import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
-import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { AppsHeader } from "@/components/apps-header";
 
 import { SearchHeader } from "./SearchHeader";
 import { SearchResultItem } from "./SearchResult";
@@ -91,13 +91,22 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     if (!isHomePage && (searchResults || isLoading)) {
         return (
             <div className="flex flex-col min-h-screen search-layout">
-                <SearchHeader
-                    query={query}
-                    setQuery={setQuery}
-                    handleSearch={handleSearch}
-                    handleBackToHome={handleBackToHome}
-                    clearSearch={clearSearch}
-                />
+                <header className="sticky top-0 left-0 w-full z-10 bg-background border-b">
+                    <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+                        <div className="flex-1 min-w-0">
+                            <SearchHeader
+                                query={query}
+                                setQuery={setQuery}
+                                handleSearch={handleSearch}
+                                handleBackToHome={handleBackToHome}
+                                clearSearch={clearSearch}
+                            />
+                        </div>
+                        <div className="shrink-0">
+                            <AppsHeader />
+                        </div>
+                    </div>
+                </header>
                 <main className="container mx-auto px-5 py-8 flex-1 overflow-y-auto h-[calc(100vh-160px)]">
                     {isLoading ? (
                         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -137,17 +146,8 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     // Home view
     return (
         <div className="h-[100dvh] flex flex-col">
-            <header className="sticky top-0 left-0 w-full p-4 z-10">
-                <div className="container mx-auto flex justify-end">
-                    <a href="mailto:enaiblr@gmail.com">
-                        <Button variant="outline" className="rounded-full px-6 hidden sm:flex">
-                            Contact
-                        </Button>
-                        <Button variant="outline" className="rounded-full sm:hidden" aria-label="Contact">
-                            <Mail className="h-5 w-5" />
-                        </Button>
-                    </a>
-                </div>
+            <header className="sticky top-0 left-0 w-full z-10">
+                <AppsHeader />
             </header>
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8 pt-1">

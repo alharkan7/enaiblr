@@ -1182,7 +1182,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     return (
       <SidebarGroup>
         <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-          Pinned
+          Chat History
         </div>
         <SidebarGroupContent>
           <div className="flex flex-col">

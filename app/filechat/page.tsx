@@ -1,15 +1,14 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { ChatTitle } from './components/ChatTitle'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { DocumentPreview } from './components/DocumentPreview'
 import { useFileUpload } from './hooks/useFileUpload'
 import { useChatMessages } from './hooks/useChatMessages'
-import { AnimatedBackground } from "../../components/animated-background"
 import RenderFooter from '@/components/RenderFooter'
+import { AppsHeader } from '@/components/apps-header'
+import { RefreshCw } from 'lucide-react'
 
 export default function Filechat() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -126,22 +125,41 @@ export default function Filechat() {
     };
 
     return (
-        <div 
+        <div
             className="flex min-h-screen"
             style={{
                 height: 'calc(var(--vh, 1vh) * 100)',
                 minHeight: '-webkit-fill-available'
             }}
-        >            <Sidebar />
+        >
             <div className="flex-1 flex flex-col overflow-hidden relative">
-                <AnimatedBackground />
-                {hasUserSentMessage ? (
-                    <ChatTitle
-                        compact
-                        clearMessages={handleReset}
-                        fileName={fileInfo?.fileName}
-                    />
-                ) : null}
+                <header className="sticky top-0 left-0 w-full z-10 bg-background">
+                    <div className="max-w-4xl mx-auto relative">
+                        {hasUserSentMessage && (
+                            <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
+                                <button
+                                    onClick={handleReset}
+                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="Clear chat history"
+                                >
+                                    <RefreshCw className="w-5 h-5 text-gray-600" />
+                                </button>
+                            </div>
+                        )}
+                        <AppsHeader
+                            title={hasUserSentMessage ? (
+                                <div className="flex items-center gap-2">
+                                    <span>Chat with</span>
+                                    {fileInfo?.fileName && (
+                                        <span className="text-blue-600 truncate max-w-[150px]">
+                                            {fileInfo.fileName}
+                                        </span>
+                                    )}
+                                </div>
+                            ) : undefined}
+                        />
+                    </div>
+                </header>
                 <div className={`flex-1 overflow-hidden flex flex-col ${!hasUserSentMessage ? 'justify-center' : ''}`}>
                     {hasUserSentMessage ? (
                         <div className="flex-1 overflow-y-auto" ref={messagesEndRef}>
@@ -152,12 +170,10 @@ export default function Filechat() {
                             />
                         </div>
                     ) : (
-                        <ChatTitle clearMessages={handleReset} fileName={fileInfo?.fileName} />
-                    )}
-                    <div className={`flex flex-col justify-end w-full ${!hasUserSentMessage ? 'mt-0' : ''}`}>
-                        <div className="w-full max-w-5xl mx-auto">
-                            {fileInfo && !hasUserSentMessage && (
-                                <div className="px-4">
+                        <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
+                            <h1 className="text-4xl font-extrabold">Chat with <span className='text-blue-600'>PDFs and Docs</span></h1>
+                            {fileInfo && (
+                                <div className="w-full">
                                     <DocumentPreview
                                         fileName={fileInfo.fileName}
                                         fileType={fileInfo.fileType}
@@ -168,6 +184,26 @@ export default function Filechat() {
                                     />
                                 </div>
                             )}
+                            <div className="w-full">
+                                <ChatInput
+                                    input={input}
+                                    setInput={setInput}
+                                    isLoading={isLoading}
+                                    fileInputRef={fileInputRef}
+                                    onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
+                                    fileContent={fileContent}
+                                    clearFile={clearFile}
+                                    sendMessage={handleSendMessage}
+                                    isFirstMessage={!hasUserSentMessage}
+                                    isUploading={isUploading}
+                                    wordCount={wordCount}
+                                    error={error}
+                                />
+                            </div>
+                        </div>
+                    )}
+                    <div className={`flex flex-col justify-end w-full ${!hasUserSentMessage ? 'hidden' : ''}`}>
+                        <div className="w-full max-w-5xl mx-auto">
                             <div className="relative">
                                 <ChatInput
                                     input={input}
@@ -175,7 +211,6 @@ export default function Filechat() {
                                     isLoading={isLoading}
                                     fileInputRef={fileInputRef}
                                     onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
-                                    // autoFocus={false}
                                     fileContent={fileContent}
                                     clearFile={clearFile}
                                     sendMessage={handleSendMessage}
