@@ -30,7 +30,7 @@ export function AppsHeader({ title }: AppsHeaderProps) {
                     className="md:px-2 px-2 md:h-fit"
                   >
                     <AppGridIcon size={14} />
-                    <span className="hidden md:inline ml-2">Apps & Settings</span>
+                    <span className="hidden md:inline ml-2">Apps</span>
                   </Button>
                 }
                 user={session?.user}
@@ -46,7 +46,7 @@ export function AppsHeader({ title }: AppsHeaderProps) {
                   className="md:px-2 px-2 md:h-fit"
                 >
                   <AppGridIcon size={14} />
-                  <span className="hidden md:inline ml-2">Apps & Settings</span>
+                  <span className="hidden md:inline ml-2">Apps</span>
                 </Button>
               }
               user={session?.user}

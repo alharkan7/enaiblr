@@ -88,7 +88,7 @@ function PureChatHeader({
             className="order-last md:px-2 px-2 md:h-fit md:ml-auto"
           >
             <AppGridIcon size={14} />
-            <span className="hidden md:inline ml-2">Apps & Settings</span>
+            <span className="hidden md:inline ml-2">Apps</span>
           </Button>
         }
         user={session?.user}

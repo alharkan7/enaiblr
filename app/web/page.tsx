@@ -1,13 +1,12 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { ChatTitle } from './components/ChatTitle'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
-import { AnimatedBackground } from "../../components/animated-background"
 import RenderFooter from '@/components/RenderFooter'
+import { AppsHeader } from '@/components/apps-header'
+import { RefreshCw } from 'lucide-react'
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -149,7 +148,6 @@ export default function MinimalistChatbot() {
 
     return (
         <>
-            <Sidebar />
             <div
                 className="flex flex-col h-screen relative chat-layout"
                 style={{
@@ -157,57 +155,67 @@ export default function MinimalistChatbot() {
                     minHeight: '-webkit-fill-available'
                 }}
             >
-                <AnimatedBackground />
-                {messages.length === 0 ? (
-                    <div className="flex flex-col flex-grow">
-                        <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
-                            <div className="w-full max-w-[1200px]">
-                                <ChatTitle clearMessages={clearMessages} />
-                                <div className="w-full max-w-3xl mt-8 mx-auto">
-
-                                    <ChatInput
-                                        input={input}
-                                        setInput={setInput}
-                                        isLoading={isLoading}
-                                        fileInputRef={fileInputRef}
-                                        sendMessage={handleSendMessage}
-                                    />
-                                </div>
+                <header className="sticky top-0 left-0 w-full z-10 bg-background">
+                    <div className="max-w-4xl mx-auto relative">
+                        {messages.length > 0 && (
+                            <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
+                                <button
+                                    onClick={clearMessages}
+                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+                                    title="Clear chat history"
+                                >
+                                    <RefreshCw className="w-5 h-5 text-gray-600" />
+                                </button>
                             </div>
-                        </div>
-                        <div className="w-full mt-8">
-                            <RenderFooter />
+                        )}
+                        <AppsHeader
+                            title={messages.length > 0 ? (
+                                <div className="flex items-center gap-2">
+                                    <span>Chat with</span>
+                                    <span className="text-blue-600">the Web</span>
+                                </div>
+                            ) : undefined}
+                        />
+                    </div>
+                </header>
+                {messages.length === 0 ? (
+                    <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
+                        <h1 className="text-4xl font-extrabold">
+                            <span className="whitespace-nowrap">Chat with </span>{' '}
+                            <span className="text-blue-600 whitespace-nowrap">the Web</span>
+                        </h1>
+                        <div className="w-full max-w-xl">
+                            <ChatInput
+                                input={input}
+                                setInput={setInput}
+                                isLoading={isLoading}
+                                sendMessage={handleSendMessage}
+                                fileInputRef={fileInputRef}
+                                autoFocus
+                            />
                         </div>
                     </div>
                 ) : (
-                    <div className="flex flex-col h-full w-full">
-                        <div className="flex flex-col w-full min-w-[320px] max-w-[1200px] mx-auto h-full">
-                            <div className="flex flex-col h-full">
-                                <div className="sticky top-0 backdrop-blur-sm z-10">
-                                    <ChatTitle compact clearMessages={clearMessages} />
-                                </div>
-                                {/* Modified container for MessageList */}
-                                <div className="flex-1 relative overflow-hidden">
-                                    <MessageList
-                                        messages={messages}
-                                        messagesEndRef={messagesEndRef}
-                                        onUpdate={() => {
-                                            scrollToBottom();
-
-                                        }}
-                                        isLoading={isLoading}
-                                    />
-                                </div>
-                                <div className="w-full border-t backdrop-blur-sm border-gray-200 sticky bottom-0 z-10">
-
-                                    <ChatInput
-                                        input={input}
-                                        setInput={setInput}
-                                        isLoading={isLoading}
-                                        fileInputRef={fileInputRef}
-                                        sendMessage={handleSendMessage}
-                                    />
-                                </div>
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        <div className="flex-1 overflow-y-auto">
+                            <div className="max-w-4xl mx-auto">
+                                <MessageList
+                                    messages={messages}
+                                    messagesEndRef={messagesEndRef}
+                                    onUpdate={scrollToBottom}
+                                    isLoading={isLoading}
+                                />
+                            </div>
+                        </div>
+                        <div className="flex-shrink-0">
+                            <div className="max-w-4xl mx-auto px-4">
+                                <ChatInput
+                                    input={input}
+                                    setInput={setInput}
+                                    isLoading={isLoading}
+                                    sendMessage={handleSendMessage}
+                                    fileInputRef={fileInputRef}
+                                />
                             </div>
                         </div>
                     </div>
