@@ -171,7 +171,7 @@ export default function Filechat() {
                         </div>
                     ) : (
                         <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
-                            <h1 className="text-4xl font-extrabold">Chat with <span className='text-blue-600'>PDFs and Docs</span></h1>
+                            <h1 className="text-4xl font-extrabold text-center">Chat&nbsp;with&nbsp;PDFs <span className='text-blue-600'>and&nbsp;Docs</span></h1>
                             {fileInfo && (
                                 <div className="w-full">
                                     <DocumentPreview
