@@ -257,51 +257,36 @@ export function TranscriptionResult({ result }: TranscriptionResultProps) {
   };
 
   return (
-    <>
-      <div className="fixed top-0 left-0 right-0 bg-white/30 backdrop-blur-sm border-b z-20">
-        <div className="max-w-4xl mx-auto px-4 h-16 flex items-center justify-center relative">
-          <button
-            onClick={() => window.location.reload()}
-            className="absolute right-4 text-gray-600 hover:text-blue-600 transition-colors"
-            title="New Transcription"
-          >
-            <RefreshCw size={20} />
-          </button>
-          <h1 className="text-xl font-bold">Transcription <span className='text-blue-600'>Result</span></h1>
-        </div>
-      </div>
+    <div className="max-w-4xl mx-auto px-4 w-full">
+      <div className="space-y-4">
+        <h2 className="text-2xl font-bold mb-6 text-center">
+          {result.fileName.replace(/(\.[^.]+)$/, '')}
+          <span className="text-blue-600">
+            {result.fileName.match(/\.[^.]+$/)?.[0]}
+          </span>
+        </h2>
 
-      <div className="max-w-4xl w-full mx-auto px-4">
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold mb-6 text-center">
-            {result.fileName.replace(/(\.[^.]+)$/, '')}
-            <span className="text-blue-600">
-              {result.fileName.match(/\.[^.]+$/)?.[0]}
-            </span>
-          </h2>
-
-          <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-            <div className="flex items-center space-x-2 text-gray-600 justify-center">
-              <Clock className="h-5 w-5 mr-2" />
-              <span>Duration: {result.audioDuration}</span>
-            </div>
-            <div className="flex items-center space-x-2 text-gray-600 justify-center">
-              <FileText className="h-5 w-5 mr-2" />
-              <span>Words: {result.segments.map(segment => segment.text).join(' ').split(' ').length}</span>
-            </div>
-            <div className="flex items-center space-x-2 text-gray-600 justify-center">
-              <LetterText className="h-5 w-5 mr-2" />
-              <span>Characters: {result.textLength}</span>
-            </div>
-            <div className="flex justify-center md:col-start-2 md:col-span-1 lg:col-auto">
-              <button
-                onClick={handleDownload}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                <Download className="h-5 w-5" />
-                <span>Download</span>
-              </button>
-            </div>
+        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
+          <div className="flex items-center space-x-2 text-gray-600 justify-center">
+            <Clock className="h-5 w-5 mr-2" />
+            <span>Duration: {result.audioDuration}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-gray-600 justify-center">
+            <FileText className="h-5 w-5 mr-2" />
+            <span>Words: {result.segments.map(segment => segment.text).join(' ').split(' ').length}</span>
+          </div>
+          <div className="flex items-center space-x-2 text-gray-600 justify-center">
+            <LetterText className="h-5 w-5 mr-2" />
+            <span>Characters: {result.textLength}</span>
+          </div>
+          <div className="flex justify-center md:col-start-2 md:col-span-1 lg:col-auto">
+            <button
+              onClick={handleDownload}
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              <Download className="h-5 w-5" />
+              <span>Download</span>
+            </button>
           </div>
         </div>
 
@@ -415,7 +400,7 @@ export function TranscriptionResult({ result }: TranscriptionResultProps) {
 
         </div>
       </div>
-    </>
+    </div>
   );
 }
 

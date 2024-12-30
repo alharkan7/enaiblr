@@ -26,7 +26,7 @@ export default function PaperFlashcardLayout({
   children: React.ReactNode
 }) {
   return (
-      <div className={`${inter.className} min-h-screen bg-gradient-to-r from-blue-100 to-white`}>
+      <div className={`${inter.className} min-h-screen`}>
         {children}
       </div>
   );

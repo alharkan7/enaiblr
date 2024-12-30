@@ -7,14 +7,20 @@ import { AppsGrid } from './ui/apps-grid';
 
 interface AppsHeaderProps {
   title?: React.ReactNode;
+  leftButton?: React.ReactNode;
 }
 
-export function AppsHeader({ title }: AppsHeaderProps) {
+export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
   const { data: session } = useSession();
 
   return (
     <header className="sticky top-0 bg-background py-1.5 px-2 md:px-2">
       <div className="relative flex items-center max-w-4xl mx-auto">
+        {leftButton && (
+          <div className="absolute left-0">
+            {leftButton}
+          </div>
+        )}
         {title ? (
           <>
             <div className="absolute left-0 right-0 flex justify-center pointer-events-none">

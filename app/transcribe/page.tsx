@@ -1,11 +1,11 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { AnimatedBackground } from "../../components/animated-background"
 import RenderFooter from '@/components/RenderFooter'
 import { UploadForm } from './components/UploadForm';
 import { TranscriptionResult } from './components/TranscriptionResult';
+import { AppsHeader } from '@/components/apps-header'
+import { RefreshCw } from 'react-feather';
 import type { TranscriptionResult as TranscriptionResultType } from './types';
 
 export default function Transcriber() {
@@ -36,12 +36,24 @@ export default function Transcriber() {
                 minHeight: '-webkit-fill-available'
             }}
         >
-            <Sidebar />
             <div className="flex flex-col w-full relative">
-                <AnimatedBackground />
-                <main className={`flex-grow ${transcriptionResult ? 'pt-28 pb-12' : 'flex items-center justify-center py-12'}`}>
+                <AppsHeader 
+                    title={transcriptionResult ? "Transcription Result" : ""} 
+                    leftButton={transcriptionResult ? (
+                        <button
+                            onClick={() => window.location.reload()}
+                            className="text-gray-600 hover:text-blue-600 transition-colors"
+                            title="New Transcription"
+                        >
+                            <RefreshCw size={20} />
+                        </button>
+                    ) : undefined}
+                />
+                <main className={`flex-grow ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
                     {transcriptionResult ? (
-                        <TranscriptionResult result={transcriptionResult} />
+                        <TranscriptionResult 
+                            result={transcriptionResult} 
+                        />
                     ) : (
                         <UploadForm onTranscriptionComplete={setTranscriptionResult} />
                     )}

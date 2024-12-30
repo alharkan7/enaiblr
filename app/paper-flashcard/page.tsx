@@ -10,9 +10,8 @@ import { PDFInput } from "./components/PDFInput";
 import { usePDFProcessor } from "./hooks/usePDFProcessor";
 import { useFlashCard } from "./hooks/useFlashCard";
 import { FlashCardContent } from "./types";
-import { Sidebar } from '@/components/Sidebar';
-import { AnimatedBackground } from "@/components/animated-background";
 import RenderFooter from '@/components/RenderFooter';
+import { AppsHeader } from '@/components/apps-header';
 import "./styles/flashcard.css";
 
 export default function PDFProcessor() {
@@ -74,29 +73,26 @@ export default function PDFProcessor() {
   if (cards.length > 0) {
     return (
       <div className="relative h-screen flex flex-col overflow-hidden">
-        <Sidebar />
-        <AnimatedBackground />
-        <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center">
-          <div
-            className="w-full max-w-3xl mb-4 flex justify-between items-center relative z-20"
-          >
+        <AppsHeader 
+          title="" 
+          leftButton={
             <Button
-              variant="link"
+              variant="ghost"
               onClick={() => {
                 setCards([]);
                 setHashtag([]);
                 setPdfLink("");
                 setFile(null);
               }}
-              className="text-blue-600 hover:text-blue-800 flex items-center"
+              className="text-gray-600 hover:text-blue-600 transition-colors"
             >
-              <ChevronLeft className="w-4 h-4 mr-1" />
+              <ChevronLeft className="w-4 h-4" />
               Back
             </Button>
-            <div className="text-sm text-blue-600 mr-4">
-              Card {currentCard + 1} of {totalCards}
-            </div>
-          </div>
+          }
+        />
+        <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center">
+
 
           <div className="w-full max-w-3xl">
             <FlashCardDisplay
@@ -160,8 +156,24 @@ export default function PDFProcessor() {
 
   return (
     <div className="relative h-screen flex flex-col overflow-hidden">
-      <Sidebar />
-      <AnimatedBackground />
+      <AppsHeader 
+        title="" 
+        leftButton={cards.length > 0 ? (
+          <Button
+            variant="ghost"
+            onClick={() => {
+              setCards([]);
+              setHashtag([]);
+              setPdfLink("");
+              setFile(null);
+            }}
+            className="text-gray-600 hover:text-blue-600 transition-colors"
+          >
+            <ChevronLeft className="w-4 h-4" />
+            Back
+          </Button>
+        ) : undefined}
+      />
       <div className="flex-1 container mx-auto px-4 flex items-center justify-center">
         <PDFInput
           pdfLink={pdfLink}

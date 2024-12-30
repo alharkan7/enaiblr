@@ -158,8 +158,13 @@ const FlashCard = ({
     <Card
       className={`w-full h-full shadow-xl border border-blue-200 flex flex-col p-8 sm:p-12 relative ${cardStyle}`}
     >
-      <div className="absolute top-4 left-4 bg-blue-200 text-blue-600 text-xs font-semibold rounded-full px-2 py-1">
-        #{section.key}
+      <div className="absolute top-4 left-0 right-0 px-4 flex justify-between items-center">
+        <div className="bg-white/80 backdrop-blur-sm border border-blue-200 text-blue-600 text-xs rounded-full px-2 py-1">
+          #{section.key}
+        </div>
+        <div className="bg-white/80 backdrop-blur-sm border border-blue-200 text-blue-600 text-xs rounded-full px-2 py-1">
+          Card {cardNumber + 1} of {totalCards}
+        </div>
       </div>
       <div ref={containerRef} className="w-full h-full mt-10 flex flex-col">
         {editMode ? (
