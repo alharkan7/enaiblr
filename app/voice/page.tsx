@@ -1,10 +1,9 @@
 'use client'
 
 import { useEffect } from 'react'
-import { Sidebar } from '@/components/Sidebar'
-import { AnimatedBackground } from "../../components/animated-background"
 import RenderFooter from '@/components/RenderFooter'
 import TextToVoiceConverter from './components/text-to-voice-converter'
+import { AppsHeader } from '@/components/apps-header'
 
 export default function Voice() {
     useEffect(() => {
@@ -26,21 +25,21 @@ export default function Voice() {
 
     return (
         <div 
-            className="flex min-h-screen"
+            className="flex min-h-screen w-full overflow-x-hidden"
             style={{
                 height: 'calc(var(--vh, 1vh) * 100)',
-                minHeight: '-webkit-fill-available'
             }}
         >
-            <Sidebar />
-            <div className="flex flex-col w-full relative">
-                <AnimatedBackground />
-                <main className="flex-grow py-12 mt-8 px-4 sm:px-6 overflow-y-auto">
-                    <TextToVoiceConverter />
-                </main>
-                <footer className="w-full sticky bottom-0 z-10">
-                    <RenderFooter />
-                </footer>
+            <div className="flex-1 flex flex-col w-full">
+                <AppsHeader />
+                <div className="flex-1 flex flex-col w-full">
+                    <main className="flex-grow py-12 mt-8 px-4 sm:px-6 overflow-y-auto w-full">
+                        <TextToVoiceConverter />
+                    </main>
+                    <footer className="w-full sticky bottom-0 z-10">
+                        <RenderFooter />
+                    </footer>
+                </div>
             </div>
         </div>
     )
