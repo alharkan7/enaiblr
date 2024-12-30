@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { createUser, getUser } from '@/lib/db/queries';
 
-import { signIn } from './auth';
+import { signIn, signOut } from './auth';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -57,4 +57,10 @@ export async function authenticate(formData: FormData) {
   } catch (error) {
     return { error: 'Could not authenticate user.' };
   }
+}
+
+export async function signOutAction() {
+  'use server';
+  
+  await signOut({ redirectTo: '/' });
 }

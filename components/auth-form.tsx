@@ -73,7 +73,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
           <Input
             id="email"
             name="email"
-            placeholder="m@example.com"
+            placeholder="yourname@email.com"
             required
             type="email"
           />
