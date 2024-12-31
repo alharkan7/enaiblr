@@ -16,7 +16,7 @@ export const SECTIONS = [
 export const useFlashCard = (cards: FlashCardContent[]) => {
   const [currentCard, setCurrentCard] = useState(0);
   const [editMode, setEditMode] = useState(false);
-  const [cardStyle, setCardStyle] = useState("bg-gradient-to-r from-blue-100 to-white");
+  const [cardStyle, setCardStyle] = useState(GRADIENTS[0]);
   const [textColor, setTextColor] = useState(TEXT_COLORS[0]);
   const [hasSwipedUp, setHasSwipedUp] = useState(false);
   const [direction, setDirection] = useState<'up' | 'down'>('up');

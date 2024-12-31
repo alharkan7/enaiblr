@@ -13,6 +13,7 @@ import { FlashCardContent } from "./types";
 import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header';
 import "./styles/flashcard.css";
+import "./styles/scrollbar.css";
 
 export default function PDFProcessor() {
   const {
@@ -84,7 +85,6 @@ export default function PDFProcessor() {
                 setPdfLink("");
                 setFile(null);
               }}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
             >
               <ChevronLeft className="w-4 h-4" />
               Back
@@ -97,7 +97,6 @@ export default function PDFProcessor() {
           <div className="w-full max-w-3xl">
             <FlashCardDisplay
               cardStyle={cardStyle}
-              textColor={textColor}
               currentCard={currentCard}
               cards={cards}
               editMode={editMode}
@@ -126,30 +125,25 @@ export default function PDFProcessor() {
             </div>
           </div>
 
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col space-y-2 z-[1]">
+          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col gap-2 z-[1]">
             <Button
               variant="outline"
               size="icon"
               onClick={() => navigateCard("prev")}
-              disabled={currentCard === 0}
-              aria-label="Previous card"
-              className="border-blue-500 text-blue-500 hover:bg-blue-100"
+              className="rounded-full"
             >
-              <ChevronUp className="h-4 w-4" />
+              <ChevronUp className="w-4 h-4" />
             </Button>
             <Button
               variant="outline"
               size="icon"
               onClick={() => navigateCard("next")}
-              disabled={currentCard === totalCards - 1}
-              aria-label="Next card"
-              className="border-blue-500 text-blue-500 hover:bg-blue-100"
+              className="rounded-full"
             >
-              <ChevronDown className="h-4 w-4" />
+              <ChevronDown className="w-4 h-4" />
             </Button>
           </div>
         </div>
-        <AppsFooter />
       </div>
     );
   }
@@ -167,7 +161,6 @@ export default function PDFProcessor() {
               setPdfLink("");
               setFile(null);
             }}
-            className="text-gray-600 hover:text-blue-600 transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back

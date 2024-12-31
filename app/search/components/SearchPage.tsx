@@ -155,7 +155,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     <h1 className="text-4xl sm:text-5xl font-extrabold">
                         enaiblr
                     </h1>
-                    <p className="text-l text-muted-foreground ibm-plex-mono-light">AI Tools Search Engine</p>
+                    <p className="text-l text-muted-foreground">AI Tools Search Engine</p>
                 </div>
 
                 <div className="w-full max-w-2xl space-y-4">

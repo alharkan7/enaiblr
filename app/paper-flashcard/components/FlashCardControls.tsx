@@ -43,7 +43,6 @@ export const FlashCardControls = ({
         size="icon"
         onClick={() => setEditMode(!editMode)}
         aria-label={editMode ? "Save" : "Edit"}
-        className={editMode ? "bg-blue-500 hover:bg-blue-600" : "border-blue-500 text-blue-500 hover:bg-blue-100"}
       >
         {editMode ? (
           <Check className="w-4 h-4" />
@@ -58,7 +57,6 @@ export const FlashCardControls = ({
             variant="outline"
             size="icon"
             aria-label="Change color"
-            className="border-blue-500 text-blue-500 hover:bg-blue-100"
           >
             <Palette className="w-4 h-4" />
           </Button>
@@ -81,7 +79,6 @@ export const FlashCardControls = ({
             variant="outline"
             size="icon"
             aria-label="Share"
-            className="border-blue-500 text-blue-500 hover:bg-blue-100"
           >
             <Share2 className="w-4 h-4" />
           </Button>
@@ -107,7 +104,6 @@ export const FlashCardControls = ({
         size="icon"
         onClick={openSourceDocument}
         aria-label="Open source document"
-        className="border-blue-500 text-blue-500 hover:bg-blue-100"
       >
         <ExternalLink className="w-4 h-4" />
       </Button>
