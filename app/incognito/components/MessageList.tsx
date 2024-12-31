@@ -62,10 +62,10 @@ export function MessageList({ messages, messagesEndRef, onUpdate }: MessageListP
                                     : 'bg-accent text-accent-foreground'
                             }`}
                         >
-                            <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 ${
+                            <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:mt-0 [&_li]:mb-0 ${
                                 message.role === 'user'
-                                    ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground'
-                                    : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground'
+                                    ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground [&_li]:text-primary-foreground [&_ul]:text-primary-foreground [&_ol]:text-primary-foreground'
+                                    : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground [&_li]:text-accent-foreground [&_ul]:text-accent-foreground [&_ol]:text-accent-foreground'
                             }`}>
                                 {message.image && (
                                     <img
