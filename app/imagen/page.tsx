@@ -61,7 +61,7 @@ export default function Home() {
             </div>
           ) : !generatedImage ? (
             <div className="flex items-center justify-center py-8 mt-8 sm:mt-0">
-              <h1 className="text-4xl sm:text-6xl font-extrabold mb-12 text-center">
+              <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-center">
                 Image Creator
               </h1>
             </div>

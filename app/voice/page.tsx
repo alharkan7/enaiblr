@@ -33,7 +33,7 @@ export default function Voice() {
             <div className="flex-1 flex flex-col w-full">
                 <AppsHeader />
                 <div className="flex-1 flex flex-col w-full">
-                    <main className="flex-grow py-12 mt-8 px-4 sm:px-6 overflow-y-auto w-full">
+                    <main className="flex-grow flex items-center py-8 px-4 sm:px-6 overflow-y-auto w-full">
                         <TextToVoiceConverter />
                     </main>
                     <footer className="w-full sticky bottom-0 z-10">

@@ -87,7 +87,7 @@ export function InputForm({
 
   return (
     <div className="w-full px-4 md:px-12 lg:px-36 xl:px-48 space-y-4">
-       <h1 className="text-3xl font-bold text-center mb-8">
+       <h1 className="text-4xl font-extrabold text-center mb-8">
         Text to Voice
       </h1>
       <Textarea

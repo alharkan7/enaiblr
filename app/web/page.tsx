@@ -5,6 +5,7 @@ import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
 import { AppsHeader } from '@/components/apps-header'
+import AppsFooter from '@/components/apps-footer'
 import { RefreshCw } from 'lucide-react'
 
 export default function MinimalistChatbot() {
@@ -148,7 +149,7 @@ export default function MinimalistChatbot() {
     return (
         <>
             <div
-                className="flex flex-col h-screen relative chat-layout"
+                className="flex flex-col h-screen w-full relative chat-layout"
                 style={{
                     height: 'calc(var(--vh, 1vh) * 100)',
                     minHeight: '-webkit-fill-available'
@@ -178,7 +179,7 @@ export default function MinimalistChatbot() {
                 </header>
                 {messages.length === 0 ? (
                     <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
-                        <h1 className="text-4xl font-extrabold">
+                        <h1 className="text-4xl font-extrabold text-center w-full">
                             <span className="whitespace-nowrap">Chat with </span>{' '}
                             <span className="whitespace-nowrap">the Web</span>
                         </h1>
@@ -218,6 +219,7 @@ export default function MinimalistChatbot() {
                         </div>
                     </div>
                 )}
+                <AppsFooter />
             </div>
         </>
     )

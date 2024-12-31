@@ -175,7 +175,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
   return (
     <div className="w-full">
-      <h1 className="text-3xl font-bold text-center mb-8">
+      <h1 className="text-4xl font-extrabold text-center mb-8">
         Audio Transcriber
       </h1>
 

@@ -25,7 +25,7 @@ export function ChatTitle({ compact, clearMessages, fileName }: ChatTitleProps) 
             <div className="max-w-4xl mx-auto px-4 py-4 md:px-6 text-center relative">
                 <h1 className="text-xl font-semibold mx-12 truncate">
                     Chat with{' '}
-                    {fileName && <span className="text-blue-600">{truncateFileName(fileName)}</span>}
+                    {fileName && <span className="text-primary">{truncateFileName(fileName)}</span>}
                 </h1>
                 <button
                     onClick={clearMessages}
@@ -41,9 +41,9 @@ export function ChatTitle({ compact, clearMessages, fileName }: ChatTitleProps) 
             <h1 className="text-4xl font-extrabold mb-2 flex flex-wrap justify-center items-center gap-x-2">
                 <span>Chat with</span>
                 {fileName ? (
-                    <span className="text-blue-600">{truncateFileName(fileName)}</span>
+                    <span className="text-primary">{truncateFileName(fileName)}</span>
                 ) : (
-                    <span className="text-blue-600">PDFs and Docs</span>
+                    <span className="text-primary">PDFs and Docs</span>
                 )}
             </h1>
             {/* <p className="text-sm text-gray-500">
