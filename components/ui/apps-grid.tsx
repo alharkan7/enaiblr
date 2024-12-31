@@ -20,9 +20,14 @@ export function AppsGrid({ trigger, user }: AppsGridProps) {
       <PopoverTrigger asChild>
         {trigger}
       </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-4" align="end">
+      <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e) => {
+        // Prevent closing when clicking inside the popover
+        if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
+          e.preventDefault();
+        }
+      }}>
         <TooltipProvider>
-          <div className="grid grid-cols-3 gap-2">
+          <div className="apps-grid-content grid grid-cols-3 gap-2">
             {apps.map((app) => {
               const Icon = app.icon;
               const AppButton = (
