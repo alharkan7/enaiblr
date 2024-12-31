@@ -92,7 +92,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
         return (
             <div className="flex flex-col min-h-screen search-layout">
                 <header className="sticky top-0 left-0 w-full z-10 bg-background border-b">
-                    <div className="container mx-auto px-4 py-4 flex items-center gap-4">
+                    <div className="container max-w-5xl mx-auto py-4 flex items-center gap-4">
                         <div className="flex-1 min-w-0">
                             <SearchHeader
                                 query={query}
@@ -152,8 +152,8 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8 pt-1">
                 <div className="text-center space-y-2">
-                    <h1 className="text-5xl tracking-tighter ibm-plex-mono-bold">
-                        en<span className="text-blue-600">ai</span>blr
+                    <h1 className="text-5xl font-extrabold">
+                        enaiblr
                     </h1>
                     <p className="text-l text-muted-foreground ibm-plex-mono-light">AI Tools Search Engine</p>
                 </div>
@@ -192,7 +192,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     </div>
                 </div>
 
-                {error && <p className="text-red-500">{error}</p>}
+                {error && <p className="text-destructive">{error}</p>}
 
                 <div className="hidden sm:flex flex-wrap justify-center gap-2 max-w-2xl mt-6">
                     {TAGS.map((tag) => (

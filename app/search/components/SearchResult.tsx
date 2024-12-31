@@ -61,7 +61,7 @@ export const SearchResultItem = ({
                         href={result.url}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-sm font-bold text-blue-800 hover:text-blue-900"
+                        className="text-sm font-medium text-primary hover:text-primary/90"
                         onClick={(e) => e.stopPropagation()}
                     >
                         {new URL(result.url).hostname.replace('www.', '')}  ↗

@@ -100,7 +100,7 @@ export function InputForm({
       <div className="flex flex-col sm:flex-row gap-4 justify-center">
         <Select value={language} onValueChange={handleLanguageChange}>
           <SelectTrigger className="w-full sm:w-[200px] rounded-full">
-            <SelectValue placeholder="Pilih Bahasa" />
+            <SelectValue placeholder="Language" />
           </SelectTrigger>
           <SelectContent>
             {Object.entries(LANGUAGES).map(([code, label]) => (
@@ -117,7 +117,7 @@ export function InputForm({
           disabled={!language}
         >
           <SelectTrigger className="w-full sm:w-[200px] rounded-full">
-            <SelectValue placeholder="Pilih Suara" />
+            <SelectValue placeholder="Voice" />
           </SelectTrigger>
           <SelectContent>
             {Object.entries(availableVoices).map(([voiceId, label]: [string, string]) => (

@@ -28,8 +28,8 @@ export const SearchHeader = ({
         <div className="flex items-center gap-4 min-w-0">
             <button
                 onClick={handleHomeClick}
-                className="text-2xl font-bold tracking-tighter shrink-0">
-                en<span className="text-blue-600">ai</span>blr
+                className="text-2xl font-bold shrink-0">
+                enaiblr
             </button>
             <div className="flex-1 min-w-0 flex items-center gap-2">
                 <div className="flex-1 min-w-0">
