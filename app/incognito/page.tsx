@@ -176,6 +176,9 @@ export default function MinimalistChatbot() {
         >
             {messages.length === 0 ? (
                 <div className="flex flex-col flex-1">
+                    <div className="sticky top-0 z-50 bg-background">
+                        <AppsHeader />
+                    </div>
                     <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
                         <div className="w-full max-w-[1200px]">
                             <div className="text-center py-8">
@@ -223,12 +226,12 @@ export default function MinimalistChatbot() {
                         {/* Header wrapper with higher z-index */}
                         <div className="sticky top-0 z-50 bg-background">
                             <AppsHeader
-                                title={messages.length > 0 ? (
+                                title={
                                     <span className="text-xl font-semibold">
                                         Disposable Chat
                                     </span>
-                                ) : undefined}
-                                leftButton={messages.length > 0 ? (
+                                }
+                                leftButton={
                                     <button
                                         onClick={clearMessages}
                                         className="p-2 hover:bg-muted rounded-full transition-colors"
@@ -236,7 +239,7 @@ export default function MinimalistChatbot() {
                                     >
                                         <RefreshCw className="w-5 h-5 text-muted-foreground" />
                                     </button>
-                                ) : undefined}
+                                }
                             />
                         </div>
                         {/* Main content area */}
