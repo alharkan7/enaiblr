@@ -89,14 +89,14 @@ export function ChatInput({
                     <div
                         {...getRootProps()}
                         className={`border-2 border-dashed rounded-lg p-6 text-center transition-colors ${isDragActive
-                                ? 'border-blue-500 bg-blue-50/90'
-                                : 'border-gray-300 hover:border-gray-400 bg-white/90'
+                                ? 'border-primary bg-primary/10'
+                                : 'border-border hover:border-primary/50 bg-background'
                             }`}
                     >
                         <input {...getInputProps()} />
                         <div>
-                            <Upload className="w-12 h-12 mx-auto text-gray-400 mb-2" />
-                            <p className="text-sm text-gray-600">
+                            <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
+                            <p className="text-sm text-muted-foreground">
                                 Drag & drop a file here, or click to select
                             </p>
                             {/* <p className="text-xs text-gray-500 mt-1">
@@ -107,27 +107,27 @@ export function ChatInput({
                 </div>
             )}
             <div className="flex flex-col space-y-4">
-                <div className="flex items-center px-2 bg-white rounded-full shadow-md mx-auto border border-gray-200 w-full">
+                <div className="flex items-center px-2 bg-background rounded-full shadow-md mx-auto border border-border w-full max-w-xl">
                     <input
                         type="text"
                         ref={inputRef}
                         value={input}
                         onChange={(e) => setInput(e.target.value)}
                         placeholder={isFirstMessage ? 'Ask your document...' : 'Type a message...'}
-                        className="flex-1 px-4 py-3 bg-transparent focus:outline-none"
+                        className="flex-1 px-4 py-3 bg-transparent focus:outline-none text-foreground placeholder:text-muted-foreground min-w-0"
                         disabled={isLoading}
                         autoFocus={autoFocus}
                     />
-                    <div className="shrink-0 p-2">
+                    <div className="flex-none">
                         <button
                             type="submit"
                             disabled={isLoading || (!input.trim() && !fileContent)}
                             className={`p-2 rounded-full transition-colors ${isLoading || (!input.trim() && !fileContent)
-                                    ? 'text-gray-400'
-                                    : 'text-blue-600 hover:bg-gray-100'
+                                    ? 'text-muted-foreground'
+                                    : 'text-primary hover:bg-muted'
                                 }`}
                         >
-                            <Send className="w-6 h-6" />
+                            <Send className="w-5 h-5" />
                         </button>
                     </div>
                 </div>

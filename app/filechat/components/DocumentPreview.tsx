@@ -7,6 +7,7 @@ interface DocumentPreviewProps {
     onRemove: () => void;
     error?: string | null;
     wordCount?: number;
+    showRemoveButton?: boolean;
 }
 
 export function DocumentPreview({
@@ -15,21 +16,22 @@ export function DocumentPreview({
     isUploading,
     onRemove,
     error,
-    wordCount
+    wordCount,
+    showRemoveButton = true
 }: DocumentPreviewProps) {
     const getFileIcon = () => {
         switch (fileType.toLowerCase()) {
             case 'pdf':
-                return <FileText className="w-8 h-8 text-red-500" />;
+                return <FileText className="w-8 h-8 text-destructive" />;
             case 'doc':
             case 'docx':
-                return <FileText className="w-8 h-8 text-blue-500" />;
+                return <FileText className="w-8 h-8 text-primary" />;
             case 'txt':
-                return <FileText className="w-8 h-8 text-gray-500" />;
+                return <FileText className="w-8 h-8 text-muted-foreground" />;
             case 'md':
-                return <FileText className="w-8 h-8 text-purple-500" />;
+                return <FileText className="w-8 h-8 text-secondary" />;
             default:
-                return <File className="w-8 h-8 text-gray-500" />;
+                return <File className="w-8 h-8 text-muted-foreground" />;
         }
     };
 
@@ -52,22 +54,22 @@ export function DocumentPreview({
 
     return (
         <div className="relative flex justify-center">
-            <div className="relative p-4 bg-gray-50 rounded-lg flex flex-col">
+            <div className="relative p-4 bg-muted rounded-lg flex flex-col">
                 <div className="flex items-start gap-3">
                     <div className="flex-shrink-0">
                         {getFileIcon()}
                     </div>
                     <div className="flex-grow min-h-[2rem] flex flex-col justify-center">
-                        <span className="text-sm text-black font-bold leading-tight truncate" title={fileName}>
+                        <span className="text-sm text-foreground font-bold leading-tight truncate" title={fileName}>
                             {getTruncatedName(fileName)}
                         </span>
-                        <div className="text-sm text-gray-500 leading-tight">
+                        <div className="text-sm text-muted-foreground leading-tight">
                             {isUploading && (
                                 <div className="flex items-center">
                                     Processing file...
                                 </div>
                             )}
-                            {error && <div className="text-red-500">{error}</div>}
+                            {error && <div className="text-destructive">{error}</div>}
                             {!isUploading && !error && (
                                 <div>
                                     Word count: {wordCount !== undefined ? formatNumber(wordCount) : (
@@ -80,21 +82,23 @@ export function DocumentPreview({
                             )}
                         </div>
                     </div>
-                    <button
-                        onClick={onRemove}
-                        className="flex-shrink-0 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
-                        aria-label="Remove document"
-                    >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                            <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                        </svg>
-                    </button>
+                    {showRemoveButton && (  
+                        <button
+                            onClick={onRemove}
+                            className="flex-shrink-0 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
+                            aria-label="Remove document"
+                        >
+                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                                <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                            </svg>
+                        </button>
+                    )}
                 </div>
 
 
                 {isUploading && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                     </div>
                 )}
             </div>
