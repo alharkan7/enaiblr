@@ -126,7 +126,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
   };
 
   return (
-    <div className="w-full space-y-4 p-4 border rounded-xl bg-white shadow-sm">
+    <div className="w-full space-y-4 p-4 border rounded-xl bg-background shadow-sm">
       <audio
         ref={audioRef}
         crossOrigin="anonymous"
@@ -137,7 +137,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
       
       <div className="flex items-center gap-4">
         {error ? (
-          <div className="text-red-500 text-sm">{error}</div>
+          <div className="text-destructive text-sm">{error}</div>
         ) : (
           <>
             <Button
@@ -153,7 +153,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               )}
             </Button>
 
-            <span className="text-sm text-gray-500 w-20">
+            <span className="text-sm text-muted-foreground w-20">
               {formatTime(currentTime)}
             </span>
 
@@ -165,7 +165,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               className="w-full"
             />
 
-            <span className="text-sm text-gray-500 w-20 text-right">
+            <span className="text-sm text-muted-foreground w-20 text-right">
               {formatTime(duration)}
             </span>
 
