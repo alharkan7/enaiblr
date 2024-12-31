@@ -10,7 +10,7 @@ import { PDFInput } from "./components/PDFInput";
 import { usePDFProcessor } from "./hooks/usePDFProcessor";
 import { useFlashCard } from "./hooks/useFlashCard";
 import { FlashCardContent } from "./types";
-import RenderFooter from '@/components/RenderFooter';
+import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header';
 import "./styles/flashcard.css";
 
@@ -149,7 +149,7 @@ export default function PDFProcessor() {
             </Button>
           </div>
         </div>
-        <RenderFooter />
+        <AppsFooter />
       </div>
     );
   }
@@ -183,7 +183,7 @@ export default function PDFProcessor() {
           errorMessage={errorMessage}
         />
       </div>
-      <RenderFooter />
+      <AppsFooter />
     </div>
   );
 }

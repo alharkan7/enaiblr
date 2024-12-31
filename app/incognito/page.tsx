@@ -7,7 +7,7 @@ import { ChatInput } from './components/ChatInput'
 import { ImagePreview } from './components/ImagePreview'
 import { useImageUpload } from './hooks/useImageUpload'
 import { useChatMessages } from './hooks/useChatMessages'
-import RenderFooter from '@/components/RenderFooter'
+import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header'
 import { RefreshCw } from 'lucide-react'
 
@@ -230,7 +230,7 @@ export default function MinimalistChatbot() {
                         </div>
                     </div>
                     <div className="w-full">
-                        <RenderFooter />
+                        <AppsFooter />
                     </div>
                 </div>
             ) : (

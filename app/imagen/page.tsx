@@ -2,7 +2,7 @@
 
 import { ImageForm } from "./components/image-form"
 import { EXAMPLE_PROMPTS } from "./components/constants"
-import RenderFooter from '@/components/RenderFooter'
+import AppsFooter from '@/components/apps-footer';
 import { useState } from 'react'
 import { Download } from 'lucide-react';
 import { ImageModal } from "./components/image-modal"
@@ -137,7 +137,7 @@ export default function Home() {
           </div>
         </div>
         <div className="mt-8">
-          <RenderFooter />
+          <AppsFooter />
         </div>
       </div>
       {generatedImage && (

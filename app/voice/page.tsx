@@ -1,7 +1,7 @@
 'use client'
 
 import { useEffect } from 'react'
-import RenderFooter from '@/components/RenderFooter'
+import AppsFooter from '@/components/apps-footer';
 import TextToVoiceConverter from './components/text-to-voice-converter'
 import { AppsHeader } from '@/components/apps-header'
 
@@ -37,7 +37,7 @@ export default function Voice() {
                         <TextToVoiceConverter />
                     </main>
                     <footer className="w-full sticky bottom-0 z-10">
-                        <RenderFooter />
+                        <AppsFooter />
                     </footer>
                 </div>
             </div>

@@ -5,66 +5,9 @@ import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
-import { Menu, X, Infinity as InfinityIcon, Search, MessageSquareDashed, Globe, Zap, WandSparkles, FileAudio, Speech, FileText } from 'lucide-react';
 import { AppsGridUserNav } from '@/components/ui/apps-grid-user-nav';
 import type { User } from 'next-auth';
-
-const apps = [
-  {
-    name: 'Enaiblr AI',
-    icon: InfinityIcon,
-    slug: '',
-    description: ''
-  },
-  {
-    name: 'AI Search',
-    icon: Search,
-    slug: 'search',
-    description: ''
-  },
-  {
-    name: 'Image Creator',
-    icon: WandSparkles,
-    slug: 'imagen',
-    description: ''
-  },
-  {
-    name: 'Doc Chat',
-    icon: FileText,
-    slug: 'filechat',
-    description: ''
-  },
-  {
-    name: 'Web Chat',
-    icon: Globe,
-    slug: 'web',
-    description: ''
-  },
-  {
-    name: 'Paper Flashcard',
-    icon: Zap,
-    slug: 'paper-flashcard',
-    description: ''
-  },
-  {
-    name: 'Transcriber',
-    icon: FileAudio,
-    slug: 'transcribe',
-    description: ''
-  },
-  {
-    name: 'Text to Voice',
-    icon: Speech,
-    slug: 'voice',
-    description: ''
-  },
-  {
-    name: 'Incognito Chat',
-    icon: MessageSquareDashed,
-    slug: 'incognito',
-    description: ''
-  },
-];
+import { apps } from '@/config/apps';
 
 interface AppsGridProps {
   trigger: React.ReactNode;

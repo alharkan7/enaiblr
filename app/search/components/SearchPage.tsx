@@ -8,7 +8,7 @@ import { AppsHeader } from "@/components/apps-header";
 import { SearchHeader } from "./SearchHeader";
 import { SearchResultItem } from "./SearchResult";
 import CustomSearchInput from "./CustomSearchInput";
-import RenderFooter from "@/components/RenderFooter";
+import AppsFooter from '@/components/apps-footer';
 
 import { useSearch } from "../hooks/useSearch";
 import { TAGS } from "../constants";
@@ -137,7 +137,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     )}
                 </main>
                 <div className="mt-8">
-                    <RenderFooter />
+                    <AppsFooter />
                 </div>
             </div>
         );
@@ -209,7 +209,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
             </main>
 
             <div className="mt-8">
-                <RenderFooter />
+                <AppsFooter />
             </div>
         </div>
     );

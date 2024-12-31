@@ -6,7 +6,7 @@ import { ChatInput } from './components/ChatInput'
 import { DocumentPreview } from './components/DocumentPreview'
 import { useFileUpload } from './hooks/useFileUpload'
 import { useChatMessages } from './hooks/useChatMessages'
-import RenderFooter from '@/components/RenderFooter'
+import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header'
 import { RefreshCw } from 'lucide-react'
 
@@ -224,7 +224,7 @@ export default function Filechat() {
                     </div>
                 </div>
                 <div className="w-full">
-                    <RenderFooter />
+                    <AppsFooter />
                 </div>
             </div>
         </div>

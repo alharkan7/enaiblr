@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import RenderFooter from '@/components/RenderFooter'
+import AppsFooter from '@/components/apps-footer';
 import { UploadForm } from './components/UploadForm';
 import { TranscriptionResult } from './components/TranscriptionResult';
 import { AppsHeader } from '@/components/apps-header'
@@ -59,7 +59,7 @@ export default function Transcriber() {
                     )}
                 </main>
                 <footer className="w-full sticky bottom-0 z-10">
-                    <RenderFooter />
+                    <AppsFooter />
                 </footer>
             </div>
         </div>

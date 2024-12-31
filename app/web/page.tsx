@@ -4,7 +4,6 @@ import { useState, useRef, useEffect } from 'react'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
-import RenderFooter from '@/components/RenderFooter'
 import { AppsHeader } from '@/components/apps-header'
 import { RefreshCw } from 'lucide-react'
 
