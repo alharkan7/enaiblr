@@ -170,8 +170,7 @@ export default function MinimalistChatbot() {
                         <AppsHeader
                             title={messages.length > 0 ? (
                                 <div className="flex items-center gap-2">
-                                    <span>Chat with</span>
-                                    <span className="text-blue-600">the Web</span>
+                                    Chat with the Web
                                 </div>
                             ) : undefined}
                         />
@@ -181,7 +180,7 @@ export default function MinimalistChatbot() {
                     <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
                         <h1 className="text-4xl font-extrabold">
                             <span className="whitespace-nowrap">Chat with </span>{' '}
-                            <span className="text-blue-600 whitespace-nowrap">the Web</span>
+                            <span className="whitespace-nowrap">the Web</span>
                         </h1>
                         <div className="w-full max-w-xl">
                             <ChatInput

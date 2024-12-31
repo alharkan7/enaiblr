@@ -20,14 +20,14 @@ function CollapsibleText({ content }: CollapsibleTextProps) {
     return (
         <div className="relative">
             <p
-                className={`text-gray-600 text-sm pr-6 ${!isExpanded ? 'line-clamp-2' : ''
+                className={`text-foreground text-sm pr-6 ${!isExpanded ? 'line-clamp-2' : ''
                     }`}
             >
                 {content}
             </p>
             <button
                 onClick={() => setIsExpanded(!isExpanded)}
-                className="absolute bottom-0 right-0 p-1 text-gray-500 hover:text-gray-700 transition-colors"
+                className="absolute bottom-0 right-0 p-1 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={isExpanded ? 'Show less' : 'Show more'}
             >
                 {isExpanded ? (
@@ -99,8 +99,8 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                             <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
                                 <div
                                     className={`max-w-[80%] rounded-2xl p-3 break-words overflow-wrap-anywhere ${message.role === 'user'
-                                        ? 'bg-blue-500 text-white rounded-br-none'
-                                        : 'bg-gray-200 text-gray-800 rounded-bl-none'
+                                        ? 'bg-primary text-primary-foreground rounded-br-none'
+                                        : 'bg-muted text-foreground rounded-bl-none'
                                         }`}
                                 >
                                     {message.role === 'user' ? (
@@ -132,12 +132,12 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                             </ReactMarkdown>
 
                                             {message.sources && message.sources.length > 0 && (
-                                                <div className="mt-4 space-y-3 border-t pt-3 text-sm">
-                                                    <div className="flex items-center justify-between cursor-pointer bg-gray-100 rounded-md p-2" 
+                                                <div className="mt-4 space-y-3 border-t pt-1 text-sm">
+                                                    <div className="flex items-center justify-between cursor-pointer bg-muted rounded-md pt-2" 
                                                          onClick={() => toggleSourcesExpanded(message.id)}>
-                                                        <div className="font-bold text-gray-700">Sources:</div>
+                                                        <div className="font-bold ">Sources:</div>
                                                         <svg
-                                                            className={`w-5 h-5 text-gray-500 transform transition-transform duration-200 ${expandedSources[message.id] ? 'rotate-180' : ''}`}
+                                                            className={`w-5 h-5 transform transition-transform duration-200 ${expandedSources[message.id] ? 'rotate-180' : ''}`}
                                                             fill="none"
                                                             stroke="currentColor"
                                                             viewBox="0 0 24 24"
@@ -156,7 +156,7 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                                         href={source.url}
                                                                         target="_blank"
                                                                         rel="noopener noreferrer"
-                                                                        className="text-blue-600 hover:underline font-medium"
+                                                                        className="text-primary underline font-medium hover:text-primary/90"
                                                                     >
                                                                         {source.title}
                                                                     </a>

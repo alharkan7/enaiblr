@@ -39,8 +39,7 @@ export function ChatInput({
 
     return (
         <form onSubmit={handleSubmit} className="p-4">
-            <div className="flex pl-2 items-center bg-white rounded-full shadow-md max-w-4xl mx-auto border border-gray-200">
-
+            <div className="flex pl-2 items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-input relative">
                 <input
                     type="file"
                     ref={fileInputRef}
@@ -49,24 +48,23 @@ export function ChatInput({
                 />
 
                 <input
-                    type="text"
                     ref={inputRef}
+                    type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-1 p-3 bg-transparent focus:outline-none min-w-0"
+                    className="flex-1 p-3 pr-12 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
+                    disabled={isLoading}
                     autoFocus={autoFocus}
                 />
 
-                <div className="shrink-0">
-                    <button
-                        type="submit"
-                        disabled={isLoading}
-                        className={`p-3 pr-4 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'} focus:outline-none rounded-r-full`}
-                    >
-                        <Send className="w-6 h-6 text-blue-500" />
-                    </button>
-                </div>
+                <button
+                    type="submit"
+                    disabled={!input.trim() || isLoading}
+                    className="absolute right-2 p-2 rounded-full text-primary hover:text-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <Send className="h-5 w-5" />
+                </button>
             </div>
         </form>
     );
