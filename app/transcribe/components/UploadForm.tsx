@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileAudio, Check, AlertCircle, X } from 'lucide-react';
+import { Upload, FileAudio, Check, AlertCircle, X, RefreshCw } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { Progress } from './ui/Progress';
 import { Groq } from 'groq-sdk';
@@ -152,7 +152,6 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
   // Calculate the progress to show
   const displayProgress = processingProgress > 0 ? processingProgress : uploadProgress;
 
-
   const formatDuration = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = Math.round(seconds % 60);
@@ -175,23 +174,20 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
   };
 
   return (
-    <div className="w-11/12 md:w-4/5 lg:w-1/2 mx-auto px-4">
+    <div className="w-full">
       <h1 className="text-3xl font-bold text-center mb-8">
-        Audio <span className="text-blue-600">Transcriber</span>
+        Audio Transcriber
       </h1>
-      {/* <p className="text-gray-600 text-sm mb-2 text-center">
-        Upload your audio file and we'll convert it to text using advanced speech recognition
-      </p> */}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
-        <div className="mb-6">
+      <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mx-auto">
+        <div className="mb-6 w-full">
           <LanguageSelector
             value={selectedLanguage}
             onChange={setSelectedLanguage}
           />
         </div>
 
-        <div className="relative">
+        <div className="relative w-full">
           {error && (
             <button
               type="button"
@@ -202,67 +198,71 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
             </button>
           )}
 
-          <div className="relative">  {/* Wrapper for dropzone */}
-            {file && (
-              <button
-                type="button"
-                onClick={clearAllStates}
-                className="absolute -top-2 -right-2 z-10 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
-              >
-                <X className="h-5 w-5 text-gray-500" />
-              </button>
-            )}
-
+          {!file && (
             <div
               {...getRootProps()}
-              className={`border-2 border-dashed rounded-lg p-8 text-center cursor-pointer transition-colors
-                ${isDragActive ? 'border-blue-500 bg-blue-50' : 'border-gray-300 hover:border-gray-400'}
-                ${error ? 'border-red-500 bg-red-50' : ''}`}
+              className={`relative p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors
+                ${isDragActive 
+                  ? 'border-primary bg-primary/5' 
+                  : 'border-border hover:border-primary/50 hover:bg-accent/50'
+                }
+                ${error ? 'border-destructive' : ''}
+              `}
             >
               <input {...getInputProps()} />
-              <div className="flex flex-col items-center space-y-4">
-                {error ? (
-                  <>
-                    <AlertCircle className="h-12 w-12 text-red-500" />
-                    <div className="space-y-1">
-                      <p className="text-red-600 font-medium">{error}</p>
-                      {errorDetails && (
-                        <p className="text-sm text-red-500">
-                          {errorDetails}
-                        </p>
-                      )}
-                    </div>
-                  </>
-                ) : file ? (
-                  <>
-                    <Check className="h-12 w-12 text-green-500" />
-                    <span className="text-green-600 font-medium">{file.name}</span>
-                  </>
-                ) : (
-                  <>
-                    <FileAudio className="h-12 w-12 text-gray-400" />
-                    <div className="space-y-1">
-                      <p className="text-gray-700 font-medium">
-                        Drop your audio file here
-                      </p>
-                      <p className="text-sm text-gray-500">
-                        or click to select a file.
-                      </p>
-                      {/* <p className="text-xs text-gray-500">
-                    Max size: 40MB. Formats: flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm
-                  </p> */}
-                    </div>
-                  </>
-                )}
+              
+              <div className="space-y-4">
+                <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Upload className="w-6 h-6 text-primary" />
+                </div>
+                
+                <div className="space-y-2">
+                  <p className="text-base font-medium text-foreground">
+                    {isDragActive ? 'Drop your audio file here' : 'Upload your audio file'}
+                  </p>
+                  <p className="text-sm text-muted-foreground">
+                    Supports flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm (max 40MB)
+                  </p>
+                </div>
               </div>
             </div>
-          </div>
+          )}
+
+          {file && !error && (
+            <div className="w-full mt-4 p-4 rounded-lg bg-accent/50 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <FileAudio className="w-5 h-5 text-primary" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
+                <p className="text-xs text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
+              </div>
+              <button
+                onClick={() => setFile(null)}
+                className="w-8 h-8 rounded-full hover:bg-accent flex items-center justify-center flex-shrink-0"
+              >
+                <X className="w-4 h-4 text-muted-foreground" />
+              </button>
+            </div>
+          )}
+
+          {error && (
+            <div className="w-full mt-4 p-4 rounded-lg bg-destructive/10 flex items-center gap-3">
+              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="w-5 h-5 text-destructive" />
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-destructive">{error}</p>
+                {errorDetails && <p className="text-xs text-destructive/80 mt-1">{errorDetails}</p>}
+              </div>
+            </div>
+          )}
         </div>
 
         {isUploading && (
-          <div className="space-y-2">
+          <div className="space-y-2 w-full">
             <Progress value={displayProgress} />
-            <p className="text-sm text-center text-gray-600">
+            <p className="text-sm text-center text-muted-foreground">
               {processingProgress > 0
                 ? `Processing transcription... ${displayProgress}%`
                 : `Uploading... ${displayProgress}%`}
@@ -273,16 +273,17 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         <button
           type="submit"
           disabled={!file || isUploading}
-          className={`w-full py-3 px-4 rounded-lg font-medium text-white
+          className={`w-full py-2.5 px-4 rounded-lg font-medium transition-colors
             ${!file || isUploading
-              ? 'bg-gray-400 cursor-not-allowed'
-              : 'bg-blue-600 hover:bg-blue-700'}`}
+              ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
+              : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            }`}
         >
           {isUploading ? (
-            <span className="flex items-center justify-center">
-              <Upload className="-ml-1 mr-2 h-5 w-5" />
-              Processing...
-            </span>
+            <div className="flex items-center justify-center gap-2">
+              <RefreshCw className="w-4 h-4 animate-spin" />
+              <span>Processing...</span>
+            </div>
           ) : (
             'Start Transcription'
           )}

@@ -11,6 +11,19 @@ interface TranscriptionResultProps {
 export function TranscriptionResult({ result }: TranscriptionResultProps) {
   const [activeTab, setActiveTab] = useState('timestamps');
 
+  const durationToSeconds = (duration: string): number => {
+    const parts = duration.split(':');
+    if (parts.length === 2) {
+      const [minutes, seconds] = parts;
+      return parseInt(minutes) * 60 + parseInt(seconds);
+    }
+    if (parts.length === 3) {
+      const [hours, minutes, seconds] = parts;
+      return parseInt(hours) * 3600 + parseInt(minutes) * 60 + parseInt(seconds);
+    }
+    return 0;
+  };
+
   const handleDownload = async () => {
     // Define default paragraph style
     const defaultStyle = {
@@ -257,148 +270,146 @@ export function TranscriptionResult({ result }: TranscriptionResultProps) {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 w-full">
-      <div className="space-y-4">
-        <h2 className="text-2xl font-bold mb-6 text-center">
-          {result.fileName.replace(/(\.[^.]+)$/, '')}
-          <span className="text-blue-600">
-            {result.fileName.match(/\.[^.]+$/)?.[0]}
+    <div className="flex flex-col h-full">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border-b border-border">
+        <div className="flex items-center justify-center gap-2">
+          <FileText className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {result.segments.map(segment => segment.text).join(' ').split(' ').length} words
           </span>
-        </h2>
-
-        <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-          <div className="flex items-center space-x-2 text-gray-600 justify-center">
-            <Clock className="h-5 w-5 mr-2" />
-            <span>Duration: {result.audioDuration}</span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-600 justify-center">
-            <FileText className="h-5 w-5 mr-2" />
-            <span>Words: {result.segments.map(segment => segment.text).join(' ').split(' ').length}</span>
-          </div>
-          <div className="flex items-center space-x-2 text-gray-600 justify-center">
-            <LetterText className="h-5 w-5 mr-2" />
-            <span>Characters: {result.textLength}</span>
-          </div>
-          <div className="flex justify-center md:col-start-2 md:col-span-1 lg:col-auto">
-            <button
-              onClick={handleDownload}
-              className="inline-flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-            >
-              <Download className="h-5 w-5" />
-              <span>Download</span>
-            </button>
-          </div>
         </div>
+        <div className="flex items-center justify-center gap-2">
+          <LetterText className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {result.textLength} characters
+          </span>
+        </div>
+        <div className="flex items-center justify-center gap-2">
+          <Clock className="w-4 h-4 text-muted-foreground" />
+          <span className="text-sm text-muted-foreground">
+            {formatTime(durationToSeconds(result.audioDuration))}
+          </span>
+        </div>
+        <div className="flex items-center justify-center">
+          <button
+            onClick={handleDownload}
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
+          >
+            <Download className="w-4 h-4" />
+            <span className="text-sm font-medium">Download</span>
+          </button>
+        </div>
+      </div>
 
-        <Tabs
-          value={activeTab}
-          onValueChange={setActiveTab}
-          tabs={[
-            { value: 'timestamps', label: 'With Timestamps' },
-            { value: 'text', label: 'Text Only' }
-          ]}
-        />
+      <Tabs
+        tabs={[
+          { value: 'timestamps', label: 'With Timestamps' },
+          { value: 'text', label: 'Text Only' }
+        ]}
+        value={activeTab}
+        onValueChange={setActiveTab}
+      />
 
-        <div className="mt-6 bg-white rounded-lg shadow-sm border p-6">
+      <div className="flex-1 overflow-y-auto p-4">
+        {activeTab === 'timestamps' ? (
+          <div className="space-y-6">
+            {(() => {
+              let paragraphs: Array<{ text: string, startTime: number, endTime: number }> = [];
+              let currentParagraph = '';
+              let startTime = 0;
+              let endTime = 0;
+              let isFirstSegment = true;
 
-          {activeTab === 'timestamps' ? (
-            <div className="space-y-4">
-              {(() => {
-                let paragraphs: Array<{ text: string, startTime: number, endTime: number }> = [];
-                let currentParagraph = '';
-                let startTime = 0;
-                let endTime = 0;
-                let isFirstSegment = true;
+              result.segments.forEach((segment) => {
+                const text = segment.text.trim();
 
-                result.segments.forEach((segment) => {
-                  const text = segment.text.trim();
-
-                  if (isFirstSegment) {
-                    startTime = segment.startTime;
-                    isFirstSegment = false;
-                  }
-
-                  if (text.endsWith('.')) {
-                    currentParagraph += ' ' + text;
-                    endTime = segment.endTime;
-
-                    if (currentParagraph.trim()) {
-                      paragraphs.push({
-                        text: currentParagraph.trim(),
-                        startTime,
-                        endTime
-                      });
-                    }
-
-                    currentParagraph = '';
-                    isFirstSegment = true;
-                  } else {
-                    currentParagraph += ' ' + text;
-                    endTime = segment.endTime;
-                  }
-                });
-
-                // Add any remaining text as final paragraph
-                if (currentParagraph.trim()) {
-                  if (!currentParagraph.trim().endsWith('.')) {
-                    currentParagraph += '.';
-                  }
-                  paragraphs.push({
-                    text: currentParagraph.trim(),
-                    startTime,
-                    endTime
-                  });
+                if (isFirstSegment) {
+                  startTime = segment.startTime;
+                  isFirstSegment = false;
                 }
 
-                return paragraphs.map((paragraph, index) => (
-                  <div key={index} className="flex space-x-4">
-                    <span className="text-gray-500 whitespace-nowrap">
+                if (text.endsWith('.')) {
+                  currentParagraph += ' ' + text;
+                  endTime = segment.endTime;
+
+                  if (currentParagraph.trim()) {
+                    paragraphs.push({
+                      text: currentParagraph.trim(),
+                      startTime,
+                      endTime
+                    });
+                  }
+
+                  currentParagraph = '';
+                  isFirstSegment = true;
+                } else {
+                  currentParagraph += ' ' + text;
+                  endTime = segment.endTime;
+                }
+              });
+
+              // Add any remaining text as final paragraph
+              if (currentParagraph.trim()) {
+                if (!currentParagraph.trim().endsWith('.')) {
+                  currentParagraph += '.';
+                }
+                paragraphs.push({
+                  text: currentParagraph.trim(),
+                  startTime,
+                  endTime
+                });
+              }
+
+              return paragraphs.map((paragraph, index) => (
+                <div key={index} className="group">
+                  <div className="flex items-start gap-4">
+                    <span className="text-xs text-muted-foreground pt-1 select-none">
                       [{formatTime(paragraph.startTime)} - {formatTime(paragraph.endTime)}]
                     </span>
-                    <p>{paragraph.text}</p>
+                    <p className="flex-1 text-foreground">
+                      {paragraph.text}
+                    </p>
                   </div>
-                ));
-              })()}
-            </div>
-          ) : (
-            <div className="prose max-w-none">
-              {(() => {
-                let paragraphs: string[] = [];
-                let currentParagraph = '';
+                </div>
+              ));
+            })()}
+          </div>
+        ) : (
+          <div className="space-y-6">
+            {(() => {
+              let paragraphs: string[] = [];
+              let currentParagraph = '';
 
-                result.segments.forEach((segment) => {
-                  const text = segment.text.trim();
+              result.segments.forEach((segment) => {
+                const text = segment.text.trim();
 
-                  // If text ends with period, add to current and start new paragraph
-                  if (text.endsWith('.')) {
-                    currentParagraph += ' ' + text;
-                    if (currentParagraph.trim()) {
-                      paragraphs.push(currentParagraph.trim());
-                    }
-                    currentParagraph = '';
-                  } else {
-                    // Add to current paragraph
-                    currentParagraph += ' ' + text;
+                if (text.endsWith('.')) {
+                  currentParagraph += ' ' + text;
+                  if (currentParagraph.trim()) {
+                    paragraphs.push(currentParagraph.trim());
                   }
-                });
-
-                // Add any remaining text as final paragraph
-                if (currentParagraph.trim()) {
-                  // Add period if missing
-                  if (!currentParagraph.trim().endsWith('.')) {
-                    currentParagraph += '.';
-                  }
-                  paragraphs.push(currentParagraph.trim());
+                  currentParagraph = '';
+                } else {
+                  currentParagraph += ' ' + text;
                 }
+              });
 
-                return paragraphs.map((paragraph, index) => (
-                  <p key={index}>{paragraph}</p>
-                ));
-              })()}
-            </div>
-          )}
+              // Add any remaining text as final paragraph
+              if (currentParagraph.trim()) {
+                if (!currentParagraph.trim().endsWith('.')) {
+                  currentParagraph += '.';
+                }
+                paragraphs.push(currentParagraph.trim());
+              }
 
-        </div>
+              return paragraphs.map((paragraph, index) => (
+                <p key={index} className="text-foreground">
+                  {paragraph}
+                </p>
+              ));
+            })()}
+          </div>
+        )}
       </div>
     </div>
   );

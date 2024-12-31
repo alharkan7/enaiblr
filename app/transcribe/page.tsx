@@ -29,7 +29,7 @@ export default function Transcriber() {
     }, []);
 
     return (
-        <div 
+        <div
             className="flex min-h-screen"
             style={{
                 height: 'calc(var(--vh, 1vh) * 100)',
@@ -37,30 +37,30 @@ export default function Transcriber() {
             }}
         >
             <div className="flex flex-col w-full relative">
-                <AppsHeader 
-                    title={transcriptionResult ? "Transcription Result" : ""} 
+                <AppsHeader
+                    title={transcriptionResult ? "Transcription Result" : ""}
                     leftButton={transcriptionResult ? (
                         <button
                             onClick={() => window.location.reload()}
-                            className="text-gray-600 hover:text-blue-600 transition-colors"
+                            className="text-foreground/60 hover:text-primary transition-colors"
                             title="New Transcription"
                         >
                             <RefreshCw size={20} />
                         </button>
                     ) : undefined}
                 />
-                <main className={`flex-grow ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
-                    {transcriptionResult ? (
-                        <TranscriptionResult 
-                            result={transcriptionResult} 
-                        />
-                    ) : (
-                        <UploadForm onTranscriptionComplete={setTranscriptionResult} />
-                    )}
+                <main className={`flex-grow px-4 md:px-4 ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
+                    <div className="w-full max-w-4xl mx-auto">
+                        {transcriptionResult ? (
+                            <TranscriptionResult
+                                result={transcriptionResult}
+                            />
+                        ) : (
+                            <UploadForm onTranscriptionComplete={setTranscriptionResult} />
+                        )}
+                    </div>
                 </main>
-                <footer className="w-full sticky bottom-0 z-10">
-                    <AppsFooter />
-                </footer>
+                <AppsFooter />
             </div>
         </div>
     )
