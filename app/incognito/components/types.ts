@@ -11,4 +11,5 @@ export type MessageContent = string | Array<{
 export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: MessageContent;
+    image?: string; // Optional image URL for uploaded images
 }

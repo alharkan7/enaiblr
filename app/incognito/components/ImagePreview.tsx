@@ -15,7 +15,7 @@ export function ImagePreview({ localImageUrl, isUploading, onRemove }: ImagePrev
                 />
                 <button
                     onClick={onRemove}
-                    className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                    className="absolute -top-2 -right-2 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
                     aria-label="Remove image"
                 >
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
@@ -23,8 +23,8 @@ export function ImagePreview({ localImageUrl, isUploading, onRemove }: ImagePrev
                     </svg>
                 </button>
                 {isUploading && (
-                    <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-white"></div>
+                    <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
+                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
                     </div>
                 )}
             </div>

@@ -48,59 +48,54 @@ export function MessageList({ messages, messagesEndRef, onUpdate }: MessageListP
         <div
             ref={messageListRef}
             className="flex-1 overflow-y-auto scrollbar-hide relative h-full"
-            style={{
-                height: '100%',
-                overscrollBehavior: 'contain',
-            }}
         >
-            <div className="max-w-4xl mx-auto w-full p-4 md:p-6">
-                <div className="space-y-4">
-                    {messages.map((message, index) => (
-                        <div key={index} className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} w-full`}>
-                            <div
-                                className={`max-w-[80%] rounded-2xl p-3 break-words overflow-wrap-anywhere ${message.role === 'user'
-                                    ? 'bg-blue-500 text-white rounded-br-none'
-                                    : 'bg-gray-200 text-gray-800 rounded-bl-none'
-                                    }`}
-                            >
-                                {message.role === 'assistant' ? (
-                                    <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert">
-                                        {typeof message.content === 'string'
-                                            ? message.content
-                                            : message.content.map((content, i) =>
-                                                content.type === 'text'
-                                                    ? content.text
-                                                    : content.image_url?.url
-                                                        ? `![Image](${content.image_url.url})`
-                                                        : ''
-                                            ).join('\n')}
-                                    </ReactMarkdown>
-                                ) : (
-                                    typeof message.content === 'string'
-                                        ? message.content
-                                        : message.content.map((content, i) => (
-                                            <div key={i} className="flex flex-col">
-                                                {content.type === 'image_url' && content.image_url?.url && (
-                                                    <img
-                                                        src={content.image_url.url}
-                                                        alt="Uploaded content"
-                                                        className="max-w-full max-h-[250px] w-auto h-auto object-contain rounded-lg mb-2"
-                                                    />
-                                                )}
-                                                {content.type === 'text' && content.text}
-                                            </div>
-                                        ))
+            <div className="max-w-4xl mx-auto px-4 pt-4 space-y-6">
+                {messages.map((message, index) => (
+                    <div
+                        key={index}
+                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                    >
+                        <div
+                            className={`rounded-lg px-4 py-2 max-w-[85%] ${
+                                message.role === 'user'
+                                    ? 'bg-primary text-primary-foreground'
+                                    : 'bg-accent text-accent-foreground'
+                            }`}
+                        >
+                            <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 ${
+                                message.role === 'user'
+                                    ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground'
+                                    : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground'
+                            }`}>
+                                {message.image && (
+                                    <img
+                                        src={message.image}
+                                        alt="Uploaded content"
+                                        className="w-full h-auto object-contain rounded-lg mb-1 max-h-[300px]"
+                                    />
+                                )}
+                                {Array.isArray(message.content) && message.content.map((content, idx) => {
+                                    if ('image_url' in content) {
+                                        return (
+                                            <img
+                                                key={idx}
+                                                src={content.image_url.url}
+                                                alt="Generated content"
+                                                className="w-full h-auto object-contain rounded-lg mb-0 max-h-[300px]"
+                                            />
+                                        );
+                                    }
+                                    return <ReactMarkdown key={idx}>{content.text}</ReactMarkdown>;
+                                })}
+                                {typeof message.content === 'string' && (
+                                    <ReactMarkdown>{message.content}</ReactMarkdown>
                                 )}
                             </div>
                         </div>
-                    ))}
-                </div>
+                    </div>
+                ))}
+                <div ref={messagesEndRef} />
             </div>
-            <div
-                ref={messagesEndRef}
-                className="h-px w-full"
-                aria-hidden="true"
-            />
         </div>
         <style>{`
             .prose pre, .prose code {

@@ -47,42 +47,40 @@ export function ChatInput({
 
     return (
         <form onSubmit={handleSubmit} className="p-4">
-            <div className="flex items-center bg-white rounded-full shadow-md max-w-4xl mx-auto border border-gray-200">
-                <div className="shrink-0">
+            <div className="flex items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-border">
+                <div className="shrink-0 pl-2">
                     <button
                         type="button"
+                        className="p-2 rounded-full hover:bg-muted transition-colors"
                         onClick={() => fileInputRef.current?.click()}
-                        className="p-3 pl-4 hover:bg-gray-100 focus:outline-none rounded-l-full"
                     >
-                        <Image className="w-6 h-6 text-gray-500" />
+                        <Image className="w-6 h-6" />
                     </button>
+                    <input
+                        ref={fileInputRef}
+                        type="file"
+                        accept="image/*"
+                        onChange={onImageSelect}
+                        className="hidden"
+                    />
                 </div>
-
                 <input
-                    type="file"
-                    ref={fileInputRef}
-                    onChange={onImageSelect}
-                    accept="image/*"
-                    className="hidden"
-                />
-
-                <input
-                    type="text"
                     ref={inputRef}
+                    type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    placeholder="Type a message..."
-                    className="flex-1 p-3 bg-transparent focus:outline-none min-w-0"
+                    placeholder="Send a message..."
+                    className="flex-1 px-4 py-2 bg-transparent focus:outline-none text-foreground placeholder:text-muted-foreground min-w-0"
+                    disabled={isLoading}
                     autoFocus={autoFocus}
                 />
-
-                <div className="shrink-0">
+                <div className="shrink-0 pr-2">
                     <button
                         type="submit"
-                        disabled={isLoading}
-                        className={`p-3 pr-4 ${isLoading ? 'opacity-50 cursor-not-allowed' : 'hover:bg-gray-100'} focus:outline-none rounded-r-full`}
+                        disabled={!input.trim() && !imageBase64}
+                        className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Send className="w-6 h-6 text-blue-500" />
+                        <Send className="w-6 h-6" />
                     </button>
                 </div>
             </div>
