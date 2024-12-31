@@ -45,7 +45,7 @@ export default function Home() {
         <AppsHeader 
           title={(isGenerating || generatedImage) ? (
             <>
-              <span className="text-blue-600">Image</span> Creator AI
+              Image Creator AI
             </>
           ) : undefined} 
         />
@@ -53,16 +53,16 @@ export default function Home() {
           {isGenerating ? (
             <div className="relative w-full max-w-[640px] flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={getAspectRatioClass(imageAspectRatio)} style={{ maxWidth: '100%', maxHeight: '100%' }}>
-                <div className="absolute inset-0 w-full h-full object-contain rounded-lg flex flex-col items-center justify-center bg-white/40 backdrop-blur">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900 mb-4"></div>
-                  <p className="text-gray-600 font-medium">Creating Visual</p>
+                <div className="absolute inset-0 w-full h-full object-contain rounded-lg flex flex-col items-center justify-center bg-background/40 backdrop-blur">
+                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mb-4"></div>
+                  <p className="text-muted-foreground font-medium">Creating Visual</p>
                 </div>
               </div>
             </div>
           ) : !generatedImage ? (
             <div className="flex items-center justify-center py-8 mt-8 sm:mt-0">
-              <h1 className="text-4xl sm:text-6xl font-bold mb-12 text-center">
-                Image <span className="text-blue-500">Creator</span>
+              <h1 className="text-4xl sm:text-6xl font-extrabold mb-12 text-center">
+                Image Creator
               </h1>
             </div>
           ) : (
@@ -81,9 +81,9 @@ export default function Home() {
                     link.download = 'generated-image.png';
                     link.click();
                   }}
-                  className="absolute bottom-2 right-2 p-2 bg-white/40 backdrop-blur-sm hover:bg-white/60 rounded-full transition-colors"
+                  className="absolute bottom-2 right-2 p-2 bg-background/40 backdrop-blur-sm hover:bg-background/60 rounded-full transition-colors"
                 >
-                  <Download className="w-5 h-5 text-white" />
+                  <Download className="w-5 h-5 text-foreground" />
                 </button>
               </div>
             </div>
@@ -127,9 +127,9 @@ export default function Home() {
                           handleGenerate(examplePrompt);
                         });
                     }}
-                    className="px-4 py-2 text-sm bg-white/80 backdrop-blur-sm rounded-full border hover:bg-white/90 transition-colors"
+                    className="px-4 py-2 text-sm bg-background/80 hover:bg-background/90 backdrop-blur-sm rounded-full border border-input transition-colors"
                   >
-                    <span className="text-xs">{examplePrompt} →</span>
+                    <span className="text-xs text-foreground/80">{examplePrompt} →</span>
                   </button>
                 ))}
               </div>

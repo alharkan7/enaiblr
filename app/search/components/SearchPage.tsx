@@ -92,7 +92,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
         return (
             <div className="flex flex-col min-h-screen search-layout">
                 <header className="sticky top-0 left-0 w-full z-10 bg-background border-b">
-                    <div className="container max-w-5xl mx-auto py-4 flex items-center gap-4">
+                    <div className="container max-w-5xl mx-auto py-4 pl-4 sm:pl-0 flex items-center gap-2">
                         <div className="flex-1 min-w-0">
                             <SearchHeader
                                 query={query}

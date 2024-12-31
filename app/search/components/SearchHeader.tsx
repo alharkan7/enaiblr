@@ -1,6 +1,7 @@
 import { Button } from "@/components/ui/button";
 import CustomSearchInput from "./CustomSearchInput";
 import { useRouter } from "next/navigation";
+import { ChevronLeft } from "lucide-react";
 
 interface SearchHeaderProps {
     query: string;
@@ -28,8 +29,9 @@ export const SearchHeader = ({
         <div className="flex items-center gap-4 min-w-0">
             <button
                 onClick={handleHomeClick}
-                className="text-2xl font-bold shrink-0">
-                enaiblr
+                className="flex items-center gap-2 shrink-0">
+                <ChevronLeft className="h-6 w-6 sm:hidden" />
+                <span className="text-2xl font-bold hidden sm:inline">enaiblr</span>
             </button>
             <div className="flex-1 min-w-0 flex items-center gap-2">
                 <div className="flex-1 min-w-0">

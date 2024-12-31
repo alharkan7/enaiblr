@@ -94,7 +94,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             onClick={() => setShowControls(!showControls)}
             className={cn(
               "absolute left-3 z-10 h-10 w-10",
-              showControls && "text-blue-500"
+              showControls && "text-primary"
             )}
           >
             <SlidersHorizontal className="h-4 w-4" />
@@ -104,7 +104,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             placeholder="Imagine something..."
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            className="pl-16 pr-12 min-h-[3.5rem] py-4 text-base sm:text-lg rounded-2xl w-full resize-none overflow-y-hidden shadow-[0_0_0_1px_rgba(0,0,0,0.1)] focus:shadow-[0_0_0_2px_rgba(0,0,0,0.2)] transition-shadow"
+            className="flex-1 min-h-[56px] w-full pl-14 pr-24 py-4 bg-background border border-input rounded-full text-foreground placeholder:text-muted-foreground focus-visible:ring-1 focus-visible:ring-primary"
             rows={1}
             style={{
               height: 'auto',
@@ -120,7 +120,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             variant="ghost"
             onClick={handleGenerate}
             disabled={!prompt || isGenerating}
-            className="absolute right-2 z-10 text-blue-500 hover:text-blue-600 hover:bg-blue-50"
+            className="absolute right-3 z-10 h-10 w-10 text-primary"
           >
             <Sparkles className="h-4 w-4" />
           </Button>
@@ -132,7 +132,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             showControls ? "max-h-[500px] opacity-100 translate-y-0" : "max-h-0 opacity-0 -translate-y-2"
           )}
         >
-          <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-4 mt-4 bg-gray-100 p-4 rounded-lg w-full">
+          <div className="flex flex-col items-center sm:flex-row sm:justify-between gap-4 mt-4 bg-muted/50 p-4 rounded-lg w-full">
             <div className="w-full">
               <Select
                 value={selectedStyle}
@@ -149,37 +149,37 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
               </Select>
             </div>
 
-            <div className="flex items-center gap-2 bg-white rounded-md p-2 w-full">
+            <div className="flex items-center gap-2 bg-background rounded-md p-2 w-full">
               <Button
                 variant={aspectRatio === 'wide' ? 'secondary' : 'ghost'}
                 onClick={() => setAspectRatio('wide')}
-                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'wide' ? 'text-blue-500 font-bold' : ''}`}
+                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'wide' ? 'text-primary font-bold' : ''}`}
               >
                 Wide
               </Button>
               <Button
                 variant={aspectRatio === 'square' ? 'secondary' : 'ghost'}
                 onClick={() => setAspectRatio('square')}
-                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'square' ? 'text-blue-500 font-bold' : ''}`}
+                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'square' ? 'text-primary font-bold' : ''}`}
               >
                 Square
               </Button>
               <Button
                 variant={aspectRatio === 'portrait' ? 'secondary' : 'ghost'}
                 onClick={() => setAspectRatio('portrait')}
-                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'portrait' ? 'text-blue-500 font-bold' : ''}`}
+                className={`flex-1 h-auto py-2 px-3 whitespace-normal text-sm ${aspectRatio === 'portrait' ? 'text-primary font-bold' : ''}`}
               >
                 Portrait
               </Button>
             </div>
 
             <div className="flex items-center gap-2 min-w-[150px] justify-center">
-              <span className={`text-sm font-medium ${quality === 'standard' ? 'text-blue-500 font-bold' : ''}`}>Standard</span>
+              <span className={`text-sm font-medium ${quality === 'standard' ? 'text-primary font-bold' : ''}`}>Standard</span>
               <Switch
                 checked={quality === 'hd'}
                 onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
               />
-              <span className={`text-sm font-medium ${quality === 'hd' ? 'text-blue-500 font-bold' : ''}`}>HD</span>
+              <span className={`text-sm font-medium ${quality === 'hd' ? 'text-primary font-bold' : ''}`}>HD</span>
             </div>
           </div>
         </div>
