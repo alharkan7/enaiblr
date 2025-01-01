@@ -22,7 +22,7 @@ export function AppsGridUserNav({ user }: { user: User }) {
       <DropdownMenuTrigger asChild>
         <Button variant="ghost" className="h-10 w-full justify-start gap-2">
           <Image
-            src={`https://avatar.vercel.sh/${user.email}`}
+            src={user.image ?? `https://avatar.vercel.sh/${user.email}`}
             alt={user.email ?? 'User Avatar'}
             width={24}
             height={24}
