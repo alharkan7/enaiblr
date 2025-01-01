@@ -172,7 +172,7 @@ export default function MinimalistChatbot() {
                 />
                 {!hasUserSentMessage ? (
                     <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
-                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Web&nbsp;Search <span className='text-primary'>Assistant</span></h1>
+                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Web&nbsp;Search</h1>
                         <div className="w-full">
                             <ChatInput
                                 input={input}
