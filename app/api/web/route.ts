@@ -45,7 +45,7 @@ export async function POST(request: Request) {
     });
 
     if (!llmResponse.choices?.[0]?.message?.content) {
-      throw new Error('Failed to process query with LLM');
+      throw new Error('Failed to process query with AI');
     }
 
     const processedQuery = llmResponse.choices[0].message.content;
@@ -58,7 +58,7 @@ export async function POST(request: Request) {
     });
 
     if (!response.answer) {
-      throw new Error('No answer received from Tavily');
+      throw new Error('No answer received from the server');
     }
 
     // Create a ReadableStream to send the response

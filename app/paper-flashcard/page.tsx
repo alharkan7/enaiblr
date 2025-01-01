@@ -73,7 +73,7 @@ export default function PDFProcessor() {
 
   if (cards.length > 0) {
     return (
-      <div className="relative h-screen flex flex-col overflow-hidden">
+      <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
         <AppsHeader 
           title="" 
           leftButton={
@@ -91,7 +91,7 @@ export default function PDFProcessor() {
             </Button>
           }
         />
-        <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center">
+        <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center -mt-8">
 
 
           <div className="w-full max-w-3xl">
@@ -149,7 +149,7 @@ export default function PDFProcessor() {
   }
 
   return (
-    <div className="relative h-screen flex flex-col overflow-hidden">
+    <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
       <AppsHeader 
         title="" 
         leftButton={cards.length > 0 ? (
@@ -167,7 +167,7 @@ export default function PDFProcessor() {
           </Button>
         ) : undefined}
       />
-      <div className="flex-1 container mx-auto px-4 flex items-center justify-center">
+      <div className="flex-1 container mx-auto px-4 flex items-center justify-center -mt-8">
         <PDFInput
           pdfLink={pdfLink}
           handleLinkChange={handleLinkChange}

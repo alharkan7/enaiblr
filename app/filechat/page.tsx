@@ -79,35 +79,6 @@ export default function Filechat() {
         }
     }, [messages, fileInfo]);
 
-    useEffect(() => {
-        const adjustViewportHeight = () => {
-            // Get the actual visible viewport height
-            const visualViewport = window.visualViewport;
-            if (visualViewport) {
-                document.documentElement.style.height = `${visualViewport.height}px`;
-            }
-        };
-
-        const handleKeyboardBehavior = () => {
-            if (typeof window === 'undefined') return;
-
-            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-            if (!isMobile) return;
-
-            // Set up viewport height
-            adjustViewportHeight();
-
-            // Update viewport height when keyboard appears/disappears
-            window.visualViewport?.addEventListener('resize', adjustViewportHeight);
-
-            return () => {
-                window.visualViewport?.removeEventListener('resize', adjustViewportHeight);
-            };
-        };
-
-        handleKeyboardBehavior();
-    }, []);
-
     const handleSendMessage = async (text: string, fileContent: string | null) => {
         if (!text.trim() && !fileContent) return;
 
@@ -126,11 +97,7 @@ export default function Filechat() {
 
     return (
         <div
-            className="flex min-h-screen"
-            style={{
-                height: 'calc(var(--vh, 1vh) * 100)',
-                minHeight: '-webkit-fill-available'
-            }}
+            className="flex min-h-[100dvh] flex-col"
         >
             <div className="flex-1 flex flex-col overflow-hidden relative">
                 <header className="sticky top-0 left-0 w-full z-10 bg-background">

@@ -24,11 +24,8 @@ export default function Voice() {
     }, []);
 
     return (
-        <div 
-            className="flex min-h-screen w-full overflow-x-hidden"
-            style={{
-                height: 'calc(var(--vh, 1vh) * 100)',
-            }}
+        <div
+            className="flex min-h-[100dvh] flex-col"
         >
             <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
                 <AppsHeader />
@@ -36,9 +33,7 @@ export default function Voice() {
                     <main className="flex-grow flex items-center py-6 sm:py-8 px-3 sm:px-6 overflow-y-auto w-full min-w-0">
                         <TextToVoiceConverter />
                     </main>
-                    <footer className="w-full sticky bottom-0 z-10">
-                        <AppsFooter />
-                    </footer>
+                    <AppsFooter />
                 </div>
             </div>
         </div>
