@@ -1,4 +1,4 @@
-import Together from "together-ai";
+import { Together } from "together-ai";
 import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {

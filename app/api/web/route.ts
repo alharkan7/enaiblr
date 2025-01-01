@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { tavily } from '@tavily/core';
-import Together from 'together-ai';
+import { Together } from 'together-ai';
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
