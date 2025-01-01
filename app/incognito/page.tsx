@@ -1,7 +1,6 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
-import { ChatTitle } from './components/ChatTitle'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { ImagePreview } from './components/ImagePreview'
@@ -9,7 +8,8 @@ import { useImageUpload } from './hooks/useImageUpload'
 import { useChatMessages } from './hooks/useChatMessages'
 import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header'
-import { RefreshCw } from 'lucide-react'
+import { RefreshIcon } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -174,23 +174,39 @@ export default function MinimalistChatbot() {
                 height: 'calc(var(--vh, 1vh) * 100)',
             }}
         >
-            {messages.length === 0 ? (
-                <div className="flex flex-col flex-1">
-                    <div className="sticky top-0 z-50 bg-background">
-                        <AppsHeader />
-                    </div>
-                    <div className="flex-1 flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
-                        <div className="w-full max-w-[1200px]">
-                            <div className="text-center py-8">
-                                <h1 className="text-4xl font-extrabold mb-2">
-                                    <span className="whitespace-nowrap">Disposable</span>{' '}
-                                    <span className="whitespace-nowrap">AI Chat</span>
-                                </h1>
-                                <p className="text-sm text-gray-500">
-                                    <b>No Limits. Not Recorded.</b>
-                                </p>
+            <div className="h-dvh flex flex-col">
+                {hasUserSentMessage ? (
+                    <div className="flex-1 flex flex-col overflow-hidden">
+                        <header className="sticky top-0 left-0 w-full z-10 bg-background">
+                            <AppsHeader 
+                                title={
+                                    <span className="text-xl font-semibold">
+                                        Disposable Chat
+                                    </span>
+                                }
+                                leftButton={
+                                    <Button
+                                        onClick={clearMessages}
+                                        className="p-2 hover:bg-muted rounded-full transition-colors"
+                                        title="Clear chat history"
+                                        variant="outline"
+                                    >
+                                        <RefreshIcon size={14} />
+                                    </Button>
+                                }
+                            />
+                        </header>
+                        <div className="flex-1 overflow-y-auto">
+                            <div className="max-w-4xl mx-auto">
+                                <MessageList
+                                    messages={messages}
+                                    messagesEndRef={messagesEndRef}
+                                    onUpdate={scrollToBottom}
+                                />
                             </div>
-                            <div className="w-full max-w-3xl mt-8 mx-auto">
+                        </div>
+                        <div className="flex-none">
+                            <div className="max-w-4xl mx-auto px-4">
                                 {localImageUrl && (
                                     <ImagePreview
                                         localImageUrl={localImageUrl}
@@ -208,7 +224,7 @@ export default function MinimalistChatbot() {
                                     setInput={setInput}
                                     isLoading={isLoading}
                                     fileInputRef={fileInputRef}
-                                    onImageSelect={handleInputImageChange}
+                                    onImageSelect={(e) => handleImageChange(e.target.files?.[0] || null)}
                                     imageBase64={imageBase64}
                                     clearImages={clearImages}
                                     sendMessage={handleSendMessage}
@@ -216,75 +232,29 @@ export default function MinimalistChatbot() {
                             </div>
                         </div>
                     </div>
-                    <div className="flex-none">
-                        <AppsFooter />
-                    </div>
-                </div>
-            ) : (
-                <div className="flex flex-col w-full h-dvh">
-                    <div className="flex flex-col size-full min-w-[320px] max-w-[1200px] mx-auto">
-                        {/* Header wrapper with higher z-index */}
-                        <div className="sticky top-0 z-50 bg-background">
-                            <AppsHeader
-                                title={
-                                    <span className="text-xl font-semibold">
-                                        Disposable Chat
-                                    </span>
-                                }
-                                leftButton={
-                                    <button
-                                        onClick={clearMessages}
-                                        className="p-2 hover:bg-muted rounded-full transition-colors"
-                                        title="Clear chat history"
-                                    >
-                                        <RefreshCw className="size-5 text-muted-foreground" />
-                                    </button>
-                                }
-                            />
-                        </div>
-                        {/* Main content area */}
-                        <div className="flex-1 overflow-hidden flex flex-col">
-                            {/* Message list with proper overflow handling */}
-                            <div className="flex-1 overflow-y-auto">
-                                <MessageList
-                                    messages={messages}
-                                    messagesEndRef={messagesEndRef}
-                                    onUpdate={() => {
-                                        scrollToBottom();
-                                    }}
+                ) : (
+                    <>
+                        <AppsHeader />
+                        <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8">
+                            <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Disposable <span className='text-primary'>Chat</span></h1>
+                            <div className="w-full max-w-2xl">
+                                <ChatInput
+                                    input={input}
+                                    setInput={setInput}
+                                    isLoading={isLoading}
+                                    fileInputRef={fileInputRef}
+                                    onImageSelect={(e) => handleImageChange(e.target.files?.[0] || null)}
+                                    imageBase64={imageBase64}
+                                    clearImages={clearImages}
+                                    sendMessage={handleSendMessage}
+                                    autoFocus
                                 />
                             </div>
-                            {/* Input area fixed at bottom */}
-                            <div className="flex-none w-full backdrop-blur-sm bg-background/80">
-                                <div className="max-w-[1200px] mx-auto">
-                                    {localImageUrl && (
-                                        <ImagePreview
-                                            localImageUrl={localImageUrl}
-                                            isUploading={isUploading}
-                                            onRemove={() => {
-                                                clearImages();
-                                                if (fileInputRef.current) {
-                                                    fileInputRef.current.value = '';
-                                                }
-                                            }}
-                                        />
-                                    )}
-                                    <ChatInput
-                                        input={input}
-                                        setInput={setInput}
-                                        isLoading={isLoading}
-                                        fileInputRef={fileInputRef}
-                                        onImageSelect={handleInputImageChange}
-                                        imageBase64={imageBase64}
-                                        clearImages={clearImages}
-                                        sendMessage={handleSendMessage}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            )}
+                        </main>
+                    </>
+                )}
+                <AppsFooter />
+            </div>
         </div>
     )
 }

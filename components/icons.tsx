@@ -399,6 +399,25 @@ export const MenuIcon = ({ size = 16 }: { size?: number }) => {
   );
 };
 
+export const RefreshIcon = ({ size = 16 }: { size?: number }) => {
+  return (
+    <svg
+      height={size}
+      strokeLinejoin="round"
+      viewBox="0 0 16 16"
+      width={size}
+      style={{ color: 'currentcolor' }}
+    >
+      <path
+        fillRule="evenodd"
+        clipRule="evenodd"
+        d="M8 3C5.23858 3 3 5.23858 3 8C3 10.7614 5.23858 13 8 13C10.7614 13 13 10.7614 13 8H14.5C14.5 11.5899 11.5899 14.5 8 14.5C4.41015 14.5 1.5 11.5899 1.5 8C1.5 4.41015 4.41015 1.5 8 1.5C9.87389 1.5 11.5667 2.30422 12.7489 3.57107L11 5.5H15V1.5L13.4772 3.02275C12.0931 1.54846 10.1537 0.5 8 0.5C3.85786 0.5 0.5 3.85786 0.5 8C0.5 12.1421 3.85786 15.5 8 15.5C12.1421 15.5 15.5 12.1421 15.5 8H13.5C13.5 11.0376 11.0376 13.5 8 13.5C4.96243 13.5 2.5 11.0376 2.5 8C2.5 4.96243 4.96243 2.5 8 2.5V3Z"
+        fill="currentColor"
+      />
+    </svg>
+  );
+};
+
 export const PencilEditIcon = ({ size = 16 }: { size?: number }) => {
   return (
     <svg

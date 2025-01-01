@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Download, Clock, FileText, Calendar, RefreshCw, LetterText } from 'lucide-react';
+import { Download, Clock, FileText, LetterText } from 'lucide-react';
 import { Tabs } from './ui/Tabs';
 import type { TranscriptionResult } from '../types';
 import { Document, Packer, Paragraph, Table, TableRow, TableCell, WidthType, BorderStyle } from 'docx';

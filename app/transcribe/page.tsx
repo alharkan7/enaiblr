@@ -5,8 +5,9 @@ import AppsFooter from '@/components/apps-footer';
 import { UploadForm } from './components/UploadForm';
 import { TranscriptionResult } from './components/TranscriptionResult';
 import { AppsHeader } from '@/components/apps-header'
-import { RefreshCw } from 'react-feather';
 import type { TranscriptionResult as TranscriptionResultType } from './types';
+import { RefreshIcon } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 export default function Transcriber() {
     const [transcriptionResult, setTranscriptionResult] = useState<TranscriptionResultType | null>(null);
@@ -40,13 +41,14 @@ export default function Transcriber() {
                 <AppsHeader
                     title={transcriptionResult ? "Transcription Result" : ""}
                     leftButton={transcriptionResult ? (
-                        <button
+                        <Button
                             onClick={() => window.location.reload()}
                             className="text-foreground/60 hover:text-primary transition-colors"
                             title="New Transcription"
+                            variant="outline"
                         >
-                            <RefreshCw size={20} />
-                        </button>
+                            <RefreshIcon size={20} />
+                        </Button>
                     ) : undefined}
                 />
                 <main className={`grow px-4 md:px-4 ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>

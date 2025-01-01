@@ -1,4 +1,5 @@
-import { RefreshCw } from 'lucide-react'
+import { RefreshIcon } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 interface ChatTitleProps {
     compact?: boolean;
@@ -12,13 +13,14 @@ export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
                 <h1 className="text-xl font-semibold">
                     <span className="text-primary">Disposable</span> Chat
                 </h1>
-                <button 
+                <Button 
                     onClick={clearMessages}
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-muted rounded-full transition-colors"
                     title="Clear chat history"
+                    variant="outline"
                 >
-                    <RefreshCw className="size-5 text-muted-foreground" />
-                </button>
+                    <RefreshIcon size={14} />
+                </Button>
             </div>
         </div>
     ) : (

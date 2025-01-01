@@ -6,8 +6,8 @@ import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
 import { AppsHeader } from '@/components/apps-header'
 import AppsFooter from '@/components/apps-footer'
-import { RefreshCw } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { RefreshIcon } from '@/components/icons';
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -155,7 +155,7 @@ export default function MinimalistChatbot() {
     return (
         <>
             <div className="flex min-h-dvh flex-col">
-                <AppsHeader 
+                <AppsHeader
                     title={hasUserSentMessage ? (
                         <div className="flex items-center gap-2">
                             <span>Web Search</span>
@@ -165,8 +165,9 @@ export default function MinimalistChatbot() {
                         <Button
                             variant="ghost"
                             onClick={handleReset}
+                            title="Clear chat history"
                         >
-                            <RefreshCw className="size-4" />
+                            <RefreshIcon size={14} />
                         </Button>
                     ) : undefined}
                 />
@@ -209,9 +210,13 @@ export default function MinimalistChatbot() {
                         </div>
                     </div>
                 )}
+
                 <div className="flex-none">
-                    <AppsFooter />
+                    {!hasUserSentMessage && (
+                        <AppsFooter />
+                    )}
                 </div>
+
             </div>
         </>
     )

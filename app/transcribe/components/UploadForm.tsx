@@ -1,10 +1,11 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileAudio, Check, AlertCircle, X, RefreshCw } from 'lucide-react';
+import { Upload, FileAudio, Check, AlertCircle, X } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { Progress } from './ui/Progress';
 import { Groq } from 'groq-sdk';
 import type { TranscriptionResult, TranscriptionSegment, GroqTranscription, GroqTranscriptionSegment } from '../types';
+import { RefreshIcon } from '@/components/icons';
 
 interface UploadFormProps {
   onTranscriptionComplete: (result: TranscriptionResult) => void;
@@ -281,7 +282,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         >
           {isUploading ? (
             <div className="flex items-center justify-center gap-2">
-              <RefreshCw className="size-4 animate-spin" />
+              <RefreshIcon size={14} />
               <span>Processing...</span>
             </div>
           ) : (

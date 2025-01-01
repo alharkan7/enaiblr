@@ -8,7 +8,8 @@ import { useFileUpload } from './hooks/useFileUpload'
 import { useChatMessages } from './hooks/useChatMessages'
 import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header'
-import { RefreshCw } from 'lucide-react'
+import { RefreshIcon } from '@/components/icons';
+import { Button } from '@/components/ui/button';
 
 export default function Filechat() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -104,13 +105,14 @@ export default function Filechat() {
                     <div className="max-w-4xl mx-auto relative">
                         {hasUserSentMessage && (
                             <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
-                                <button
+                                <Button
                                     onClick={handleReset}
-                                    className="p-2 hover:bg-muted rounded-full transition-colors"
+                                    className="md:px-2 px-2 md:h-fit"
                                     title="Clear chat history"
+                                    variant="outline"
                                 >
-                                    <RefreshCw className="size-5 text-muted-foreground" />
-                                </button>
+                                    <RefreshIcon size={14} />
+                                </Button>
                             </div>
                         )}
                         <AppsHeader

@@ -94,9 +94,9 @@ export function MessageList({
                             }`}
                     >
                         <div
-                            className={`rounded-lg px-4 py-2 max-w-[85%] ${message.role === 'user'
-                                ? 'bg-primary text-primary-foreground'
-                                : 'bg-accent text-accent-foreground'
+                            className={`rounded-2xl px-4 py-2 max-w-[85%] ${message.role === 'user'
+                                ? 'bg-primary text-primary-foreground rounded-br-none'
+                                : 'bg-accent text-accent-foreground rounded-bl-none'
                                 }`}
                         >
                             <div className={`prose prose-sm max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${
