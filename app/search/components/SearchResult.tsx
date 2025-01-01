@@ -29,14 +29,14 @@ export const SearchResultItem = ({
                     <img
                         src={result.image}
                         alt={result.title}
-                        className="w-8 h-8 object-contain"
+                        className="size-8 object-contain"
                     />
                 ) : faviconUrl ? (
                     <div className="flex flex-col items-center justify-center gap-2">
                         <img
                             src={faviconUrl}
                             alt={`${result.title} favicon`}
-                            className="w-8 h-8 object-contain"
+                            className="size-8 object-contain"
                             onError={(e) => {
                                 e.currentTarget.style.display = 'none';
                                 const iconElement = e.currentTarget.parentElement?.querySelector('.fallback-icon');
@@ -45,10 +45,10 @@ export const SearchResultItem = ({
                                 }
                             }}
                         />
-                        <IconComponent className="w-8 h-8 hidden fallback-icon" />
+                        <IconComponent className="size-8 hidden fallback-icon" />
                     </div>
                 ) : (
-                    <IconComponent className="w-8 h-8" />
+                    <IconComponent className="size-8" />
                 )}
             </div>
             <div className="flex flex-col flex-1 min-w-0">
@@ -70,12 +70,12 @@ export const SearchResultItem = ({
                         <div className="flex items-center gap-1 text-xs text-muted-foreground">
                             {isExpanded ? (
                                 <>
-                                    <ChevronUp className="h-4 w-4" />
+                                    <ChevronUp className="size-4" />
                                     <span>Show less</span>
                                 </>
                             ) : (
                                 <>
-                                    <ChevronDown className="h-4 w-4" />
+                                    <ChevronDown className="size-4" />
                                     <span>Show more</span>
                                 </>
                             )}

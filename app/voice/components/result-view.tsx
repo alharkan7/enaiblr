@@ -49,17 +49,17 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
 
       <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:gap-4 mb-6">
         <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
-          <Clock className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <Clock className="size-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
           <span className="truncate text-sm sm:text-base">Duration: {formatDuration(duration)}</span>
         </div>
 
         <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
-          <TextQuote className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <TextQuote className="size-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
           <span className="truncate text-sm sm:text-base">Words: {wordCount}</span>
         </div>
 
         <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
-          <FileAudio className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <FileAudio className="size-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
           <span className="truncate text-sm sm:text-base">Size: {size.toFixed(2)} MB</span>
         </div>
 
@@ -69,7 +69,7 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
             aria-label="Download audio file"
             className="space-x-1 sm:space-x-2 h-8 sm:h-9 text-sm sm:text-base px-2 sm:px-4"
           >
-            <Download className="h-4 w-4 sm:h-5 sm:w-5" />
+            <Download className="size-4 sm:h-5 sm:w-5" />
             <span>Download</span>
           </Button>
         </div>

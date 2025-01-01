@@ -42,7 +42,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
 
   return (
     <div className="relative flex items-center">
-      <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground z-10" />
+      <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-muted-foreground z-10" />
       <div className="relative flex-1">
         <Input
           ref={forwardedRef}
@@ -74,7 +74,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
             className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground z-10"
             aria-label="Clear input"
           >
-            <X className="h-5 w-5" />
+            <X className="size-5" />
           </button>
         )}
       </div>

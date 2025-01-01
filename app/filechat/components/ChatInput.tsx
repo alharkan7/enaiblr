@@ -95,7 +95,7 @@ export function ChatInput({
                     >
                         <input {...getInputProps()} />
                         <div>
-                            <Upload className="w-12 h-12 mx-auto text-muted-foreground mb-2" />
+                            <Upload className="size-12 mx-auto text-muted-foreground mb-2" />
                             <p className="text-sm text-muted-foreground">
                                 Drag & drop a file here, or click to select
                             </p>
@@ -127,7 +127,7 @@ export function ChatInput({
                                     : 'text-primary hover:bg-muted'
                                 }`}
                         >
-                            <Send className="w-5 h-5" />
+                            <Send className="size-5" />
                         </button>
                     </div>
                 </div>

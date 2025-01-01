@@ -62,8 +62,8 @@ export const PDFInput = ({
           {selectedFile ? (
             <>
               <div className="flex flex-col items-center gap-3">
-                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <FileText className="w-6 h-6 text-primary" />
+                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <FileText className="size-6 text-primary" />
                 </div>
                 <div className="space-y-1">
                   <p className="font-medium text-foreground">{selectedFile.name}</p>
@@ -77,13 +77,13 @@ export const PDFInput = ({
                 className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
                 title="Remove file"
               >
-                <X className="w-5 h-5" />
+                <X className="size-5" />
               </button>
             </>
           ) : (
             <div className="flex flex-col items-center gap-3">
-              <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
-                <Upload className="w-6 h-6 text-primary" />
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
+                <Upload className="size-6 text-primary" />
               </div>
               <div className="space-y-2">
                 <p className="font-medium text-foreground">

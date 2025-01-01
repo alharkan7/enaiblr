@@ -109,7 +109,7 @@ export default function Filechat() {
                                     className="p-2 hover:bg-muted rounded-full transition-colors"
                                     title="Clear chat history"
                                 >
-                                    <RefreshCw className="w-5 h-5 text-muted-foreground" />
+                                    <RefreshCw className="size-5 text-muted-foreground" />
                                 </button>
                             </div>
                         )}

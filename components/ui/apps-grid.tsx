@@ -37,7 +37,7 @@ export function AppsGrid({ trigger, user }: AppsGridProps) {
                   asChild
                 >
                   <Link href={`/${app.slug}`}>
-                    <Icon className="w-12 h-12 text-foreground" />
+                    <Icon className="size-12 text-foreground" />
                     <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
                   </Link>
                 </Button>

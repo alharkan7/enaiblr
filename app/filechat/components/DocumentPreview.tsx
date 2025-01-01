@@ -22,16 +22,16 @@ export function DocumentPreview({
     const getFileIcon = () => {
         switch (fileType.toLowerCase()) {
             case 'pdf':
-                return <FileText className="w-8 h-8 text-destructive" />;
+                return <FileText className="size-8 text-destructive" />;
             case 'doc':
             case 'docx':
-                return <FileText className="w-8 h-8 text-primary" />;
+                return <FileText className="size-8 text-primary" />;
             case 'txt':
-                return <FileText className="w-8 h-8 text-muted-foreground" />;
+                return <FileText className="size-8 text-muted-foreground" />;
             case 'md':
-                return <FileText className="w-8 h-8 text-secondary" />;
+                return <FileText className="size-8 text-secondary" />;
             default:
-                return <File className="w-8 h-8 text-muted-foreground" />;
+                return <File className="size-8 text-muted-foreground" />;
         }
     };
 
@@ -88,7 +88,7 @@ export function DocumentPreview({
                             className="flex-shrink-0 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
                             aria-label="Remove document"
                         >
-                            <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
+                            <svg xmlns="http://www.w3.org/2000/svg" className="size-4" viewBox="0 0 20 20" fill="currentColor">
                                 <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
                             </svg>
                         </button>
@@ -98,7 +98,7 @@ export function DocumentPreview({
 
                 {isUploading && (
                     <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-primary"></div>
+                        <div className="animate-spin rounded-full size-8 border-t-2 border-b-2 border-primary"></div>
                     </div>
                 )}
             </div>

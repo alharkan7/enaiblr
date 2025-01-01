@@ -163,12 +163,12 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               size="icon"
               variant="ghost"
               onClick={handlePlayPause}
-              className="h-8 w-8 flex-shrink-0"
+              className="size-8 flex-shrink-0"
             >
               {isPlaying ? (
-                <Pause className="h-4 w-4" />
+                <Pause className="size-4" />
               ) : (
-                <Play className="h-4 w-4" />
+                <Play className="size-4" />
               )}
             </Button>
 
@@ -194,12 +194,12 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="h-8 w-8 flex-shrink-0"
+                    className="size-8 flex-shrink-0"
                   >
                     {isMuted ? (
-                      <VolumeX className="h-4 w-4" />
+                      <VolumeX className="size-4" />
                     ) : (
-                      <Volume2 className="h-4 w-4" />
+                      <Volume2 className="size-4" />
                     )}
                   </Button>
                 </PopoverTrigger>
@@ -231,7 +231,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
                 size="icon"
                 variant="ghost"
                 onClick={toggleMute}
-                className="h-8 w-8 flex-shrink-0 sm:hidden"
+                className="size-8 flex-shrink-0 sm:hidden"
               >
                 <span className="sr-only">Toggle mute</span>
               </Button>

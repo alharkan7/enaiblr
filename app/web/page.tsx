@@ -166,7 +166,7 @@ export default function MinimalistChatbot() {
                             variant="ghost"
                             onClick={handleReset}
                         >
-                            <RefreshCw className="w-4 h-4" />
+                            <RefreshCw className="size-4" />
                         </Button>
                     ) : undefined}
                 />

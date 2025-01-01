@@ -29,7 +29,7 @@ export function AppsGridUserNav({ user }: { user: User }) {
             className="rounded-full"
           />
           <span className="truncate">{user?.email}</span>
-          <ChevronUp className="ml-auto h-4 w-4" />
+          <ChevronUp className="ml-auto size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

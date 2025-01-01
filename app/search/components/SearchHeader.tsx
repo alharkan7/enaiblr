@@ -30,7 +30,7 @@ export const SearchHeader = ({
             <button
                 onClick={handleHomeClick}
                 className="flex items-center gap-2 shrink-0">
-                <ChevronLeft className="h-6 w-6 sm:hidden" />
+                <ChevronLeft className="size-6 sm:hidden" />
                 <span className="text-2xl font-bold hidden sm:inline">enaiblr</span>
             </button>
             <div className="flex-1 min-w-0 flex items-center gap-2">

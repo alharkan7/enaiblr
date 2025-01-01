@@ -96,16 +96,16 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Kontak</h3>
             <div className="flex space-x-4">
               <Link href="mailto:enaiblr@gmail.com" className="text-muted-foreground hover:text-foreground">
-                <Mail className="w-5 h-5" />
+                <Mail className="size-5" />
               </Link>
               <Link href="https://wa.me/+6281280077690" className="text-muted-foreground hover:text-foreground" target="_blank" rel="noopener noreferrer">
-                <Phone className="w-5 h-5" />
+                <Phone className="size-5" />
               </Link>
               <Link href="#Hero" className="text-muted-foreground hover:text-foreground">
-                <Globe className="w-5 h-5" />
+                <Globe className="size-5" />
               </Link>
               {/* <Link href="/about" className="text-muted-foreground hover:text-foreground">
-                <Linkedin className="w-5 h-5" />
+                <Linkedin className="size-5" />
               </Link> */}
             </div>
           </div>

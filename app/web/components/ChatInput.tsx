@@ -63,7 +63,7 @@ export function ChatInput({
                     disabled={!input.trim() || isLoading}
                     className="absolute right-2 p-2 rounded-full text-primary hover:text-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                    <Send className="h-5 w-5" />
+                    <Send className="size-5" />
                 </button>
             </div>
         </form>

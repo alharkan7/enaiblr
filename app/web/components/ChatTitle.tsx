@@ -17,7 +17,7 @@ export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
                     className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-accent rounded-full transition-colors"
                     title="Clear chat history"
                 >
-                    <RefreshCw className="w-5 h-5 text-muted-foreground" />
+                    <RefreshCw className="size-5 text-muted-foreground" />
                 </button>
             </div>
         </div>

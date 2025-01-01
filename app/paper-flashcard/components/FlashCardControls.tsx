@@ -45,9 +45,9 @@ export const FlashCardControls = ({
         aria-label={editMode ? "Save" : "Edit"}
       >
         {editMode ? (
-          <Check className="w-4 h-4" />
+          <Check className="size-4" />
         ) : (
-          <Edit className="w-4 h-4" />
+          <Edit className="size-4" />
         )}
       </Button>
 
@@ -58,7 +58,7 @@ export const FlashCardControls = ({
             size="icon"
             aria-label="Change color"
           >
-            <Palette className="w-4 h-4" />
+            <Palette className="size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -80,7 +80,7 @@ export const FlashCardControls = ({
             size="icon"
             aria-label="Share"
           >
-            <Share2 className="w-4 h-4" />
+            <Share2 className="size-4" />
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent>
@@ -91,7 +91,7 @@ export const FlashCardControls = ({
               className="w-full"
             >
               <div className="flex items-center">
-                <MessageCircle className="w-4 h-4 mr-2" />
+                <MessageCircle className="size-4 mr-2" />
                 WhatsApp
               </div>
             </WhatsappShareButton>
@@ -105,7 +105,7 @@ export const FlashCardControls = ({
         onClick={openSourceDocument}
         aria-label="Open source document"
       >
-        <ExternalLink className="w-4 h-4" />
+        <ExternalLink className="size-4" />
       </Button>
     </div>
   );

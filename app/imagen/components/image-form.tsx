@@ -93,11 +93,11 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             variant="ghost"
             onClick={() => setShowControls(!showControls)}
             className={cn(
-              "absolute left-3 z-10 h-10 w-10",
+              "absolute left-3 z-10 size-10",
               showControls && "text-primary"
             )}
           >
-            <SlidersHorizontal className="h-4 w-4" />
+            <SlidersHorizontal className="size-4" />
           </Button>
 
           <textarea
@@ -120,9 +120,9 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             variant="ghost"
             onClick={handleGenerate}
             disabled={!prompt || isGenerating}
-            className="absolute right-3 z-10 h-10 w-10 text-primary"
+            className="absolute right-3 z-10 size-10 text-primary"
           >
-            <Sparkles className="h-4 w-4" />
+            <Sparkles className="size-4" />
           </Button>
         </div>
 

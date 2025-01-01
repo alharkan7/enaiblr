@@ -41,7 +41,7 @@ export function ImageModal({ isOpen, onClose, imageUrl }: ImageModalProps) {
             className="absolute bottom-2 right-2 p-2 bg-white/30 hover:bg-white/50 rounded-full transition-colors"
             aria-label="Download image"
           >
-            <Download className="w-6 h-6" />
+            <Download className="size-6" />
           </button>
         </div>
       </div>

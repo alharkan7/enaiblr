@@ -20,7 +20,7 @@ const CTA = () => {
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full" asChild>
               <Link href="/">
-                Akses Sekarang <ArrowRight className="w-4 h-4" />
+                Akses Sekarang <ArrowRight className="size-4" />
               </Link>
             </Button>
             <Button size="lg" variant="outline" className="rounded-full" asChild>

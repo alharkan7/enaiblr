@@ -53,8 +53,8 @@ export default function Home() {
           {isGenerating ? (
             <div className="relative w-full max-w-[640px] flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={getAspectRatioClass(imageAspectRatio)} style={{ maxWidth: '100%', maxHeight: '100%' }}>
-                <div className="absolute inset-0 w-full h-full object-contain rounded-lg flex flex-col items-center justify-center bg-background/40 backdrop-blur">
-                  <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-foreground mb-4"></div>
+                <div className="absolute inset-0 size-full object-contain rounded-lg flex flex-col items-center justify-center bg-background/40 backdrop-blur">
+                  <div className="animate-spin rounded-full size-12 border-b-2 border-foreground mb-4"></div>
                   <p className="text-muted-foreground font-medium">Creating Visual</p>
                 </div>
               </div>
@@ -71,7 +71,7 @@ export default function Home() {
                 <img
                   src={generatedImage}
                   alt="Generated image"
-                  className="w-full h-full object-contain rounded-lg cursor-pointer"
+                  className="size-full object-contain rounded-lg cursor-pointer"
                   onClick={() => setIsModalOpen(true)}
                 />
                 <button
@@ -83,7 +83,7 @@ export default function Home() {
                   }}
                   className="absolute bottom-2 right-2 p-2 bg-background/40 backdrop-blur-sm hover:bg-background/60 rounded-full transition-colors"
                 >
-                  <Download className="w-5 h-5 text-foreground" />
+                  <Download className="size-5 text-foreground" />
                 </button>
               </div>
             </div>

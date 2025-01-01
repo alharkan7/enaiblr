@@ -86,7 +86,7 @@ export default function PDFProcessor() {
                 setFile(null);
               }}
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="size-4" />
               Back
             </Button>
           }
@@ -132,7 +132,7 @@ export default function PDFProcessor() {
               onClick={() => navigateCard("prev")}
               className="rounded-full"
             >
-              <ChevronUp className="w-4 h-4" />
+              <ChevronUp className="size-4" />
             </Button>
             <Button
               variant="outline"
@@ -140,7 +140,7 @@ export default function PDFProcessor() {
               onClick={() => navigateCard("next")}
               className="rounded-full"
             >
-              <ChevronDown className="w-4 h-4" />
+              <ChevronDown className="size-4" />
             </Button>
           </div>
         </div>
@@ -162,7 +162,7 @@ export default function PDFProcessor() {
               setFile(null);
             }}
           >
-            <ChevronLeft className="w-4 h-4" />
+            <ChevronLeft className="size-4" />
             Back
           </Button>
         ) : undefined}

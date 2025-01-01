@@ -69,8 +69,8 @@ const Features = () => {
               className="border-none shadow-lg w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
             >
               <CardHeader>
-                <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
-                  <feature.icon className="w-6 h-6 text-white" />
+                <div className="size-12 flex items-center justify-center rounded-lg mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+                  <feature.icon className="size-6 text-white" />
                 </div>
                 <CardTitle>{feature.title}</CardTitle>
                 <CardDescription>{feature.description}</CardDescription>

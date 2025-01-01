@@ -114,7 +114,7 @@ const FlashCard = ({
               setEditedContent(newContent);
               handleEdit(newContent);
             }}
-            className="w-full h-full min-h-[200px] text-xl bg-background/80 text-foreground resize-none"
+            className="size-full min-h-[200px] text-xl bg-background/80 text-foreground resize-none"
           />
         ) : (
           <div className="w-full text-center text-2xl font-medium text-foreground overflow-y-auto scrollbar-hide">

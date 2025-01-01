@@ -273,19 +273,19 @@ export function TranscriptionResult({ result }: TranscriptionResultProps) {
     <div className="flex flex-col h-full">
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 p-4 border-b border-border">
         <div className="flex items-center justify-center gap-2">
-          <FileText className="w-4 h-4 text-muted-foreground" />
+          <FileText className="size-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             {result.segments.map(segment => segment.text).join(' ').split(' ').length} words
           </span>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <LetterText className="w-4 h-4 text-muted-foreground" />
+          <LetterText className="size-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             {result.textLength} characters
           </span>
         </div>
         <div className="flex items-center justify-center gap-2">
-          <Clock className="w-4 h-4 text-muted-foreground" />
+          <Clock className="size-4 text-muted-foreground" />
           <span className="text-sm text-muted-foreground">
             {formatTime(durationToSeconds(result.audioDuration))}
           </span>
@@ -295,7 +295,7 @@ export function TranscriptionResult({ result }: TranscriptionResultProps) {
             onClick={handleDownload}
             className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary/10 hover:bg-primary/20 text-primary transition-colors"
           >
-            <Download className="w-4 h-4" />
+            <Download className="size-4" />
             <span className="text-sm font-medium">Download</span>
           </button>
         </div>

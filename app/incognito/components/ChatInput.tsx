@@ -54,7 +54,7 @@ export function ChatInput({
                         className="p-2 rounded-full hover:bg-muted transition-colors"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        <Image className="w-6 h-6" />
+                        <Image className="size-6" />
                     </button>
                     <input
                         ref={fileInputRef}
@@ -80,7 +80,7 @@ export function ChatInput({
                         disabled={!input.trim() && !imageBase64}
                         className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Send className="w-6 h-6" />
+                        <Send className="size-6" />
                     </button>
                 </div>
             </div>

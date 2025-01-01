@@ -101,10 +101,10 @@ useEffect(() => {
   }, []);
 
   return (
-    <div className="animated-background fixed inset-0 w-full h-full z-[1]">
+    <div className="animated-background fixed inset-0 size-full z-[1]">
       <canvas
         ref={canvasRef}
-        className="fixed inset-0 w-full h-full"
+        className="fixed inset-0 size-full"
         style={{
           backgroundColor: '#f8fafc',
           zIndex: 0,

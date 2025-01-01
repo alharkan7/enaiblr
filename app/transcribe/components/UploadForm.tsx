@@ -194,7 +194,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
               onClick={clearAllStates}
               className="absolute -top-2 -right-2 z-10 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
             >
-              <X className="h-5 w-5 text-gray-500" />
+              <X className="size-5 text-gray-500" />
             </button>
           )}
 
@@ -212,8 +212,8 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
               <input {...getInputProps()} />
               
               <div className="space-y-4">
-                <div className="mx-auto w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <Upload className="w-6 h-6 text-primary" />
+                <div className="mx-auto size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Upload className="size-6 text-primary" />
                 </div>
                 
                 <div className="space-y-2">
@@ -230,8 +230,8 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
           {file && !error && (
             <div className="w-full mt-4 p-4 rounded-lg bg-accent/50 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
-                <FileAudio className="w-5 h-5 text-primary" />
+              <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+                <FileAudio className="size-5 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
@@ -239,17 +239,17 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
               </div>
               <button
                 onClick={() => setFile(null)}
-                className="w-8 h-8 rounded-full hover:bg-accent flex items-center justify-center flex-shrink-0"
+                className="size-8 rounded-full hover:bg-accent flex items-center justify-center flex-shrink-0"
               >
-                <X className="w-4 h-4 text-muted-foreground" />
+                <X className="size-4 text-muted-foreground" />
               </button>
             </div>
           )}
 
           {error && (
             <div className="w-full mt-4 p-4 rounded-lg bg-destructive/10 flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
-                <AlertCircle className="w-5 h-5 text-destructive" />
+              <div className="size-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
+                <AlertCircle className="size-5 text-destructive" />
               </div>
               <div className="flex-1">
                 <p className="text-sm font-medium text-destructive">{error}</p>
@@ -281,7 +281,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         >
           {isUploading ? (
             <div className="flex items-center justify-center gap-2">
-              <RefreshCw className="w-4 h-4 animate-spin" />
+              <RefreshCw className="size-4 animate-spin" />
               <span>Processing...</span>
             </div>
           ) : (

@@ -31,9 +31,9 @@ function CollapsibleText({ content }: CollapsibleTextProps) {
                 aria-label={isExpanded ? 'Show less' : 'Show more'}
             >
                 {isExpanded ? (
-                    <ChevronUp className="h-4 w-4" />
+                    <ChevronUp className="size-4" />
                 ) : (
-                    <ChevronDown className="h-4 w-4" />
+                    <ChevronDown className="size-4" />
                 )}
             </button>
         </div>
@@ -137,7 +137,7 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                          onClick={() => toggleSourcesExpanded(message.id)}>
                                                         <div className="font-bold ">Sources:</div>
                                                         <svg
-                                                            className={`w-5 h-5 transform transition-transform duration-200 ${expandedSources[message.id] ? 'rotate-180' : ''}`}
+                                                            className={`size-5 transform transition-transform duration-200 ${expandedSources[message.id] ? 'rotate-180' : ''}`}
                                                             fill="none"
                                                             stroke="currentColor"
                                                             viewBox="0 0 24 24"

@@ -29,7 +29,7 @@ interface LanguageSelectorProps {
 export function LanguageSelector({ value, onChange, disabled }: LanguageSelectorProps) {
   return (
     <div className="flex items-center gap-3">
-      <Globe className="h-5 w-5 text-primary" />
+      <Globe className="size-5 text-primary" />
       <select
         value={value}
         onChange={(e) => onChange(e.target.value)}
