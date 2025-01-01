@@ -25,7 +25,7 @@ export default function Voice() {
 
     return (
         <div
-            className="flex min-h-[100dvh] flex-col"
+            className="flex min-h-dvh flex-col"
         >
             <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
                 <AppsHeader />

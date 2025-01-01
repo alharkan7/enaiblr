@@ -154,7 +154,7 @@ export default function MinimalistChatbot() {
 
     return (
         <>
-            <div className="flex min-h-[100dvh] flex-col">
+            <div className="flex min-h-dvh flex-col">
                 <AppsHeader 
                     title={hasUserSentMessage ? (
                         <div className="flex items-center gap-2">

@@ -59,7 +59,7 @@ export function DocumentPreview({
                     <div className="shrink-0">
                         {getFileIcon()}
                     </div>
-                    <div className="grow min-h-[2rem] flex flex-col justify-center">
+                    <div className="grow min-h-8 flex flex-col justify-center">
                         <span className="text-sm text-foreground font-bold leading-tight truncate" title={fileName}>
                             {getTruncatedName(fileName)}
                         </span>

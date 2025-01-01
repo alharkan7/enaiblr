@@ -18,7 +18,7 @@ import type { SearchPageProps } from "../types";
 export default function SearchPage({ initialQuery }: SearchPageProps) {
     return (
         <Suspense fallback={
-            <div className="w-full h-[100dvh] flex items-center justify-center">
+            <div className="w-full h-dvh flex items-center justify-center">
                 <div className="animate-pulse text-muted-foreground">Loading...</div>
             </div>
         }>
@@ -145,7 +145,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
     // Home view
     return (
-        <div className="h-[100dvh] flex flex-col">
+        <div className="h-dvh flex flex-col">
             <header className="sticky top-0 left-0 w-full z-10">
                 <AppsHeader />
             </header>

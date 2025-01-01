@@ -97,7 +97,7 @@ export default function Filechat() {
 
     return (
         <div
-            className="flex min-h-[100dvh] flex-col"
+            className="flex min-h-dvh flex-col"
         >
             <div className="flex-1 flex flex-col overflow-hidden relative">
                 <header className="sticky top-0 left-0 w-full z-10 bg-background">

@@ -73,7 +73,7 @@ export default function PDFProcessor() {
 
   if (cards.length > 0) {
     return (
-      <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
+      <div className="relative min-h-dvh flex flex-col overflow-hidden">
         <AppsHeader 
           title="" 
           leftButton={
@@ -149,7 +149,7 @@ export default function PDFProcessor() {
   }
 
   return (
-    <div className="relative min-h-[100dvh] flex flex-col overflow-hidden">
+    <div className="relative min-h-dvh flex flex-col overflow-hidden">
       <AppsHeader 
         title="" 
         leftButton={cards.length > 0 ? (

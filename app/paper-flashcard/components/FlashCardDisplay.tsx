@@ -100,7 +100,7 @@ const FlashCard = ({
   const [editedContent, setEditedContent] = useState<FlashCardContent>(content);
 
   return (
-    <Card className={`h-full w-full flex flex-col justify-between p-6 ${cardStyle} bg-card relative`}>
+    <Card className={`size-full flex flex-col justify-between p-6 ${cardStyle} bg-card relative`}>
       <div className="absolute top-4 left-4 px-2 py-1 rounded-full bg-background/80 text-xs text-foreground/70">
         #{section.key}
       </div>

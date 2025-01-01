@@ -41,7 +41,7 @@ export default function Home() {
 
   return (
     <>
-      <div className="flex flex-col min-h-[100dvh] imagen-layout pt-0"> 
+      <div className="flex flex-col min-h-dvh imagen-layout pt-0"> 
         <AppsHeader 
           title={(isGenerating || generatedImage) ? (
             <>
@@ -51,7 +51,7 @@ export default function Home() {
         />
         <div className={`grow flex flex-col items-center justify-center w-full px-4 overflow-y-auto ${hasInteracted ? 'pt-4' : ''}`}>
           {isGenerating ? (
-            <div className="relative w-full max-w-[640px] flex items-center justify-center h-[50vh] mx-auto mb-8">
+            <div className="relative w-full max-w-screen-sm flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={getAspectRatioClass(imageAspectRatio)} style={{ maxWidth: '100%', maxHeight: '100%' }}>
                 <div className="absolute inset-0 size-full object-contain rounded-lg flex flex-col items-center justify-center bg-background/40 backdrop-blur">
                   <div className="animate-spin rounded-full size-12 border-b-2 border-foreground mb-4"></div>
@@ -66,7 +66,7 @@ export default function Home() {
               </h1>
             </div>
           ) : (
-            <div className="relative w-full max-w-[640px] flex items-center justify-center h-[50vh] mx-auto mb-8">
+            <div className="relative w-full max-w-screen-sm flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={`relative ${getAspectRatioClass(imageAspectRatio)}`} style={{ maxWidth: '100%', maxHeight: '100%' }}>
                 <img
                   src={generatedImage}

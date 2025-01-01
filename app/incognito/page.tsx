@@ -221,8 +221,8 @@ export default function MinimalistChatbot() {
                     </div>
                 </div>
             ) : (
-                <div className="flex flex-col w-full h-[100dvh]">
-                    <div className="flex flex-col w-full min-w-[320px] max-w-[1200px] mx-auto h-full">
+                <div className="flex flex-col w-full h-dvh">
+                    <div className="flex flex-col size-full min-w-[320px] max-w-[1200px] mx-auto">
                         {/* Header wrapper with higher z-index */}
                         <div className="sticky top-0 z-50 bg-background">
                             <AppsHeader

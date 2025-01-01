@@ -28,7 +28,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
         )}
         {title ? (
           <>
-            <div className="absolute left-0 right-0 flex justify-center pointer-events-none">
+            <div className="absolute inset-x-0 flex justify-center pointer-events-none">
               <div className="text-xl font-semibold">
                 {title}
               </div>
