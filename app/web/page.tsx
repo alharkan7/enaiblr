@@ -7,6 +7,7 @@ import { useChatMessages } from './hooks/useChatMessages'
 import { AppsHeader } from '@/components/apps-header'
 import AppsFooter from '@/components/apps-footer'
 import { RefreshCw } from 'lucide-react'
+import { Button } from '@/components/ui/button'
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -35,6 +36,11 @@ export default function MinimalistChatbot() {
             setHasUserSentMessage(true);
         }
         await sendMessage(text);
+    };
+
+    const handleReset = () => {
+        setHasUserSentMessage(false);
+        clearMessages();
     };
 
     useEffect(() => {
@@ -148,42 +154,26 @@ export default function MinimalistChatbot() {
 
     return (
         <>
-            <div
-                className="flex flex-col h-screen w-full relative chat-layout"
-                style={{
-                    height: 'calc(var(--vh, 1vh) * 100)',
-                    minHeight: '-webkit-fill-available'
-                }}
-            >
-                <header className="sticky top-0 left-0 w-full z-10 bg-background">
-                    <div className="max-w-4xl mx-auto relative">
-                        {messages.length > 0 && (
-                            <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
-                                <button
-                                    onClick={clearMessages}
-                                    className="p-2 hover:bg-gray-100 rounded-full transition-colors"
-                                    title="Clear chat history"
-                                >
-                                    <RefreshCw className="w-5 h-5 text-gray-600" />
-                                </button>
-                            </div>
-                        )}
-                        <AppsHeader
-                            title={messages.length > 0 ? (
-                                <div className="flex items-center gap-2">
-                                    Chat with the Web
-                                </div>
-                            ) : undefined}
-                        />
-                    </div>
-                </header>
-                {messages.length === 0 ? (
+            <div className="flex min-h-[100dvh] flex-col">
+                <AppsHeader 
+                    title={hasUserSentMessage ? (
+                        <div className="flex items-center gap-2">
+                            <span>Web Search</span>
+                        </div>
+                    ) : undefined}
+                    leftButton={hasUserSentMessage ? (
+                        <Button
+                            variant="ghost"
+                            onClick={handleReset}
+                        >
+                            <RefreshCw className="w-4 h-4" />
+                        </Button>
+                    ) : undefined}
+                />
+                {!hasUserSentMessage ? (
                     <div className="flex-1 flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
-                        <h1 className="text-4xl font-extrabold text-center w-full">
-                            <span className="whitespace-nowrap">Chat with </span>{' '}
-                            <span className="whitespace-nowrap">the Web</span>
-                        </h1>
-                        <div className="w-full max-w-xl">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Web&nbsp;Search <span className='text-primary'>Assistant</span></h1>
+                        <div className="w-full">
                             <ChatInput
                                 input={input}
                                 setInput={setInput}
@@ -195,7 +185,7 @@ export default function MinimalistChatbot() {
                         </div>
                     </div>
                 ) : (
-                    <div className="flex-1 flex flex-col overflow-hidden">
+                    <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
                         <div className="flex-1 overflow-y-auto">
                             <div className="max-w-4xl mx-auto">
                                 <MessageList
@@ -206,7 +196,7 @@ export default function MinimalistChatbot() {
                                 />
                             </div>
                         </div>
-                        <div className="flex-shrink-0">
+                        <div className="flex-none">
                             <div className="max-w-4xl mx-auto px-4">
                                 <ChatInput
                                     input={input}
@@ -219,7 +209,9 @@ export default function MinimalistChatbot() {
                         </div>
                     </div>
                 )}
-                <AppsFooter />
+                <div className="flex-none">
+                    <AppsFooter />
+                </div>
             </div>
         </>
     )

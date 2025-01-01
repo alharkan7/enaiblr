@@ -216,7 +216,7 @@ export default function MinimalistChatbot() {
                             </div>
                         </div>
                     </div>
-                    <div className="w-full">
+                    <div className="flex-none">
                         <AppsFooter />
                     </div>
                 </div>
