@@ -54,7 +54,7 @@ export function ChatInput({
                         className="p-2 rounded-full hover:bg-muted transition-colors"
                         onClick={() => fileInputRef.current?.click()}
                     >
-                        <Image className="size-6" />
+                        <Image className="size-6" aria-label="Upload image" />
                     </button>
                     <input
                         ref={fileInputRef}
