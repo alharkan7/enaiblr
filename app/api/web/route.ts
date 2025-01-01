@@ -61,29 +61,7 @@ export async function POST(request: Request) {
       throw new Error('No answer received from Tavily');
     }
 
-    // Process Tavily answer with LLM to make it more natural
-    const llmAnswerResponse = await together.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant. Your task is to take the search results and rewrite them into a natural, well-structured response. Keep the information accurate but make it more conversational and engaging. Include relevant details from the sources but present them in a cohesive way. Try to be concise, only answer in length if necessary to explain the details. You do not need to cite the sources, it is already attached by other components. Return only the final response without any additional text or explanation.'
-        },
-        {
-          role: 'user',
-          content: `Here is the raw answer and sources to process:\n\nAnswer: ${response.answer}\n\nSources: ${response.results.map(r => r.content).join('\n\n')}`
-        }
-      ],
-      model: 'meta-llama/Llama-Vision-Free',
-      max_tokens: 1024,
-      temperature: 0.7,
-      top_p: 0.9,
-      top_k: 50,
-      repetition_penalty: 1,
-      stop: ['<|eot_id|>', '<|eom_id|>'],
-      stream: true
-    });
-
-    // Create a ReadableStream to handle the streaming response
+    // Create a ReadableStream to send the response
     const stream = new ReadableStream({
       async start(controller) {
         try {
@@ -94,17 +72,13 @@ export async function POST(request: Request) {
           };
           controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(sourcesData)}\n\n`));
 
-          // Then stream the LLM response
-          for await (const chunk of llmAnswerResponse) {
-            const content = chunk.choices[0]?.delta?.content;
-            if (content) {
-              const data = {
-                type: 'content',
-                content
-              };
-              controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data)}\n\n`));
-            }
-          }
+          // Send Tavily's answer directly
+          const answerData = {
+            type: 'content',
+            content: response.answer
+          };
+          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(answerData)}\n\n`));
+          
           controller.close();
         } catch (error) {
           controller.error(error);
