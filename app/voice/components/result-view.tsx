@@ -44,32 +44,32 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
   };
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8">
+    <div className="w-full max-w-4xl mx-auto space-y-8 px-4">
       <h1 className="text-3xl font-bold text-center mb-8">Your Audio is <span className="text-primary">Ready</span></h1>
 
-      <div className="grid grid-cols-1 xs:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mb-6">
-        <div className="flex items-center space-x-2 text-muted-foreground justify-center">
-          <Clock className="h-5 w-5 mr-2" />
-          <span>Duration: {formatDuration(duration)}</span>
+      <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:gap-4 mb-6">
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+          <Clock className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <span className="truncate text-sm sm:text-base">Duration: {formatDuration(duration)}</span>
         </div>
 
-        <div className="flex items-center space-x-2 text-muted-foreground justify-center">
-          <TextQuote className="h-5 w-5 mr-2" />
-          <span>Words: {wordCount}</span>
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+          <TextQuote className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <span className="truncate text-sm sm:text-base">Words: {wordCount}</span>
         </div>
 
-        <div className="flex items-center space-x-2 text-muted-foreground justify-center">
-          <FileAudio className="h-5 w-5 mr-2" />
-          <span>Size: {size.toFixed(2)} MB</span>
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+          <FileAudio className="h-4 w-4 sm:h-5 sm:w-5 mr-1 sm:mr-2 flex-shrink-0" />
+          <span className="truncate text-sm sm:text-base">Size: {size.toFixed(2)} MB</span>
         </div>
 
-        <div className="flex justify-center md:col-start-2 md:col-span-1 lg:col-auto">
+        <div className="flex justify-center">
           <Button
             onClick={handleDownload}
             aria-label="Download audio file"
-            className="space-x-2"
+            className="space-x-1 sm:space-x-2 h-8 sm:h-9 text-sm sm:text-base px-2 sm:px-4"
           >
-            <Download className="h-5 w-5" />
+            <Download className="h-4 w-4 sm:h-5 sm:w-5" />
             <span>Download</span>
           </Button>
         </div>

@@ -30,10 +30,10 @@ export default function Voice() {
                 height: 'calc(var(--vh, 1vh) * 100)',
             }}
         >
-            <div className="flex-1 flex flex-col w-full">
+            <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
                 <AppsHeader />
-                <div className="flex-1 flex flex-col w-full">
-                    <main className="flex-grow flex items-center py-8 px-4 sm:px-6 overflow-y-auto w-full">
+                <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
+                    <main className="flex-grow flex items-center py-6 sm:py-8 px-3 sm:px-6 overflow-y-auto w-full min-w-0">
                         <TextToVoiceConverter />
                     </main>
                     <footer className="w-full sticky bottom-0 z-10">

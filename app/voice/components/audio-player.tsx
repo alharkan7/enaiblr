@@ -2,8 +2,14 @@
 
 import { useRef, useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { SliderVertical } from "@/components/ui/slider-vertical";
 import { Slider } from "@/components/ui/slider";
 import { Play, Pause, Volume2, VolumeX } from "lucide-react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover"
 
 interface AudioPlayerProps {
   audioUrl: string;
@@ -21,11 +27,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
 
   useEffect(() => {
     if (audioRef.current) {
-      console.log('Setting audio source:', audioUrl);
-      
-      // Set crossOrigin to anonymous to allow blob URLs
-      audioRef.current.crossOrigin = "anonymous";
-      audioRef.current.src = audioUrl;
+      const audio = audioRef.current;
       
       const handleCanPlayThrough = () => {
         console.log('Audio can play through');
@@ -44,42 +46,61 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
         setIsPlaying(false);
       };
 
-      audioRef.current.addEventListener('canplaythrough', handleCanPlayThrough);
-      audioRef.current.addEventListener('error', handleError);
+      const handleEnded = () => {
+        console.log('Audio playback ended');
+        setIsPlaying(false);
+        audio.currentTime = 0;
+      };
 
+      audio.addEventListener('canplaythrough', handleCanPlayThrough);
+      audio.addEventListener('error', handleError);
+      audio.addEventListener('ended', handleEnded);
+
+      // Reset audio state
+      audio.pause();
+      audio.currentTime = 0;
+      setIsPlaying(false);
+      
+      // Set source and load
+      audio.src = audioUrl;
+      
+      // Set initial volume
+      audio.volume = isMuted ? 0 : volume;
+      
       // Load the audio
-      audioRef.current.load();
+      audio.load();
 
       return () => {
-        if (audioRef.current) {
-          audioRef.current.removeEventListener('canplaythrough', handleCanPlayThrough);
-          audioRef.current.removeEventListener('error', handleError);
-          audioRef.current.src = '';
+        audio.removeEventListener('canplaythrough', handleCanPlayThrough);
+        audio.removeEventListener('error', handleError);
+        audio.removeEventListener('ended', handleEnded);
+        audio.pause();
+        setIsPlaying(false);
+        // Only clear the source if we're changing to a new URL
+        if (audio.src !== audioUrl) {
+          audio.src = '';
         }
       };
     }
-  }, [audioUrl]);
+  }, [audioUrl, volume, isMuted]);
 
-  const handlePlayPause = () => {
+  const handlePlayPause = async () => {
     if (audioRef.current) {
-      if (isPlaying) {
-        audioRef.current.pause();
-        setIsPlaying(false);
-      } else {
-        console.log('Attempting to play audio');
-        const playPromise = audioRef.current.play();
-        if (playPromise !== undefined) {
-          playPromise
-            .then(() => {
-              console.log('Audio playing successfully');
-              setIsPlaying(true);
-            })
-            .catch(error => {
-              console.error('Error playing audio:', error);
-              setError(`Failed to play audio: ${error.message}`);
-              setIsPlaying(false);
-            });
+      try {
+        if (isPlaying) {
+          audioRef.current.pause();
+          setIsPlaying(false);
+        } else {
+          setError(null);
+          console.log('Attempting to play audio:', audioRef.current.src);
+          await audioRef.current.play();
+          console.log('Audio playing successfully');
+          setIsPlaying(true);
         }
+      } catch (error) {
+        console.error('Error playing audio:', error);
+        setError(`Failed to play audio: ${error instanceof Error ? error.message : 'Unknown error'}`);
+        setIsPlaying(false);
       }
     }
   };
@@ -126,25 +147,23 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
   };
 
   return (
-    <div className="w-full space-y-4 p-4 border rounded-xl bg-background shadow-sm">
+    <div className="w-full space-y-4 p-2 sm:p-4 border rounded-xl bg-background shadow-sm overflow-hidden">
       <audio
         ref={audioRef}
-        crossOrigin="anonymous"
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
-        onEnded={() => setIsPlaying(false)}
       />
       
-      <div className="flex items-center gap-4">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         {error ? (
-          <div className="text-destructive text-sm">{error}</div>
+          <div className="text-destructive text-sm overflow-hidden text-ellipsis">{error}</div>
         ) : (
           <>
             <Button
               size="icon"
               variant="ghost"
               onClick={handlePlayPause}
-              className="h-8 w-8"
+              className="h-8 w-8 flex-shrink-0"
             >
               {isPlaying ? (
                 <Pause className="h-4 w-4" />
@@ -153,7 +172,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               )}
             </Button>
 
-            <span className="text-sm text-muted-foreground w-20">
+            <span className="text-sm text-muted-foreground w-16 flex-shrink-0 text-center">
               {formatTime(currentTime)}
             </span>
 
@@ -162,33 +181,61 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               max={duration}
               step={0.1}
               onValueChange={handleSliderChange}
-              className="w-full"
+              className="flex-1 min-w-0"
             />
 
-            <span className="text-sm text-muted-foreground w-20 text-right">
+            <span className="text-sm text-muted-foreground w-16 text-right flex-shrink-0 text-center">
               {formatTime(duration)}
             </span>
 
-            <Button
-              size="icon"
-              variant="ghost"
-              onClick={toggleMute}
-              className="h-8 w-8"
-            >
-              {isMuted ? (
-                <VolumeX className="h-4 w-4" />
-              ) : (
-                <Volume2 className="h-4 w-4" />
-              )}
-            </Button>
+            <div className="flex items-center">
+              <Popover>
+                <PopoverTrigger asChild>
+                  <Button
+                    size="icon"
+                    variant="ghost"
+                    className="h-8 w-8 flex-shrink-0"
+                  >
+                    {isMuted ? (
+                      <VolumeX className="h-4 w-4" />
+                    ) : (
+                      <Volume2 className="h-4 w-4" />
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-10 p-2" side="top" align="end">
+                  <div className="h-24 flex items-center justify-center">
+                    <SliderVertical
+                      value={[isMuted ? 0 : volume]}
+                      max={1}
+                      step={0.01}
+                      onValueChange={(value) => {
+                        const newVolume = value[0];
+                        if (newVolume === 0) {
+                          setIsMuted(true);
+                        } else {
+                          setIsMuted(false);
+                          setVolume(newVolume);
+                          if (audioRef.current) {
+                            audioRef.current.volume = newVolume;
+                          }
+                        }
+                      }}
+                      className="h-full relative flex items-center select-none touch-none"
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
 
-            <Slider
-              value={[volume]}
-              max={1}
-              step={0.01}
-              onValueChange={handleVolumeChange}
-              className="w-24"
-            />
+              <Button
+                size="icon"
+                variant="ghost"
+                onClick={toggleMute}
+                className="h-8 w-8 flex-shrink-0 sm:hidden"
+              >
+                <span className="sr-only">Toggle mute</span>
+              </Button>
+            </div>
           </>
         )}
       </div>
