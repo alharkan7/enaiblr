@@ -28,7 +28,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
   useEffect(() => {
     if (audioRef.current) {
       const audio = audioRef.current;
-      
+
       const handleCanPlayThrough = () => {
         console.log('Audio can play through');
         setError(null);
@@ -60,13 +60,10 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
       audio.pause();
       audio.currentTime = 0;
       setIsPlaying(false);
-      
+
       // Set source and load
       audio.src = audioUrl;
-      
-      // Set initial volume
-      audio.volume = isMuted ? 0 : volume;
-      
+
       // Load the audio
       audio.load();
 
@@ -76,13 +73,15 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
         audio.removeEventListener('ended', handleEnded);
         audio.pause();
         setIsPlaying(false);
-        // Only clear the source if we're changing to a new URL
-        if (audio.src !== audioUrl) {
-          audio.src = '';
-        }
       };
     }
-  }, [audioUrl, volume, isMuted]);
+  }, [audioUrl]);
+
+  useEffect(() => {
+    if (audioRef.current) {
+      audioRef.current.volume = isMuted ? 0 : volume;
+    }
+  }, [volume, isMuted]);
 
   const handlePlayPause = async () => {
     if (audioRef.current) {
@@ -133,13 +132,6 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
     }
   };
 
-  const handleVolumeChange = (value: number[]) => {
-    if (audioRef.current) {
-      audioRef.current.volume = value[0];
-      setVolume(value[0]);
-    }
-  };
-
   const formatTime = (time: number) => {
     const minutes = Math.floor(time / 60);
     const seconds = Math.floor(time % 60);
@@ -153,7 +145,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
       />
-      
+
       <div className="flex items-center gap-2 sm:gap-4 min-w-0">
         {error ? (
           <div className="text-destructive text-sm overflow-hidden text-ellipsis">{error}</div>
@@ -181,6 +173,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               max={duration}
               step={0.1}
               onValueChange={handleSliderChange}
+              onValueCommit={handleSliderChange}
               className="flex-1 min-w-0"
             />
 
@@ -189,10 +182,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
             </span>
 
             <div className="flex items-center">
-              <div 
-                className="flex items-center justify-center size-12 rounded-lg bg-background border relative"
-                onClick={(e) => e.stopPropagation()}
-              >
+              <div className="flex items-center justify-center size-12 rounded-lg bg-background border relative">
                 <Popover>
                   <PopoverTrigger asChild>
                     <Button
@@ -207,22 +197,23 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
                       )}
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-10 p-2" side="top" align="end">
+                  <PopoverContent
+                    className="w-10 p-2"
+                    side="top"
+                    align="end"
+                  >
                     <div className="h-24 flex items-center justify-center">
                       <SliderVertical
                         value={[isMuted ? 0 : volume]}
                         max={1}
                         step={0.01}
                         onValueChange={(value) => {
-                          const newVolume = value[0];
-                          if (newVolume === 0) {
-                            setIsMuted(true);
-                          } else {
-                            setIsMuted(false);
-                            setVolume(newVolume);
-                            if (audioRef.current) {
-                              audioRef.current.volume = newVolume;
-                            }
+                          setVolume(value[0]);
+                          setIsMuted(value[0] === 0);
+                        }}
+                        onValueCommit={(value) => {
+                          if (audioRef.current) {
+                            audioRef.current.volume = value[0];
                           }
                         }}
                         className="h-full relative flex items-center select-none touch-none"

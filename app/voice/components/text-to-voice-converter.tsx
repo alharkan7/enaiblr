@@ -60,12 +60,12 @@ export default function TextToVoiceConverter() {
       setIsLoading(true);
       const audioBuffer = await synthesizeSpeech();
       
-      // Create blob for size calculation
+      // Create blob for size calculation and download
       const blob = new Blob([audioBuffer], { type: "audio/wav" });
       const size = blob.size / (1024 * 1024);
 
       // Store audio data in server
-      const response = await fetch('/api/voice/stream', {
+      const response = await fetch('/api/voice/audio', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -76,12 +76,12 @@ export default function TextToVoiceConverter() {
       });
 
       const { id } = await response.json();
-      const streamUrl = `/api/voice/stream?id=${id}`;
+      const audioUrl = `/api/voice/audio?id=${id}`;
 
       setAudioData({
-        url: streamUrl,
+        url: audioUrl,
         size,
-        blob, // Keep blob for download functionality
+        blob,
       });
 
       setIsComplete(true);

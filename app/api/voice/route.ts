@@ -41,7 +41,7 @@ export async function POST(request: Request) {
     });
 
     // Log audio data size for debugging
-    console.log('Audio data size:', audioData.byteLength);
+    // console.log('Audio data size:', audioData.byteLength);
 
     return new NextResponse(audioData, {
       headers: {
