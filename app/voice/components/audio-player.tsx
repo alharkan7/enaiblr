@@ -172,7 +172,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               )}
             </Button>
 
-            <span className="text-sm text-muted-foreground w-16 shrink-0">
+            <span className="text-sm text-muted-foreground shrink-0 min-w-[3ch]">
               {formatTime(currentTime)}
             </span>
 
@@ -184,57 +184,62 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               className="flex-1 min-w-0"
             />
 
-            <span className="text-sm text-muted-foreground w-16 text-right shrink-0">
+            <span className="text-sm text-muted-foreground text-right shrink-0 min-w-[3ch]">
               {formatTime(duration)}
             </span>
 
             <div className="flex items-center">
-              <Popover>
-                <PopoverTrigger asChild>
-                  <Button
-                    size="icon"
-                    variant="ghost"
-                    className="size-8 shrink-0"
-                  >
-                    {isMuted ? (
-                      <VolumeX className="size-4" />
-                    ) : (
-                      <Volume2 className="size-4" />
-                    )}
-                  </Button>
-                </PopoverTrigger>
-                <PopoverContent className="w-10 p-2" side="top" align="end">
-                  <div className="h-24 flex items-center justify-center">
-                    <SliderVertical
-                      value={[isMuted ? 0 : volume]}
-                      max={1}
-                      step={0.01}
-                      onValueChange={(value) => {
-                        const newVolume = value[0];
-                        if (newVolume === 0) {
-                          setIsMuted(true);
-                        } else {
-                          setIsMuted(false);
-                          setVolume(newVolume);
-                          if (audioRef.current) {
-                            audioRef.current.volume = newVolume;
-                          }
-                        }
-                      }}
-                      className="h-full relative flex items-center select-none touch-none"
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
-
-              <Button
-                size="icon"
-                variant="ghost"
-                onClick={toggleMute}
-                className="size-8 shrink-0 sm:hidden"
+              <div 
+                className="flex items-center justify-center size-12 rounded-lg bg-background border relative"
+                onClick={(e) => e.stopPropagation()}
               >
-                <span className="sr-only">Toggle mute</span>
-              </Button>
+                <Popover>
+                  <PopoverTrigger asChild>
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="size-8 absolute inset-0 m-auto"
+                    >
+                      {isMuted ? (
+                        <VolumeX className="size-4 mx-auto" />
+                      ) : (
+                        <Volume2 className="size-4 mx-auto" />
+                      )}
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-10 p-2" side="top" align="end">
+                    <div className="h-24 flex items-center justify-center">
+                      <SliderVertical
+                        value={[isMuted ? 0 : volume]}
+                        max={1}
+                        step={0.01}
+                        onValueChange={(value) => {
+                          const newVolume = value[0];
+                          if (newVolume === 0) {
+                            setIsMuted(true);
+                          } else {
+                            setIsMuted(false);
+                            setVolume(newVolume);
+                            if (audioRef.current) {
+                              audioRef.current.volume = newVolume;
+                            }
+                          }
+                        }}
+                        className="h-full relative flex items-center select-none touch-none"
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+
+                <Button
+                  size="icon"
+                  variant="ghost"
+                  onClick={toggleMute}
+                  className="size-8 shrink-0 sm:hidden"
+                >
+                  <span className="sr-only">Toggle mute</span>
+                </Button>
+              </div>
             </div>
           </>
         )}
