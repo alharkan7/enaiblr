@@ -163,7 +163,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               size="icon"
               variant="ghost"
               onClick={handlePlayPause}
-              className="size-8 flex-shrink-0"
+              className="size-8 shrink-0"
             >
               {isPlaying ? (
                 <Pause className="size-4" />
@@ -172,7 +172,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               )}
             </Button>
 
-            <span className="text-sm text-muted-foreground w-16 flex-shrink-0 text-center">
+            <span className="text-sm text-muted-foreground w-16 shrink-0">
               {formatTime(currentTime)}
             </span>
 
@@ -184,7 +184,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
               className="flex-1 min-w-0"
             />
 
-            <span className="text-sm text-muted-foreground w-16 text-right flex-shrink-0 text-center">
+            <span className="text-sm text-muted-foreground w-16 text-right shrink-0">
               {formatTime(duration)}
             </span>
 
@@ -194,7 +194,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
                   <Button
                     size="icon"
                     variant="ghost"
-                    className="size-8 flex-shrink-0"
+                    className="size-8 shrink-0"
                   >
                     {isMuted ? (
                       <VolumeX className="size-4" />
@@ -231,7 +231,7 @@ export default function AudioPlayer({ audioUrl, onDurationChange }: AudioPlayerP
                 size="icon"
                 variant="ghost"
                 onClick={toggleMute}
-                className="size-8 flex-shrink-0 sm:hidden"
+                className="size-8 shrink-0 sm:hidden"
               >
                 <span className="sr-only">Toggle mute</span>
               </Button>

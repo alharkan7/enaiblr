@@ -59,7 +59,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
           }}
         />
         <div 
-          className="absolute left-10 top-0 bottom-0 flex items-center pointer-events-none text-foreground"
+          className="absolute left-10 inset-y-0 flex items-center pointer-events-none text-foreground"
           style={{ 
             fontSize: 'inherit',
             lineHeight: 'inherit'

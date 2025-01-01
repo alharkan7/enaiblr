@@ -49,7 +49,7 @@ export default function Transcriber() {
                         </button>
                     ) : undefined}
                 />
-                <main className={`flex-grow px-4 md:px-4 ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
+                <main className={`grow px-4 md:px-4 ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
                     <div className="w-full max-w-4xl mx-auto">
                         {transcriptionResult ? (
                             <TranscriptionResult

@@ -24,7 +24,7 @@ export const SearchResultItem = ({
             className="p-4 rounded-xl border bg-card hover:bg-accent transition-colors flex gap-4 cursor-pointer"
             onClick={() => onResultClick(index)}
         >
-            <div className="w-16 h-16 flex items-center justify-center text-primary shrink-0">
+            <div className="size-16 flex items-center justify-center text-primary shrink-0">
                 {result.image ? (
                     <img
                         src={result.image}

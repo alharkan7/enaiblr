@@ -24,7 +24,7 @@ export function ImagePreview({ localImageUrl, isUploading, onRemove }: ImagePrev
                 </button>
                 {isUploading && (
                     <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full size-8 border-t-2 border-b-2 border-primary"></div>
+                        <div className="animate-spin rounded-full size-8 border-y-2 border-primary"></div>
                     </div>
                 )}
             </div>

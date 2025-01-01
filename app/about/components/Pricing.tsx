@@ -89,7 +89,7 @@ const Pricing = () => {
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
-              <CardContent className="flex flex-col flex-grow">
+              <CardContent className="flex flex-col grow">
                 <div className="mb-4 text-center">
                   <span className="text-4xl font-bold">{plan.price}</span>
                   <span className="text-muted-foreground">/bulan</span>

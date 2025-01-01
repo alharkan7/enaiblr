@@ -56,10 +56,10 @@ export function DocumentPreview({
         <div className="relative flex justify-center">
             <div className="relative p-4 bg-muted rounded-lg flex flex-col">
                 <div className="flex items-start gap-3">
-                    <div className="flex-shrink-0">
+                    <div className="shrink-0">
                         {getFileIcon()}
                     </div>
-                    <div className="flex-grow min-h-[2rem] flex flex-col justify-center">
+                    <div className="grow min-h-[2rem] flex flex-col justify-center">
                         <span className="text-sm text-foreground font-bold leading-tight truncate" title={fileName}>
                             {getTruncatedName(fileName)}
                         </span>
@@ -85,7 +85,7 @@ export function DocumentPreview({
                     {showRemoveButton && (  
                         <button
                             onClick={onRemove}
-                            className="flex-shrink-0 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
+                            className="shrink-0 bg-destructive text-destructive-foreground rounded-full p-1 hover:bg-destructive/90 transition-colors"
                             aria-label="Remove document"
                         >
                             <svg xmlns="http://www.w3.org/2000/svg" className="size-4" viewBox="0 0 20 20" fill="currentColor">
@@ -98,7 +98,7 @@ export function DocumentPreview({
 
                 {isUploading && (
                     <div className="absolute inset-0 bg-background/50 flex items-center justify-center rounded-lg">
-                        <div className="animate-spin rounded-full size-8 border-t-2 border-b-2 border-primary"></div>
+                        <div className="animate-spin rounded-full size-8 border-y-2 border-primary"></div>
                     </div>
                 )}
             </div>

@@ -22,7 +22,7 @@ export function ChatTitle({ compact, clearMessages, fileName }: ChatTitleProps) 
 
     return compact ? (
         <div className="border-b border-gray-200">
-            <div className="max-w-4xl mx-auto px-4 py-4 md:px-6 text-center relative">
+            <div className="max-w-4xl mx-auto p4 md:px-6 text-center relative">
                 <h1 className="text-xl font-semibold mx-12 truncate">
                     Chat with{' '}
                     {fileName && <span className="text-primary">{truncateFileName(fileName)}</span>}

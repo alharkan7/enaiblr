@@ -230,7 +230,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
           {file && !error && (
             <div className="w-full mt-4 p-4 rounded-lg bg-accent/50 flex items-center gap-3">
-              <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center flex-shrink-0">
+              <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
                 <FileAudio className="size-5 text-primary" />
               </div>
               <div className="min-w-0 flex-1">
@@ -239,7 +239,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
               </div>
               <button
                 onClick={() => setFile(null)}
-                className="size-8 rounded-full hover:bg-accent flex items-center justify-center flex-shrink-0"
+                className="size-8 rounded-full hover:bg-accent flex items-center justify-center shrink-0"
               >
                 <X className="size-4 text-muted-foreground" />
               </button>
@@ -248,7 +248,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
           {error && (
             <div className="w-full mt-4 p-4 rounded-lg bg-destructive/10 flex items-center gap-3">
-              <div className="size-10 rounded-full bg-destructive/10 flex items-center justify-center flex-shrink-0">
+              <div className="size-10 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
                 <AlertCircle className="size-5 text-destructive" />
               </div>
               <div className="flex-1">

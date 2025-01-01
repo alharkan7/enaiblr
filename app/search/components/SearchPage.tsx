@@ -112,7 +112,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
                             {Array.from({ length: 4 }, (_, index) => (
                                 <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
-                                    <div className="w-16 h-16 bg-muted rounded-lg"></div>
+                                    <div className="size-16 bg-muted rounded-lg"></div>
                                     <div className="flex-1">
                                         <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
                                         <div className="h-4 bg-muted rounded w-full mb-2"></div>

@@ -113,7 +113,7 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                         <img
                                                             src={content.image_url.url}
                                                             alt="Uploaded content"
-                                                            className="max-w-full max-h-[250px] w-auto h-auto object-contain rounded-lg mb-2"
+                                                            className="max-w-full max-h-[250px] size-auto object-contain rounded-lg mb-2"
                                                         />
                                                     )}
                                                 </div>
@@ -176,9 +176,9 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                             <div className="flex justify-start w-full">
                                 <div className="max-w-[80%] rounded-2xl p-3 bg-gray-200 text-gray-800 rounded-bl-none">
                                     <div className="flex space-x-1">
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                                        <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                                        <div className="size-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                                        <div className="size-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                                        <div className="size-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
                                     </div>
                                 </div>
                             </div>

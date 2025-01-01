@@ -68,7 +68,7 @@ export const FlashCardDisplay = ({
         />
 
         {!hasSwipedUp && cards.length > 0 && (
-          <div className="absolute bottom-4 left-0 right-0 flex flex-col items-center text-foreground/70 animate-bounce pointer-events-none">
+          <div className="absolute bottom-4 inset-x-0 flex flex-col items-center text-foreground/70 animate-bounce pointer-events-none">
             <ChevronUp size={24} />
             <p className="text-sm">Swipe Up</p>
           </div>
