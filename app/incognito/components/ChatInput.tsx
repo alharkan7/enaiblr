@@ -47,7 +47,7 @@ export function ChatInput({
 
     return (
         <form onSubmit={handleSubmit} className="p-4">
-            <div className="flex items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-border">
+            <div className="flex items-center h-12 bg-background rounded-full shadow-md max-w-4xl mx-auto border border-border focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                 <div className="shrink-0 pl-2">
                     <button
                         type="button"

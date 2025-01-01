@@ -102,6 +102,7 @@ export const PDFInput = ({
           placeholder="Paste a .pdf link here"
           value={pdfLink}
           onChange={handleLinkChange}
+          className="rounded-full"
         />
       </div>
 

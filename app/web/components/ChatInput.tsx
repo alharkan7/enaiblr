@@ -39,7 +39,7 @@ export function ChatInput({
 
     return (
         <form onSubmit={handleSubmit} className="p-4">
-            <div className="flex pl-2 items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-input relative">
+            <div className="flex pl-2 items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-input relative focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                 <input
                     type="file"
                     ref={fileInputRef}

@@ -107,7 +107,7 @@ export function ChatInput({
                 </div>
             )}
             <div className="flex flex-col space-y-4">
-                <div className="flex items-center px-2 bg-background rounded-full shadow-md mx-auto border border-border w-full max-w-xl">
+                <div className="flex items-center px-2 bg-background rounded-full shadow-md mx-auto border border-border w-full max-w-xl focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                     <input
                         type="text"
                         ref={inputRef}
