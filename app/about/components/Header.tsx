@@ -44,11 +44,11 @@ const Header = () => {
   }, []);
 
   return (
-    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "bg-background/80 backdrop-blur-md shadow-sm" : ""}`}>
+    <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : ""}`}>
       <nav className="container mx-auto px-4 sm:px-6 lg:px-16">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/about" className="text-2xl font-bold">
+            <Link href="/about" className="text-2xl font-bold text-black">
               en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
             </Link>
           </div>
@@ -90,7 +90,7 @@ const Header = () => {
           className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out rounded-lg shadow-md ${isMenuOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
             }`}
         >
-          <div className="bg-white px-2 pt-2 pb-3 space-y-1">
+          <div className="bg-white/80 backdrop-blur-md px-2 pt-2 pb-3 space-y-1">
             {navigation.map((item) => (
               <Link
                 key={item.name}

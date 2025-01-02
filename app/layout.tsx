@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import { Toaster } from 'sonner';
 import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
-import { headers } from 'next/headers';
 import { auth } from './(auth)/auth';
 
 import { ThemeProvider } from '@/components/theme-provider';
@@ -68,8 +67,8 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="system"
-            enableSystem
+            defaultTheme="light"
+            enableSystem={false}
             disableTransitionOnChange
           >
             <Toaster position="top-center" />

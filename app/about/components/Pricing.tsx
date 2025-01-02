@@ -53,7 +53,7 @@ const plans = [
 
 const Pricing = () => {
   return (
-    <section id="pricing" className="py-20 bg-muted/50">
+    <section id="pricing" className="py-20 backdrop-blur-xs">
       <div className="container px-4 mx-auto">
         <div className="max-w-2xl mx-auto text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">
@@ -72,7 +72,7 @@ const Pricing = () => {
             <Card
               key={index}
               className={cn(
-                "relative flex flex-col h-full",
+                "relative flex flex-col h-full bg-white",
                 plan.popular
                   ? "border-blue-600 shadow-lg scale-105"
                   : "border-border"
@@ -80,24 +80,24 @@ const Pricing = () => {
             >
               {plan.popular && (
                 <div className="absolute -top-4 left-1/2 -translate-x-1/2">
-                  <span className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                  <span className="bg-gradient-to-r from-blue-600 to-cyan-500 !text-white px-3 py-1 rounded-full text-sm font-medium">
                     enaiblr
                   </span>
                 </div>
               )}
-              <CardHeader className="text-center">
+              <CardHeader className="text-center !text-black">
                 <CardTitle>{plan.name}</CardTitle>
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col grow">
                 <div className="mb-4 text-center">
-                  <span className="text-4xl font-bold">{plan.price}</span>
+                  <span className="text-4xl !text-black font-bold">{plan.price}</span>
                   <span className="text-muted-foreground">/bulan</span>
                 </div>
                 <ul className="space-y-2 max-w-[90%] mx-auto">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2">
-                      <Check className="size-4 text-primary" />
+                      <Check className="size-4 text-primary !text-black/80" />
                       <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}

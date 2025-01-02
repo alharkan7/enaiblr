@@ -23,7 +23,7 @@ const CTA = () => {
                 Akses Sekarang <ArrowRight className="size-4" />
               </Link>
             </Button>
-            <Button size="lg" variant="outline" className="rounded-full" asChild>
+            <Button size="lg" variant="outline" className="rounded-full text-black" asChild>
               <a href="https://wa.me/+6281280077690" target="_blank" rel="noopener noreferrer">Hubungi Admin</a>
             </Button>
           </div>

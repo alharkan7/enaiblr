@@ -1,15 +1,15 @@
 import Link from "next/link";
-import { Github, Twitter, Linkedin, Mail, Globe, Phone } from "lucide-react";
+import { Mail, Globe, Phone } from "lucide-react";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className="bg-muted/50 pt-12 pb-4 relative z-[2]">
-      <div className="container px-4 mx-auto backdrop-blur-sm">
+    <footer className="pt-12 pb-4 relative z-[2]  backdrop-blur-sm">
+      <div className="container px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:px-16">
           <div>
-            <Link href="/about" className="text-2xl font-bold mb-4 block">
+            <Link href="/about" className="text-2xl font-bold mb-4 block !text-black">
               en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
             </Link>
             <p className="text-muted-foreground">

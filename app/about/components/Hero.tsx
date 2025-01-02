@@ -24,7 +24,7 @@ const Hero = () => {
               </Button>
             </Link>
             <Link href="#features">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto rounded-full text-black">
                 Lihat Fitur
               </Button>
             </Link>

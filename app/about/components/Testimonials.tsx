@@ -42,12 +42,12 @@ const Testimonials = () => {
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:px-16">
           {testimonials.map((testimonial, index) => (
-            <Card key={index} className="border-none shadow-lg">
+            <Card key={index} className="border-none shadow-lg bg-white">
               <CardHeader>
-                <div className="flex items-center gap-4">
+                <div className="bg-white flex items-center gap-4">
                   <Avatar>
-                    <AvatarImage src={testimonial.image} alt={testimonial.name} />
-                    <AvatarFallback>
+                    <AvatarImage className="bg-white" src={testimonial.image} alt={testimonial.name} />
+                    <AvatarFallback className="bg-white border">
                       {testimonial.name
                         .split(" ")
                         .map((n) => n[0])
@@ -55,7 +55,7 @@ const Testimonials = () => {
                     </AvatarFallback>
                   </Avatar>
                   <div>
-                    <h4 className="font-semibold">{testimonial.name}</h4>
+                    <h4 className="font-semibold text-black">{testimonial.name}</h4>
                     <p className="text-sm text-muted-foreground">
                       {testimonial.role}
                     </p>
