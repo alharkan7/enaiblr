@@ -40,6 +40,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
                   </Button>
                 }
                 user={session?.user}
+                useHardReload={false}
               />
             </div>
           </>
@@ -56,6 +57,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
                 </Button>
               }
               user={session?.user}
+              useHardReload={false}
             />
           </div>
         )}

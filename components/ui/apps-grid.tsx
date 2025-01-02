@@ -7,15 +7,23 @@ import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/comp
 import { AppsGridUserNav } from '@/components/ui/apps-grid-user-nav';
 import type { User } from 'next-auth';
 import { apps } from '@/config/apps';
+import { useRouter } from 'next/navigation';
 
 interface AppsGridProps {
   trigger: React.ReactNode;
   user?: User;
+  useHardReload?: boolean;
 }
 
-export function AppsGrid({ trigger, user }: AppsGridProps) {
+export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps) {
+  const router = useRouter();
+
   const handleAppClick = (slug: string) => {
-    window.location.href = `/${slug}`;
+    if (useHardReload) {
+      window.location.href = `/${slug}`;
+    } else {
+      router.push(`/${slug}`, { scroll: false });
+    }
   };
 
   return (

@@ -92,6 +92,7 @@ function PureChatHeader({
           </Button>
         }
         user={user}
+        useHardReload={true}
       />
     </header>
   );
