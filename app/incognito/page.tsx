@@ -1,15 +1,13 @@
 'use client'
 
 import { useState, useRef, useEffect } from 'react'
+import { ChatTitle } from './components/ChatTitle'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { ImagePreview } from './components/ImagePreview'
 import { useImageUpload } from './hooks/useImageUpload'
 import { useChatMessages } from './hooks/useChatMessages'
-import AppsFooter from '@/components/apps-footer';
-import { AppsHeader } from '@/components/apps-header'
-import { RefreshIcon } from '@/components/icons';
-import { Button } from '@/components/ui/button';
+import RenderFooter from '@/components/apps-footer'
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -168,93 +166,96 @@ export default function MinimalistChatbot() {
     };
 
     return (
-        <div
-            className="flex flex-col h-screen relative chat-layout w-full overflow-x-hidden"
-            style={{
-                height: 'calc(var(--vh, 1vh) * 100)',
-            }}
-        >
-            <div className="h-dvh flex flex-col">
-                {hasUserSentMessage ? (
-                    <div className="flex-1 flex flex-col overflow-hidden">
-                        <header className="sticky top-0 left-0 w-full z-10 bg-background">
-                            <AppsHeader 
-                                title={
-                                    <span className="text-xl font-semibold">
-                                        Disposable Chat
-                                    </span>
-                                }
-                                leftButton={
-                                    <Button
-                                        onClick={clearMessages}
-                                        className="p-2 hover:bg-muted rounded-full transition-colors"
-                                        title="Clear chat history"
-                                        variant="outline"
-                                    >
-                                        <RefreshIcon size={14} />
-                                    </Button>
-                                }
-                            />
-                        </header>
-                        <div className="flex-1 overflow-y-auto">
-                            <div className="max-w-4xl mx-auto">
-                                <MessageList
-                                    messages={messages}
-                                    messagesEndRef={messagesEndRef}
-                                    onUpdate={scrollToBottom}
-                                />
+        <>
+            <div
+                className="flex flex-col h-screen relative chat-layout"
+                style={{
+                    height: 'calc(var(--vh, 1vh) * 100)',
+                    minHeight: '-webkit-fill-available'
+                }}
+            >
+                {messages.length === 0 ? (
+                    <div className="flex flex-col flex-grow bg-background">
+                        <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
+                            <div className="w-full max-w-[1200px]">
+                                <ChatTitle clearMessages={clearMessages} />
+                                <div className="w-full max-w-3xl mt-8 mx-auto">
+                                    {localImageUrl && (
+                                        <ImagePreview
+                                            localImageUrl={localImageUrl}
+                                            isUploading={isUploading}
+                                            onRemove={() => {
+                                                clearImages();
+                                                if (fileInputRef.current) {
+                                                    fileInputRef.current.value = '';
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                    <ChatInput
+                                        input={input}
+                                        setInput={setInput}
+                                        isLoading={isLoading}
+                                        fileInputRef={fileInputRef}
+                                        onImageSelect={handleInputImageChange}
+                                        imageBase64={imageBase64}
+                                        clearImages={clearImages}
+                                        sendMessage={handleSendMessage}
+                                    />
+                                </div>
                             </div>
                         </div>
-                        <div className="flex-none">
-                            <div className="max-w-4xl mx-auto px-4">
-                                {localImageUrl && (
-                                    <ImagePreview
-                                        localImageUrl={localImageUrl}
-                                        isUploading={isUploading}
-                                        onRemove={() => {
-                                            clearImages();
-                                            if (fileInputRef.current) {
-                                                fileInputRef.current.value = '';
-                                            }
-                                        }}
-                                    />
-                                )}
-                                <ChatInput
-                                    input={input}
-                                    setInput={setInput}
-                                    isLoading={isLoading}
-                                    fileInputRef={fileInputRef}
-                                    onImageSelect={(e) => handleImageChange(e.target.files?.[0] || null)}
-                                    imageBase64={imageBase64}
-                                    clearImages={clearImages}
-                                    sendMessage={handleSendMessage}
-                                />
-                            </div>
+                        <div className="w-full mt-8">
+                            <RenderFooter />
                         </div>
                     </div>
                 ) : (
-                    <>
-                        <AppsHeader />
-                        <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8">
-                            <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Disposable <span className='text-primary'>Chat</span></h1>
-                            <div className="w-full max-w-2xl">
-                                <ChatInput
-                                    input={input}
-                                    setInput={setInput}
-                                    isLoading={isLoading}
-                                    fileInputRef={fileInputRef}
-                                    onImageSelect={(e) => handleImageChange(e.target.files?.[0] || null)}
-                                    imageBase64={imageBase64}
-                                    clearImages={clearImages}
-                                    sendMessage={handleSendMessage}
-                                    autoFocus
-                                />
+                    <div className="flex flex-col h-full w-full">
+                        <div className="flex flex-col w-full min-w-[320px] max-w-[1200px] mx-auto h-full">
+                            <div className="flex flex-col h-full">
+                                <div className="sticky top-0 backdrop-blur-sm z-10 bg-background">
+                                    <ChatTitle compact clearMessages={clearMessages} />
+                                </div>
+                                {/* Modified container for MessageList */}
+                                <div className="flex-1 relative overflow-hidden">
+                                    <MessageList
+                                        messages={messages}
+                                        messagesEndRef={messagesEndRef}
+                                        onUpdate={() => {
+                                            scrollToBottom();
+                                        }}
+                                    />
+                                </div>
+                                <div className="w-full border-t backdrop-blur-sm border-border bg-background sticky bottom-0 z-10">
+
+                                    {localImageUrl && (
+                                        <ImagePreview
+                                            localImageUrl={localImageUrl}
+                                            isUploading={isUploading}
+                                            onRemove={() => {
+                                                clearImages();
+                                                if (fileInputRef.current) {
+                                                    fileInputRef.current.value = '';
+                                                }
+                                            }}
+                                        />
+                                    )}
+                                    <ChatInput
+                                        input={input}
+                                        setInput={setInput}
+                                        isLoading={isLoading}
+                                        fileInputRef={fileInputRef}
+                                        onImageSelect={handleInputImageChange}
+                                        imageBase64={imageBase64}
+                                        clearImages={clearImages}
+                                        sendMessage={handleSendMessage}
+                                    />
+                                </div>
                             </div>
-                        </main>
-                    </>
+                        </div>
+                    </div>
                 )}
-                <AppsFooter />
             </div>
-        </div>
+        </>
     )
 }

@@ -56,10 +56,10 @@ export function MessageList({ messages, messagesEndRef, onUpdate }: MessageListP
                         className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
                         <div
-                            className={`rounded-lg px-4 py-2 max-w-[85%] ${
+                            className={`rounded-2xl px-4 py-2 max-w-[85%] ${
                                 message.role === 'user'
-                                    ? 'bg-primary text-primary-foreground'
-                                    : 'bg-accent text-accent-foreground'
+                                    ? 'bg-primary text-primary-foreground rounded-br-none'
+                                    : 'bg-accent text-accent-foreground rounded-bl-none'
                             }`}
                         >
                             <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${

@@ -1,5 +1,6 @@
 import { RefreshIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import { AppsHeader } from '@/components/apps-header';
 
 interface ChatTitleProps {
     compact?: boolean;
@@ -7,22 +8,22 @@ interface ChatTitleProps {
 }
 
 export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
+    const refreshButton = (
+        <Button 
+            onClick={clearMessages}
+            className="p-2 hover:bg-muted rounded-lg transition-colors"
+            title="Clear chat history"
+            variant="outline"
+        >
+            <RefreshIcon size={14} />
+        </Button>
+    );
+
     return compact ? (
-        <div className="border-b border-border">
-            <div className="max-w-4xl mx-auto p-4 md:px-6 text-center relative">
-                <h1 className="text-xl font-semibold">
-                    <span className="text-primary">Disposable</span> Chat
-                </h1>
-                <Button 
-                    onClick={clearMessages}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 p-2 hover:bg-muted rounded-full transition-colors"
-                    title="Clear chat history"
-                    variant="outline"
-                >
-                    <RefreshIcon size={14} />
-                </Button>
-            </div>
-        </div>
+        <AppsHeader
+            title={<><span className="text-primary">Disposable</span> Chat</>}
+            leftButton={refreshButton}
+        />
     ) : (
         <div className="text-center py-8">
             <h1 className="text-4xl font-extrabold mb-2">
