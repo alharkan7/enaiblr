@@ -90,8 +90,8 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
     if (!isHomePage && (searchResults || isLoading)) {
         return (
-            <div className="flex flex-col min-h-dvh">
-                <header className="sticky top-0 left-0 w-full z-10 bg-background border-b">
+            <div className="flex flex-col h-dvh">
+                <header className="flex-none sticky top-0 left-0 w-full z-10 bg-background border-b">
                     <div className="container max-w-5xl mx-auto py-4 pl-4 sm:pl-0 flex items-center gap-2">
                         <div className="flex-1 min-w-0">
                             <SearchHeader
@@ -107,36 +107,38 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         </div>
                     </div>
                 </header>
-                <main className="flex-1 container mx-auto px-5 py-8 overflow-y-auto">
-                    {isLoading ? (
-                        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {Array.from({ length: 4 }, (_, index) => (
-                                <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
-                                    <div className="size-16 bg-muted rounded-lg"></div>
-                                    <div className="flex-1">
-                                        <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                                        <div className="h-4 bg-muted rounded w-full mb-2"></div>
-                                        <div className="h-4 bg-muted rounded w-1/2"></div>
+                <main className="flex-1 overflow-y-auto">
+                    <div className="container mx-auto px-5 py-8">
+                        {isLoading ? (
+                            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {Array.from({ length: 4 }, (_, index) => (
+                                    <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
+                                        <div className="size-16 bg-muted rounded-lg"></div>
+                                        <div className="flex-1">
+                                            <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                                            <div className="h-4 bg-muted rounded w-full mb-2"></div>
+                                            <div className="h-4 bg-muted rounded w-1/2"></div>
+                                        </div>
                                     </div>
-                                </div>
-                            ))}
-                        </div>
-                    ) : (
-                        <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {searchResults.results.map((result: any, index: number) => (
-                                <SearchResultItem
-                                    key={index}
-                                    result={result}
-                                    index={index}
-                                    isExpanded={expandedResultIndex === index}
-                                    IconComponent={resultIcons[index]}
-                                    onResultClick={handleResultClick}
-                                />
-                            ))}
-                        </div>
-                    )}
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
+                                {searchResults.results.map((result: any, index: number) => (
+                                    <SearchResultItem
+                                        key={index}
+                                        result={result}
+                                        index={index}
+                                        isExpanded={expandedResultIndex === index}
+                                        IconComponent={resultIcons[index]}
+                                        onResultClick={handleResultClick}
+                                    />
+                                ))}
+                            </div>
+                        )}
+                    </div>
                 </main>
-                <div className="mt-8">
+                <div className="flex-none mt-8">
                     <AppsFooter />
                 </div>
             </div>
