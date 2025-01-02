@@ -100,8 +100,8 @@ export default function Filechat() {
         <div
             className="flex min-h-dvh flex-col"
         >
-            <div className="flex-1 flex flex-col overflow-hidden relative">
-                <header className="sticky top-0 left-0 w-full z-10 bg-background">
+            <div className="flex-1 flex flex-col relative">
+                <header className="fixed top-0 left-0 right-0 z-10 bg-background">
                     <div className="max-w-4xl mx-auto relative">
                         {hasUserSentMessage && (
                             <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
@@ -129,10 +129,10 @@ export default function Filechat() {
                         />
                     </div>
                 </header>
-                <div className={`flex-1 overflow-hidden flex flex-col ${!hasUserSentMessage ? 'justify-center' : ''}`}>
+                <div className={`flex-1 flex flex-col ${!hasUserSentMessage ? 'justify-center' : ''}`}>
                     {hasUserSentMessage ? (
                         <>
-                            <div className="flex-1 overflow-y-auto">
+                            <div className="flex-1 overflow-y-auto pt-16 pb-24">
                                 <MessageList
                                     messages={messages}
                                     messagesEndRef={messagesEndRef}
@@ -144,7 +144,7 @@ export default function Filechat() {
                                     wordCount={wordCount}
                                 />
                             </div>
-                            <div className="flex-none">
+                            <div className="fixed bottom-0 left-0 right-0 bg-background">
                                 <ChatInput
                                     input={input}
                                     setInput={setInput}

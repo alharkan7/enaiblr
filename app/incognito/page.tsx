@@ -8,6 +8,7 @@ import { ImagePreview } from './components/ImagePreview'
 import { useImageUpload } from './hooks/useImageUpload'
 import { useChatMessages } from './hooks/useChatMessages'
 import RenderFooter from '@/components/apps-footer'
+import { AppsHeader } from '@/components/apps-header'
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -176,6 +177,7 @@ export default function MinimalistChatbot() {
             >
                 {messages.length === 0 ? (
                     <div className="flex flex-col flex-grow bg-background">
+                        {messages.length === 0 && <AppsHeader />}
                         <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
                             <div className="w-full max-w-[1200px]">
                                 <ChatTitle clearMessages={clearMessages} />
