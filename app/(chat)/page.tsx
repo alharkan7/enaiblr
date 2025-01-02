@@ -1,4 +1,5 @@
 import { cookies } from 'next/headers';
+import { auth } from '@/app/(auth)/auth'; 
 
 import { Chat } from '@/components/chat';
 import { DEFAULT_MODEL_NAME, models } from '@/lib/ai/models';
@@ -10,6 +11,7 @@ export default async function Page() {
 
   const cookieStore = await cookies();
   const modelIdFromCookie = cookieStore.get('model-id')?.value;
+  const session = await auth();
 
   const selectedModelId =
     models.find((model) => model.id === modelIdFromCookie)?.id ||
@@ -24,6 +26,7 @@ export default async function Page() {
         selectedModelId={selectedModelId}
         selectedVisibilityType="private"
         isReadonly={false}
+        user={session?.user}
       />
       <DataStreamHandler id={id} />
     </>

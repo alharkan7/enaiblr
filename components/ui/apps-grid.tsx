@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import Link from 'next/link';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -15,6 +14,10 @@ interface AppsGridProps {
 }
 
 export function AppsGrid({ trigger, user }: AppsGridProps) {
+  const handleAppClick = (slug: string) => {
+    window.location.href = `/${slug}`;
+  };
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -34,12 +37,10 @@ export function AppsGrid({ trigger, user }: AppsGridProps) {
                 <Button
                   variant="ghost"
                   className="h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
-                  asChild
+                  onClick={() => handleAppClick(app.slug)}
                 >
-                  <Link href={`/${app.slug}`}>
-                    <Icon className="size-12 text-foreground" />
-                    <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
-                  </Link>
+                  <Icon className="size-12 text-foreground" />
+                  <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
                 </Button>
               );
 

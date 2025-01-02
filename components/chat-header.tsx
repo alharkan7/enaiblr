@@ -1,7 +1,7 @@
 'use client';
 import { useRouter } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
-import { useSession } from 'next-auth/react';
+import type { User } from 'next-auth';
 
 import { ModelSelector } from '@/components/model-selector';
 import { SidebarToggle } from '@/components/sidebar-toggle';
@@ -18,16 +18,16 @@ function PureChatHeader({
   selectedModelId,
   selectedVisibilityType,
   isReadonly,
+  user,
 }: {
   chatId: string;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  user?: User;
 }) {
   const router = useRouter();
   const { open } = useSidebar();
-  const { data: session } = useSession();
-
   const { width: windowWidth } = useWindowSize();
 
   return (
@@ -91,7 +91,7 @@ function PureChatHeader({
             <span className="hidden md:inline ml-2">Apps</span>
           </Button>
         }
-        user={session?.user}
+        user={user}
       />
     </header>
   );

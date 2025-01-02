@@ -1,4 +1,3 @@
-
 import { notFound } from 'next/navigation';
 
 import { auth } from '@/app/(auth)/auth';
@@ -29,20 +28,19 @@ export default async function Page(props: { params: Promise<{ id: string }> }) {
     }
   }
 
-  const messagesFromDb = await getMessagesByChatId({
-    id,
-  });
-
-  const selectedModelId = chat.llm_id || DEFAULT_MODEL_NAME;
+  const messages = await getMessagesByChatId({ id });
+  const uiMessages = convertToUIMessages(messages);
 
   return (
     <>
       <Chat
-        id={chat.id}
-        initialMessages={convertToUIMessages(messagesFromDb)}
-        selectedModelId={selectedModelId}
+        key={id}
+        id={id}
+        initialMessages={uiMessages}
+        selectedModelId={chat.llm_id || DEFAULT_MODEL_NAME}
         selectedVisibilityType={chat.visibility}
         isReadonly={session?.user?.id !== chat.userId}
+        user={session?.user}
       />
       <DataStreamHandler id={id} />
     </>

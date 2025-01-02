@@ -11,12 +11,7 @@ interface AppsHeaderProps {
 }
 
 export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
-  const { data: session, status } = useSession();
-
-  // Don't render anything while loading to prevent flashing
-  if (status === 'loading') {
-    return null;
-  }
+  const { data: session } = useSession();
 
   return (
     <header className="sticky top-0 bg-background py-1.5 px-2 md:px-2">

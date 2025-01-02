@@ -13,6 +13,7 @@ import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
 import type { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
+import type { User } from 'next-auth';
 
 export function Chat({
   id,
@@ -20,12 +21,14 @@ export function Chat({
   selectedModelId,  // This would come from the chat.llm_id or default
   selectedVisibilityType,
   isReadonly,
+  user,
 }: {
   id: string;
   initialMessages: Array<Message>;
   selectedModelId: string;
   selectedVisibilityType: VisibilityType;
   isReadonly: boolean;
+  user?: User;
 }) {
   const { mutate } = useSWRConfig();
 
@@ -66,6 +69,7 @@ export function Chat({
           selectedModelId={selectedModelId}
           selectedVisibilityType={selectedVisibilityType}
           isReadonly={isReadonly}
+          user={user}
         />
 
         <Messages
