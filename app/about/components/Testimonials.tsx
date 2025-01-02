@@ -6,21 +6,21 @@ const testimonials = [
     name: "Anindya",
     role: "Mahasiswa Pascasarjana",
     content: "Platform ini sangat membantu saya ngerjain tugas. Bisa coding, beri rekomendasi solusi, bahkan belajar konsep baru. Nilai matkul saya naik drastis sejak pakai enaiblr.",
-    image: "icon.png",
+    image: "app/favicon.ico",
   },
   {
     name: "Sarah",
     role: "Digital Marketer",
     content:
       "Website ini sangat membantu saya dalam menghasilkan ide konten, visual, dan copy dalam hitungan menit. Fitur AI-nya lengkap dan sangat membantu creative process saya",
-    image: "icon.png",
+    image: "app/favicon.ico",
   },
   {
     name: "Wijaya",
     role: "Dosen & Peneliti",
     content:
       "Saya terkesan dengan kemudahan akses ke berbagai tools AI dalam satu platform ini. Sangat membantu untuk riset akademis dan membuat materi presentasi.",
-    image: "icon.png",
+    image: "app/favicon.ico",
   },
 ];
 

@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Enaiblr - Platform AI All-in-One',
+  title: 'Enaiblr - Unlimited AI Platform',
   description: 'Akses Seluruh AI Tanpa Batas dalam Satu Platform dengan Harga Terjangkau'
 };
 
