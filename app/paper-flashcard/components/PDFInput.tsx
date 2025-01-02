@@ -113,7 +113,7 @@ export const PDFInput = ({
       <Button
         onClick={handleProcess}
         disabled={!pdfLink && !selectedFile}
-        className="w-full"
+        className="w-full rounded-full"
       >
         Create
       </Button>
