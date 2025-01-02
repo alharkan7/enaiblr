@@ -1,5 +1,5 @@
 'use client';
-import { ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
@@ -29,7 +29,7 @@ export function AppsGridUserNav({ user }: { user: User }) {
             className="rounded-full"
           />
           <span className="truncate">{user?.email}</span>
-          <ChevronUp className="ml-auto size-4" />
+          <ChevronDown className="ml-auto size-4" />
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent

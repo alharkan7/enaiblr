@@ -110,8 +110,11 @@ const Pricing = () => {
                       "w-full rounded-lg px-4 py-2",
                       plan?.popular
                         ? "bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
-                        : "border border-gray-200 bg-white text-gray-900 hover:bg-gray-100 rounded-full",
-                    )}>Mulai Sekarang</button>
+                        : "border border-gray-200 bg-white text-black rounded-full hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white hover:border-transparent",
+                    )}
+                  >
+                    Mulai Sekarang
+                  </button>
                 </Link>
               </CardFooter>
             </Card>

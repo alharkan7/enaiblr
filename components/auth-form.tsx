@@ -36,8 +36,24 @@ export default function AuthForm({ type, action }: AuthFormProps) {
         return;
       }
 
+      // Sign in directly with credentials after successful server action
+      const signInResult = await signIn('credentials', {
+        email: formData.get('email'),
+        password: formData.get('password'),
+        redirect: false,
+      });
+
+      if (signInResult?.error) {
+        setError('Failed to sign in');
+        toast.error('Failed to sign in');
+        return;
+      }
+
       toast.success(type === 'login' ? 'Logged in successfully!' : 'Account created successfully!');
+      
+      // Force a router refresh to update session state
       router.refresh();
+      
       const callbackUrl = searchParams.get('callbackUrl');
       router.push(callbackUrl || '/apps');
     } catch (e) {

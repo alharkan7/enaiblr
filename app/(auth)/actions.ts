@@ -48,11 +48,32 @@ export async function register(formData: FormData) {
 
 export async function authenticate(formData: FormData) {
   try {
-    await signIn('credentials', {
+    const validatedFields = authFormSchema.safeParse({
       email: formData.get('email'),
       password: formData.get('password'),
-      redirect: false,
     });
+
+    if (!validatedFields.success) {
+      return { error: 'Invalid fields!' };
+    }
+
+    const { email, password } = validatedFields.data;
+    const users = await getUser(email);
+
+    if (users.length === 0) {
+      return { error: 'Invalid credentials' };
+    }
+
+    const user = users[0];
+    if (!user.password) {
+      return { error: 'Invalid credentials' };
+    }
+
+    const passwordsMatch = await hash(password, user.password);
+    if (!passwordsMatch) {
+      return { error: 'Invalid credentials' };
+    }
+
     return { success: true };
   } catch (error) {
     return { error: 'Could not authenticate user.' };
