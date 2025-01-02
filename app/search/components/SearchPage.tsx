@@ -90,7 +90,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
     if (!isHomePage && (searchResults || isLoading)) {
         return (
-            <div className="flex flex-col min-h-screen search-layout">
+            <div className="flex flex-col min-h-dvh">
                 <header className="sticky top-0 left-0 w-full z-10 bg-background border-b">
                     <div className="container max-w-5xl mx-auto py-4 pl-4 sm:pl-0 flex items-center gap-2">
                         <div className="flex-1 min-w-0">
@@ -107,7 +107,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         </div>
                     </div>
                 </header>
-                <main className="container mx-auto px-5 py-8 flex-1 overflow-y-auto h-[calc(100vh-160px)]">
+                <main className="flex-1 container mx-auto px-5 py-8 overflow-y-auto">
                     {isLoading ? (
                         <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
                             {Array.from({ length: 4 }, (_, index) => (
