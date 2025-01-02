@@ -24,16 +24,25 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
+  // Redirect root path to /apps
+  if (request.nextUrl.pathname === '/') {
+    return NextResponse.redirect(new URL('/apps', request.url));
+  }
+
   // Redirect to login if accessing protected routes while not logged in
   if (!isLoggedIn && !isAuthPage && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', request.url);
+    loginUrl.searchParams.set('callbackUrl', request.nextUrl.pathname);
     return NextResponse.redirect(loginUrl);
   }
 
-  // Redirect to home if accessing auth pages while logged in
+  // Redirect to callback URL or apps if accessing auth pages while logged in
   if (isLoggedIn && isAuthPage) {
-    return NextResponse.redirect(new URL('/', request.url));
+    const callbackUrl = request.nextUrl.searchParams.get('callbackUrl');
+    if (callbackUrl && callbackUrl.startsWith('/')) {
+      return NextResponse.redirect(new URL(callbackUrl, request.url));
+    }
+    return NextResponse.redirect(new URL('/apps', request.url));
   }
 
   return NextResponse.next();

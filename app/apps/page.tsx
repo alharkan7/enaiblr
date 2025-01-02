@@ -7,6 +7,7 @@ import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
 import { useSession } from 'next-auth/react';
 import { AppsHeader } from '@/components/apps-header';
+import { Button } from '@/components/ui/button';
 
 export default function Page() {
   const { setTheme, theme } = useTheme();
@@ -17,8 +18,8 @@ export default function Page() {
       {session ? (
         <AppsHeader />
       ) : (
-        <header className="sticky top-0 bg-background py-4 px-4">
-          <div className="max-w-6xl mx-auto flex justify-end items-center gap-2">
+        <header className="top-0 bg-background py-4 px-4 z-50">
+          <div className="max-w-6xl mx-auto flex justify-between items-center">
             <button
               onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
               className={`
@@ -43,12 +44,11 @@ export default function Page() {
               </div>
               <span className="sr-only">Toggle theme</span>
             </button>
-            <Link
-              href="/login"
-              className="inline-flex items-center justify-center rounded-md text-sm font-medium h-8 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
-            >
-              Login
-            </Link>
+            <Button asChild>
+              <Link href="/login">
+                Login
+              </Link>
+            </Button>
           </div>
         </header>
       )}

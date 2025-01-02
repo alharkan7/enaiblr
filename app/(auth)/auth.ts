@@ -61,9 +61,13 @@ export const config = {
         return false;
       }
 
-      // Redirect to home if accessing auth pages while logged in
+      // Redirect to callback URL or apps if accessing auth pages while logged in
       if (isLoggedIn && isAuthPage) {
-        return Response.redirect(new URL('/', nextUrl));
+        const callbackUrl = nextUrl.searchParams.get('callbackUrl');
+        if (callbackUrl && callbackUrl.startsWith('/')) {
+          return Response.redirect(new URL(callbackUrl, nextUrl));
+        }
+        return Response.redirect(new URL('/apps', nextUrl));
       }
 
       return true;

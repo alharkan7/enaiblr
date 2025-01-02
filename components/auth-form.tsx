@@ -1,7 +1,7 @@
 'use client';
 import { signIn } from 'next-auth/react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { toast } from 'sonner';
 
@@ -16,6 +16,7 @@ interface AuthFormProps {
 
 export default function AuthForm({ type, action }: AuthFormProps) {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -37,7 +38,8 @@ export default function AuthForm({ type, action }: AuthFormProps) {
 
       toast.success(type === 'login' ? 'Logged in successfully!' : 'Account created successfully!');
       router.refresh();
-      router.push('/');
+      const callbackUrl = searchParams.get('callbackUrl');
+      router.push(callbackUrl || '/apps');
     } catch (e) {
       setError('An unexpected error occurred');
       toast.error('An unexpected error occurred');
