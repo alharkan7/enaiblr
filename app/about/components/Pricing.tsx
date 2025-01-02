@@ -97,7 +97,7 @@ const Pricing = () => {
                 <ul className="space-y-2 max-w-[90%] mx-auto">
                   {plan.features.map((feature, i) => (
                     <li key={i} className="flex items-center gap-2">
-                      <Check className="size-4 text-primary !text-black/80" />
+                      <Check className="size-4 !text-black/80" />
                       <span className="text-muted-foreground">{feature}</span>
                     </li>
                   ))}
