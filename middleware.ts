@@ -9,13 +9,23 @@ export default auth(async function middleware(request: NextRequest) {
                     request.nextUrl.pathname.startsWith('/register');
   const isApiAuthRoute = request.nextUrl.pathname.startsWith('/api/auth');
 
+  // Define public routes that don't require authentication
+  const publicRoutes = [
+    '/about',       // About page
+    '/apps',      // Apps page
+  ];
+  
+  const isPublicRoute = publicRoutes.some(route => 
+    request.nextUrl.pathname.startsWith(route)
+  );
+
   // Allow API auth routes to pass through
   if (isApiAuthRoute) {
     return NextResponse.next();
   }
 
   // Redirect to login if accessing protected routes while not logged in
-  if (!isLoggedIn && !isAuthPage) {
+  if (!isLoggedIn && !isAuthPage && !isPublicRoute) {
     const loginUrl = new URL('/login', request.url);
     loginUrl.searchParams.set('callbackUrl', request.url);
     return NextResponse.redirect(loginUrl);

@@ -5,39 +5,54 @@ import { apps } from '@/config/apps';
 import AppsFooter from '@/components/apps-footer';
 import { useTheme } from 'next-themes';
 import { Moon, Sun } from 'lucide-react';
+import { useSession } from 'next-auth/react';
+import { AppsHeader } from '@/components/apps-header';
 
 export default function Page() {
   const { setTheme, theme } = useTheme();
+  const { data: session } = useSession();
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      <div className="fixed top-4 right-4">
-        <button
-          onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
-          className={`
-            w-16 h-8 rounded-full bg-slate-200 dark:bg-slate-700
-            relative transition-colors duration-500 ease-in-out
-            focus:outline-none focus:ring-2 focus:ring-primary
-          `}
-          title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
-        >
-          <div
-            className={`
-              absolute top-1 left-1
-              w-6 h-6 rounded-full
-              transform transition-transform duration-500 ease-in-out
-              flex items-center justify-center
-              bg-white dark:bg-slate-800
-              ${theme === 'dark' ? 'translate-x-8' : 'translate-x-0'}
-            `}
-          >
-            <Sun className="h-4 w-4 text-yellow-500 absolute rotate-0 scale-100 transition-all duration-500 dark:rotate-90 dark:scale-0" />
-            <Moon className="h-4 w-4 text-slate-300 absolute rotate-90 scale-0 transition-all duration-500 dark:rotate-0 dark:scale-100" />
+      {session ? (
+        <AppsHeader />
+      ) : (
+        <header className="sticky top-0 bg-background py-4 px-4">
+          <div className="max-w-6xl mx-auto flex justify-end items-center gap-2">
+            <button
+              onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
+              className={`
+                w-16 h-8 rounded-full bg-slate-200 dark:bg-slate-700
+                relative transition-colors duration-500 ease-in-out
+                focus:outline-none focus:ring-2 focus:ring-primary
+              `}
+              title={`Switch to ${theme === 'light' ? 'dark' : 'light'} theme`}
+            >
+              <div
+                className={`
+                  absolute top-1 left-1
+                  w-6 h-6 rounded-full
+                  transform transition-transform duration-500 ease-in-out
+                  flex items-center justify-center
+                  bg-white dark:bg-slate-800
+                  ${theme === 'dark' ? 'translate-x-8' : 'translate-x-0'}
+                `}
+              >
+                <Sun className="h-4 w-4 text-yellow-500 absolute rotate-0 scale-100 transition-all duration-500 dark:rotate-90 dark:scale-0" />
+                <Moon className="h-4 w-4 text-slate-300 absolute rotate-90 scale-0 transition-all duration-500 dark:rotate-0 dark:scale-100" />
+              </div>
+              <span className="sr-only">Toggle theme</span>
+            </button>
+            <Link
+              href="/login"
+              className="inline-flex items-center justify-center rounded-md text-sm font-medium h-8 px-4 py-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+            >
+              Login
+            </Link>
           </div>
-          <span className="sr-only">Toggle theme</span>
-        </button>
-      </div>
-      <main className="flex-1 container mx-auto px-4 pt-16 pb-8 flex items-center justify-center">
+        </header>
+      )}
+      <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="w-full">
           <div className="text-center mb-12">
             <h1 className="text-5xl font-bold tracking-tighter mb-4 text-foreground">
@@ -45,7 +60,7 @@ export default function Page() {
             </h1>
             <p className="text-muted-foreground">Unlimited AI Platform</p>
           </div>
-          
+
           <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto">
             {apps.map((app) => {
               const Icon = app.icon
