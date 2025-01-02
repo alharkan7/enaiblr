@@ -17,6 +17,8 @@ interface AppsGridProps {
 
 export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps) {
   const router = useRouter();
+  const [isOpen, setIsOpen] = React.useState(false);
+  const [showTooltips, setShowTooltips] = React.useState(false);
 
   const handleAppClick = (slug: string) => {
     if (useHardReload) {
@@ -26,36 +28,42 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
     }
   };
 
+  React.useEffect(() => {
+    if (isOpen) {
+      // Delay enabling tooltips to prevent them from showing immediately when popover opens
+      const timer = setTimeout(() => setShowTooltips(true), 500);
+      return () => clearTimeout(timer);
+    } else {
+      setShowTooltips(false);
+    }
+  }, [isOpen]);
+
   return (
-    <Popover>
-      <PopoverTrigger asChild>
-        {trigger}
-      </PopoverTrigger>
-      <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e) => {
-        // Prevent closing when clicking inside the popover
-        if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
-          e.preventDefault();
-        }
-      }}>
-        <TooltipProvider>
+    <TooltipProvider>
+      <Popover open={isOpen} onOpenChange={setIsOpen}>
+        <PopoverTrigger asChild>
+          {trigger}
+        </PopoverTrigger>
+        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e) => {
+          // Prevent closing when clicking inside the popover
+          if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
+            e.preventDefault();
+          }
+        }}>
           <div className="apps-grid-content grid grid-cols-3 gap-2">
             {apps.map((app) => {
               const Icon = app.icon;
-              const AppButton = (
-                <Button
-                  variant="ghost"
-                  className="h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
-                  onClick={() => handleAppClick(app.slug)}
-                >
-                  <Icon className="size-12 text-foreground" />
-                  <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
-                </Button>
-              );
-
               return (
-                <Tooltip key={app.slug} delayDuration={200}>
-                  <TooltipTrigger asChild>
-                    {AppButton}
+                <Tooltip key={app.slug}>
+                  <TooltipTrigger asChild disabled={!showTooltips}>
+                    <Button
+                      variant="ghost"
+                      className="h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
+                      onClick={() => handleAppClick(app.slug)}
+                    >
+                      <Icon className="size-12 text-foreground" />
+                      <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
+                    </Button>
                   </TooltipTrigger>
                   <TooltipContent>
                     {app.description || app.name}
@@ -64,13 +72,13 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
               );
             })}
           </div>
-        </TooltipProvider>
-        {user && (
-          <div className="mt-4 pt-4 border-t border-border">
-            <AppsGridUserNav user={user} />
-          </div>
-        )}
-      </PopoverContent>
-    </Popover>
+          {user && (
+            <div className="mt-4 pt-4 border-t border-border">
+              <AppsGridUserNav user={user} />
+            </div>
+          )}
+        </PopoverContent>
+      </Popover>
+    </TooltipProvider>
   );
 }
