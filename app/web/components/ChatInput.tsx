@@ -8,6 +8,7 @@ interface ChatInputProps {
     fileInputRef: React.RefObject<HTMLInputElement>;
     autoFocus?: boolean;
     sendMessage: (text: string) => Promise<void>;
+    onFocusChange?: (focused: boolean) => void;
 }
 
 export function ChatInput({ 
@@ -16,7 +17,8 @@ export function ChatInput({
     isLoading, 
     fileInputRef, 
     autoFocus,
-    sendMessage
+    sendMessage,
+    onFocusChange
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -52,6 +54,8 @@ export function ChatInput({
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onFocus={() => onFocusChange?.(true)}
+                    onBlur={() => onFocusChange?.(false)}
                     placeholder="Type a message..."
                     className="flex-1 p-3 pr-12 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
                     disabled={isLoading}

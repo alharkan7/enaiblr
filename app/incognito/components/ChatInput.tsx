@@ -11,6 +11,7 @@ interface ChatInputProps {
     imageBase64: string | null;
     clearImages: () => void;
     sendMessage: (text: string, imageBase64: string | null) => Promise<void>;
+    onFocusChange?: (focused: boolean) => void;
 }
 
 export function ChatInput({ 
@@ -22,7 +23,8 @@ export function ChatInput({
     autoFocus,
     imageBase64,
     clearImages,
-    sendMessage
+    sendMessage,
+    onFocusChange
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
 
@@ -69,6 +71,8 @@ export function ChatInput({
                     type="text"
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
+                    onFocus={() => onFocusChange?.(true)}
+                    onBlur={() => onFocusChange?.(false)}
                     placeholder="Send a message..."
                     className="flex-1 px-4 py-2 bg-transparent focus:outline-none text-foreground placeholder:text-muted-foreground min-w-0"
                     disabled={isLoading}

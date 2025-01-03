@@ -5,7 +5,7 @@ import { ChatTitle } from './components/ChatTitle'
 import { MessageList } from './components/MessageList'
 import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
-import RenderFooter from '@/components/apps-footer'
+import AppsFooter from '@/components/apps-footer'
 import { AppsHeader } from '@/components/apps-header'
 
 export default function MinimalistChatbot() {
@@ -15,6 +15,7 @@ export default function MinimalistChatbot() {
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [input, setInput] = useState('');
     const [hasUserSentMessage, setHasUserSentMessage] = useState(false);
+    const [isInputFocused, setIsInputFocused] = useState(false);
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -168,12 +169,13 @@ export default function MinimalistChatbot() {
                                         isLoading={isLoading}
                                         fileInputRef={fileInputRef}
                                         sendMessage={handleSendMessage}
+                                        onFocusChange={setIsInputFocused}
                                     />
                                 </div>
                             </div>
                         </div>
-                        <div className="w-full mt-8">
-                            <RenderFooter />
+                        <div className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}>
+                            <AppsFooter />
                         </div>
                     </div>
                 ) : (
@@ -203,9 +205,13 @@ export default function MinimalistChatbot() {
                                         isLoading={isLoading}
                                         fileInputRef={fileInputRef}
                                         sendMessage={handleSendMessage}
+                                        onFocusChange={setIsInputFocused}
                                     />
                                 </div>
                             </div>
+                        </div>
+                        <div className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}>
+                            <AppsFooter />
                         </div>
                     </div>
                 )}
