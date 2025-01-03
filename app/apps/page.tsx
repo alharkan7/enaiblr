@@ -8,12 +8,13 @@ import { AppsHeader } from '@/components/apps-header';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { SubscriptionDialog } from '@/components/subscription-dialog';
-import { useSearchParams } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
 export default function Page() {
   const { data: session, status } = useSession();
   const searchParams = useSearchParams();
+  const router = useRouter();
   const [showProDialog, setShowProDialog] = useState(false);
 
   // Show dialog when redirected from pro feature with error
@@ -22,6 +23,19 @@ export default function Page() {
       setShowProDialog(true);
     }
   }, [searchParams]);
+
+  // Handle dialog close
+  const handleDialogChange = (open: boolean) => {
+    setShowProDialog(open);
+    // If dialog is being closed and error parameter exists, remove it
+    if (!open && searchParams.get('error') === 'pro_required') {
+      // Create new URL without the error parameter
+      const newUrl = new URL(window.location.href);
+      newUrl.searchParams.delete('error');
+      // Replace current URL without adding to history
+      router.replace(newUrl.pathname + newUrl.search);
+    }
+  };
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -82,7 +96,7 @@ export default function Page() {
       <AppsFooter />
       <SubscriptionDialog 
         open={showProDialog} 
-        onOpenChange={setShowProDialog} 
+        onOpenChange={handleDialogChange} 
       />
     </div>
   )
