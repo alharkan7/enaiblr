@@ -128,3 +128,15 @@ export const suggestion = pgTable(
 );
 
 export type Suggestion = InferSelectModel<typeof suggestion>;
+
+export const subscription = pgTable('Subscriptions', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+  plan: varchar('plan', { length: 32 }).notNull().default('free'),
+  validUntil: timestamp('validUntil'),
+});
+
+export type Subscription = InferSelectModel<typeof subscription>;

@@ -48,10 +48,20 @@ export default function Page() {
                   href={`/${app.slug}`}
                   className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors"
                 >
+                  <div className="absolute -right-[1px] -top-[3px]">
+                    <span className={`inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl ${
+                      app.type === 'pro' 
+                        ? 'bg-primary text-primary-foreground' 
+                        : 'bg-muted text-muted-foreground'
+                    }`}>
+                      {app.type}
+                    </span>
+                  </div>
                   <div className="mb-3 md:mb-4 p-2 rounded-lg bg-muted group-hover:bg-accent-foreground/10 transition-colors">
                     <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                   </div>
                   <h2 className="text-sm md:text-lg font-semibold text-center text-foreground">{app.name}</h2>
+                  <p className="text-xs text-muted-foreground text-center mt-2">{app.description}</p>
                 </Link>
               )
             })}

@@ -4,7 +4,7 @@ import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { getUser } from '@/lib/db/queries';
+import { getUser, createGoogleUser } from '@/lib/db/queries';
 
 export const config = {
   trustHost: true,
@@ -35,6 +35,10 @@ export const config = {
         const users = await getUser(user.email!);
         if (users.length > 0) {
           user.id = users[0].id;
+        } else {
+          // Create new user for Google sign-in
+          const newUser = await createGoogleUser(user.email!);
+          user.id = newUser[0].id;
         }
       }
       return true;

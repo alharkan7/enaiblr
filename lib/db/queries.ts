@@ -13,6 +13,7 @@ import {
   document,
   type Suggestion,
   suggestion,
+  subscription,
 } from './schema';
 import type { BlockKind } from '@/components/block';
 
@@ -31,9 +32,32 @@ export async function getUser(email: string): Promise<Array<User>> {
 
 export async function createUser(email: string, password: string) {
   try {
-    return await db.insert(user).values({ email, password });
+    return await db.transaction(async (tx) => {
+      const result = await tx.insert(user).values({ email, password }).returning();
+      await tx.insert(subscription).values({ 
+        userId: result[0].id,
+        createdAt: new Date()
+      });
+      return result;
+    });
   } catch (error) {
     console.error('Failed to create user in database');
+    throw error;
+  }
+}
+
+export async function createGoogleUser(email: string) {
+  try {
+    return await db.transaction(async (tx) => {
+      const result = await tx.insert(user).values({ email }).returning();
+      await tx.insert(subscription).values({ 
+        userId: result[0].id,
+        createdAt: new Date()
+      });
+      return result;
+    });
+  } catch (error) {
+    console.error('Failed to create Google user in database');
     throw error;
   }
 }
@@ -370,6 +394,15 @@ export async function updateChatFolder({
       .where(eq(chat.id, id));
   } catch (error) {
     console.error('Failed to update chat folder');
+    throw error;
+  }
+}
+
+export async function createSubscription(userId: string) {
+  try {
+    return await db.insert(subscription).values({ userId, createdAt: new Date() });
+  } catch (error) {
+    console.error('Failed to create subscription in database');
     throw error;
   }
 }
