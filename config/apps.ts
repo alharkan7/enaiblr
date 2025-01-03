@@ -46,13 +46,6 @@ export const apps: AppConfig[] = [
     type: 'pro'
   },
   {
-    name: 'Paper Flashcard',
-    icon: Zap,
-    slug: 'paper-flashcard',
-    description: 'Turn any Science Paper into Flashcard for Easy Reading',
-    type: 'free'
-  },
-  {
     name: 'Transcriber',
     icon: FileAudio,
     slug: 'transcribe',
@@ -65,6 +58,13 @@ export const apps: AppConfig[] = [
     slug: 'voice',
     description: 'Turn Any Text into Audio in Natural, Human-like Voice',
     type: 'pro'
+  },
+  {
+    name: 'Paper Flashcard',
+    icon: Zap,
+    slug: 'paper-flashcard',
+    description: 'Turn any Science Paper into Flashcard for Easy Reading',
+    type: 'free'
   },
   {
     name: 'Incognito Chat',
