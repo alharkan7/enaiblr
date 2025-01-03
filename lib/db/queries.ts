@@ -407,6 +407,68 @@ export async function createSubscription(userId: string) {
   }
 }
 
+// Subscription types
+type SubscriptionPlan = 'free' | 'pro';
+type SubscriptionStatus = {
+  plan: SubscriptionPlan;
+};
+
+// Cache for subscription status
+const subscriptionCache = new Map<string, { status: SubscriptionStatus, timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
+
+export async function getUserSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
+  // Check cache first
+  const cached = subscriptionCache.get(userId);
+  const now = Date.now();
+  
+  if (cached && (now - cached.timestamp) < CACHE_TTL) {
+    return cached.status;
+  }
+
+  try {
+    const subs = await db
+      .select()
+      .from(subscription)
+      .where(eq(subscription.userId, userId));
+
+    let status: SubscriptionStatus = { plan: 'free' };
+
+    if (subs && subs.length > 0) {
+      const sub = subs[0];
+      if (sub.plan === 'pro' && sub.validUntil) {
+        const now = new Date();
+        if (now < sub.validUntil) {
+          status = { plan: 'pro' };
+        }
+      }
+    }
+
+    // Update cache
+    subscriptionCache.set(userId, {
+      status,
+      timestamp: now
+    });
+
+    return status;
+  } catch (error) {
+    console.error('Failed to get user subscription status:', error);
+    // Default to free on error for security
+    return { plan: 'free' };
+  }
+}
+
+// Helper function to clear cache for a specific user
+// Call this when subscription status is updated
+export function clearSubscriptionCache(userId: string) {
+  subscriptionCache.delete(userId);
+}
+
+export async function isProUser(userId: string): Promise<boolean> {
+  const status = await getUserSubscriptionStatus(userId);
+  return status.plan === 'pro';
+}
+
 // Folder queries
 export async function getFoldersByUserId(userId: string) {
   const folders = await db

@@ -51,7 +51,6 @@ import type { Chat } from '@/lib/db/schema';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { Input } from './ui/input';
 import styles from './sidebar-history.module.css';
-import { PlusIcon } from './icons';
 
 export interface Folder {
     id: string;
@@ -828,7 +827,7 @@ export function FolderSection({
                         className="mr-2 hover:bg-sidebar-accent-foreground/10"
                         onClick={() => setIsAddingFolder(true)}
                     >
-                        <PlusIcon size={14} />
+                        <FolderPlusIcon size={12} />
                     </Button>
                 </div>
 
