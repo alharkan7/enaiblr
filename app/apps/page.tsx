@@ -15,9 +15,11 @@ export default function Page() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {status === 'authenticated' ? (
-        <AppsHeader />
+        <div className="!static">
+          <AppsHeader />
+        </div>
       ) : (
-        <header className="top-0 bg-background py-4 px-4 z-50">
+        <header className="bg-background py-4 px-4 z-50">
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <ThemeToggle />
             <Button asChild>
