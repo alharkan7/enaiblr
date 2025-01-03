@@ -71,6 +71,26 @@ interface FolderSectionProps {
 }
 
 export const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFolder: boolean, folders: Folder[], setFolders: (folders: Folder[]) => void, mutate: () => void) => {
+    // Optimistically update the UI
+    const previousFolders = [...folders];
+    const updatedFolders = folders.map(f => {
+        if (f.id === folder.id) {
+            return {
+                ...f,
+                chats: isInFolder
+                    ? f.chats.filter(c => c.id !== chat.id)
+                    : [...f.chats.filter(c => c.id !== chat.id), chat]
+            };
+        }
+        return {
+            ...f,
+            chats: f.chats.filter(c => c.id !== chat.id)
+        };
+    });
+
+    setFolders(updatedFolders);
+    mutate(); // Trigger revalidation
+
     try {
         const response = await fetch('/api/folder', {
             method: 'PATCH',
@@ -84,29 +104,17 @@ export const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFol
             }),
         });
 
-        if (response.ok) {
-            const updatedFolders = folders.map(f => {
-                if (f.id === folder.id) {
-                    return {
-                        ...f,
-                        chats: isInFolder
-                            ? f.chats.filter(c => c.id !== chat.id) // Remove if already in folder
-                            : [...f.chats.filter(c => c.id !== chat.id), chat] // Add if not in folder
-                    };
-                }
-                return {
-                    ...f,
-                    chats: f.chats.filter(c => c.id !== chat.id)
-                };
-            });
-            setFolders(updatedFolders);
-            mutate(); // Refresh folders data
-            toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
-        } else {
+        if (!response.ok) {
             throw new Error('Failed to update folder');
         }
+
+        // Update was successful, no need to revert
+        mutate(); // Revalidate to ensure sync with server
+        toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
     } catch (error) {
-        console.error('Failed to update chat in folder:', error);
+        // Revert the optimistic update on error
+        setFolders(previousFolders);
+        mutate();
         toast.error('Failed to update folder');
     }
 };
@@ -345,8 +353,8 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                                                     <CheckCircleFillIcon size={14} />
                                                 )}
                                             </DropdownMenuItem>
-                                        ))
-                                    )}
+                                        )))
+                                    }
                                 </DropdownMenuSubContent>
                             </DropdownMenuPortal>
                         </DropdownMenuSub>
