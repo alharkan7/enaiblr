@@ -414,19 +414,17 @@ type SubscriptionStatus = {
 };
 
 // Cache for subscription status
-const subscriptionCache = new Map<string, { status: SubscriptionStatus, timestamp: number }>();
+const subscriptionCache = new Map<string, { status: SubscriptionStatus, expiresAt: number }>();
 const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
 
 export async function getUserSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
-  // Check cache first
-  const cached = subscriptionCache.get(userId);
-  const now = Date.now();
-  
-  if (cached && (now - cached.timestamp) < CACHE_TTL) {
-    return cached.status;
-  }
-
   try {
+    // Check cache first
+    const cached = subscriptionCache.get(userId);
+    if (cached && cached.expiresAt > Date.now()) {
+      return cached.status;
+    }
+
     const subs = await db
       .select()
       .from(subscription)
@@ -444,10 +442,10 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
       }
     }
 
-    // Update cache
+    // Update cache with expiration time
     subscriptionCache.set(userId, {
       status,
-      timestamp: now
+      expiresAt: Date.now() + CACHE_TTL
     });
 
     return status;
@@ -459,7 +457,6 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
 }
 
 // Helper function to clear cache for a specific user
-// Call this when subscription status is updated
 export function clearSubscriptionCache(userId: string) {
   subscriptionCache.delete(userId);
 }

@@ -86,22 +86,34 @@ export default auth(async function middleware(request: NextRequest) {
   // Handle subscription-based access for logged-in users
   if (isLoggedIn && session?.user?.id) {
     const pageType = getPageType(pathname);
-    const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
 
     // If page type is not found in apps config, allow access (internal pages)
     if (!pageType) {
       return NextResponse.next();
     }
 
-    // Free users can only access free pages
-    if (subscriptionStatus.plan === 'free' && pageType === 'pro') {
-      const redirectUrl = new URL('/apps', request.url);
-      redirectUrl.searchParams.set('error', 'pro_required');
-      return NextResponse.redirect(redirectUrl);
-    }
+    try {
+      const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
 
-    // Pro users can access all pages
-    return NextResponse.next();
+      // Free users can only access free pages
+      if (subscriptionStatus.plan === 'free' && pageType === 'pro') {
+        const redirectUrl = new URL('/apps', request.url);
+        redirectUrl.searchParams.set('error', 'pro_required');
+        return NextResponse.redirect(redirectUrl);
+      }
+
+      // Pro users can access all pages
+      return NextResponse.next();
+    } catch (error) {
+      console.error('Subscription check failed:', error);
+      // On error, default to free access for security
+      if (pageType === 'pro') {
+        const redirectUrl = new URL('/apps', request.url);
+        redirectUrl.searchParams.set('error', 'subscription_error');
+        return NextResponse.redirect(redirectUrl);
+      }
+      return NextResponse.next();
+    }
   }
 
   return NextResponse.next();
