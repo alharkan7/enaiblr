@@ -6,7 +6,7 @@ export interface AppConfig {
   icon: LucideIcon
   slug: string
   description: string
-  type: string
+  type: 'free' | 'pro'
 }
 
 export const apps: AppConfig[] = [
@@ -23,20 +23,6 @@ export const apps: AppConfig[] = [
     slug: 'search',
     description: 'Find the Best AI Tools on the Internet',
     type: 'pro'
-  },
-  {
-    name: 'Image Creator',
-    icon: WandSparkles,
-    slug: 'imagen',
-    description: 'Create Unlimited Image in HD Quality & Limitless Styles',
-    type: 'free'
-  },
-  {
-    name: 'Doc Chat',
-    icon: FileText,
-    slug: 'filechat',
-    description: 'Private Chat with Documents. No File Copy is Saved',
-    type: 'free'
   },
   {
     name: 'Web Chat',
@@ -58,6 +44,20 @@ export const apps: AppConfig[] = [
     slug: 'voice',
     description: 'Turn Any Text into Audio in Natural, Human-like Voice',
     type: 'pro'
+  },
+  {
+    name: 'Image Creator',
+    icon: WandSparkles,
+    slug: 'imagen',
+    description: 'Create Unlimited Image in HD Quality & Limitless Styles',
+    type: 'free'
+  },
+  {
+    name: 'Doc Chat',
+    icon: FileText,
+    slug: 'filechat',
+    description: 'Private Chat with Documents. No File Copy is Saved',
+    type: 'free'
   },
   {
     name: 'Paper Flashcard',

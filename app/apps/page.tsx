@@ -10,9 +10,11 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { SubscriptionDialog } from '@/components/subscription-dialog';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { useSubscription } from '@/contexts/subscription-context';
 
 export default function Page() {
   const { data: session, status } = useSession();
+  const { plan } = useSubscription();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showProDialog, setShowProDialog] = useState(false);
@@ -37,6 +39,14 @@ export default function Page() {
     }
   };
 
+  const handleAppClick = (appType: 'free' | 'pro', appSlug: string) => {
+    if (appType === 'pro' && plan === 'free') {
+      setShowProDialog(true);
+      return;
+    }
+    router.push(`/${appSlug}`);
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {status === 'authenticated' ? (
@@ -48,13 +58,12 @@ export default function Page() {
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <ThemeToggle />
             <Button asChild>
-              <Link href="/login">
-                Login
-              </Link>
+              <Link href="/login">Login</Link>
             </Button>
           </div>
         </header>
       )}
+
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="w-full">
           <div className="text-center mb-12">
@@ -68,10 +77,10 @@ export default function Page() {
             {apps.map((app) => {
               const Icon = app.icon
               return (
-                <Link
+                <div
                   key={app.slug}
-                  href={`/${app.slug}`}
-                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors"
+                  onClick={() => handleAppClick(app.type, app.slug)}
+                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer"
                 >
                   <div className="absolute -right-[1px] -top-[3px]">
                     <span className={`inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl ${
@@ -87,17 +96,16 @@ export default function Page() {
                   </div>
                   <h2 className="text-sm md:text-lg font-semibold text-center text-foreground">{app.name}</h2>
                   <p className="text-xs text-muted-foreground text-center mt-2">{app.description}</p>
-                </Link>
+                </div>
               )
             })}
           </div>
         </div>
       </main>
+
       <AppsFooter />
-      <SubscriptionDialog 
-        open={showProDialog} 
-        onOpenChange={handleDialogChange} 
-      />
+      
+      <SubscriptionDialog open={showProDialog} onOpenChange={handleDialogChange} />
     </div>
-  )
+  );
 }

@@ -8,6 +8,7 @@ import { headers } from 'next/headers';
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import { SubscriptionProvider } from '@/contexts/subscription-context';
 
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -116,11 +117,14 @@ export default async function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
+            disableTransitionOnChange
           >
-              <Toaster position="top-center" />
-              <TooltipProvider delayDuration={700}>
+            <Toaster position="top-center" />
+            <TooltipProvider delayDuration={700}>
+              <SubscriptionProvider>
                 {children}
-              </TooltipProvider>
+              </SubscriptionProvider>
+            </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
         <Analytics />

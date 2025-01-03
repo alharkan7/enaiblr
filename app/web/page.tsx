@@ -7,6 +7,7 @@ import { ChatInput } from './components/ChatInput'
 import { useChatMessages } from './hooks/useChatMessages'
 import AppsFooter from '@/components/apps-footer'
 import { AppsHeader } from '@/components/apps-header'
+import { ProGate } from '@/components/pro-gate'
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -148,7 +149,7 @@ export default function MinimalistChatbot() {
     }, []);
 
     return (
-        <>
+        <ProGate>
             <div
                 className="flex flex-col h-screen relative chat-layout"
                 style={{
@@ -216,6 +217,6 @@ export default function MinimalistChatbot() {
                     </div>
                 )}
             </div>
-        </>
+        </ProGate>
     )
 }

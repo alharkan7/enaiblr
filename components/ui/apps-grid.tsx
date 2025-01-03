@@ -8,6 +8,8 @@ import { AppsGridUserNav } from '@/components/ui/apps-grid-user-nav';
 import type { User } from 'next-auth';
 import { apps } from '@/config/apps';
 import { useRouter } from 'next/navigation';
+import { useSubscription } from '@/contexts/subscription-context';
+import { SubscriptionDialog } from '@/components/subscription-dialog';
 
 interface AppsGridProps {
   trigger: React.ReactNode;
@@ -17,15 +19,23 @@ interface AppsGridProps {
 
 export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps) {
   const router = useRouter();
+  const { plan } = useSubscription();
   const [isOpen, setIsOpen] = React.useState(false);
   const [showTooltips, setShowTooltips] = React.useState(false);
+  const [showProDialog, setShowProDialog] = React.useState(false);
 
-  const handleAppClick = (slug: string) => {
+  const handleAppClick = (type: 'free' | 'pro', slug: string) => {
+    if (type === 'pro' && plan === 'free') {
+      setShowProDialog(true);
+      return;
+    }
+
     if (useHardReload) {
       window.location.href = `/${slug}`;
     } else {
       router.push(`/${slug}`, { scroll: false });
     }
+    setIsOpen(false);
   };
 
   React.useEffect(() => {
@@ -58,9 +68,14 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                   <TooltipTrigger asChild disabled={!showTooltips}>
                     <Button
                       variant="ghost"
-                      className="h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
-                      onClick={() => handleAppClick(app.slug)}
+                      className="relative h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
+                      onClick={() => handleAppClick(app.type, app.slug)}
                     >
+                      {app.type === 'pro' && (
+                        <span className="absolute top-0 right-1 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
+                          PRO
+                        </span>
+                      )}
                       <Icon className="size-12 text-foreground" />
                       <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
                     </Button>
@@ -79,6 +94,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
           )}
         </PopoverContent>
       </Popover>
+      <SubscriptionDialog open={showProDialog} onOpenChange={setShowProDialog} />
     </TooltipProvider>
   );
 }

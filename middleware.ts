@@ -2,7 +2,6 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { auth } from './app/(auth)/auth';
 import { apps } from './config/apps';
-import { getUserSubscriptionStatus } from './lib/db/queries';
 
 // Helper function to check if a route is public
 function isPublicRoute(pathname: string): boolean {
@@ -108,26 +107,7 @@ export default auth(async function middleware(request: NextRequest) {
         return NextResponse.next();
       }
 
-      // For pro pages, check subscription status
-      if (pageType === 'pro') {
-        try {
-          const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
-          
-          if (subscriptionStatus.plan === 'free') {
-            const redirectUrl = new URL('/apps', request.url);
-            redirectUrl.searchParams.set('error', 'pro_required');
-            return NextResponse.redirect(redirectUrl);
-          }
-        } catch (error) {
-          console.error('Subscription check failed:', error);
-          // On error, default to blocking access
-          const redirectUrl = new URL('/apps', request.url);
-          redirectUrl.searchParams.set('error', 'subscription_error');
-          return NextResponse.redirect(redirectUrl);
-        }
-      }
-
-      // Free pages are always accessible
+      // For pro pages, we'll let the client handle subscription checks
       return NextResponse.next();
     }
   }
