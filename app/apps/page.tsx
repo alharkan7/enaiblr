@@ -1,6 +1,5 @@
 'use client'
 
-import type { Metadata } from 'next';
 import Link from 'next/link';
 import { apps } from '@/config/apps';
 import AppsFooter from '@/components/apps-footer';
@@ -8,9 +7,21 @@ import { useSession } from 'next-auth/react';
 import { AppsHeader } from '@/components/apps-header';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
+import { SubscriptionDialog } from '@/components/subscription-dialog';
+import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
 
 export default function Page() {
   const { data: session, status } = useSession();
+  const searchParams = useSearchParams();
+  const [showProDialog, setShowProDialog] = useState(false);
+
+  // Show dialog when redirected from pro feature with error
+  useEffect(() => {
+    if (searchParams.get('error') === 'pro_required') {
+      setShowProDialog(true);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
@@ -69,6 +80,10 @@ export default function Page() {
         </div>
       </main>
       <AppsFooter />
+      <SubscriptionDialog 
+        open={showProDialog} 
+        onOpenChange={setShowProDialog} 
+      />
     </div>
   )
 }
