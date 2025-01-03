@@ -24,8 +24,8 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Redirect root path to /apps
-  if (request.nextUrl.pathname === '/') {
+  // Redirect root path to /apps if not logged in
+  if (request.nextUrl.pathname === '/' && !isLoggedIn) {
     return NextResponse.redirect(new URL('/apps', request.url));
   }
 

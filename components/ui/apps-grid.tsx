@@ -66,7 +66,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>
-                    {app.description || app.name}
+                    {app.name}
                   </TooltipContent>
                 </Tooltip>
               );
