@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { memo, useEffect, useState, useRef, useCallback } from 'react';
+import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useSWRConfig } from 'swr';
 import { Button } from "@/components/ui/button";
@@ -50,6 +51,7 @@ import type { Chat } from '@/lib/db/schema';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { Input } from './ui/input';
 import styles from './sidebar-history.module.css';
+import { PlusIcon } from './icons';
 
 export interface Folder {
     id: string;
@@ -89,7 +91,6 @@ export const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFol
     });
 
     setFolders(updatedFolders);
-    mutate(); // Trigger revalidation
 
     try {
         const response = await fetch('/api/folder', {
@@ -108,8 +109,8 @@ export const handleChatFolderUpdate = async (folder: Folder, chat: Chat, isInFol
             throw new Error('Failed to update folder');
         }
 
-        // Update was successful, no need to revert
-        mutate(); // Revalidate to ensure sync with server
+        // Update was successful
+        mutate(); // Single revalidation after success
         toast.success(isInFolder ? 'Chat removed from folder' : 'Chat added to folder');
     } catch (error) {
         // Revert the optimistic update on error
@@ -129,6 +130,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     setFolders: (folders: Folder[]) => void;
 }) => {
     const { mutate: globalMutate } = useSWRConfig();
+    const router = useRouter();
     const { visibilityType, setVisibilityType } = useChatVisibility({
         chatId: chat.id,
         initialVisibility: chat.visibility,
@@ -137,6 +139,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     const [newTitle, setNewTitle] = useState(chat.title);
     const inputRef = useRef<HTMLInputElement>(null);
     const [isTouchDevice, setIsTouchDevice] = useState(false);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
     useEffect(() => {
         // Check if device supports touch
@@ -223,6 +226,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     };
 
     return (
+        <>
         <SidebarMenuItem className="ml-6 list-none">
             <div
                 draggable={!isTouchDevice}
@@ -341,7 +345,6 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                                                     const isInFolder = folder.chats.some(c => c.id === chat.id);
                                                     handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
                                                         globalMutate('/api/folder');
-                                                        chatMutate();
                                                     });
                                                 }}
                                             >
@@ -367,7 +370,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                             <DropdownMenuPortal>
                                 <DropdownMenuSubContent>
                                     <DropdownMenuItem
-                                        className="cursor-pointer flex-row justify-between"
+                                        className="cursor-pointer"
                                         onClick={() => {
                                             setVisibilityType('private');
                                         }}
@@ -381,7 +384,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                                         ) : null}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                        className="cursor-pointer flex-row justify-between"
+                                        className="cursor-pointer"
                                         onClick={() => {
                                             setVisibilityType('public');
                                         }}
@@ -408,6 +411,57 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                 </DropdownMenu>
             </div>
         </SidebarMenuItem>
+
+        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialogContent>
+                <AlertDialogHeader>
+                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                </AlertDialogHeader>
+                <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete your chat and remove it from our servers.
+                </AlertDialogDescription>
+                <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => {
+                        const deletePromise = fetch(`/api/chat?id=${chat.id}`, {
+                            method: 'DELETE',
+                        });
+
+                        toast.promise(deletePromise, {
+                            loading: 'Deleting chat...',
+                            success: async () => {
+                                // Update parent state
+                                onDelete(chat.id);
+                                
+                                // Update global history and folder data
+                                await Promise.all([
+                                    globalMutate('/api/history'),
+                                    globalMutate('/api/folder')
+                                ]);
+
+                                // Update local folder state
+                                const updatedFolders = folders.map(f => ({
+                                    ...f,
+                                    chats: f.chats.filter(c => c.id !== chat.id)
+                                }));
+                                setFolders(updatedFolders);
+
+                                // Redirect if this was the active chat
+                                if (isActive) {
+                                    router.push('/');
+                                }
+                                
+                                return 'Chat deleted successfully';
+                            },
+                            error: 'Failed to delete chat',
+                        });
+                    }}>
+                        Continue
+                    </AlertDialogAction>
+                </AlertDialogFooter>
+            </AlertDialogContent>
+        </AlertDialog>
+        </>
     );
 };
 
@@ -418,7 +472,10 @@ const FolderItem = ({
     folders,
     chats,
     setFolders,
-    foldersMutate
+    foldersMutate,
+    setDeleteId,
+    setShowDeleteDialog,
+    onDeleteChat
 }: {
     folder: Folder;
     isExpanded: boolean;
@@ -427,12 +484,15 @@ const FolderItem = ({
     chats: Chat[];
     setFolders: (folders: Folder[]) => void;
     foldersMutate: () => Promise<any>;
+    setDeleteId: (id: string | null) => void;
+    setShowDeleteDialog: (show: boolean) => void;
+    onDeleteChat: (chatId: string) => void;
 }) => {
     const [isDropTarget, setIsDropTarget] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
-    const [newName, setNewName] = useState(folder.name);
+    const [editedName, setEditedName] = useState(folder.name);
     const [displayName, setDisplayName] = useState(folder.name);
-    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const [folderDeleteDialog, setFolderDeleteDialog] = useState(false);
     const { mutate: globalMutate } = useSWRConfig();
 
     useEffect(() => {
@@ -441,16 +501,16 @@ const FolderItem = ({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (!newName.trim()) return;
+        if (!editedName.trim()) return;
         setIsEditing(false);
 
         try {
             // Update local display immediately
-            setDisplayName(newName);
+            setDisplayName(editedName);
 
             // Optimistic update with sorting
             const updatedFolders = folders
-                .map(f => f.id === folder.id ? { ...f, name: newName } : f)
+                .map(f => f.id === folder.id ? { ...f, name: editedName } : f)
                 .sort((a, b) => a.name.localeCompare(b.name));
             setFolders(updatedFolders);
 
@@ -463,7 +523,7 @@ const FolderItem = ({
                 body: JSON.stringify({
                     id: folder.id,
                     action: 'rename',
-                    name: newName
+                    name: editedName
                 }),
             });
 
@@ -486,7 +546,6 @@ const FolderItem = ({
         try {
             const updatedFolders = folders.filter(f => f.id !== folder.id);
             setFolders(updatedFolders);
-            setShowDeleteDialog(false);
 
             const response = await fetch(`/api/folder?id=${folder.id}`, {
                 method: 'DELETE',
@@ -573,8 +632,8 @@ const FolderItem = ({
                         >
                             <Input
                                 type="text"
-                                value={newName}
-                                onChange={(e) => setNewName(e.target.value)}
+                                value={editedName}
+                                onChange={(e) => setEditedName(e.target.value)}
                                 autoFocus
                                 onBlur={handleSubmit}
                             />
@@ -603,14 +662,14 @@ const FolderItem = ({
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end">
                                     <DropdownMenuItem onClick={() => {
-                                        setNewName(folder.name);
+                                        setEditedName(folder.name);
                                         setIsEditing(true);
                                     }}>
                                         <PencilEditIcon size={14} />
                                         <span>Rename</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                        onClick={() => setShowDeleteDialog(true)}
+                                        onClick={() => setFolderDeleteDialog(true)}
                                         className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
                                     >
                                         <TrashIcon size={14} />
@@ -624,12 +683,14 @@ const FolderItem = ({
 
                 {isExpanded && (
                     <SidebarGroupContent>
-                        {folder.chats?.map((chat) => (
+                        {folder.chats
+                            ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+                            .map((chat) => (
                             <ChatItemInFolder
                                 key={chat.id}
                                 chat={chat}
                                 isActive={false}
-                                onDelete={() => { }}
+                                onDelete={onDeleteChat}
                                 setOpenMobile={() => { }}
                                 mutate={() => globalMutate('/api/history')}
                                 folders={folders}
@@ -640,7 +701,7 @@ const FolderItem = ({
                 )}
             </SidebarGroup>
 
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+            <AlertDialog open={folderDeleteDialog} onOpenChange={setFolderDeleteDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Delete Folder</AlertDialogTitle>
@@ -650,7 +711,20 @@ const FolderItem = ({
                     </AlertDialogDescription>
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleDelete}>
+                        <AlertDialogAction onClick={() => {
+                            const deletePromise = fetch(`/api/folder?id=${folder.id}`, {
+                                method: 'DELETE',
+                            });
+
+                            toast.promise(deletePromise, {
+                                loading: 'Deleting folder...',
+                                success: () => {
+                                    handleDelete();
+                                    return 'Folder deleted successfully';
+                                },
+                                error: 'Failed to delete folder',
+                            });
+                        }}>
                             Delete
                         </AlertDialogAction>
                     </AlertDialogFooter>
@@ -718,14 +792,20 @@ const NewFolderInput = ({
     );
 };
 
-export const FolderSection = memo(({
-    folders,
-    setFolders,
-    chats,
-    isAddingFolder,
-    setIsAddingFolder,
-    foldersMutate
-}: FolderSectionProps & { foldersMutate: () => Promise<any> }) => {
+export function FolderSection({ 
+    folders, 
+    setFolders, 
+    chats, 
+    onDeleteChat, 
+    activeChatId, 
+    isAddingFolder, 
+    setIsAddingFolder, 
+    foldersMutate 
+}: FolderSectionProps) {
+    const [deleteId, setDeleteId] = useState<string | null>(null);
+    const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    const router = useRouter();
+    const { mutate: globalMutate } = useSWRConfig();
     const [expandedFolders, setExpandedFolders] = useState<Record<string, boolean>>({});
 
     const handleFolderToggle = useCallback((folderId: string) => {
@@ -736,52 +816,85 @@ export const FolderSection = memo(({
     }, []);
 
     return (
-        <div className="mt-3">
-            <div className="flex items-center justify-between">
-                <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
-                    Folders
+        <>
+            <div className="mt-3">
+                <div className="flex items-center justify-between">
+                    <div className="px-2 py-1 text-xs text-sidebar-foreground/50">
+                        Folders
+                    </div>
+                    <Button
+                        variant="ghost"
+                        size="sm"
+                        className="mr-2 hover:bg-sidebar-accent-foreground/10"
+                        onClick={() => setIsAddingFolder(true)}
+                    >
+                        <PlusIcon size={14} />
+                    </Button>
                 </div>
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    className="size-6 mr-2"
-                    onClick={() => setIsAddingFolder(true)}
-                >
-                    <FolderPlusIcon />
-                </Button>
+
+                {isAddingFolder && (
+                    <NewFolderInput
+                        folders={folders}
+                        setFolders={setFolders}
+                        setIsAddingFolder={setIsAddingFolder}
+                    />
+                )}
+
+                {folders.map((folder) => (
+                    <FolderItem
+                        key={folder.id}
+                        folder={folder}
+                        isExpanded={expandedFolders[folder.id] || false}
+                        onToggle={() => handleFolderToggle(folder.id)}
+                        folders={folders}
+                        chats={chats}
+                        setFolders={setFolders}
+                        foldersMutate={foldersMutate}
+                        setDeleteId={setDeleteId}
+                        setShowDeleteDialog={setShowDeleteDialog}
+                        onDeleteChat={onDeleteChat}
+                    />
+                ))}
             </div>
 
-            {isAddingFolder && (
-                <NewFolderInput
-                    folders={folders}
-                    setFolders={setFolders}
-                    setIsAddingFolder={setIsAddingFolder}
-                />
-            )}
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your chat and remove it from our servers.
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            if (!deleteId) return;
+                            
+                            const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
+                                method: 'DELETE',
+                            });
 
-            {folders.map((folder) => (
-                <FolderItem
-                    key={folder.id}
-                    folder={folder}
-                    isExpanded={expandedFolders[folder.id] || false}
-                    onToggle={() => handleFolderToggle(folder.id)}
-                    folders={folders}
-                    chats={chats}
-                    setFolders={setFolders}
-                    foldersMutate={foldersMutate}
-                />
-            ))}
-        </div>
+                            toast.promise(deletePromise, {
+                                loading: 'Deleting chat...',
+                                success: () => {
+                                    globalMutate('/api/history');
+                                    foldersMutate();
+                                    return 'Chat deleted successfully';
+                                },
+                                error: 'Failed to delete chat',
+                            });
+
+                            if (deleteId === activeChatId) {
+                                router.push('/');
+                            }
+                        }}>
+                            Continue
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+        </>
     );
-}, (prevProps, nextProps) => {
-    if (prevProps.isAddingFolder !== nextProps.isAddingFolder) return false;
-    if (prevProps.activeChatId !== nextProps.activeChatId) return false;
-    if (prevProps.folders.length !== nextProps.folders.length) return false;
-    if (prevProps.chats.length !== nextProps.chats.length) return false;
-
-    const prevFolderIds = prevProps.folders.map(f => f.id).join(',');
-    const nextFolderIds = nextProps.folders.map(f => f.id).join(',');
-    return prevFolderIds === nextFolderIds;
-});
+}
 
 FolderSection.displayName = 'FolderSection';
