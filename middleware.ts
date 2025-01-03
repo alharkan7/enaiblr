@@ -11,6 +11,7 @@ function isPublicRoute(pathname: string): boolean {
     '/apps',      // Apps page
     '/login',     // Auth pages
     '/register',
+    '/api/subscription', // Subscription status endpoint
   ];
   
   return publicRoutes.some(route => pathname.startsWith(route));
@@ -102,32 +103,32 @@ export default auth(async function middleware(request: NextRequest) {
     if (isAppRoute(pathname)) {
       const pageType = getPageType(pathname);
 
-      try {
-        const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
-
-        // If page type is not found in apps config, allow access (internal pages)
-        if (!pageType) {
-          return NextResponse.next();
-        }
-
-        // Free users can only access free pages
-        if (subscriptionStatus.plan === 'free' && pageType === 'pro') {
-          const redirectUrl = new URL('/apps', request.url);
-          redirectUrl.searchParams.set('error', 'pro_required');
-          return NextResponse.redirect(redirectUrl);
-        }
-
-        // Pro users can access all pages
+      // If page type is not found in apps config, allow access (internal pages)
+      if (!pageType) {
         return NextResponse.next();
-      } catch (error) {
-        console.error('Subscription check failed:', error);
-        // On error, default to free access for security
-        if (pageType === 'pro') {
+      }
+
+      // For pro pages, check subscription status
+      if (pageType === 'pro') {
+        try {
+          const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
+          
+          if (subscriptionStatus.plan === 'free') {
+            const redirectUrl = new URL('/apps', request.url);
+            redirectUrl.searchParams.set('error', 'pro_required');
+            return NextResponse.redirect(redirectUrl);
+          }
+        } catch (error) {
+          console.error('Subscription check failed:', error);
+          // On error, default to blocking access
           const redirectUrl = new URL('/apps', request.url);
           redirectUrl.searchParams.set('error', 'subscription_error');
           return NextResponse.redirect(redirectUrl);
         }
       }
+
+      // Free pages are always accessible
+      return NextResponse.next();
     }
   }
 

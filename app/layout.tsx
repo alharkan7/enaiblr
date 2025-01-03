@@ -3,6 +3,7 @@ import { Toaster } from 'sonner';
 import { Inter } from 'next/font/google';
 import { SessionProvider } from 'next-auth/react';
 import { auth } from './(auth)/auth';
+import { headers } from 'next/headers';
 
 import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
@@ -93,9 +94,13 @@ export default async function RootLayout({
   children: React.ReactNode;
 }>) {
   const session = await auth();
+  const headersList = await headers();
+  const pageType = headersList.get('x-page-type');
+
   return (
     <html
       lang="en_US, en_ID"
+      data-page-type={pageType}
       suppressHydrationWarning
     >
       <head>
@@ -109,14 +114,13 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
-            enableSystem={false}
-            disableTransitionOnChange
+            defaultTheme="system"
+            enableSystem
           >
-            <Toaster position="top-center" />
-            <TooltipProvider delayDuration={700}>
-              {children}
-            </TooltipProvider>
+              <Toaster position="top-center" />
+              <TooltipProvider delayDuration={700}>
+                {children}
+              </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
         <Analytics />
