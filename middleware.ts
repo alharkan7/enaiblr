@@ -28,22 +28,35 @@ function getPageType(pathname: string): 'free' | 'pro' | null {
     return null;
   }
 
-  // Check if it's under /apps/
-  if (!pathname.startsWith('/apps/')) {
-    return null;
+  // First, try to get slug from direct path
+  let slug = pathname.slice(1); // Remove leading slash
+
+  // If it's under /apps/, get the slug after /apps/
+  if (pathname.startsWith('/apps/')) {
+    slug = pathname.replace('/apps/', '').split('/')[0];
   }
 
-  // Get the slug after /apps/
-  const slug = pathname.replace('/apps/', '').split('/')[0];
-  
-  // Special case for root app (slug: '')
+  // Handle empty slug (root app)
   if (slug === '') {
     const rootApp = apps.find(app => app.slug === '');
     return rootApp?.type as 'free' | 'pro' | null;
   }
 
+  // Find app by slug
   const app = apps.find(app => app.slug === slug);
   return app?.type as 'free' | 'pro' | null;
+}
+
+// Helper function to check if a path is an app route
+function isAppRoute(pathname: string): boolean {
+  if (pathname === '/apps') return true;
+  
+  // Get slug either from direct path or /apps/ path
+  const slug = pathname.startsWith('/apps/') 
+    ? pathname.replace('/apps/', '').split('/')[0]
+    : pathname.slice(1);
+
+  return apps.some(app => app.slug === slug);
 }
 
 export default auth(async function middleware(request: NextRequest) {
@@ -85,34 +98,36 @@ export default auth(async function middleware(request: NextRequest) {
 
   // Handle subscription-based access for logged-in users
   if (isLoggedIn && session?.user?.id) {
-    const pageType = getPageType(pathname);
+    // Only check page type for app routes
+    if (isAppRoute(pathname)) {
+      const pageType = getPageType(pathname);
 
-    // If page type is not found in apps config, allow access (internal pages)
-    if (!pageType) {
-      return NextResponse.next();
-    }
+      try {
+        const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
 
-    try {
-      const subscriptionStatus = await getUserSubscriptionStatus(session.user.id);
+        // If page type is not found in apps config, allow access (internal pages)
+        if (!pageType) {
+          return NextResponse.next();
+        }
 
-      // Free users can only access free pages
-      if (subscriptionStatus.plan === 'free' && pageType === 'pro') {
-        const redirectUrl = new URL('/apps', request.url);
-        redirectUrl.searchParams.set('error', 'pro_required');
-        return NextResponse.redirect(redirectUrl);
+        // Free users can only access free pages
+        if (subscriptionStatus.plan === 'free' && pageType === 'pro') {
+          const redirectUrl = new URL('/apps', request.url);
+          redirectUrl.searchParams.set('error', 'pro_required');
+          return NextResponse.redirect(redirectUrl);
+        }
+
+        // Pro users can access all pages
+        return NextResponse.next();
+      } catch (error) {
+        console.error('Subscription check failed:', error);
+        // On error, default to free access for security
+        if (pageType === 'pro') {
+          const redirectUrl = new URL('/apps', request.url);
+          redirectUrl.searchParams.set('error', 'subscription_error');
+          return NextResponse.redirect(redirectUrl);
+        }
       }
-
-      // Pro users can access all pages
-      return NextResponse.next();
-    } catch (error) {
-      console.error('Subscription check failed:', error);
-      // On error, default to free access for security
-      if (pageType === 'pro') {
-        const redirectUrl = new URL('/apps', request.url);
-        redirectUrl.searchParams.set('error', 'subscription_error');
-        return NextResponse.redirect(redirectUrl);
-      }
-      return NextResponse.next();
     }
   }
 

@@ -413,18 +413,9 @@ type SubscriptionStatus = {
   plan: SubscriptionPlan;
 };
 
-// Cache for subscription status
-const subscriptionCache = new Map<string, { status: SubscriptionStatus, expiresAt: number }>();
-const CACHE_TTL = 5 * 60 * 1000; // 5 minutes in milliseconds
-
+// For Edge Runtime compatibility, we'll skip caching
 export async function getUserSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
   try {
-    // Check cache first
-    const cached = subscriptionCache.get(userId);
-    if (cached && cached.expiresAt > Date.now()) {
-      return cached.status;
-    }
-
     const subs = await db
       .select()
       .from(subscription)
@@ -442,23 +433,12 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
       }
     }
 
-    // Update cache with expiration time
-    subscriptionCache.set(userId, {
-      status,
-      expiresAt: Date.now() + CACHE_TTL
-    });
-
     return status;
   } catch (error) {
     console.error('Failed to get user subscription status:', error);
     // Default to free on error for security
     return { plan: 'free' };
   }
-}
-
-// Helper function to clear cache for a specific user
-export function clearSubscriptionCache(userId: string) {
-  subscriptionCache.delete(userId);
 }
 
 export async function isProUser(userId: string): Promise<boolean> {
