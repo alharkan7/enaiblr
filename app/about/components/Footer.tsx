@@ -8,7 +8,7 @@ const Footer = () => {
   return (
     <footer className="pt-12 pb-4 relative z-[2]  backdrop-blur-sm">
       <div className="container px-4 mx-auto">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-8 lg:px-16">
+        <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:px-16">
           <div>
             <Link href="/about" className="text-2xl font-bold mb-4 block !text-black">
               en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
@@ -64,9 +64,21 @@ const Footer = () => {
             </ul>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Produk</h3>
+            <h3 className="font-semibold mb-4">Enaiblr Pro</h3>
             <ul className="space-y-2">
-              {apps.map((app) => (
+              {apps.filter(app => app.type === 'pro').map((app) => (
+                <li key={app.slug}>
+                  <Link href={`/${app.slug}`} className="text-muted-foreground hover:text-foreground">
+                    {app.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-semibold mb-4">Free Apps</h3>
+            <ul className="space-y-2">
+              {apps.filter(app => app.type === 'free').map((app) => (
                 <li key={app.slug}>
                   <Link href={`/${app.slug}`} className="text-muted-foreground hover:text-foreground">
                     {app.name}
