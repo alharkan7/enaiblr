@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Mail, Globe, Phone } from "lucide-react";
+import { apps } from "@/config/apps";
 
 const Footer = () => {
   const currentYear = new Date().getFullYear();
@@ -65,31 +66,13 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Produk</h3>
             <ul className="space-y-2">
-              <li>
-                <Link href="/search" className="text-muted-foreground hover:text-foreground">
-                  Search Engine
-                </Link>
-              </li>
-              <li>
-                <Link href="/" className="text-muted-foreground hover:text-foreground">
-                  AI Chat
-                </Link>
-              </li>
-              <li>
-                <Link href="/imagen" className="text-muted-foreground hover:text-foreground">
-                  Image Creator
-                </Link>
-              </li>
-              <li>
-                <Link href="/transcribe" className="text-muted-foreground hover:text-foreground">
-                  Audio Transcriber
-                </Link>
-              </li>
-              <li>
-                <Link href="/voice" className="text-muted-foreground hover:text-foreground">
-                  Text to Voice
-                </Link>
-              </li>
+              {apps.map((app) => (
+                <li key={app.slug}>
+                  <Link href={`/${app.slug}`} className="text-muted-foreground hover:text-foreground">
+                    {app.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
           <div>
