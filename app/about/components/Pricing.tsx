@@ -104,7 +104,7 @@ const Pricing = () => {
                 </ul>
               </CardContent>
               <CardFooter className="mt-auto">
-                <Link href="/" className="w-full">
+                <Link href="/apps" className="w-full">
                   <button
                     className={cn(
                       "w-full rounded-lg px-4 py-2",

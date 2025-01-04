@@ -66,7 +66,7 @@ const Header = () => {
                 </Link>
               ))}
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                <Link href="#features">Mulai</Link>
+                <Link href="/apps">Mulai</Link>
               </Button>
             </div>
           </div>

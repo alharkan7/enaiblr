@@ -18,7 +18,7 @@ const Hero = () => {
             Tingkatkan produktivitasmu dengan akses ke beragam jenis AI dalam satu akun. Harga terjangkau, tak perlu lagi membayar langganan satu per satu.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Link href="#features">
+            <Link href="/apps">
               <Button size="lg" className="gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
                 Mulai <ArrowRight className="size-4" />
               </Button>
