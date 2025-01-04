@@ -34,13 +34,24 @@ export function AppsGridUserNav({ user }: { user: User }) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-[200px]"
+        className="w-full min-w-[200px]"
       >
         <DropdownMenuItem
           className="cursor-pointer"
           onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
         >
-          {`Toggle ${theme === 'light' ? 'dark' : 'light'} mode`}
+          {`${theme === 'light' ? 'Dark' : 'Light'} Mode`}
+        </DropdownMenuItem>
+        <DropdownMenuSeparator />
+        <DropdownMenuItem asChild>
+          <a
+            href="https://wa.me/+6281280077690"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="w-full cursor-pointer"
+          >
+            Contact Help
+          </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
@@ -53,7 +64,7 @@ export function AppsGridUserNav({ user }: { user: User }) {
               });
             }}
           >
-            Sign out
+            Sign Out
           </button>
         </DropdownMenuItem>
       </DropdownMenuContent>

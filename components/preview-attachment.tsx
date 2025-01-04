@@ -2,18 +2,40 @@ import type { Attachment } from 'ai';
 
 import { LoaderIcon, FileIcon } from './icons';
 
+const truncateMiddle = (text: string) => {
+  const lastDotIndex = text.lastIndexOf('.');
+  if (lastDotIndex === -1) return text;
+  
+  const name = text.slice(0, lastDotIndex);
+  const ext = text.slice(lastDotIndex);
+  
+  if (name.length <= 20) return text;
+  return `${name.slice(0, 18)}...${ext}`;
+};
+
 export const PreviewAttachment = ({
   attachment,
   isUploading = false,
+  onRemove,
 }: {
-  attachment: Attachment;
+  attachment: { url: string; contentType?: string; name?: string };
   isUploading?: boolean;
+  onRemove?: () => void;
 }) => {
-  const { name, url, contentType } = attachment;
+  const { url, contentType, name } = attachment;
 
   return (
     <div className="flex flex-col gap-2">
-      <div className="w-20 h-16 aspect-video bg-muted rounded-md relative flex flex-col items-center justify-center">
+      <div className="w-30 h-24 border aspect-video bg-muted rounded-md relative flex flex-col items-center justify-center">
+        {onRemove && (
+          <button
+            onClick={onRemove}
+            className="absolute -right-1 -top-0 bg-zinc-800 hover:bg-zinc-700 text-white rounded-full p-0.5 size-5 flex items-center justify-center shadow-sm"
+            aria-label="Remove attachment"
+          >
+            ×
+          </button>
+        )}
         {contentType ? (
           contentType.startsWith('image') ? (
             // NOTE: it is recommended to use next/image for images
@@ -41,7 +63,9 @@ export const PreviewAttachment = ({
           </div>
         )}
       </div>
-      <div className="text-xs text-zinc-500 max-w-16 truncate">{name}</div>
+      <div className="text-xs text-zinc-500 max-w-30">
+        {name ? truncateMiddle(name) : ''}
+      </div>
     </div>
   );
 };

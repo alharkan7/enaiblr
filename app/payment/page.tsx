@@ -3,8 +3,7 @@
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
-import { Check } from 'lucide-react'
-import { Loader2 } from 'lucide-react'
+import { Check, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 
@@ -19,60 +18,30 @@ export default function PaymentPage() {
       return
     }
 
-    const apiKey = process.env.NEXT_PUBLIC_MAYAR_API_KEY
-    if (!apiKey) {
-      console.error('Mayar API key is not configured')
-      alert('Payment system is not properly configured. Please contact support.')
-      return
-    }
-
     setLoading(true)
     try {
-      // Calculate expiry date 24 hours from now
-      const expiry = new Date()
-      expiry.setHours(expiry.getHours() + 24)
-
-      const payload = {
-        name: 'Enaiblr Pro User',
-        email: email,
-        amount: 170000,
-        mobile: mobile.replace(/\D/g, ''),
-        redirectUrl: `${process.env.NEXT_PUBLIC_APP_URL}/payment/success`,
-        description: 'Upgrade to Enaiblr Pro - Access all premium features',
-        expiredAt: expiry.toISOString()
-      }
-
-      console.log('Sending payment request with payload:', payload)
-
-      const response = await fetch('https://api.mayar.id/hl/v1/payment/create', {
+      const response = await fetch('/api/payment', {
         method: 'POST',
         headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(payload),
+        body: JSON.stringify({
+          email,
+          mobile,
+        }),
       })
 
-      const result = await response.json()
-      console.log('Payment response:', {
-        status: response.status,
-        headers: Object.fromEntries(response.headers.entries()),
-        result
-      })
-
-      if (result?.statusCode === 200 && result?.data?.link) {
-        window.location.href = result.data.link
-      } else {
-        console.error('Error creating payment link:', {
-          status: response.status,
-          statusText: response.statusText,
-          result
-        })
-        alert(`Failed to create payment link: ${result?.messages || 'Unknown error'}`)
+      const data = await response.json()
+      
+      if (!response.ok) {
+        throw new Error(data.error || 'Failed to create payment')
       }
+
+      // Redirect to Mayar payment page
+      window.location.href = data.url
     } catch (error) {
       console.error('Payment error:', error)
-      alert('An error occurred while processing your payment. Please try again.')
+      alert('Failed to initiate payment. Please try again.')
     } finally {
       setLoading(false)
     }

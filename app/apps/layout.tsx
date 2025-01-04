@@ -16,8 +16,8 @@ import type { Metadata } from 'next';
 export const metadata: Metadata = {
   metadataBase: new URL('https://enaiblr.org'),
   title: {
-    template: '%s | enaiblr',
-    default: 'enaiblr AI Platform',
+    template: '%s',
+    default: 'Unlimited AI Platform',
   },
   description: 'Unlimited AI Platform',
 
