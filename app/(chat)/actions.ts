@@ -13,7 +13,7 @@ import type { VisibilityType } from '@/components/visibility-selector';
 
 export async function saveModelId(model: string) {
   const cookieStore = await cookies();
-  cookieStore.set('model-id', model);
+  cookieStore.set('selectedModelId', model);
 }
 
 export async function generateTitleFromUserMessage({
