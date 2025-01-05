@@ -1,16 +1,23 @@
 import { Buffer } from 'buffer';
 
-if (!process.env.BUNNYCDN_STORAGE_ZONE) throw new Error('BUNNYCDN_STORAGE_ZONE is required');
-if (!process.env.BUNNYCDN_STORAGE_HOST) throw new Error('BUNNYCDN_STORAGE_HOST is required');
-if (!process.env.BUNNYCDN_STORAGE_PASSWORD) throw new Error('BUNNYCDN_STORAGE_PASSWORD is required');
-if (!process.env.BUNNYCDN_CDN_HOST) throw new Error('BUNNYCDN_CDN_HOST is required');
+// Get environment variables with fallbacks
+const STORAGE_ZONE_NAME = process.env.BUNNYCDN_STORAGE_ZONE || '';
+const STORAGE_HOSTNAME = process.env.BUNNYCDN_STORAGE_HOST || '';
+const STORAGE_PASSWORD = process.env.BUNNYCDN_STORAGE_PASSWORD || '';
+const CDN_HOSTNAME = process.env.BUNNYCDN_CDN_HOST || '';
 
-const STORAGE_ZONE_NAME = process.env.BUNNYCDN_STORAGE_ZONE;
-const STORAGE_HOSTNAME = process.env.BUNNYCDN_STORAGE_HOST;
-const STORAGE_PASSWORD = process.env.BUNNYCDN_STORAGE_PASSWORD;
-const CDN_HOSTNAME = process.env.BUNNYCDN_CDN_HOST;
+// Validate environment variables at runtime, not build time
+const validateConfig = () => {
+  if (!STORAGE_ZONE_NAME) throw new Error('BUNNYCDN_STORAGE_ZONE is required');
+  if (!STORAGE_HOSTNAME) throw new Error('BUNNYCDN_STORAGE_HOST is required');
+  if (!STORAGE_PASSWORD) throw new Error('BUNNYCDN_STORAGE_PASSWORD is required');
+  if (!CDN_HOSTNAME) throw new Error('BUNNYCDN_CDN_HOST is required');
+};
 
 export async function uploadToBunny(filename: string, buffer: ArrayBuffer) {
+  // Only validate when actually uploading
+  validateConfig();
+  
   const url = `https://${STORAGE_HOSTNAME}/${STORAGE_ZONE_NAME}/${filename}`;
   
   try {
@@ -36,6 +43,9 @@ export async function uploadToBunny(filename: string, buffer: ArrayBuffer) {
 }
 
 export async function deleteFromBunny(filename: string) {
+  // Only validate when actually deleting
+  validateConfig();
+  
   const url = `https://${STORAGE_HOSTNAME}/${STORAGE_ZONE_NAME}/${filename}`;
   
   try {
