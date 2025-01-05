@@ -97,32 +97,46 @@ export function convertToUIMessages(
 
     let textContent = '';
     const toolInvocations: Array<ToolInvocation> = [];
+    const attachments: Array<{ url: string; contentType?: string; name?: string }> = []
 
     if (typeof message.content === 'string') {
       textContent = message.content;
     } else if (Array.isArray(message.content)) {
-      for (const content of message.content) {
+      message.content.forEach((content: any) => {
         if (content.type === 'text') {
-          textContent += content.text;
-        } else if (content.type === 'tool-call') {
-          toolInvocations.push({
-            state: 'call',
-            toolCallId: content.toolCallId,
-            toolName: content.toolName,
-            args: content.args,
+          textContent = content.text;
+        } else if (content.type === 'image') {
+          attachments.push({
+            url: content.image,
+            contentType: 'image/png', // or detect from URL extension
+            name: content.image.split('/').pop()
+          });
+        } else if (content.type === 'file') {
+          attachments.push({
+            url: content.data,
+            contentType: content.mimeType,
+            name: decodeURIComponent(content.data.split('/').pop())
           });
         }
-      }
+      });
     }
 
-    chatMessages.push({
+    const uiMessage: Message = {
       id: message.id,
-      role: message.role as Message['role'],
       content: textContent,
-      toolInvocations,
-    });
+      role: message.role as Message['role'],
+      createdAt: message.createdAt,
+    };
 
-    return chatMessages;
+    if (attachments.length > 0) {
+      uiMessage.experimental_attachments = attachments;
+    }
+
+    if (toolInvocations.length > 0) {
+      uiMessage.toolInvocations = toolInvocations;
+    }
+
+    return [...chatMessages, uiMessage];
   }, []);
 }
 

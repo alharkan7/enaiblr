@@ -1,9 +1,9 @@
-import { put } from '@vercel/blob';
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import { models } from '@/lib/ai/models';
 
 import { auth } from '@/app/(auth)/auth';
+import { uploadToBunny } from '@/lib/bunnycdn';
 
 // Common document types
 const documentTypes = [
@@ -81,11 +81,30 @@ export async function POST(request: Request) {
     const fileBuffer = await file.arrayBuffer();
 
     try {
-      const data = await put(`${filename}`, fileBuffer, {
-        access: 'public',
-      });
+      const data = await uploadToBunny(filename, fileBuffer);
 
-      return NextResponse.json(data);
+      // Determine content type based on file extension if not available
+      let contentType = file.type;
+      if (!contentType) {
+        const ext = filename.split('.').pop()?.toLowerCase();
+        if (ext === 'pdf') contentType = 'application/pdf';
+        else if (ext === 'txt') contentType = 'text/plain';
+        else if (ext === 'doc') contentType = 'application/msword';
+        else if (ext === 'docx') contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
+        else if (ext === 'xls') contentType = 'application/vnd.ms-excel';
+        else if (ext === 'xlsx') contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
+        else if (ext === 'ppt') contentType = 'application/vnd.ms-powerpoint';
+        else if (ext === 'pptx') contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
+        else if (ext === 'jpg' || ext === 'jpeg') contentType = 'image/jpeg';
+        else if (ext === 'png') contentType = 'image/png';
+        else contentType = 'application/octet-stream';
+      }
+
+      return NextResponse.json({
+        url: data,
+        pathname: filename,
+        contentType: contentType
+      });
     } catch (error) {
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
     }

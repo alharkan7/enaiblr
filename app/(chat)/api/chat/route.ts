@@ -75,7 +75,9 @@ export async function POST(request: Request) {
     return new Response('Model not found', { status: 404 });
   }
 
-  const coreMessages = convertToCoreMessages(messages);
+  const coreMessages = convertToCoreMessages(messages, {
+    tools: allTools.reduce((acc, tool) => ({ ...acc, [tool]: true }), {}),
+  });
   const userMessage = getMostRecentUserMessage(coreMessages);
 
   if (!userMessage) {

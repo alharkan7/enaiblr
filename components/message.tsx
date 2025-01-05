@@ -72,7 +72,11 @@ const PurePreviewMessage = ({
                 {message.experimental_attachments.map((attachment) => (
                   <PreviewAttachment
                     key={attachment.url}
-                    attachment={attachment}
+                    attachment={{
+                      ...attachment,
+                      // Ensure URL is using CDN domain
+                      url: attachment.url.replace('vercel-storage.com', 'cdn.enaiblr.org')
+                    }}
                   />
                 ))}
               </div>
