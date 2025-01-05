@@ -18,7 +18,7 @@ const documentTypes = [
 ];
 
 // Image types
-const imageTypes = ['image/jpeg', 'image/png'];
+const imageTypes = ['image/jpeg', 'image/png']
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
@@ -39,7 +39,7 @@ const FileSchema = z.object({
   }
   return false;
 }, {
-  message: 'Invalid file type for the selected model',
+  message: 'Invalid file type. Please change the AI model.',
   path: ['file'], // This shows the error on the file field
 });
 
