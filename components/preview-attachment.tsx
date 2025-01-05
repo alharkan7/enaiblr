@@ -1,6 +1,7 @@
 import type { Attachment } from 'ai';
-
+import { useState } from 'react';
 import { LoaderIcon, FileIcon } from './icons';
+import { ImageModal } from './ui/image-modal';
 
 const truncateMiddle = (text: string) => {
   const lastDotIndex = text.lastIndexOf('.');
@@ -33,6 +34,7 @@ export const PreviewAttachment = ({
   onRemove?: () => void;
 }) => {
   const { url, contentType, name } = attachment;
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   return (
     <div className="flex flex-col gap-2">
@@ -48,18 +50,35 @@ export const PreviewAttachment = ({
         )}
         {contentType ? (
           contentType.startsWith('image') ? (
-            // NOTE: it is recommended to use next/image for images
-            // eslint-disable-next-line @next/next/no-img-element
-            <img
-              key={url}
-              src={url}
-              alt={name ?? 'An image attachment'}
-              className="rounded-md size-full object-cover"
-            />
+            <>
+              {/* eslint-disable-next-line @next/next/no-img-element */}
+              <img
+                key={url}
+                src={url}
+                alt={name ?? 'An image attachment'}
+                className="rounded-md size-full object-cover cursor-pointer"
+                onClick={() => setIsModalOpen(true)}
+              />
+              <ImageModal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                imageUrl={url}
+                altText={name ?? 'An image attachment'}
+              />
+            </>
           ) : (
-            <div className="flex flex-col items-center justify-center p-1 text-center">
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex flex-col items-center justify-center p-1 text-center w-full h-full cursor-pointer hover:bg-muted/50 rounded-md transition-colors"
+              aria-label={`Open ${name || 'file'} in new tab`}
+            >
               <FileIcon size={16} className="text-zinc-500 mb-1" />
-            </div>
+              <span className="text-xs font-bold text-zinc-500 truncate max-w-[90%]">
+                {contentType?.split('/')[1]?.toUpperCase() || 'FILE'}
+              </span>
+            </a>
           )
         ) : (
           <div className="flex items-center justify-center">

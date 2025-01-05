@@ -10,12 +10,14 @@ import { optimizeFile } from '@/lib/optimize';
 const documentTypes = [
   'application/pdf',
   'text/plain',
-  'application/msword',
-  'application/vnd.openxmlformats-officedocument.wordprocessingml.document', // .docx
-  'application/vnd.ms-excel',
-  'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', // .xlsx
-  'application/vnd.ms-powerpoint',
-  'application/vnd.openxmlformats-officedocument.presentationml.presentation', // .pptx
+  'application/x-javascript, text/javascript',
+  'application/x-python, text/x-python',
+  'text/html',
+  'text/css',
+  'text/md',
+  'text/csv',
+  'text/xml',
+  'text/rtf',
 ];
 
 // Image types
@@ -43,7 +45,7 @@ const FileSchema = z.object({
   }
   return false;
 }, {
-  message: 'Invalid file type. Please change the AI model.',
+  message: 'Invalid allowed file type. Please change the AI model.',
   path: ['file'],
 });
 
@@ -85,7 +87,7 @@ export async function POST(request: Request) {
     const { buffer: optimizedBuffer, type: optimizedType } = await optimizeFile(file, originalFilename);
 
     // Update filename extension for WebP converted images
-    const filename = optimizedType === 'image/webp' 
+    const filename = optimizedType === 'image/webp'
       ? originalFilename.replace(/\.[^/.]+$/, '.webp')
       : originalFilename;
 
