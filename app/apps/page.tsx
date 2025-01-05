@@ -14,7 +14,7 @@ import { useSubscription } from '@/contexts/subscription-context';
 
 export default function Page() {
   const { data: session, status } = useSession();
-  const { plan } = useSubscription();
+  const { plan, isLoading } = useSubscription();
   const searchParams = useSearchParams();
   const router = useRouter();
   const [showProDialog, setShowProDialog] = useState(false);
@@ -87,7 +87,7 @@ export default function Page() {
                   onClick={() => handleAppClick(app.type, app.slug)}
                   className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer"
                 >
-                  {plan === 'free' && (
+                  {!isLoading && plan === 'free' && (
                     <div className="absolute -right-[1px] -top-[3px]">
                       <span className={`inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl ${
                         app.type === 'pro' 

@@ -102,7 +102,7 @@ export default function Filechat() {
         >
             <div className="flex-1 flex flex-col relative">
                 <header className="fixed top-0 left-0 right-0 z-10 bg-background">
-                    <div className="max-w-4xl mx-auto relative">
+                    <div className="max-w-6xl mx-auto relative">
                         {hasUserSentMessage && (
                             <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
                                 <Button

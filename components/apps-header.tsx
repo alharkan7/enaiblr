@@ -15,7 +15,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
 
   return (
     <header className="sticky top-0 bg-background py-1.5 px-2 md:px-2">
-      <div className="relative flex items-center max-w-4xl mx-auto">
+      <div className="relative flex items-center max-w-6xl mx-auto">
         {leftButton && (
           <div className="absolute left-0">
             {leftButton}

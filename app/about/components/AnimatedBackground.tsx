@@ -40,7 +40,7 @@ useEffect(() => {
   window.addEventListener('resize', resizeCanvas);
 
     // Create particles
-    const particleCount = 50;
+    const particleCount = 70;
     const particles: Particle[] = [];
     const connectionDistance = 150; // Maximum distance for connecting particles
 

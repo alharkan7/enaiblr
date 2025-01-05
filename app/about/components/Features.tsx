@@ -25,7 +25,7 @@ const Features = () => {
               href={`/${app.slug}`}
               className="w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
             >
-              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black">
                 <CardHeader>
                   <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
                     <app.icon className="w-6 h-6 text-white" />
