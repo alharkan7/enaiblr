@@ -59,6 +59,8 @@ function isAppRoute(pathname: string): boolean {
   return apps.some(app => app.slug === slug);
 }
 
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
+
 export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
   const isLoggedIn = !!session?.user;
@@ -71,8 +73,11 @@ export default auth(async function middleware(request: NextRequest) {
   }
 
   // Redirect root path to /apps if not logged in
-  if (pathname === '/' && !isLoggedIn) {
-    return NextResponse.redirect(new URL('/apps', request.url));
+  if (pathname === '/') {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL('/apps', BASE_URL));
+    }
+    return NextResponse.next();
   }
 
   // Allow public routes without login

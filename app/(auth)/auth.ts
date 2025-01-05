@@ -6,6 +6,8 @@ import GoogleProvider from 'next-auth/providers/google';
 
 import { getUser, createGoogleUser } from '@/lib/db/queries';
 
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
+
 export const config = {
   trustHost: true,
   pages: {
@@ -69,9 +71,9 @@ export const config = {
       if (isLoggedIn && isAuthPage) {
         const callbackUrl = nextUrl.searchParams.get('callbackUrl');
         if (callbackUrl && callbackUrl.startsWith('/')) {
-          return Response.redirect(new URL(callbackUrl, nextUrl));
+          return Response.redirect(new URL(callbackUrl, BASE_URL));
         }
-        return Response.redirect(new URL('/apps', nextUrl));
+        return Response.redirect(new URL('/apps', BASE_URL));
       }
 
       return true;
