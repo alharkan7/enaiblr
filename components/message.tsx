@@ -79,29 +79,33 @@ const PurePreviewMessage = ({
             )}
 
             {message.content && mode === 'view' && (
-              <div className="flex flex-row gap-2 items-start">
+              <div className={cn("flex flex-row gap-2 items-start", {
+                "justify-end": message.role === 'user'
+              })}>
                 {message.role === 'user' &&
                   !isReadonly &&
                   (!message.experimental_attachments?.length) && (
-                    <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
-                          onClick={() => {
-                            setMode('edit');
-                          }}
-                        >
-                          <PencilEditIcon />
-                        </Button>
-                      </TooltipTrigger>
-                      <TooltipContent>Edit message</TooltipContent>
-                    </Tooltip>
+                    <div className="order-1">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            className="px-2 h-fit rounded-full text-muted-foreground opacity-0 group-hover/message:opacity-100"
+                            onClick={() => {
+                              setMode('edit');
+                            }}
+                          >
+                            <PencilEditIcon />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent>Edit message</TooltipContent>
+                      </Tooltip>
+                    </div>
                   )}
 
                 <div
                   className={cn('flex flex-col gap-4', {
-                    'bg-primary text-primary-foreground px-3 py-2 rounded-xl':
+                    'bg-primary text-primary-foreground px-3 py-2 rounded-xl order-2':
                       message.role === 'user',
                   })}
                 >
