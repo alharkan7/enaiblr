@@ -21,7 +21,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://access.enaiblr.org'),
+  metadataBase: new URL('https://enaiblr.org'),
   title: {
     template: '%s | enaiblr',
     default: 'enaiblr AI Platform',
