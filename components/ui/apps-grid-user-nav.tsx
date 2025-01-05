@@ -4,6 +4,7 @@ import Image from 'next/image';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
+import { useSubscription } from '@/contexts/subscription-context';
 
 import {
   DropdownMenu,
@@ -14,8 +15,9 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
 
-export function AppsGridUserNav({ user }: { user: User }) {
+export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: boolean }) {
   const { setTheme, theme } = useTheme();
+  const { plan } = useSubscription();
 
   return (
     <DropdownMenu>
@@ -43,14 +45,19 @@ export function AppsGridUserNav({ user }: { user: User }) {
           {`${theme === 'light' ? 'Dark' : 'Light'} Mode`}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
-        <DropdownMenuItem asChild>
+        <DropdownMenuItem asChild disabled={isPro && plan === 'free'}>
           <a
             href="https://wa.me/+6281280077690"
             target="_blank"
             rel="noopener noreferrer"
-            className="w-full cursor-pointer"
+            className="relative w-full cursor-pointer"
           >
             Contact Help
+            {isPro && plan === 'free' && (
+              <span className="absolute right-2 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
+                PRO
+              </span>
+            )}
           </a>
         </DropdownMenuItem>
         <DropdownMenuSeparator />

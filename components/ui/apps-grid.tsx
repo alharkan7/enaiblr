@@ -71,7 +71,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                       className="relative h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
                       onClick={() => handleAppClick(app.type, app.slug)}
                     >
-                      {app.type === 'pro' && (
+                      {app.type === 'pro' && plan === 'free' && (
                         <span className="absolute top-0 right-1 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
                           PRO
                         </span>
@@ -89,7 +89,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
           </div>
           {user && (
             <div className="mt-4 pt-4 border-t border-border">
-              <AppsGridUserNav user={user} />
+              <AppsGridUserNav user={user} isPro={apps.some(app => app.type === 'pro')} />
             </div>
           )}
         </PopoverContent>
