@@ -4,6 +4,7 @@ import { models } from '@/lib/ai/models';
 
 import { auth } from '@/app/(auth)/auth';
 import { uploadToBunny } from '@/lib/bunnycdn';
+import { optimizeFile } from '@/lib/optimize';
 
 // Common document types
 const documentTypes = [
@@ -18,14 +19,17 @@ const documentTypes = [
 ];
 
 // Image types
-const imageTypes = ['image/jpeg', 'image/png']
+const imageTypes = ['image/jpeg', 'image/png', 'image/webp']
+
+// Initial size limit increased since we'll optimize images
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
 // Use Blob instead of File since File is not available in Node.js environment
 const FileSchema = z.object({
   file: z
     .instanceof(Blob)
-    .refine((file) => file.size <= 5 * 1024 * 1024, {
-      message: 'File size should be less than 5MB',
+    .refine((file) => file.size <= MAX_FILE_SIZE, {
+      message: 'File size should be less than 10MB',
     }),
   modelId: z.string(),
 }).refine((data) => {
@@ -40,7 +44,7 @@ const FileSchema = z.object({
   return false;
 }, {
   message: 'Invalid file type. Please change the AI model.',
-  path: ['file'], // This shows the error on the file field
+  path: ['file'],
 });
 
 export async function POST(request: Request) {
@@ -76,34 +80,23 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: errorMessage }, { status: 400 });
     }
 
-    // Get filename from formData since Blob doesn't have name property
-    const filename = (formData.get('file') as File).name;
-    const fileBuffer = await file.arrayBuffer();
+    // Get filename and optimize file
+    const originalFilename = (formData.get('file') as File).name;
+    const { buffer: optimizedBuffer, type: optimizedType } = await optimizeFile(file, originalFilename);
+
+    // Update filename extension for WebP converted images
+    const filename = optimizedType === 'image/webp' 
+      ? originalFilename.replace(/\.[^/.]+$/, '.webp')
+      : originalFilename;
 
     try {
-      const data = await uploadToBunny(filename, fileBuffer);
-
-      // Determine content type based on file extension if not available
-      let contentType = file.type;
-      if (!contentType) {
-        const ext = filename.split('.').pop()?.toLowerCase();
-        if (ext === 'pdf') contentType = 'application/pdf';
-        else if (ext === 'txt') contentType = 'text/plain';
-        else if (ext === 'doc') contentType = 'application/msword';
-        else if (ext === 'docx') contentType = 'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-        else if (ext === 'xls') contentType = 'application/vnd.ms-excel';
-        else if (ext === 'xlsx') contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
-        else if (ext === 'ppt') contentType = 'application/vnd.ms-powerpoint';
-        else if (ext === 'pptx') contentType = 'application/vnd.openxmlformats-officedocument.presentationml.presentation';
-        else if (ext === 'jpg' || ext === 'jpeg') contentType = 'image/jpeg';
-        else if (ext === 'png') contentType = 'image/png';
-        else contentType = 'application/octet-stream';
-      }
+      const data = await uploadToBunny(filename, optimizedBuffer);
 
       return NextResponse.json({
         url: data,
         pathname: filename,
-        contentType: contentType
+        contentType: optimizedType,
+        originalName: originalFilename
       });
     } catch (error) {
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });

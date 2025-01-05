@@ -13,12 +13,22 @@ const truncateMiddle = (text: string) => {
   return `${name.slice(0, 18)}...${ext}`;
 };
 
+const getDisplayName = (attachment: { url: string; contentType?: string; name?: string; originalName?: string }) => {
+  // Use original name if available
+  if (attachment.originalName) {
+    return truncateMiddle(attachment.originalName);
+  }
+
+  // Fallback to current name
+  return attachment.name ? truncateMiddle(attachment.name) : '';
+};
+
 export const PreviewAttachment = ({
   attachment,
   isUploading = false,
   onRemove,
 }: {
-  attachment: { url: string; contentType?: string; name?: string };
+  attachment: { url: string; contentType?: string; name?: string; originalName?: string };
   isUploading?: boolean;
   onRemove?: () => void;
 }) => {
@@ -64,7 +74,7 @@ export const PreviewAttachment = ({
         )}
       </div>
       <div className="text-xs text-zinc-500 max-w-30">
-        {name ? truncateMiddle(name) : ''}
+        {getDisplayName(attachment)}
       </div>
     </div>
   );
