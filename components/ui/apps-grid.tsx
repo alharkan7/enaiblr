@@ -1,6 +1,7 @@
 'use client';
 
 import * as React from 'react';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -9,7 +10,6 @@ import type { User } from 'next-auth';
 import { apps } from '@/config/apps';
 import { useRouter } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
-import { SubscriptionDialog } from '@/components/subscription-dialog';
 
 interface AppsGridProps {
   trigger: React.ReactNode;
@@ -22,11 +22,11 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
   const { plan } = useSubscription();
   const [isOpen, setIsOpen] = React.useState(false);
   const [showTooltips, setShowTooltips] = React.useState(false);
-  const [showProDialog, setShowProDialog] = React.useState(false);
 
   const handleAppClick = (type: 'free' | 'pro', slug: string) => {
     if (type === 'pro' && plan === 'free') {
-      setShowProDialog(true);
+      router.push('/payment');
+      setIsOpen(false);
       return;
     }
 
@@ -54,7 +54,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
         <PopoverTrigger asChild>
           {trigger}
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e) => {
+        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: PopoverPrimitive.PointerDownOutsideEvent) => {
           // Prevent closing when clicking inside the popover
           if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
             e.preventDefault();
@@ -94,7 +94,6 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
           )}
         </PopoverContent>
       </Popover>
-      <SubscriptionDialog open={showProDialog} onOpenChange={setShowProDialog} />
     </TooltipProvider>
   );
 }

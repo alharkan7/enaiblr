@@ -1,7 +1,9 @@
 import { NextResponse } from 'next/server'
+import { PRO_FEATURES } from '@/lib/constants'
 
 export async function POST(request: Request) {
   const apiKey = process.env.MAYAR_API_KEY
+  const apiUrl = process.env.MAYAR_API_URL
   
   if (!apiKey) {
     return NextResponse.json(
@@ -12,21 +14,28 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { email, mobile } = body
+    const { email, name, mobile, amount } = body
+
+    if (!email || !name || !mobile || !amount) {
+      return NextResponse.json(
+        { error: 'Email, name, mobile and amount are required' },
+        { status: 400 }
+      )
+    }
 
     // Calculate expiry date 24 hours from now
     const expiry = new Date()
     expiry.setHours(expiry.getHours() + 24)
 
     const payload = {
-      amount: 170000,
-      description: 'Upgrade to Enaiblr Pro - Access all premium features',
+      amount,
+      description: `Enaiblr Pro Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
       email: email,
-      mobile: mobile.replace(/\D/g, ''),
       expired_at: expiry.toISOString(),
       success_url: `${process.env.APP_URL}/payment/success`,
       failure_url: `${process.env.APP_URL}/payment`,
-      customer_name: 'Enaiblr Pro User'
+      name,
+      mobile: mobile.replace(/\D/g, ''),
     }
 
     const response = await fetch('https://api.mayar.id/hl/v1/payment/create', {

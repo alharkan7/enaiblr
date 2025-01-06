@@ -521,3 +521,16 @@ export async function deleteFolder(id: string) {
   // Then delete the folder
   await db.delete(folder).where(eq(folder.id, id));
 }
+
+export async function updateUserProfile(email: string, data: { name?: string, phone?: string }) {
+  try {
+    return await db
+      .update(user)
+      .set(data)
+      .where(eq(user.email, email))
+      .returning();
+  } catch (error) {
+    console.error('Failed to update user profile:', error);
+    throw error;
+  }
+}
