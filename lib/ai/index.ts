@@ -2,6 +2,7 @@ import { openai } from '@ai-sdk/openai';
 import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
+import { togetherai } from '@ai-sdk/togetherai';
 import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
 
 import { customMiddleware } from './custom-middleware';
@@ -33,6 +34,9 @@ export const customModel = (apiIdentifier: string) => {
         //   ],
         // }
       );
+      break;
+    case 'togetherai':
+      provider = togetherai(apiIdentifier);
       break;
     default:
       throw new Error(`Unknown provider ${model.provider}`);
