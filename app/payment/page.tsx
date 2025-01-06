@@ -90,7 +90,11 @@ export default function PaymentPage() {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <AppsHeader />
+      <div className="relative">
+        <div className="[&>header]:!static">
+          <AppsHeader />
+        </div>
+      </div>
       <div className="flex flex-1 items-center justify-center">
         <div className="container max-w-6xl py-10">
           <div className="mx-auto flex flex-col items-center space-y-2 text-center">
@@ -100,25 +104,26 @@ export default function PaymentPage() {
                 PRO
               </span>
             </h1>
-            {/* <p className="text-muted-foreground">
-              Get access to all premium features and unlimited usage
-            </p> */}
+            <p className="text-muted-foreground">
+              Get Unlimited Access to All Features
+            </p>
           </div>
 
-          <div className="mx-auto mt-10 max-w-md">
+          <div className="mx-auto mt-6 max-w-md">
             <Card>
               <CardHeader className="text-center">
-                <CardTitle className="mb-2">Unlimited Access</CardTitle>
+                {/* <CardTitle className="mb-2">Unlimited Access</CardTitle>
                 <CardDescription>
                   Get Access to All Apps and Features
-                </CardDescription>
-                <div className="!mt-6 !mb-4 text-center">
+                </CardDescription> */}
+                <div className=" !mb-2 text-center">
                   <div className="mb-1">
                     <span className="text-xl text-muted-foreground relative">
                       <span className="relative">
                         Rp{originalPrice.toLocaleString('id-ID')}
                         <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
                       </span>
+                      <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-0.5 rounded-md">60% Disc</span>
                     </span>
                   </div>
                   <span className="text-4xl !text-primary font-bold">Rp{price.toLocaleString('id-ID')}</span>
@@ -202,6 +207,7 @@ export default function PaymentPage() {
           </div>
         </div>
       </div>
+
     </div>
   )
 }
