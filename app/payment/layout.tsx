@@ -2,8 +2,8 @@ import '../globals.css';
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Upgrade to Pro',
-  description: 'Upgrade your account to access premium features',
+  title: 'Get Enaiblr Pro',
+  description: 'Unlimited Access to All AI Models, Document & Image Uploads, Saved History, Chat Organizer (Foldering, Pins), AI Document Creator, and AI Python Programmer',
 };
 
 export default function PaymentLayout({
