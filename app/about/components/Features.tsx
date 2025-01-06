@@ -1,6 +1,7 @@
 import { Card, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import Link from "next/link";
 import { apps } from "@/config/apps";
+import { ArrowUpRight } from "lucide-react";
 
 const Features = () => {
   return (
@@ -25,13 +26,16 @@ const Features = () => {
               href={`/apps`}
               className="w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
             >
-              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black">
+              <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black group relative">
                 <CardHeader>
                   <div className="w-12 h-12 flex items-center justify-center rounded-lg mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
                     <app.icon className="w-6 h-6 text-white" />
                   </div>
                   <CardTitle>{app.name}</CardTitle>
                   <CardDescription>{app.description}</CardDescription>
+                  <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <ArrowUpRight className="w-12 h-12 text-sky-500" />
+                  </div>
                 </CardHeader>
               </Card>
             </Link>
