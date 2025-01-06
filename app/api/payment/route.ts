@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { PRO_FEATURES } from '@/lib/constants'
+import { createPaymentToken } from '@/lib/db/queries'
 
 export async function POST(request: Request) {
   const apiKey = process.env.MAYAR_API_KEY
@@ -14,15 +15,18 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { email, name, mobile, amount } = body
+    const { email, name, mobile, amount, userId } = body
 
-    if (!email || !name || !mobile || !amount) {
+    if (!email || !name || !mobile || !amount || !userId) {
       return NextResponse.json(
-        { error: 'Email, name, mobile and amount are required' },
+        { error: 'Email, name, mobile, amount and userId are required' },
         { status: 400 }
       )
     }
 
+    // Generate payment verification token
+    const [paymentToken] = await createPaymentToken(userId)
+    
     // Calculate expiry date 24 hours from now
     const expiry = new Date()
     expiry.setHours(expiry.getHours() + 24)
@@ -32,9 +36,9 @@ export async function POST(request: Request) {
       description: `Enaiblr Pro Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
       email: email,
       expired_at: expiry.toISOString(),
-      success_url: `${process.env.APP_URL}/payment/success`,
+      success_url: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
       failure_url: `${process.env.APP_URL}/payment`,
-      name,
+      name: name,
       mobile: mobile.replace(/\D/g, ''),
     }
 

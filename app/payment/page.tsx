@@ -69,6 +69,7 @@ export default function PaymentPage() {
           name,
           mobile,
           amount: price,
+          userId: session.user.id,
         }),
       })
 
@@ -117,7 +118,7 @@ export default function PaymentPage() {
                   Get Access to All Apps and Features
                 </CardDescription> */}
                 <div className=" !mb-2 text-center">
-                  <div className="mb-1">
+                  <div className="mb-3">
                     <span className="text-xl text-muted-foreground relative">
                       <span className="relative">
                         Rp{originalPrice.toLocaleString('id-ID')}

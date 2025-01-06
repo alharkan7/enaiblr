@@ -142,3 +142,15 @@ export const subscription = pgTable('Subscriptions', {
 });
 
 export type Subscription = InferSelectModel<typeof subscription>;
+
+export const token = pgTable('Token', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  token: varchar('token', { length: 64 }).notNull(),
+  status: varchar('status', { enum: ['open', 'used'] }).notNull().default('open'),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id),
+});
+
+export type Token = InferSelectModel<typeof token>;

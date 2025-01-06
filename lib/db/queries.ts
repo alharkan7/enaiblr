@@ -14,6 +14,7 @@ import {
   type Suggestion,
   suggestion,
   subscription,
+  token,
 } from './schema';
 import type { BlockKind } from '@/components/block';
 
@@ -550,6 +551,62 @@ export async function updateUserProfile(email: string, data: { name?: string, ph
       .returning();
   } catch (error) {
     console.error('Failed to update user profile:', error);
+    throw error;
+  }
+}
+
+async function generateToken(): Promise<string> {
+  // Generate a UUID v4 format
+  const array = new Uint8Array(16);
+  crypto.getRandomValues(array);
+  // Set version (4) and variant (2) bits
+  array[6] = (array[6] & 0x0f) | 0x40;
+  array[8] = (array[8] & 0x3f) | 0x80;
+  
+  // Convert to UUID string format
+  const hex = Array.from(array, byte => byte.toString(16).padStart(2, '0'));
+  return [
+    hex.slice(0, 4).join(''),
+    hex.slice(4, 6).join(''),
+    hex.slice(6, 8).join(''),
+    hex.slice(8, 10).join(''),
+    hex.slice(10, 16).join('')
+  ].join('-');
+}
+
+export async function createPaymentToken(userId: string) {
+  try {
+    const tokenValue = await generateToken();
+    return await db.insert(token).values({
+      userId,
+      token: tokenValue,
+      createdAt: new Date(),
+      status: 'open',
+    }).returning();
+  } catch (error) {
+    console.error('Failed to create payment token');
+    throw error;
+  }
+}
+
+export async function getPaymentToken(tokenValue: string) {
+  try {
+    return await db.select()
+      .from(token)
+      .where(eq(token.token, tokenValue));
+  } catch (error) {
+    console.error('Failed to get payment token');
+    throw error;
+  }
+}
+
+export async function markTokenAsUsed(tokenValue: string) {
+  try {
+    return await db.update(token)
+      .set({ status: 'used' })
+      .where(eq(token.token, tokenValue));
+  } catch (error) {
+    console.error('Failed to mark token as used');
     throw error;
   }
 }
