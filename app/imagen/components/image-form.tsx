@@ -13,6 +13,10 @@ import { Switch } from "@/components/ui/switch"
 import { Sparkles, SlidersHorizontal } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { style } from './constants';
+import { useSubscription } from "@/contexts/subscription-context"
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+
+type SubscriptionPlan = 'free' | 'pro';
 
 interface ImageFormProps {
   defaultPrompt?: string
@@ -23,6 +27,7 @@ interface ImageFormProps {
 }
 
 export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onAspectRatioChange, imageDisplayed = false }: ImageFormProps) {
+  const { plan } = useSubscription()
   const [showControls, setShowControls] = useState(imageDisplayed)
   const [prompt, setPrompt] = useState(defaultPrompt)
   const [isGenerating, setIsGenerating] = useState(false)
@@ -175,10 +180,27 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
 
             <div className="flex items-center gap-2 min-w-[150px] justify-center">
               <span className={`text-sm font-medium ${quality === 'standard' ? 'text-primary font-bold' : ''}`}>Standard</span>
-              <Switch
-                checked={quality === 'hd'}
-                onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
-              />
+              {plan === 'free' ? (
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <div>
+                      <Switch
+                        checked={quality === 'hd'}
+                        onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
+                        disabled
+                      />
+                    </div>
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Get Enaiblr Pro</p>
+                  </TooltipContent>
+                </Tooltip>
+              ) : (
+                <Switch
+                  checked={quality === 'hd'}
+                  onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
+                />
+              )}
               <span className={`text-sm font-medium ${quality === 'hd' ? 'text-primary font-bold' : ''}`}>HD</span>
             </div>
           </div>
