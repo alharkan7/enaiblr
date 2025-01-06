@@ -41,6 +41,16 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
     fetchSubscription();
   }, [session?.user?.id]);
 
+  useEffect(() => {
+    // Check for subscription success in URL and refresh
+    if (typeof window !== 'undefined') {
+      const searchParams = new URLSearchParams(window.location.search);
+      if (searchParams.get('subscription') === 'success') {
+        refreshSubscription();
+      }
+    }
+  }, []);
+
   const refreshSubscription = async () => {
     setIsLoading(true);
     await fetchSubscription();

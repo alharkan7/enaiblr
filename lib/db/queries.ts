@@ -446,6 +446,25 @@ export async function isProUser(userId: string): Promise<boolean> {
   return status.plan === 'pro';
 }
 
+export async function updateSubscriptionToPro(userId: string) {
+  try {
+    const validUntil = new Date();
+    validUntil.setDate(validUntil.getDate() + 30);
+
+    return await db
+      .update(subscription)
+      .set({
+        plan: 'pro',
+        validUntil,
+      })
+      .where(eq(subscription.userId, userId))
+      .returning();
+  } catch (error) {
+    console.error('Failed to update subscription:', error);
+    throw error;
+  }
+}
+
 // Folder queries
 export async function getFoldersByUserId(userId: string) {
   const folders = await db
