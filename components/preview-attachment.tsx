@@ -14,14 +14,19 @@ const truncateMiddle = (text: string) => {
   return `${name.slice(0, 18)}...${ext}`;
 };
 
+const cleanFileName = (fileName: string) => {
+  // Remove leading timestamp and UUID pattern (e.g., 1736005090506-651b2ec0-)
+  return fileName.replace(/^\d+-[a-f0-9]+-/, '');
+};
+
 const getDisplayName = (attachment: { url: string; contentType?: string; name?: string; originalName?: string }) => {
   // Use original name if available
   if (attachment.originalName) {
     return truncateMiddle(attachment.originalName);
   }
 
-  // Fallback to current name
-  return attachment.name ? truncateMiddle(attachment.name) : '';
+  // Clean and use current name
+  return attachment.name ? truncateMiddle(cleanFileName(attachment.name)) : '';
 };
 
 export const PreviewAttachment = ({
