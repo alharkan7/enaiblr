@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { useSession } from 'next-auth/react'
 import { PRO_FEATURES } from '@/lib/constants'
 import { AppsHeader } from '@/components/apps-header'
+import { price, originalPrice } from '@/lib/constants'
 
 export default function PaymentPage() {
   const { data: session } = useSession()
@@ -17,9 +18,6 @@ export default function PaymentPage() {
   const [mobile, setMobile] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
   const [userData, setUserData] = useState<{ name: string | null, phone: string | null } | null>(null)
-
-  const price = 39000
-  const originalPrice = 99000
 
   useEffect(() => {
     async function fetchUserData() {

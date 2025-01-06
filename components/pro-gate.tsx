@@ -13,7 +13,7 @@ export function ProGate({ children }: { children: React.ReactNode }) {
     if (!isLoading && plan === 'free') {
       // Redirect to apps page with error
       const redirectUrl = new URL('/apps', window.location.href);
-      redirectUrl.searchParams.set('error', 'pro_required');
+      // redirectUrl.searchParams.set('error', 'pro_required');
       router.replace(redirectUrl.toString());
     }
   }, [plan, isLoading, router]);

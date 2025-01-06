@@ -1,4 +1,6 @@
-import { Check } from "lucide-react";
+"use client"
+
+import { Check, ChevronDown, ChevronUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -10,30 +12,25 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import { price, originalPrice, PRO_FEATURES, FREE_FEATURES } from "@/lib/constants";
+import React from 'react';
+
+const formatPrice = (amount: number) => {
+  return `Rp${amount.toLocaleString('id-ID')}`;
+};
 
 const plans = [
   {
     name: "Gratis",
-    price: "Rp0",
+    price: 0,
     description: "Cocok untuk Pengguna Baru",
-    features: [
-      "Chatbot AI tanpa History",
-      "Image Generator Non-HD",
-      "AI Search 1 Query/Hari",
-      "Transcription 10 Menit",
-    ],
+    features: FREE_FEATURES,
   },
   {
-    name: "All Access",
-    price: "Rp49.000",
-    description: "Akses Semua Fitur AI Lengkap",
-    features: [
-      "Unlimited Chatbot dengan History",
-      "Unlimited Image Generator HD",
-      "Unlimited AI Search Query",
-      "Transcription 100 Menit",
-      "Tutorial dan Akses Support",
-    ],
+    name: "Unlimited Access",
+    price: price,
+    description: "Akses Semua Fitur AI Tanpa Batas",
+    features: PRO_FEATURES,
     popular: true,
   },
   // {
@@ -52,6 +49,12 @@ const plans = [
 ];
 
 const Pricing = () => {
+  const [expandedPlan, setExpandedPlan] = React.useState<number | null>(null);
+
+  const toggleExpand = (index: number) => {
+    setExpandedPlan(expandedPlan === index ? null : index);
+  };
+
   return (
     <section id="pricing" className="py-20 backdrop-blur-xs">
       <div className="container px-4 mx-auto">
@@ -90,22 +93,61 @@ const Pricing = () => {
                 <CardDescription>{plan.description}</CardDescription>
               </CardHeader>
               <CardContent className="flex flex-col grow">
+                {plan.popular && (
+                  <div className="mb-3 text-center">
+                    <span className="text-xl text-muted-foreground relative">
+                      <span className="relative">
+                        {formatPrice(originalPrice)}
+                        <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
+                      </span>
+                      <span className="ml-2 text-xs bg-blue-400/90 text-white px-2 py-1 rounded-full">Disc. 60%</span>
+                    </span>
+                  </div>
+                )}
                 <div className="mb-4 text-center">
-                  <span className="text-4xl !text-black font-bold">{plan.price}</span>
-                  <span className="text-muted-foreground">/bulan</span>
+                  <span className="text-4xl !text-black font-bold">{formatPrice(plan.price)}</span>
+                  <span className="text-muted-foreground">{plan.price === 0 ? "" : "/bulan"}</span>
                 </div>
-                <ul className="space-y-2 max-w-[90%] mx-auto">
-                  {plan.features.map((feature, i) => (
-                    <li key={i} className="flex items-center gap-2">
-                      <Check className="size-4 !text-black/80" />
-                      <span className="text-muted-foreground">{feature}</span>
-                    </li>
-                  ))}
-                </ul>
+                <div className="relative">
+                  <ul className={cn(
+                    "space-y-2 max-w-[90%] mx-auto",
+                    plan.features.length > 8 && expandedPlan !== index && "mask-linear-gradient",
+                    plan.features.length > 8 && expandedPlan === index && "pb-12"
+                  )}>
+                    {plan.features.slice(0, expandedPlan === index ? undefined : 8).map((feature, i) => (
+                      <li key={i} className="flex items-center gap-2">
+                        <Check className="size-4 !text-black/80" />
+                        <span className="text-muted-foreground text-sm">{feature}</span>
+                      </li>
+                    ))}
+                  </ul>
+                  {plan.features.length > 8 && (
+                    <div className={cn(
+                      "absolute bottom-0 left-0 right-0 pt-8 pb-2 max-w-[90%] mx-auto",
+                      expandedPlan === index ? "" : "bg-gradient-to-t from-white via-white/80 to-transparent"
+                    )}>
+                      <button
+                        onClick={() => toggleExpand(index)}
+                        className="flex items-center gap-2 text-blue-600 hover:text-blue-700 text-sm"
+                      >
+                        {expandedPlan === index ? (
+                          <>
+                            <ChevronUp className="size-4" />
+                            <span>Ringkas</span>
+                          </>
+                        ) : (
+                          <>
+                            <ChevronDown className="size-5" />
+                            <span>Tampilkan Seluruhnya</span>
+                          </>
+                        )}
+                      </button>
+                    </div>
+                  )}
+                </div>
               </CardContent>
               <CardFooter className="mt-auto">
-                <Link href="/apps" className="w-full">
-                  <button
+              <Link href={plan?.popular ? "/payment" : "/apps"} className="w-full">                  <button
                     className={cn(
                       "w-full rounded-lg px-4 py-2",
                       plan?.popular

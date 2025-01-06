@@ -1,4 +1,5 @@
 import type { Config } from 'tailwindcss';
+import type { PluginAPI } from 'tailwindcss/types/config';
 
 const config: Config = {
   darkMode: ['class'],
@@ -72,6 +73,18 @@ const config: Config = {
       },
     },
   },
-  plugins: [require('tailwindcss-animate'), require('@tailwindcss/typography')],
+  plugins: [
+    function({ addUtilities }: PluginAPI) {
+      addUtilities({
+        '.mask-linear-gradient': {
+          'mask-image': 'linear-gradient(to bottom, black 30%, transparent 100%)',
+          '-webkit-mask-image': 'linear-gradient(to bottom, black 30%, transparent 100%)',
+        },
+      });
+    },
+    require('tailwindcss-animate'), 
+    require('@tailwindcss/typography')
+  ],
 };
+
 export default config;

@@ -22,7 +22,7 @@ const Features = () => {
         {apps.map((app) => (
             <Link
               key={app.slug}
-              href={`/${app.slug}`}
+              href={`/apps`}
               className="w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
             >
               <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black">

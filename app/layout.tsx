@@ -103,6 +103,7 @@ export default async function RootLayout({
       lang="en_US, en_ID"
       data-page-type={pageType}
       suppressHydrationWarning
+      className="scroll-smooth"
     >
       <head>
         <script

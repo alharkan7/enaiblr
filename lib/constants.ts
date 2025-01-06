@@ -1,3 +1,6 @@
+export const price = 39000
+export const originalPrice = 99000
+
 export const PRO_FEATURES = [
   'Unlimited Access to All AI Models:',
   'GPT-4o, Claude, Gemini, Llama, etc.',
@@ -13,4 +16,12 @@ export const PRO_FEATURES = [
   'Unlimited AI Natural Voice Creator',
   'Direct WhatsApp Support',
   'Unlimited Free Apps',
+] as const
+
+export const FREE_FEATURES = [
+  'Chatbot AI tanpa History',
+  'Image Generator Non-HD',
+  'Document Chat tanpa History',
+  'Science Paper Flashcards',
+  'Tanpa Support WhatsApp',
 ] as const
