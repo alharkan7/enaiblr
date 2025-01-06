@@ -123,7 +123,7 @@ export default function PaymentPage() {
                         Rp{originalPrice.toLocaleString('id-ID')}
                         <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
                       </span>
-                      <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-0.5 rounded-md">60% Disc</span>
+                      <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-0.5 rounded-md">Disc. 60%</span>
                     </span>
                   </div>
                   <span className="text-4xl !text-primary font-bold">Rp{price.toLocaleString('id-ID')}</span>
