@@ -2,6 +2,7 @@ import type { ChatRequestOptions, Message } from 'ai';
 import { PreviewMessage, ThinkingMessage } from './message';
 import { useScrollToBottom } from './use-scroll-to-bottom';
 import { memo } from 'react';
+import { Overview } from './overview';
 
 interface MessagesProps {
   chatId: string;
