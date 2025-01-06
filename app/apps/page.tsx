@@ -7,9 +7,8 @@ import { useSession } from 'next-auth/react';
 import { AppsHeader } from '@/components/apps-header';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
-import { SubscriptionDialog } from '@/components/subscription-dialog';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useSubscription } from '@/contexts/subscription-context';
 
 export default function Page() {
@@ -17,18 +16,9 @@ export default function Page() {
   const { plan, isLoading } = useSubscription();
   const searchParams = useSearchParams();
   const router = useRouter();
-  const [showProDialog, setShowProDialog] = useState(false);
-
-  // Show dialog when redirected from pro feature with error
-  useEffect(() => {
-    if (searchParams.get('error') === 'pro_required') {
-      setShowProDialog(true);
-    }
-  }, [searchParams]);
 
   // Handle dialog close
   const handleDialogChange = (open: boolean) => {
-    setShowProDialog(open);
     // If dialog is being closed and error parameter exists, remove it
     if (!open && searchParams.get('error') === 'pro_required') {
       // Create new URL without the error parameter
@@ -41,7 +31,7 @@ export default function Page() {
 
   const handleAppClick = (appType: 'free' | 'pro', appSlug: string) => {
     if (appType === 'pro' && plan === 'free') {
-      setShowProDialog(true);
+      router.push('/payment');
       return;
     }
     router.push(`/${appSlug}`);
@@ -111,8 +101,6 @@ export default function Page() {
       </main>
 
       <AppsFooter />
-      
-      <SubscriptionDialog open={showProDialog} onOpenChange={handleDialogChange} />
     </div>
   );
 }
