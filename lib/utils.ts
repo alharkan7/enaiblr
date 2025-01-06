@@ -97,46 +97,53 @@ export function convertToUIMessages(
 
     let textContent = '';
     const toolInvocations: Array<ToolInvocation> = [];
-    const attachments: Array<{ url: string; contentType?: string; name?: string }> = []
 
     if (typeof message.content === 'string') {
       textContent = message.content;
     } else if (Array.isArray(message.content)) {
-      message.content.forEach((content: any) => {
+      for (const content of message.content) {
         if (content.type === 'text') {
-          textContent = content.text;
-        } else if (content.type === 'image') {
-          attachments.push({
-            url: content.image,
-            contentType: 'image/png', // or detect from URL extension
-            name: content.image.split('/').pop()
+          textContent += content.text;
+        } else if (content.type === 'tool-call') {
+          toolInvocations.push({
+            state: 'call',
+            toolCallId: content.toolCallId,
+            toolName: content.toolName,
+            args: content.args,
           });
-        } else if (content.type === 'file') {
-          attachments.push({
-            url: content.data,
-            contentType: content.mimeType,
-            name: decodeURIComponent(content.data.split('/').pop())
-          });
+        } else if (content.type === 'tool-result') {
+          // Handle tool results when loading from DB
+          const existingInvocationIndex = toolInvocations.findIndex(
+            inv => inv.toolCallId === content.toolCallId
+          );
+          
+          const resultInvocation = {
+            state: 'result' as const,
+            toolCallId: content.toolCallId,
+            toolName: content.toolName,
+            args: content.args,
+            result: content.result
+          };
+          
+          if (existingInvocationIndex !== -1) {
+            // Replace the existing invocation with the result
+            toolInvocations[existingInvocationIndex] = resultInvocation;
+          } else {
+            toolInvocations.push(resultInvocation);
+          }
         }
-      });
+      }
     }
 
-    const uiMessage: Message = {
+    chatMessages.push({
       id: message.id,
-      content: textContent,
       role: message.role as Message['role'],
-      createdAt: message.createdAt,
-    };
+      content: textContent,
+      toolInvocations,
+      createdAt: message.createdAt
+    });
 
-    if (attachments.length > 0) {
-      uiMessage.experimental_attachments = attachments;
-    }
-
-    if (toolInvocations.length > 0) {
-      uiMessage.toolInvocations = toolInvocations;
-    }
-
-    return [...chatMessages, uiMessage];
+    return chatMessages;
   }, []);
 }
 
