@@ -97,6 +97,7 @@ export function convertToUIMessages(
 
     let textContent = '';
     const toolInvocations: Array<ToolInvocation> = [];
+    const attachments: Array<{ url: string; contentType?: string; name?: string }> = [];
 
     if (typeof message.content === 'string') {
       textContent = message.content;
@@ -104,15 +105,30 @@ export function convertToUIMessages(
       for (const content of message.content) {
         if (content.type === 'text') {
           textContent += content.text;
-        } else if (content.type === 'tool-call') {
+        } else if (message.role === 'user' && content.type === 'image') {
+          // Handle user image attachments
+          attachments.push({
+            url: content.image,
+            contentType: 'image/png',
+            name: content.image.split('/').pop()
+          });
+        } else if (message.role === 'user' && content.type === 'file') {
+          // Handle user file attachments
+          attachments.push({
+            url: content.data,
+            contentType: content.mimeType,
+            name: decodeURIComponent(content.data.split('/').pop())
+          });
+        } else if (message.role === 'assistant' && content.type === 'tool-call') {
+          // Handle assistant tool calls
           toolInvocations.push({
             state: 'call',
             toolCallId: content.toolCallId,
             toolName: content.toolName,
             args: content.args,
           });
-        } else if (content.type === 'tool-result') {
-          // Handle tool results when loading from DB
+        } else if (message.role === 'assistant' && content.type === 'tool-result') {
+          // Handle assistant tool results when loading from DB
           const existingInvocationIndex = toolInvocations.findIndex(
             inv => inv.toolCallId === content.toolCallId
           );
@@ -135,14 +151,22 @@ export function convertToUIMessages(
       }
     }
 
-    chatMessages.push({
+    const uiMessage: Message = {
       id: message.id,
       role: message.role as Message['role'],
       content: textContent,
-      toolInvocations,
       createdAt: message.createdAt
-    });
+    };
 
+    if (attachments.length > 0) {
+      uiMessage.experimental_attachments = attachments;
+    }
+
+    if (toolInvocations.length > 0) {
+      uiMessage.toolInvocations = toolInvocations;
+    }
+
+    chatMessages.push(uiMessage);
     return chatMessages;
   }, []);
 }
