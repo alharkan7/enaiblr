@@ -54,7 +54,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
         <PopoverTrigger asChild>
           {trigger}
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: PopoverPrimitive.PopoverContentProps['onPointerDownOutside'] extends (e: infer E) => void ? E : never) => {
+        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: Event) => {
           // Prevent closing when clicking inside the popover
           if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
             e.preventDefault();
