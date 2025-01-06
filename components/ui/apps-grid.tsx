@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import type { DismissEvent } from '@radix-ui/react-dismissable-layer';
+import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -54,7 +54,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
         <PopoverTrigger asChild>
           {trigger}
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: DismissEvent) => {
+        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: PopoverPrimitive.PopoverContentProps['onPointerDownOutside'] extends (e: infer E) => void ? E : never) => {
           // Prevent closing when clicking inside the popover
           if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
             e.preventDefault();
