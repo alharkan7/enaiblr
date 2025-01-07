@@ -65,7 +65,7 @@ export default function Page() {
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold tracking-tighter mb-2 text-foreground relative inline-block">
               enaiblr
-              <span className="absolute top-0 right-[-40] text-xs font-medium text-primary-foreground bg-primary rounded-lg px-1 leading-normal tracking-normal">
+              <span className={`absolute top-0 right-[-40] text-xs font-medium ${plan === 'pro' ? 'text-primary-foreground bg-primary' : 'text-foreground bg-muted outline-1 outline outline-primary'} rounded-lg px-1 leading-normal tracking-normal`}>
                 {plan === 'pro' ? 'PRO' : 'FREE'}
               </span>
             </h1>
