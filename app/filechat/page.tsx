@@ -97,42 +97,40 @@ export default function Filechat() {
     };
 
     return (
-        <div
-            className="flex min-h-dvh flex-col"
-        >
-            <div className="flex-1 flex flex-col relative">
-                <header className="fixed top-0 left-0 right-0 z-10 bg-background">
-                    <div className="max-w-6xl mx-auto relative">
-                        {hasUserSentMessage && (
-                            <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
-                                <Button
-                                    onClick={handleReset}
-                                    className="md:px-2 px-2 md:h-fit"
-                                    title="Clear chat history"
-                                    variant="outline"
-                                >
-                                    <RefreshIcon size={14} />
-                                </Button>
+        <div className="flex min-h-dvh flex-col overflow-hidden">
+            <div className="fixed top-0 left-0 right-0 z-10 bg-background border-b border-border">
+                <div className="max-w-6xl mx-auto relative">
+                    {hasUserSentMessage && (
+                        <div className="absolute left-2 top-1/2 -translate-y-1/2 z-20">
+                            <Button
+                                onClick={handleReset}
+                                className="md:px-2 px-2 md:h-fit"
+                                title="Clear chat history"
+                                variant="outline"
+                            >
+                                <RefreshIcon size={14} />
+                            </Button>
+                        </div>
+                    )}
+                    <AppsHeader
+                        title={hasUserSentMessage ? (
+                            <div className="flex items-center gap-2">
+                                <span className='text-lg'>Chat with</span>
+                                {fileInfo?.fileName && (
+                                    <span className="text-lg text-primary truncate max-w-[150px]">
+                                        {fileInfo.fileName}
+                                    </span>
+                                )}
                             </div>
-                        )}
-                        <AppsHeader
-                            title={hasUserSentMessage ? (
-                                <div className="flex items-center gap-2">
-                                    <span>Chat with</span>
-                                    {fileInfo?.fileName && (
-                                        <span className="text-primary truncate max-w-[150px]">
-                                            {fileInfo.fileName}
-                                        </span>
-                                    )}
-                                </div>
-                            ) : undefined}
-                        />
-                    </div>
-                </header>
+                        ) : undefined}
+                    />
+                </div>
+            </div>
+            <div className="flex-1 flex flex-col pt-[60px]">
                 <div className={`flex-1 flex flex-col ${!hasUserSentMessage ? 'justify-center' : ''}`}>
                     {hasUserSentMessage ? (
                         <>
-                            <div className="flex-1 overflow-y-auto pt-16 pb-24">
+                            <div className="flex-1 overflow-y-auto pb-24">
                                 <MessageList
                                     messages={messages}
                                     messagesEndRef={messagesEndRef}
@@ -144,22 +142,24 @@ export default function Filechat() {
                                     wordCount={wordCount}
                                 />
                             </div>
-                            <div className="fixed bottom-0 left-0 right-0 bg-background">
-                                <ChatInput
-                                    input={input}
-                                    setInput={setInput}
-                                    isLoading={isLoading}
-                                    fileInputRef={fileInputRef}
-                                    onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
-                                    autoFocus
-                                    fileContent={fileContent}
-                                    clearFile={clearFile}
-                                    sendMessage={handleSendMessage}
-                                    isFirstMessage={!hasUserSentMessage}
-                                    isUploading={isUploading}
-                                    wordCount={wordCount}
-                                    error={error}
-                                />
+                            <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
+                                <div className="max-w-4xl mx-auto">
+                                    <ChatInput
+                                        input={input}
+                                        setInput={setInput}
+                                        isLoading={isLoading}
+                                        fileInputRef={fileInputRef}
+                                        onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
+                                        autoFocus
+                                        fileContent={fileContent}
+                                        clearFile={clearFile}
+                                        sendMessage={handleSendMessage}
+                                        isFirstMessage={!hasUserSentMessage}
+                                        isUploading={isUploading}
+                                        wordCount={wordCount}
+                                        error={error}
+                                    />
+                                </div>
                             </div>
                         </>
                     ) : (

@@ -32,25 +32,21 @@ export function MessageList({
     const scrollToBottom = () => {
         if (messageListRef.current && messagesEndRef.current) {
             const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-
-            if (isMobile) {
-                requestAnimationFrame(() => {
-                    messagesEndRef.current?.scrollIntoView({ block: 'end' });
-                });
-            } else {
-                messageListRef.current.scrollTop = messageListRef.current.scrollHeight;
-            }
+            requestAnimationFrame(() => {
+                if (isMobile) {
+                    messagesEndRef.current?.scrollIntoView({ block: 'end', behavior: 'smooth' });
+                } else {
+                    messageListRef.current!.scrollTop = messageListRef.current!.scrollHeight;
+                }
+            });
         }
     };
 
     useEffect(() => {
         if (messages.length > 0) {
-            const lastMessage = messages[messages.length - 1];
-            if (lastMessage.role === 'assistant' || lastMessage.role === 'user') {
-                scrollToBottom();
-            }
+            scrollToBottom();
         }
-    }, [messages, messages[messages.length - 1]?.content]);
+    }, [messages]);
 
     useEffect(() => {
         scrollToBottom();
@@ -69,11 +65,8 @@ export function MessageList({
     };
 
     return (
-        <div
-            ref={messageListRef}
-            className="flex-1 overflow-y-auto scrollbar-hide relative h-full"
-        >
-            <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+        <div ref={messageListRef} className="h-full overflow-y-auto px-4 py-4">
+            <div className="max-w-4xl mx-auto space-y-4">
                 {messages.length > 0 && fileInfo && (
                     <div className="flex justify-end mb-4">
                         <DocumentPreview
