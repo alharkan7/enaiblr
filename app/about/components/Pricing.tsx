@@ -57,7 +57,7 @@ const Pricing = () => {
 
   return (
     <section id="pricing" className="py-20 backdrop-blur-xs">
-      <div className="container px-4 mx-auto">
+      <div className="container px-6 mx-auto">
         <div className="max-w-2xl mx-auto text-center mb-16">
           <h2 className="text-3xl font-bold mb-4">
             Harga Tunggal dan
@@ -70,7 +70,7 @@ const Pricing = () => {
             Fitur AI terlengkap dan tanpa batas dengan harga paling murah.
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-3xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-16 md:gap-8 max-w-3xl mx-auto">
           {plans.map((plan, index) => (
             <Card
               key={index}

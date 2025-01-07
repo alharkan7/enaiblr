@@ -72,7 +72,12 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center gap-2">
+            <Button
+              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
+            >
+              <Link href="#features">Mulai</Link>
+            </Button>
             <Button
               ref={buttonRef}
               variant="ghost"
@@ -102,11 +107,6 @@ const Header = () => {
                 {item.name}
               </Link>
             ))}
-            <div className="px-3 py-2">
-              <Button className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                <Link href="#features">Mulai Sekarang</Link>
-              </Button>
-            </div>
           </div>
         </div>
       </nav>
