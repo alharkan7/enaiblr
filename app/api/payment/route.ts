@@ -32,14 +32,15 @@ export async function POST(request: Request) {
     expiry.setHours(expiry.getHours() + 24)
 
     const payload = {
-      amount,
-      description: `Enaiblr Pro Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
+      name: name,
       email: email,
+      amount:amount,
+      mobile: mobile.replace(/\D/g, ''),
+      redirectUrl: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
+      description: `Enaiblr Pro Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
       expired_at: expiry.toISOString(),
       success_url: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
       failure_url: `${process.env.APP_URL}/payment`,
-      name: name,
-      mobile: mobile.replace(/\D/g, ''),
     }
 
     const response = await fetch('https://api.mayar.id/hl/v1/payment/create', {
