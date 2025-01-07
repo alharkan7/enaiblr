@@ -108,7 +108,7 @@ export default function PaymentPage() {
             </p>
           </div>
 
-          <div className="mx-auto mt-6 max-w-md">
+          <div className="mx-auto mt-6 max-w-md px-4">
             <Card>
               <CardHeader className="text-center">
                 {/* <CardTitle className="mb-2">Unlimited Access</CardTitle>
