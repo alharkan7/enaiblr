@@ -4,7 +4,6 @@ import { useEffect } from 'react'
 import AppsFooter from '@/components/apps-footer';
 import TextToVoiceConverter from './components/text-to-voice-converter'
 import { AppsHeader } from '@/components/apps-header'
-import { ProGate } from '@/components/pro-gate'
 
 export default function Voice() {
     useEffect(() => {
@@ -25,7 +24,6 @@ export default function Voice() {
     }, []);
 
     return (
-        <ProGate>
             <div
                 className="flex min-h-dvh flex-col"
             >
@@ -39,6 +37,5 @@ export default function Voice() {
                     </div>
                 </div>
             </div>
-        </ProGate>
     )
 }

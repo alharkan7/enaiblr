@@ -31,13 +31,9 @@ export default function Page() {
 
   const handleAppClick = (appType: 'free' | 'pro', appSlug: string) => {
     if (status !== 'authenticated') {
-      const callbackUrl = appType === 'pro' ? '/payment' : `/${appSlug}`;
-      router.push(`/login?callbackUrl=${encodeURIComponent(callbackUrl)}`);
-      return;
-    }
-    
-    if (appType === 'pro' && plan === 'free') {
-      router.push('/payment');
+      const callbackUrl = `/${appSlug}`;
+      const encodedCallback = encodeURIComponent(callbackUrl);
+      router.push(`/login?callbackUrl=${encodedCallback}`);
       return;
     }
     router.push(`/${appSlug}`);

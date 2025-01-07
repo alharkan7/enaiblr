@@ -8,7 +8,6 @@ import { AppsHeader } from '@/components/apps-header'
 import type { TranscriptionResult as TranscriptionResultType } from './types';
 import { RefreshIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
-import { ProGate } from '@/components/pro-gate';
 
 export default function Transcriber() {
     const [transcriptionResult, setTranscriptionResult] = useState<TranscriptionResultType | null>(null);
@@ -31,7 +30,6 @@ export default function Transcriber() {
     }, []);
 
     return (
-        <ProGate>
             <div
                 className="flex min-h-screen"
                 style={{
@@ -71,6 +69,5 @@ export default function Transcriber() {
                     </main>
                 </div>
             </div>
-        </ProGate>
     )
 }

@@ -2,7 +2,6 @@
 
 import SearchPage from './components/SearchPage'
 import { useEffect, useState } from 'react'
-import { ProGate } from '@/components/pro-gate'
 
 export default function Page({
   searchParams
@@ -16,8 +15,6 @@ export default function Page({
   }, [searchParams]);
 
   return (
-    <ProGate>
       <SearchPage initialQuery={params.q || ""} />
-    </ProGate>
   )
 }

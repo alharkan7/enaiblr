@@ -1,6 +1,5 @@
 'use client';
 
-import { ProGate } from '@/components/pro-gate';
 import { Chat } from '@/components/chat';
 import { DataStreamHandler } from '@/components/data-stream-handler';
 import type { User } from 'next-auth';
@@ -17,7 +16,6 @@ export function ChatWrapper({ id: initialId, selectedModelId, user }: ChatWrappe
   const [id] = useState(() => initialId || generateUUID());
 
   return (
-    <ProGate>
       <>
         <Chat
           key={id}
@@ -30,6 +28,5 @@ export function ChatWrapper({ id: initialId, selectedModelId, user }: ChatWrappe
         />
         <DataStreamHandler id={id} />
       </>
-    </ProGate>
   );
 }
