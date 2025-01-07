@@ -152,14 +152,20 @@ export default function AuthForm({ type, action }: AuthFormProps) {
         {type === 'login' ? (
           <>
             Don&apos;t have an account?{' '}
-            <Link className="font-medium underline" href="/register">
+            <Link 
+              className="font-medium underline" 
+              href={`/register${searchParams.get('callbackUrl') ? `?callbackUrl=${searchParams.get('callbackUrl')}` : ''}`}
+            >
               Sign up
             </Link>
           </>
         ) : (
           <>
             Already have an account?{' '}
-            <Link className="font-medium underline" href="/login">
+            <Link 
+              className="font-medium underline" 
+              href={`/login${searchParams.get('callbackUrl') ? `?callbackUrl=${searchParams.get('callbackUrl')}` : ''}`}
+            >
               Sign in
             </Link>
           </>
