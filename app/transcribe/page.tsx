@@ -39,7 +39,7 @@ export default function Transcriber() {
                     minHeight: '-webkit-fill-available'
                 }}
             >
-                <div className="flex flex-col w-full relative">
+                <div className="flex flex-col w-full relative overflow-hidden">
                     <AppsHeader
                         title={transcriptionResult ? "Transcription Result" : ""}
                         leftButton={transcriptionResult ? (
@@ -53,7 +53,7 @@ export default function Transcriber() {
                             </Button>
                         ) : undefined}
                     />
-                    <main className={`grow px-4 md:px-4 ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
+                    <main className={`grow px-4 md:px-4 overflow-y-auto ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
                         <div className="w-full max-w-4xl mx-auto">
                             {transcriptionResult ? (
                                 <TranscriptionResult
