@@ -53,18 +53,22 @@ export default function Transcriber() {
                             </Button>
                         ) : undefined}
                     />
-                    <main className={`grow px-4 md:px-4 overflow-y-auto ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center py-12'}`}>
+                    <main className={`grow px-4 md:px-4 overflow-y-auto ${transcriptionResult ? 'pt-8 pb-12' : 'flex items-center justify-center pb-24'}`}>
                         <div className="w-full max-w-4xl mx-auto">
                             {transcriptionResult ? (
                                 <TranscriptionResult
                                     result={transcriptionResult}
                                 />
                             ) : (
-                                <UploadForm onTranscriptionComplete={setTranscriptionResult} />
+                                <>
+                                    <UploadForm onTranscriptionComplete={setTranscriptionResult} />
+                                    <div className="fixed bottom-0 left-0 right-0 bg-background border-t border-border">
+                                        <AppsFooter />
+                                    </div>
+                                </>
                             )}
                         </div>
                     </main>
-                    <AppsFooter />
                 </div>
             </div>
         </ProGate>
