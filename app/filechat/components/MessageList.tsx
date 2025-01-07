@@ -65,7 +65,7 @@ export function MessageList({
     };
 
     return (
-        <div ref={messageListRef} className="h-full overflow-y-auto px-4 py-4">
+        <div ref={messageListRef} className="h-full overflow-y-auto px-4 pb-4">
             <div className="max-w-4xl mx-auto space-y-4">
                 {messages.length > 0 && fileInfo && (
                     <div className="flex justify-end mb-4">
