@@ -65,11 +65,9 @@ export default function Page() {
           <div className="text-center mb-16">
             <h1 className="text-5xl font-bold tracking-tighter mb-2 text-foreground relative inline-block">
               enaiblr
-              {plan === 'pro' && (
-                <span className="absolute top-0 right-[-40] text-xs font-medium text-primary-foreground bg-primary rounded-lg px-1 leading-normal tracking-normal">
-                  PRO
-                </span>
-              )}
+              <span className="absolute top-0 right-[-40] text-xs font-medium text-primary-foreground bg-primary rounded-lg px-1 leading-normal tracking-normal">
+                {plan === 'pro' ? 'PRO' : 'FREE'}
+              </span>
             </h1>
             <p className="text-muted-foreground">Unlimited AI Platform</p>
           </div>
@@ -83,14 +81,10 @@ export default function Page() {
                   onClick={() => handleAppClick(app.type, app.slug)}
                   className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer"
                 >
-                  {!isLoading && plan === 'free' && (
+                  {!isLoading && plan === 'free' && app.type === 'pro' && (
                     <div className="absolute -right-[1px] -top-[3px]">
-                      <span className={`inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl ${
-                        app.type === 'pro' 
-                          ? 'bg-primary text-primary-foreground' 
-                          : 'bg-muted text-muted-foreground'
-                      }`}>
-                        {app.type}
+                      <span className="inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl bg-primary text-primary-foreground">
+                        PRO
                       </span>
                     </div>
                   )}

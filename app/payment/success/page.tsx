@@ -70,11 +70,11 @@ export default function PaymentSuccessPage() {
               <div className="flex justify-center mb-4">
                 <div className="h-12 w-12 animate-spin rounded-full border-4 border-t-transparent border-primary"></div>
               </div>
-              <CardTitle className="text-2xl">Processing Payment...</CardTitle>
+              <CardTitle className="text-2xl">Verifying Payment...</CardTitle>
             </CardHeader>
             <CardContent className="text-center">
               <p className="text-muted-foreground">
-                Please wait while we verify your payment...
+                Please wait while we check your payment...
               </p>
             </CardContent>
           </Card>
