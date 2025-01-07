@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { price, originalPrice, PRO_FEATURES, FREE_FEATURES } from "@/lib/constants";
+import { price, originalPrice, discountValue, PRO_FEATURES, FREE_FEATURES } from "@/lib/constants";
 import React from 'react';
 
 const formatPrice = (amount: number) => {
@@ -100,7 +100,7 @@ const Pricing = () => {
                         {formatPrice(originalPrice)}
                         <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
                       </span>
-                      <span className="ml-2 text-xs bg-blue-400/90 text-white px-2 py-1 rounded-full">Disc. 60%</span>
+                      <span className="ml-2 text-xs bg-blue-400/90 text-white px-2 py-1 rounded-full">Disc. {discountValue}%</span>
                     </span>
                   </div>
                 )}
