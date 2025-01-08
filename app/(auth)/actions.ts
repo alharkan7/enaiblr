@@ -61,17 +61,17 @@ export async function authenticate(formData: FormData) {
     const users = await getUser(email);
 
     if (users.length === 0) {
-      return { error: 'Invalid credentials' };
+      return { error: 'No user found. Please sign up.' };
     }
 
     const user = users[0];
     if (!user.password) {
-      return { error: 'Invalid credentials' };
+      return { error: 'Please sign in via Google' };
     }
 
     const passwordsMatch = await hash(password, user.password);
     if (!passwordsMatch) {
-      return { error: 'Invalid credentials' };
+      return { error: 'Invalid password' };
     }
 
     return { success: true };

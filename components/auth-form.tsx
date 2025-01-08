@@ -47,7 +47,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
 
       if (signInResult?.error) {
         setError('Failed to sign in');
-        toast.error('Failed to sign in');
+        toast.error('Failed to sign in. Try continue with Google.');
         return;
       }
 
