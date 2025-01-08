@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { BookText, MoveRight, ClipboardCheck, X, FileText, Upload } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
+import { useSubscription } from '@/contexts/subscription-context';
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 
 interface PDFInputProps {
   pdfLink: string;
@@ -21,13 +23,25 @@ export const PDFInput = ({
   errorMessage,
 }: PDFInputProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { plan } = useSubscription();
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles[0]) {
-      setSelectedFile(acceptedFiles[0]);
-      handleFileChange(acceptedFiles[0]);
+      const file = acceptedFiles[0];
+      if (file.size > (plan === 'free' ? 5 * 1024 * 1024 : 40 * 1024 * 1024)) {
+        if (plan === 'free') {
+          setShowUpgradeDialog(true);
+          return;
+        } else {
+          // Show error for pro users exceeding 40MB
+          return;
+        }
+      }
+      setSelectedFile(file);
+      handleFileChange(file);
     }
-  }, [handleFileChange]);
+  }, [handleFileChange, plan]);
 
   const removeFile = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -54,13 +68,13 @@ export const PDFInput = ({
 
       <div className="w-full space-y-2">
         <div
-          className={`w-full border-2 border-dashed ${isDragActive ? 'border-primary bg-primary/10' : 'border-muted'
+          className={`w-full border-2 border-primary/30 border-dashed ${isDragActive ? 'border-primary bg-primary/10' : 'border-muted'
             } rounded-lg p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-all group`}
           {...getRootProps()}
         >
           <input {...getInputProps()} />
           {selectedFile ? (
-            <>
+            <div>
               <div className="flex flex-col items-center gap-3">
                 <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
                   <FileText className="size-6 text-primary" />
@@ -79,7 +93,7 @@ export const PDFInput = ({
               >
                 <X className="size-5" />
               </button>
-            </>
+            </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
               <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary/20 transition-colors">
@@ -87,11 +101,11 @@ export const PDFInput = ({
               </div>
               <div className="space-y-2">
                 <p className="font-medium text-foreground">
-                  Drop your PDF here, or <span className="text-primary">browse</span>
+                  Drop your PDF here
                 </p>
-                <p className="text-sm text-muted-foreground">
+                {/* <p className="text-sm text-muted-foreground">
                   Maximum file size: 10MB
-                </p>
+                </p> */}
               </div>
             </div>
           )}
@@ -117,6 +131,20 @@ export const PDFInput = ({
       >
         Create
       </Button>
+      <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+            <AlertDialogDescription>
+              Free users are limited to 5MB PDF files. Upgrade to Pro to upload larger files and unlock all features.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>Cancel</Button>
+            <Button onClick={() => window.location.href = '/pricing'}>Upgrade Now</Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
