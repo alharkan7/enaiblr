@@ -68,31 +68,32 @@ export const PDFInput = ({
 
       <div className="w-full space-y-2">
         <div
-          className={`w-full border-2 border-primary/30 border-dashed ${isDragActive ? 'border-primary bg-primary/10' : 'border-muted'
-            } rounded-lg p-8 text-center cursor-pointer hover:border-primary hover:bg-primary/10 transition-all group`}
+          className={`relative w-full border-2 border-primary/30 border-dashed ${
+            isDragActive && !selectedFile ? 'border-primary bg-primary/10' : 'border-muted'
+          } rounded-lg p-8 text-center ${!selectedFile ? 'cursor-pointer hover:border-primary hover:bg-primary/10' : ''} transition-all group`}
           {...getRootProps()}
         >
           <input {...getInputProps()} />
+          {selectedFile && (
+            <button
+              onClick={removeFile}
+              className="absolute top-[-0.5rem] right-[-0.5rem] p-1.5 rounded-full bg-red-500 border shadow-sm hover:bg-red-600 text-white hover:text-red-100 transition-colors z-10"
+              title="Remove file"
+            >
+              <X className="size-4" />
+            </button>
+          )}
           {selectedFile ? (
-            <div>
-              <div className="flex flex-col items-center gap-3">
-                <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                  <FileText className="size-6 text-primary" />
-                </div>
-                <div className="space-y-1">
-                  <p className="font-medium text-foreground">{selectedFile.name}</p>
-                  <p className="text-sm text-muted-foreground">
-                    {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
-                  </p>
-                </div>
+            <div className="flex flex-col items-center gap-3">
+              <div className="size-12 rounded-full bg-primary/10 flex items-center justify-center">
+                <FileText className="size-6 text-primary" />
               </div>
-              <button
-                onClick={removeFile}
-                className="absolute top-3 right-3 p-1.5 rounded-full hover:bg-primary/10 text-muted-foreground hover:text-primary transition-colors"
-                title="Remove file"
-              >
-                <X className="size-5" />
-              </button>
+              <div className="space-y-1">
+                <p className="font-medium text-foreground">{selectedFile.name}</p>
+                <p className="text-sm text-muted-foreground">
+                  {(selectedFile.size / (1024 * 1024)).toFixed(2)} MB
+                </p>
+              </div>
             </div>
           ) : (
             <div className="flex flex-col items-center gap-3">
