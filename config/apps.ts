@@ -18,6 +18,27 @@ export const apps: AppConfig[] = [
     type: 'pro'
   },
   {
+    name: 'Image Creator',
+    icon: WandSparkles,
+    slug: 'imagen',
+    description: 'Create Unlimited Image in HD Quality & Limitless Styles',
+    type: 'free'
+  },
+  {
+    name: 'Doc Chat',
+    icon: FileText,
+    slug: 'filechat',
+    description: 'Private Chat with Documents. No File Copy is Saved',
+    type: 'free'
+  },
+  {
+    name: 'Incognito Chat',
+    icon: MessageSquareDashed,
+    slug: 'incognito',
+    description: 'Private Chat with AI; No Text is Saved',
+    type: 'free'
+  },
+  {
     name: 'AI Search',
     icon: Search,
     slug: 'search',
@@ -39,38 +60,17 @@ export const apps: AppConfig[] = [
     type: 'pro'
   },
   {
-    name: 'Text to Voice',
+    name: 'Natural AI Voice',
     icon: Speech,
     slug: 'voice',
     description: 'Turn Any Text into Audio in Natural, Human-like Voice',
     type: 'pro'
   },
   {
-    name: 'Image Creator',
-    icon: WandSparkles,
-    slug: 'imagen',
-    description: 'Create Unlimited Image in HD Quality & Limitless Styles',
-    type: 'free'
-  },
-  {
-    name: 'Doc Chat',
-    icon: FileText,
-    slug: 'filechat',
-    description: 'Private Chat with Documents. No File Copy is Saved',
-    type: 'free'
-  },
-  {
     name: 'Paper Flashcard',
     icon: Zap,
     slug: 'paper-flashcard',
     description: 'Turn any Science Paper into Flashcard for Easy Reading',
-    type: 'free'
-  },
-  {
-    name: 'Incognito Chat',
-    icon: MessageSquareDashed,
-    slug: 'incognito',
-    description: 'Private Chat with AI; No Text is Saved',
     type: 'free'
   },
 ]

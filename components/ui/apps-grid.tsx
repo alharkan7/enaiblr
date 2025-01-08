@@ -62,7 +62,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                   <TooltipTrigger asChild disabled={!showTooltips}>
                     <Button
                       variant="ghost"
-                      className="relative h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
+                      className="relative h-[100px] w-[100px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
                       onClick={() => handleAppClick(app.type, app.slug)}
                     >
                       {/* {app.type === 'pro' && plan === 'free' && (
@@ -71,7 +71,9 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                         </span>
                       )} */}
                       <Icon className="size-12 text-foreground" />
-                      <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
+                      <div className="w-full h-8 flex items-start">
+                        <span className="text-xs font-medium line-clamp-2 text-center whitespace-normal break-words w-full">{app.name}</span>
+                      </div>
                     </Button>
                   </TooltipTrigger>
                   <TooltipContent>

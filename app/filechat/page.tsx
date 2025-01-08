@@ -21,7 +21,9 @@ export default function Filechat() {
         clearFile,
         error,
         setError,
-        wordCount
+        wordCount,
+        showUpgradeDialog,
+        setShowUpgradeDialog
     } = useFileUpload();
 
     useEffect(() => {
@@ -204,6 +206,8 @@ export default function Filechat() {
                                 isUploading={isUploading}
                                 wordCount={wordCount}
                                 error={error}
+                                showUpgradeDialog={showUpgradeDialog}
+                                setShowUpgradeDialog={setShowUpgradeDialog}
                             />
                         </div>
                     </div>
@@ -229,6 +233,8 @@ export default function Filechat() {
                                 isUploading={isUploading}
                                 wordCount={wordCount}
                                 error={error}
+                                showUpgradeDialog={showUpgradeDialog}
+                                setShowUpgradeDialog={setShowUpgradeDialog}
                             />
                         </div>
                     </div>

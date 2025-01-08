@@ -14,7 +14,8 @@ import { Sparkles, SlidersHorizontal } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { style } from './constants';
 import { useSubscription } from "@/contexts/subscription-context"
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
+import { useRouter } from "next/navigation"
 
 type SubscriptionPlan = 'free' | 'pro';
 
@@ -34,6 +35,8 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
   const [quality, setQuality] = useState<'standard' | 'hd'>('standard')
   const [aspectRatio, setAspectRatio] = useState<'wide' | 'square' | 'portrait'>('square')
   const [selectedStyle, setSelectedStyle] = useState("")
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
+  const router = useRouter()
 
   useEffect(() => {
     setPrompt(defaultPrompt)
@@ -181,20 +184,33 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
             <div className="flex items-center gap-2 min-w-[150px] justify-center">
               <span className={`text-sm font-medium ${quality === 'standard' ? 'text-primary font-bold' : ''}`}>Standard</span>
               {plan === 'free' ? (
-                <Tooltip>
-                  <TooltipTrigger asChild>
-                    <div>
-                      <Switch
-                        checked={quality === 'hd'}
-                        onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
-                        disabled
-                      />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent>
-                    <p>Get Enaiblr Pro</p>
-                  </TooltipContent>
-                </Tooltip>
+                <>
+                  <Switch
+                    checked={quality === 'hd'}
+                    onCheckedChange={() => setShowUpgradeDialog(true)}
+                  />
+                  <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+                    <AlertDialogContent>
+                      <AlertDialogHeader>
+                        <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+                        <AlertDialogDescription>
+                          HD quality is only available to Pro users. Upgrade now to unlock HD quality and other premium features.
+                        </AlertDialogDescription>
+                      </AlertDialogHeader>
+                      <AlertDialogFooter>
+                        <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
+                          Cancel
+                        </Button>
+                        <Button onClick={() => {
+                          router.push('/payment');
+                          setShowUpgradeDialog(false);
+                        }}>
+                          Upgrade to Pro
+                        </Button>
+                      </AlertDialogFooter>
+                    </AlertDialogContent>
+                  </AlertDialog>
+                </>
               ) : (
                 <Switch
                   checked={quality === 'hd'}

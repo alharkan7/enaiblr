@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
+import { useSubscription } from '@/contexts/subscription-context';
+import { useRouter } from 'next/navigation';
 
 interface FileInfo {
     fileName: string;
@@ -10,6 +12,10 @@ interface FileInfo {
 
 export function useFileUpload() {
     const [wordCount, setWordCount] = useState<number>(0);
+    const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+    const { plan } = useSubscription();
+    const router = useRouter();
+
     useEffect(() => {
         // Set up PDF.js worker using local file
         pdfjsLib.GlobalWorkerOptions.workerSrc = '/pdf.worker.min.mjs';
@@ -118,10 +124,19 @@ export function useFileUpload() {
             const words = content.trim().split(/\s+/).length;
 
             if (words > 80000) {
-                setError('Maximum word count is 80.000');
+                setError('Maximum word count is 80,000');
                 setFileInfo(null);
                 setFileContent(null);
                 setWordCount(0);
+            } else if (plan === 'free' && words > 10000) {
+                setShowUpgradeDialog(true);
+                // Keep the file info but mark it as over limit
+                setFileInfo(prev => prev ? {
+                    ...prev,
+                    content: content
+                } : null);
+                setFileContent(content);
+                setWordCount(words);
             } else {
                 setWordCount(words);
                 setFileContent(content);
@@ -142,6 +157,7 @@ export function useFileUpload() {
         setFileInfo(null);
         setFileContent(null);
         setError(null);
+        setShowUpgradeDialog(false);
         // Reset the file input value to allow selecting the same file again
         const fileInput = document.querySelector('input[type="file"]');
         if (fileInput) {
@@ -158,5 +174,7 @@ export function useFileUpload() {
         error,
         setError,
         wordCount,
+        showUpgradeDialog,
+        setShowUpgradeDialog
     };
 }
