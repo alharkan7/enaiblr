@@ -4,7 +4,7 @@ import type { NextAuthConfig } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
-import { getUser, createGoogleUser } from '@/lib/db/queries';
+import { getUser, createGoogleUser, updateUserAvatar } from '@/lib/db/queries';
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
 
@@ -34,12 +34,17 @@ export const config = {
   callbacks: {
     async signIn({ user, account }) {
       if (account?.provider === 'google') {
+        // console.log('Google sign in - user data:', { email: user.email, image: user.image, name: user.name });
         const users = await getUser(user.email!);
         if (users.length > 0) {
           user.id = users[0].id;
+          // Update avatar for existing user
+          if (user.image && (!users[0].avatar || users[0].avatar !== user.image)) {
+            await updateUserAvatar(user.email!, user.image);
+          }
         } else {
           // Create new user for Google sign-in
-          const newUser = await createGoogleUser(user.email!);
+          const newUser = await createGoogleUser(user.email!, user.image || undefined);
           user.id = newUser[0].id;
         }
       }
@@ -54,6 +59,12 @@ export const config = {
     async session({ session, token }: any) {
       if (session.user) {
         session.user.id = token.id;
+        // Get user from database to include stored avatar
+        const users = await getUser(session.user.email!);
+        if (users.length > 0) {
+          // Use stored avatar if available, otherwise fallback to session image
+          session.user.image = users[0].avatar || session.user.image;
+        }
       }
       return session;
     },

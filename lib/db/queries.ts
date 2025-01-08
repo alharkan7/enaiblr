@@ -47,10 +47,10 @@ export async function createUser(email: string, password: string) {
   }
 }
 
-export async function createGoogleUser(email: string) {
+export async function createGoogleUser(email: string, avatar?: string) {
   try {
     return await db.transaction(async (tx) => {
-      const result = await tx.insert(user).values({ email }).returning();
+      const result = await tx.insert(user).values({ email, avatar }).returning();
       await tx.insert(subscription).values({ 
         userId: result[0].id,
         createdAt: new Date()
@@ -551,6 +551,18 @@ export async function updateUserProfile(email: string, data: { name?: string, ph
       .returning();
   } catch (error) {
     console.error('Failed to update user profile:', error);
+    throw error;
+  }
+}
+
+export async function updateUserAvatar(email: string, avatar: string | null) {
+  try {
+    return await db.update(user)
+      .set({ avatar })
+      .where(eq(user.email, email))
+      .returning();
+  } catch (error) {
+    console.error('Failed to update user avatar');
     throw error;
   }
 }
