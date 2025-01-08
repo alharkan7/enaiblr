@@ -1,5 +1,16 @@
 import { Send, Image } from 'lucide-react'
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
+import { useSubscription } from '@/contexts/subscription-context'
+import { useRouter } from 'next/navigation'
+import {
+    AlertDialog,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
+import { Button } from '@/components/ui/button'
 
 interface ChatInputProps {
     input: string;
@@ -27,6 +38,9 @@ export function ChatInput({
     onFocusChange
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
+    const { plan } = useSubscription();
+    const router = useRouter();
+    const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -53,10 +67,21 @@ export function ChatInput({
                 <div className="shrink-0 pl-2">
                     <button
                         type="button"
-                        className="p-2 rounded-full hover:bg-muted transition-colors"
-                        onClick={() => fileInputRef.current?.click()}
+                        className="p-2 rounded-full hover:bg-muted transition-colors relative"
+                        onClick={() => {
+                            if (plan === 'free') {
+                                setShowUpgradeDialog(true);
+                                return;
+                            }
+                            fileInputRef.current?.click();
+                        }}
                     >
                         <Image className="size-6" aria-label="Upload image" />
+                        {/* {plan === 'free' && (
+                            <span className="absolute -top-1 -right-1 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
+                                PRO
+                            </span>
+                        )} */}
                     </button>
                     <input
                         ref={fileInputRef}
@@ -88,6 +113,27 @@ export function ChatInput({
                     </button>
                 </div>
             </div>
+            <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Image upload is only available to Pro users. Upgrade now to unlock all pro features.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
+                            Cancel
+                        </Button>
+                        <Button onClick={() => {
+                            router.push('/payment');
+                            setShowUpgradeDialog(false);
+                        }}>
+                            Upgrade to Pro
+                        </Button>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </form>
     );
 }

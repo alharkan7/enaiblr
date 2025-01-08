@@ -196,17 +196,35 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
                 {error && <p className="text-destructive">{error}</p>}
 
-                <div className="hidden sm:flex flex-wrap justify-center gap-2 max-w-2xl mt-6">
-                    {TAGS.map((tag) => (
-                        <Button
-                            key={tag}
-                            variant="outline"
-                            className="rounded-full text-xs h-8 hover:bg-secondary"
-                            onClick={() => handleTagSearch(tag)}
-                        >
-                            {tag} ↗
-                        </Button>
-                    ))}
+                <div className="sm:flex sm:flex-wrap justify-center gap-2 max-w-2xl mt-6">
+                    <div className="sm:hidden relative">
+                        <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
+                        <div className="max-h-[160px] overflow-y-auto flex flex-col gap-2 px-4 scrollbar-hide">
+                            {TAGS.map((tag) => (
+                                <Button
+                                    key={tag}
+                                    variant="outline"
+                                    className="rounded-full text-xs h-8 hover:bg-secondary w-full"
+                                    onClick={() => handleTagSearch(tag)}
+                                >
+                                    {tag} ↗
+                                </Button>
+                            ))}
+                        </div>
+                        <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
+                    </div>
+                    <div className="hidden sm:flex sm:flex-wrap sm:justify-center gap-2">
+                        {TAGS.map((tag) => (
+                            <Button
+                                key={tag}
+                                variant="outline"
+                                className="rounded-full text-xs h-8 hover:bg-secondary"
+                                onClick={() => handleTagSearch(tag)}
+                            >
+                                {tag} ↗
+                            </Button>
+                        ))}
+                    </div>
                 </div>
             </main>
 
