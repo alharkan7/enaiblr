@@ -24,6 +24,26 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
 
   return (
     <div>
+      {plan === 'free' && (
+        <>
+          <Button
+            variant="ghost"
+            className="bg-muted h-10 w-full justify-start gap-2 text-primary hover:text-primary"
+            onClick={() => router.push('/payment')}
+          >
+            <Image
+              src="/favicon.ico"
+              alt="Enaiblr Logo"
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+            <span>Get Enaiblr Pro</span>
+            <ArrowRight className="ml-auto size-4" />
+          </Button>
+          <DropdownMenuSeparator className="mb-1 mt-2"/>
+        </>
+      )}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-10 w-full justify-start gap-2">
@@ -80,26 +100,6 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
-      {plan === 'free' && (
-        <>
-          <DropdownMenuSeparator />
-          <Button
-            variant="ghost"
-            className="h-10 w-full justify-start gap-2 text-primary hover:text-primary mt-1"
-            onClick={() => router.push('/payment')}
-          >
-            <Image
-              src="/favicon.ico"
-              alt="Enaiblr Logo"
-              width={24}
-              height={24}
-              className="rounded-full"
-            />
-            <span>Get Enaiblr Pro</span>
-            <ArrowRight className="ml-auto size-4" />
-          </Button>
-        </>
-      )}
     </div>
   );
 }

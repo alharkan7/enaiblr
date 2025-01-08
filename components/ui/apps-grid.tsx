@@ -82,7 +82,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
             })}
           </div>
           {user && (
-            <div className="mt-4 pt-4 border-t border-border">
+            <div className="mt-2 pt-2 border-t border-border">
               <AppsGridUserNav user={user} isPro={apps.some(app => app.type === 'pro')} />
             </div>
           )}

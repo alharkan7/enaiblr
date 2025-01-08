@@ -6,6 +6,7 @@ export interface Model {
   apiIdentifier: string;
   description: string;
   provider: 'openai' | 'anthropic' | 'google' | 'groq' | 'togetherai';
+  type: 'pro' | 'free',
   capabilities: {
     images?: boolean;
     files?: boolean;
@@ -19,6 +20,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'gpt-4o-mini',
     description: 'Text, Images, Editor, Code',
     provider: 'openai',
+    type: 'pro',
     capabilities: {
       images: true,
       files: false,
@@ -30,6 +32,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'claude-3-haiku-20240307',
     description: 'Text, Images, Editor, Code',
     provider: 'anthropic',
+    type: 'pro',
     capabilities: {
       images: true,
       files: false,
@@ -41,6 +44,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'gemini-1.5-flash',
     description: 'Text, Image, Documents',
     provider: 'google',
+    type: 'pro',
     capabilities: {
       images: true,
       files: true,
@@ -52,6 +56,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'llama3-70b-8192',
     description: 'Text, Editor, Code',
     provider: 'groq',
+    type: 'free',
     capabilities: {
       images: false,
       files: false,
@@ -63,6 +68,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'mixtral-8x7b-32768',
     description: 'Text, Editor, Code',
     provider: 'groq',
+    type: 'free',
     capabilities: {
         images: false,
         files: false,
@@ -74,6 +80,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'gemma2-9b-it',
     description: 'Text, Editor, Code',
     provider: 'groq',
+    type: 'free',
     capabilities: {
         images: false,
         files: false,
@@ -81,5 +88,5 @@ export const models: Array<Model> = [
   },
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'gpt-4o-mini';
+export const DEFAULT_MODEL_NAME: string = 'llama3-70b-8192';
 
