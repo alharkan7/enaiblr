@@ -69,10 +69,10 @@ export function ChatInput({
                         type="button"
                         className="p-2 rounded-full hover:bg-muted transition-colors relative"
                         onClick={() => {
-                            if (plan === 'free') {
-                                setShowUpgradeDialog(true);
-                                return;
-                            }
+                            // if (plan === 'free') {
+                            //     setShowUpgradeDialog(true);
+                            //     return;
+                            // }
                             fileInputRef.current?.click();
                         }}
                     >

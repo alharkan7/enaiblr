@@ -35,7 +35,7 @@ export function ChatInput({
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
     const { plan } = useSubscription();
     const router = useRouter();
-    const CHARACTER_LIMIT = 20;
+    const CHARACTER_LIMIT = 40;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();

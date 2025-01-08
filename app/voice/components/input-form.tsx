@@ -54,7 +54,7 @@ const VOICES: VoicesType = {
   },
 };
 
-const CHARACTER_LIMIT = 200;
+const CHARACTER_LIMIT = 400;
 
 export function InputForm({
   text,

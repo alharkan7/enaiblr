@@ -21,6 +21,8 @@ type CustomSearchInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 
   onClear?: () => void;
 };
 
+const CHARACTER_LIMIT = 10;
+
 const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputProps>(({ 
   value, 
   onChange, 
@@ -42,11 +44,11 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
   }, [value, prefix]);
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-    if (plan === 'free') {
+    const newValue = e.target.value;
+    if (plan === 'free' && newValue.length > CHARACTER_LIMIT) {
       setShowUpgradeDialog(true);
       return;
     }
-    const newValue = e.target.value;
     setInputValue(newValue);
     onChange(prefix + newValue);
   };
@@ -92,7 +94,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users can only search from the available keywords below. Upgrade to Pro to unlock custom search capabilities.
+              Free users can only search with {CHARACTER_LIMIT} characters keywords. Upgrade to Pro to unlock custom search capabilities.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

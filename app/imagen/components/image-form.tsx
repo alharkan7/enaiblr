@@ -183,7 +183,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
 
             <div className="flex items-center gap-2 min-w-[150px] justify-center">
               <span className={`text-sm font-medium ${quality === 'standard' ? 'text-primary font-bold' : ''}`}>Standard</span>
-              {plan === 'free' ? (
+              {/* {plan === 'free' ? (
                 <>
                   <Switch
                     checked={quality === 'hd'}
@@ -211,12 +211,12 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
                     </AlertDialogContent>
                   </AlertDialog>
                 </>
-              ) : (
+              ) : ( */}
                 <Switch
                   checked={quality === 'hd'}
                   onCheckedChange={(checked) => setQuality(checked ? 'hd' : 'standard')}
                 />
-              )}
+              {/* )} */}
               <span className={`text-sm font-medium ${quality === 'hd' ? 'text-primary font-bold' : ''}`}>HD</span>
             </div>
           </div>

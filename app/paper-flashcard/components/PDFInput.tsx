@@ -25,11 +25,12 @@ export const PDFInput = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const { plan } = useSubscription();
+  const fileSizeLimit = 8;
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles[0]) {
       const file = acceptedFiles[0];
-      if (file.size > (plan === 'free' ? 5 * 1024 * 1024 : 40 * 1024 * 1024)) {
+      if (file.size > (plan === 'free' ? fileSizeLimit * 1024 * 1024 : 40 * 1024 * 1024)) {
         if (plan === 'free') {
           setShowUpgradeDialog(true);
           return;
@@ -137,7 +138,7 @@ export const PDFInput = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users are limited to 5MB PDF files. Upgrade to Pro to upload larger files and unlock all features.
+              Free users are limited to {fileSizeLimit}MB PDF files. Upgrade to Pro to upload larger files and unlock all features.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

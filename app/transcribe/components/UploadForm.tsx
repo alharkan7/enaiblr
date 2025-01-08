@@ -24,6 +24,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
   const [errorDetails, setErrorDetails] = useState<string | null>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const { plan } = useSubscription();
+  const fileSizeLimit = 8;
 
   const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: any[]) => {
     setError(null);
@@ -31,7 +32,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
     if (rejectedFiles.length > 0) {
       const rejection = rejectedFiles[0];
-      if (rejection.file.size > (plan === 'free' ? 5 * 1024 * 1024 : 40 * 1024 * 1024)) {
+      if (rejection.file.size > (plan === 'free' ? fileSizeLimit * 1024 * 1024 : 40 * 1024 * 1024)) {
         if (plan === 'free') {
           setShowUpgradeDialog(true);
         } else {
@@ -44,7 +45,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
       return;
     }
 
-    if (acceptedFiles[0].size > (plan === 'free' ? 5 * 1024 * 1024 : 40 * 1024 * 1024)) {
+    if (acceptedFiles[0].size > (plan === 'free' ? fileSizeLimit * 1024 * 1024 : 40 * 1024 * 1024)) {
       if (plan === 'free') {
         setShowUpgradeDialog(true);
       } else {
@@ -312,7 +313,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users are limited to 5MB audio files. Upgrade to Pro to transcribe audio files in larger sizes.
+              Free users are limited to {fileSizeLimit}MB audio files. Upgrade to Pro to transcribe audio files in larger sizes.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
