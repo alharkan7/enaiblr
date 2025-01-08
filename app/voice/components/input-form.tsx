@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -11,6 +11,15 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import debounce from "lodash/debounce";
+import { useSubscription } from '@/contexts/subscription-context'
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from '@/components/ui/alert-dialog'
 
 interface InputFormProps {
   text: string;
@@ -45,6 +54,8 @@ const VOICES: VoicesType = {
   },
 };
 
+const CHARACTER_LIMIT = 200;
+
 export function InputForm({
   text,
   language,
@@ -55,6 +66,8 @@ export function InputForm({
   onSubmit,
 }: InputFormProps) {
   const availableVoices = language ? VOICES[language as keyof typeof VOICES] : {};
+  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const { plan } = useSubscription();
 
   // Debounced text change handler
   const debouncedTextChange = useCallback(
@@ -66,6 +79,10 @@ export function InputForm({
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
+    if (plan === 'free' && value.length > CHARACTER_LIMIT) {
+      setShowUpgradeDialog(true);
+      return;
+    }
     // Immediately update parent's state
     onTextChange(value);
     // Debounce other operations
@@ -88,7 +105,7 @@ export function InputForm({
   return (
     <div className="w-full px-4 md:px-12 lg:px-36 xl:px-48 space-y-4">
        <h1 className="text-4xl font-extrabold text-center mb-8">
-        Text to Voice
+        Text to Natural Voice
       </h1>
       <Textarea
         placeholder="Enter your text here..."
@@ -136,6 +153,25 @@ export function InputForm({
           Convert to Audio
         </Button>
       </div>
+
+      <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+            <AlertDialogDescription>
+              Free users are limited to {CHARACTER_LIMIT} characters per message. Upgrade to Pro to convert longer texts.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
+              Cancel
+            </Button>
+            <Button onClick={() => window.location.href = '/pricing'}>
+              Upgrade to Pro
+            </Button>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
