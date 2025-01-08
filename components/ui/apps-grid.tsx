@@ -24,12 +24,6 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
   const [showTooltips, setShowTooltips] = React.useState(false);
 
   const handleAppClick = (type: 'free' | 'pro', slug: string) => {
-    if (type === 'pro' && plan === 'free') {
-      router.push('/payment');
-      setIsOpen(false);
-      return;
-    }
-
     if (useHardReload) {
       window.location.href = `/${slug}`;
     } else {
