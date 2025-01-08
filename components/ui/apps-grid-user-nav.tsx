@@ -69,7 +69,9 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
             {`${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild disabled={isPro && plan === 'free'}>
+          <DropdownMenuItem asChild 
+          // disabled={isPro && plan === 'free'}
+          >
             <a
               href="https://wa.me/+6281280077690"
               target="_blank"
@@ -77,11 +79,11 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               className="relative w-full cursor-pointer"
             >
               Contact Help
-              {isPro && plan === 'free' && (
+              {/* {isPro && plan === 'free' && (
                 <span className="absolute right-2 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
                   PRO
                 </span>
-              )}
+              )} */}
             </a>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
