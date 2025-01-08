@@ -62,7 +62,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                   <TooltipTrigger asChild disabled={!showTooltips}>
                     <Button
                       variant="ghost"
-                      className="relative h-[90px] w-[100px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
+                      className="relative h-[100px] w-[100px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
                       onClick={() => handleAppClick(app.type, app.slug)}
                     >
                       {/* {app.type === 'pro' && plan === 'free' && (

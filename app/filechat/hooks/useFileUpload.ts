@@ -3,6 +3,7 @@ import * as pdfjsLib from 'pdfjs-dist';
 import mammoth from 'mammoth';
 import { useSubscription } from '@/contexts/subscription-context';
 import { useRouter } from 'next/navigation';
+import {filechatFree_WordsLimit} from '@/config/freeLimits'
 
 interface FileInfo {
     fileName: string;
@@ -128,7 +129,7 @@ export function useFileUpload() {
                 setFileInfo(null);
                 setFileContent(null);
                 setWordCount(0);
-            } else if (plan === 'free' && words > 10000) {
+            } else if (plan === 'free' && words > filechatFree_WordsLimit) {
                 setShowUpgradeDialog(true);
                 // Keep the file info but mark it as over limit
                 setFileInfo(prev => prev ? {

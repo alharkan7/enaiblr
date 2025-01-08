@@ -6,6 +6,7 @@ import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSubscription } from '@/contexts/subscription-context';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { paperFlashcardFree_PDFSizeLimit } from "@/config/freeLimits";
 
 interface PDFInputProps {
   pdfLink: string;
@@ -25,12 +26,11 @@ export const PDFInput = ({
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const { plan } = useSubscription();
-  const fileSizeLimit = 8;
 
   const onDrop = useCallback((acceptedFiles: File[]) => {
     if (acceptedFiles[0]) {
       const file = acceptedFiles[0];
-      if (file.size > (plan === 'free' ? fileSizeLimit * 1024 * 1024 : 40 * 1024 * 1024)) {
+      if (file.size > (plan === 'free' ? paperFlashcardFree_PDFSizeLimit * 1024 * 1024 : 40 * 1024 * 1024)) {
         if (plan === 'free') {
           setShowUpgradeDialog(true);
           return;
@@ -138,7 +138,7 @@ export const PDFInput = ({
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users are limited to {fileSizeLimit}MB PDF files. Upgrade to Pro to upload larger files and unlock all features.
+              Free users are limited to {paperFlashcardFree_PDFSizeLimit}MB PDF files. Upgrade to Pro to upload larger files and unlock all features.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

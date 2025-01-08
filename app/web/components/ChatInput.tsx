@@ -11,6 +11,7 @@ import {
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
+import { webFree_CharactersLimit } from '@/config/freeLimits'
 
 interface ChatInputProps {
     input: string;
@@ -35,7 +36,6 @@ export function ChatInput({
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
     const { plan } = useSubscription();
     const router = useRouter();
-    const CHARACTER_LIMIT = 40;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -55,7 +55,7 @@ export function ChatInput({
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const newValue = e.target.value;
-        if (plan === 'free' && newValue.length > CHARACTER_LIMIT) {
+        if (plan === 'free' && newValue.length > webFree_CharactersLimit) {
             setShowUpgradeDialog(true);
             return;
         }
@@ -94,7 +94,7 @@ export function ChatInput({
                     <AlertDialogHeader>
                         <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Free users are limited to {CHARACTER_LIMIT} characters per message. Upgrade to Pro to send longer messages.
+                            Free users are limited to {webFree_CharactersLimit} characters per message. Upgrade to Pro to send longer messages.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>

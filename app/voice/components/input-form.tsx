@@ -20,6 +20,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
+import { voiceFree_CharactersLimit } from "@/config/freeLimits";
 
 interface InputFormProps {
   text: string;
@@ -54,8 +55,6 @@ const VOICES: VoicesType = {
   },
 };
 
-const CHARACTER_LIMIT = 400;
-
 export function InputForm({
   text,
   language,
@@ -79,7 +78,7 @@ export function InputForm({
 
   const handleTextChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const value = e.target.value;
-    if (plan === 'free' && value.length > CHARACTER_LIMIT) {
+    if (plan === 'free' && value.length > voiceFree_CharactersLimit) {
       setShowUpgradeDialog(true);
       return;
     }
@@ -159,7 +158,7 @@ export function InputForm({
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users are limited to {CHARACTER_LIMIT} characters per message. Upgrade to Pro to convert longer texts.
+              Free users are limited to {voiceFree_CharactersLimit} characters per message. Upgrade to Pro to convert longer texts.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

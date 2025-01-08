@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useSubscription } from "@/contexts/subscription-context"
+import {filechatFree_WordsLimit} from '@/config/freeLimits'
 
 interface ChatInputProps {
   input: string;
@@ -76,7 +77,7 @@ export function ChatInput({
   const router = useRouter();
   const { plan } = useSubscription();
 
-  const isOverWordLimit = plan === 'free' && wordCount > 10000;
+  const isOverWordLimit = plan === 'free' && wordCount > filechatFree_WordsLimit;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -163,7 +164,7 @@ export function ChatInput({
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Your document has {wordCount?.toLocaleString()} words. Free users are limited to documents with 10,000 words or less. 
+              Your document has {wordCount?.toLocaleString('id-ID')} words. Free users are limited to documents with {filechatFree_WordsLimit.toLocaleString('id-ID')} words or less. 
               Upgrade to Pro to process larger documents and unlock advanced features.
             </AlertDialogDescription>
           </AlertDialogHeader>
