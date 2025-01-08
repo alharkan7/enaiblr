@@ -48,7 +48,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
         <PopoverTrigger asChild>
           {trigger}
         </PopoverTrigger>
-        <PopoverContent className="w-[300px] p-4" align="end" onPointerDownOutside={(e: Event) => {
+        <PopoverContent className="w-[330px] p-2" align="end" onPointerDownOutside={(e: Event) => {
           // Prevent closing when clicking inside the popover
           if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
             e.preventDefault();
@@ -62,7 +62,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                   <TooltipTrigger asChild disabled={!showTooltips}>
                     <Button
                       variant="ghost"
-                      className="relative h-[100px] w-[100px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
+                      className="relative h-[90px] w-[100px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
                       onClick={() => handleAppClick(app.type, app.slug)}
                     >
                       {/* {app.type === 'pro' && plan === 'free' && (
