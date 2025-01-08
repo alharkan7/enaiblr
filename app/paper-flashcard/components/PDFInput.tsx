@@ -141,7 +141,7 @@ export const PDFInput = ({
           </AlertDialogHeader>
           <AlertDialogFooter>
             <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>Cancel</Button>
-            <Button onClick={() => window.location.href = '/pricing'}>Upgrade Now</Button>
+            <Button onClick={() => window.location.href = '/payment'}>Upgrade Now</Button>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
