@@ -11,7 +11,7 @@ export interface AppConfig {
 
 export const apps: AppConfig[] = [
   {
-    name: 'Enaiblr AI',
+    name: 'Unlimited AI',
     icon: InfinityIcon,
     slug: '',
     description: 'Unlimited AI Access & File Upload. Saved History & Foldering',

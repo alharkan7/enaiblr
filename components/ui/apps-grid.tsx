@@ -65,11 +65,11 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
                       className="relative h-[92px] w-[92px] flex flex-col items-center justify-center gap-3 hover:bg-muted rounded-2xl"
                       onClick={() => handleAppClick(app.type, app.slug)}
                     >
-                      {app.type === 'pro' && plan === 'free' && (
+                      {/* {app.type === 'pro' && plan === 'free' && (
                         <span className="absolute top-0 right-1 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
                           PRO
                         </span>
-                      )}
+                      )} */}
                       <Icon className="size-12 text-foreground" />
                       <span className="text-xs font-medium truncate max-w-[80px]">{app.name}</span>
                     </Button>

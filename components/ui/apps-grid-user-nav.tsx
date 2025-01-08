@@ -28,7 +28,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
         <>
           <Button
             variant="ghost"
-            className="bg-muted h-10 w-full justify-start gap-2 text-primary hover:text-primary"
+            className="outline outline-primary outline-1 h-10 w-full justify-start gap-2 text-primary hover:text-primary"
             onClick={() => router.push('/payment')}
           >
             <Image

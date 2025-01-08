@@ -77,13 +77,13 @@ export default function Page() {
                   onClick={() => handleAppClick(app.type, app.slug)}
                   className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer"
                 >
-                  {!isLoading && plan === 'free' && app.type === 'pro' && (
+                  {/* {!isLoading && plan === 'free' && app.type === 'pro' && (
                     <div className="absolute -right-[1px] -top-[3px]">
                       <span className="inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl bg-primary text-primary-foreground">
                         PRO
                       </span>
                     </div>
-                  )}
+                  )} */}
                   <div className="mb-3 md:mb-4 p-2 rounded-lg bg-muted group-hover:bg-accent-foreground/10 transition-colors">
                     <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                   </div>
