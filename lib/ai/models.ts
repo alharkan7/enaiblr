@@ -62,30 +62,30 @@ export const models: Array<Model> = [
       files: false,
     },
   },
-  {
-    id: 'mixtral-8x7b-32768',
-    label: 'Mixtral 8x',
-    apiIdentifier: 'mixtral-8x7b-32768',
-    description: 'Text, Editor, Code',
-    provider: 'groq',
-    type: 'free',
-    capabilities: {
-        images: false,
-        files: false,
-      },
-  },
-  {
-    id: 'gemma2-9b-it',
-    label: 'Gemma 2',
-    apiIdentifier: 'gemma2-9b-it',
-    description: 'Text, Editor, Code',
-    provider: 'groq',
-    type: 'free',
-    capabilities: {
-        images: false,
-        files: false,
-      },
-  },
+  // {
+  //   id: 'mixtral-8x7b-32768',
+  //   label: 'Mixtral 8x',
+  //   apiIdentifier: 'mixtral-8x7b-32768',
+  //   description: 'Text, Editor, Code',
+  //   provider: 'groq',
+  //   type: 'free',
+  //   capabilities: {
+  //       images: false,
+  //       files: false,
+  //     },
+  // },
+  // {
+  //   id: 'gemma2-9b-it',
+  //   label: 'Gemma 2',
+  //   apiIdentifier: 'gemma2-9b-it',
+  //   description: 'Text, Editor, Code',
+  //   provider: 'groq',
+  //   type: 'free',
+  //   capabilities: {
+  //       images: false,
+  //       files: false,
+  //     },
+  // },
 ] as const;
 
 export const DEFAULT_MODEL_NAME: string = 'llama3-70b-8192';
