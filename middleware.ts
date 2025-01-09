@@ -75,13 +75,18 @@ export default auth(async function middleware(request: NextRequest) {
   // Redirect root path to /apps if not logged in
   if (pathname === '/') {
     if (!isLoggedIn) {
-      return NextResponse.redirect(new URL('/apps', BASE_URL));
+      return NextResponse.redirect(new URL('/apps', request.url));
     }
     return NextResponse.next();
   }
 
   // Allow public routes without login
   if (isPublicRoute(pathname)) {
+    return NextResponse.next();
+  }
+
+  // Handle preview URLs
+  if (request.nextUrl.searchParams.get('preview')) {
     return NextResponse.next();
   }
 
