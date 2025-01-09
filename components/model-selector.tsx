@@ -1,8 +1,9 @@
 'use client';
 
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
+import { mutate } from 'swr';
 
 import { saveModelId } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -34,6 +35,7 @@ export function ModelSelector({
   const [open, setOpen] = useState(false);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const router = useRouter();
+  const pathname = usePathname();
   const { plan } = useSubscription();
   const [optimisticModelId, setOptimisticModelId] =
     useOptimistic(selectedModelId);
@@ -62,17 +64,27 @@ export function ModelSelector({
           {models.map((model) => (
             <DropdownMenuItem
               key={model.id}
-              onClick={() => {
+              onClick={async () => {
                 if (model.type === 'pro' && plan === 'free') {
                   setShowUpgradeDialog(true);
                   setOpen(false);
                   return;
                 }
-                startTransition(() => {
+                startTransition(async () => {
                   setOptimisticModelId(model.id);
-                  saveModelId(model.id);
+                  await saveModelId(model.id);
                   setOpen(false);
-                  router.refresh();
+                  
+                  // Only reload if we're not on the root path
+                  if (pathname !== '/') {
+                    // Clear the chat messages from SWR cache
+                    mutate('/api/chat', null);
+                    mutate('/api/history');
+                    // Force a hard navigation to clear React state
+                    window.location.href = '/';
+                  } else {
+                    router.refresh();
+                  }
                 });
               }}
               className={cn(

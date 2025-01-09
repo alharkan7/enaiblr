@@ -1,5 +1,5 @@
 'use client';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { useWindowSize } from 'usehooks-ts';
 import type { User } from 'next-auth';
 
@@ -12,6 +12,7 @@ import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 import { AppsGrid } from './ui/apps-grid';
+import { mutate } from 'swr';
 
 function PureChatHeader({
   chatId,
@@ -29,6 +30,7 @@ function PureChatHeader({
   const router = useRouter();
   const { open } = useSidebar();
   const { width: windowWidth } = useWindowSize();
+  const pathname = usePathname();
 
   return (
     <header className="flex sticky top-0 bg-background py-1.5 items-center px-2 md:px-2 gap-2">
@@ -41,8 +43,16 @@ function PureChatHeader({
               variant="outline"
               className="order-2 md:order-1 md:px-2 px-2 md:h-fit ml-auto md:ml-0"
               onClick={() => {
-                router.push('/');
-                router.refresh();
+                  // Only reload if we're not on the root path
+                  if (pathname !== '/') {
+                    // Clear the chat messages from SWR cache
+                    mutate('/api/chat', null);
+                    mutate('/api/history');
+                    // Force a hard navigation to clear React state
+                    window.location.href = '/';
+                  } else {
+                    router.refresh();
+                  }
               }}
             >
               <PlusIcon size={14} />

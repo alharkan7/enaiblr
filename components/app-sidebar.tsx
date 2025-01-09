@@ -1,7 +1,8 @@
 'use client';
 
 import type { User } from 'next-auth';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useSWRConfig } from 'swr';
 
 import { PlusIcon } from '@/components/icons';
 import { SidebarHistory } from '@/components/sidebar-history';
@@ -20,6 +21,22 @@ import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 export function AppSidebar({ user }: { user: User | undefined }) {
   const router = useRouter();
   const { setOpenMobile } = useSidebar();
+  const { mutate } = useSWRConfig();
+  const pathname = usePathname();
+
+  const handleNewChat = () => {
+    setOpenMobile(false);
+    // Only reload if we're not on the root path
+    if (pathname !== '/') {
+      // Clear the chat messages from SWR cache
+      mutate('/api/chat', null);
+      mutate('/api/history');
+      // Force a hard navigation to clear React state
+      window.location.href = '/';
+    } else {
+      router.refresh();
+    }
+  };
 
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
@@ -33,7 +50,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               }}
               className="flex flex-row gap-3 items-center"
             >
-              <span className="text-lg font-semibold px-2 hover:bg-muted rounded-md cursor-pointer">
+              <span className="text-lg font-semibold pl-0 hover:bg-muted rounded-md cursor-pointer">
                 Enaiblr
               </span>
             </Link>
@@ -43,11 +60,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   variant="ghost"
                   type="button"
                   className="p-2 h-fit hidden md:flex"
-                  onClick={() => {
-                    setOpenMobile(false);
-                    router.push('/');
-                    router.refresh();
-                  }}
+                  onClick={handleNewChat}
                 >
                   <PlusIcon />
                 </Button>
@@ -58,11 +71,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               variant="ghost"
               type="button"
               className="p-2 h-fit md:hidden"
-              onClick={() => {
-                setOpenMobile(false);
-                router.push('/');
-                router.refresh();
-              }}
+              onClick={handleNewChat}
             >
               <PlusIcon />
             </Button>
