@@ -25,7 +25,7 @@ export const apps: AppConfig[] = [
     type: 'free'
   },
   {
-    name: 'Doc Chat',
+    name: 'Private PDF Chat',
     icon: FileText,
     slug: 'filechat',
     description: 'Private Chat with Documents. No File Copy is Saved',

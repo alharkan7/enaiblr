@@ -170,7 +170,7 @@ export default function Filechat() {
                     <MessageList
                         messages={messages}
                         messagesEndRef={messagesEndRef}
-                        onUpdate={() => {}}
+                        onUpdate={() => { }}
                         fileInfo={fileInfo}
                         isUploading={isUploading}
                         onRemoveFile={clearFile}
@@ -178,8 +178,11 @@ export default function Filechat() {
                         wordCount={wordCount}
                     />
                 ) : (
-                    <div className="h-full flex flex-col justify-center items-center gap-8 max-w-5xl mx-auto w-full px-4">
-                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Chat&nbsp;with&nbsp;PDFs <span className='text-primary'>and&nbsp;Docs</span></h1>
+                    <div className="h-full flex flex-col justify-center items-center gap-4 max-w-5xl mx-auto w-full px-4">
+                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Chat&nbsp;with&nbsp;PDFs 
+                            {/* <span className='text-primary'>and&nbsp;Docs</span> */}
+                        </h1>
+                        <p className="text-semibold text-muted-foreground text-center">No Files are Saved to the Server</p>
                         {fileInfo && (
                             <div className="w-full">
                                 <DocumentPreview

@@ -21,15 +21,33 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://enaiblr.org'),
   title: {
     template: '%s | enaiblr',
     default: 'enaiblr AI Platform',
   },
   description: 'Unlimited AI Platform',
-  icons: {
-    icon: ['/icon.png'],
+  manifest: '/manifest.json',
+  themeColor: '#000000',
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'default',
+    title: 'Enaiblr',
   },
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+  },
+  icons: {
+    icon: [
+      { url: '/icons/icon-192x192.png', sizes: '192x192', type: 'image/png' },
+      { url: '/icons/icon-512x512.png', sizes: '512x512', type: 'image/png' },
+    ],
+    apple: [
+      { url: '/icons/icon-192x192.png' },
+    ],
+  },
+  metadataBase: new URL('https://enaiblr.org'),
   openGraph: {
     title: 'enaiblr AI Platform',
     description: 'Unlimited Access to AI Tools and Resources',

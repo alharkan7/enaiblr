@@ -209,9 +209,9 @@ export default function MinimalistChatbot() {
                                 </div>
                             </div>
                         </div>
-                        <div className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}>
+                        {/* <div className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}>
                             <AppsFooter />
-                        </div>
+                        </div> */}
                     </div>
                 )}
             </div>
