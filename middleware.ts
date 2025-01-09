@@ -59,7 +59,7 @@ function isAppRoute(pathname: string): boolean {
   return apps.some(app => app.slug === slug);
 }
 
-const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org' || 'https://dev.enaiblr.org';
 
 export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
