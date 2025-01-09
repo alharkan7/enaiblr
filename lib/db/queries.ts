@@ -34,7 +34,11 @@ export async function getUser(email: string): Promise<Array<User>> {
 export async function createUser(email: string, password: string) {
   try {
     return await db.transaction(async (tx) => {
-      const result = await tx.insert(user).values({ email, password }).returning();
+      const result = await tx.insert(user).values({ 
+        email, 
+        password,
+        createdAt: new Date()
+      }).returning();
       await tx.insert(subscription).values({ 
         userId: result[0].id,
         createdAt: new Date()
@@ -50,7 +54,11 @@ export async function createUser(email: string, password: string) {
 export async function createGoogleUser(email: string, avatar?: string) {
   try {
     return await db.transaction(async (tx) => {
-      const result = await tx.insert(user).values({ email, avatar }).returning();
+      const result = await tx.insert(user).values({ 
+        email, 
+        avatar,
+        createdAt: new Date()
+      }).returning();
       await tx.insert(subscription).values({ 
         userId: result[0].id,
         createdAt: new Date()
