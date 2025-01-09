@@ -4,6 +4,7 @@ import { startTransition, useMemo, useOptimistic, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
 import { mutate } from 'swr';
+import { InfinityIcon } from 'lucide-react';
 
 import { saveModelId } from '@/app/(chat)/actions';
 import { Button } from '@/components/ui/button';
@@ -103,7 +104,7 @@ export function ModelSelector({
               </div>
               {model.type === 'pro' && plan === 'free' && (
                 <span className="absolute top-1 right-2 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
-                  PRO
+                  <InfinityIcon />
                 </span>
               )}
               {model.id === optimisticModelId && (
