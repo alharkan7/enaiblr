@@ -1,6 +1,6 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
-import { FlashCardContent } from '@/app/paper-flashcard/types';
+import { FlashCardContent } from '../../paper-flashcard/types';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY || '');
 
