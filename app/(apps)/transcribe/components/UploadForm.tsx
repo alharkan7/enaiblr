@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { Upload, FileAudio, Check, AlertCircle, X } from 'lucide-react';
+import { Upload, FileAudio, AlertCircle, X } from 'lucide-react';
 import { LanguageSelector } from './LanguageSelector';
 import { Progress } from './ui/Progress';
 import { Groq } from 'groq-sdk';

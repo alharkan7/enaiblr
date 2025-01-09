@@ -8,7 +8,6 @@ import { AppsHeader } from '@/components/apps-header';
 import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useRouter, useSearchParams } from 'next/navigation';
-import { useEffect } from 'react';
 import { useSubscription } from '@/contexts/subscription-context';
 
 export default function Page() {

@@ -14,7 +14,6 @@ import { Sparkles, SlidersHorizontal } from 'lucide-react'
 import { cn } from "@/lib/utils"
 import { style } from './constants';
 import { useSubscription } from "@/contexts/subscription-context"
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog"
 import { useRouter } from "next/navigation"
 
 type SubscriptionPlan = 'free' | 'pro';

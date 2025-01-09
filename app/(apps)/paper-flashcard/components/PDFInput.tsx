@@ -1,7 +1,7 @@
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { BookText, MoveRight, ClipboardCheck, X, FileText, Upload } from 'lucide-react';
+import { X, FileText, Upload } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSubscription } from '@/contexts/subscription-context';
