@@ -6,7 +6,23 @@ import GoogleProvider from 'next-auth/providers/google';
 
 import { getUser, createGoogleUser, updateUserAvatar } from '@/lib/db/queries';
 
+import type { JWT } from 'next-auth/jwt';
+import type { Session, User } from 'next-auth';
+
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
+
+interface ExtendedToken extends JWT {
+  id: string;
+  email: string;
+  name?: string | null;
+  picture?: string | null;
+}
+
+interface ExtendedSession extends Session {
+  user: User & {
+    id: string;
+  };
+}
 
 export const config = {
   trustHost: true,
@@ -50,23 +66,23 @@ export const config = {
       }
       return true;
     },
-    async jwt({ token, user }) {
-      if (user?.id) {
+    async jwt({ token, user, account, profile }): Promise<ExtendedToken> {
+      if (user) {
         token.id = user.id;
+        token.email = user.email as string;
+        token.name = user.name;
+        token.picture = user.image;
       }
-      return token;
+      return token as ExtendedToken;
     },
-    async session({ session, token }: any) {
-      if (session.user) {
-        session.user.id = token.id;
-        // Get user from database to include stored avatar
-        const users = await getUser(session.user.email!);
-        if (users.length > 0) {
-          // Use stored avatar if available, otherwise fallback to session image
-          session.user.image = users[0].avatar || session.user.image;
-        }
+    async session({ session, token }): Promise<ExtendedSession> {
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email as string;
+        session.user.name = token.name as string | null;
+        session.user.image = token.picture as string | null;
       }
-      return session;
+      return session as ExtendedSession;
     },
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;

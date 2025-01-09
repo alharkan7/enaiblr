@@ -53,11 +53,15 @@ export default function AuthForm({ type, action }: AuthFormProps) {
 
       toast.success(type === 'login' ? 'Logged in successfully!' : 'Account created successfully!');
       
-      // Force a router refresh to update session state
-      router.refresh();
+      // Get the callback URL or default to /apps
+      const callbackUrl = searchParams.get('callbackUrl') || '/apps';
       
-      const callbackUrl = searchParams.get('callbackUrl');
-      router.push(callbackUrl || '/apps');
+      // Wait for the session to be updated
+      await new Promise(resolve => setTimeout(resolve, 500));
+      
+      // Force a router refresh and redirect
+      router.refresh();
+      router.push(callbackUrl);
     } catch (e) {
       setError('An unexpected error occurred');
       toast.error('An unexpected error occurred');
