@@ -397,7 +397,7 @@ const SidebarContent = React.forwardRef<
     ref={ref}
     data-sidebar="content"
     className={cn(
-      'pl-2 flex min-h-0 flex-1 flex-col gap-2 overflow-auto group-data-[collapsible=icon]:overflow-hidden',
+      'flex min-h-0 flex-1 flex-col gap-2 overflow-y-auto group-data-[collapsible=icon]:overflow-hidden',
       '[&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-thumb]:rounded-full',
       '[&::-webkit-scrollbar-thumb]:bg-gray-300 dark:[&::-webkit-scrollbar-thumb]:bg-gray-600',
       '[&::-webkit-scrollbar-track]:bg-transparent hover:[&::-webkit-scrollbar-thumb]:bg-gray-400',

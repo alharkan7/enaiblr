@@ -9,7 +9,7 @@ import { getUser, createGoogleUser, updateUserAvatar } from '@/lib/db/queries';
 import type { JWT } from 'next-auth/jwt';
 import type { Session, User } from 'next-auth';
 
-const BASE_URL = process.env.NEXTAUTH_URL || 'https://enaiblr.org';
+const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
 interface ExtendedToken extends JWT {
   id: string;
