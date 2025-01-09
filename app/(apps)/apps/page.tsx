@@ -74,7 +74,7 @@ export default function Page() {
                 <div
                   key={app.slug}
                   onClick={() => handleAppClick(app.type, app.slug)}
-                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer"
+                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer select-none"
                 >
                   {/* {!isLoading && plan === 'free' && app.type === 'pro' && (
                     <div className="absolute -right-[1px] -top-[3px]">
