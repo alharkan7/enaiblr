@@ -126,7 +126,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
     setOpenMobile: (open: boolean) => void;
     mutate: () => void;
     folders: Folder[];
-    setFolders: (folders: Folder[]) => void;
+    setFolders: (folders: Folder[] | ((prevFolders: Folder[]) => Folder[])) => void;
 }) => {
     const { mutate: globalMutate } = useSWRConfig();
     const router = useRouter();
@@ -226,240 +226,241 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
 
     return (
         <>
-        <SidebarMenuItem className="ml-6 list-none">
-            <div
-                draggable={!isTouchDevice}
-                onDragStart={handleDragStart}
-                className="flex w-full items-center"
-            >
-                <SidebarMenuButton asChild isActive={isActive}>
-                    {isEditing ? (
-                        <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
-                            <Input
-                                ref={inputRef}
-                                value={newTitle}
-                                onClick={handleInputClick}
-                                onChange={(e) => setNewTitle(e.target.value)}
-                                onKeyDown={(e) => {
-                                    if (e.key === 'Enter') {
-                                        handleRename();
-                                    } else if (e.key === 'Escape') {
-                                        setIsEditing(false);
-                                        setNewTitle(chat.title);
-                                    }
+            <SidebarMenuItem className="ml-6 list-none">
+                <div
+                    draggable={!isTouchDevice}
+                    onDragStart={handleDragStart}
+                    className="flex w-full items-center"
+                >
+                    <SidebarMenuButton asChild isActive={isActive}>
+                        {isEditing ? (
+                            <div className="flex items-center gap-2" onClick={(e) => e.preventDefault()}>
+                                <Input
+                                    ref={inputRef}
+                                    value={newTitle}
+                                    onClick={handleInputClick}
+                                    onChange={(e) => setNewTitle(e.target.value)}
+                                    onKeyDown={(e) => {
+                                        if (e.key === 'Enter') {
+                                            handleRename();
+                                        } else if (e.key === 'Escape') {
+                                            setIsEditing(false);
+                                            setNewTitle(chat.title);
+                                        }
+                                    }}
+                                    onBlur={handleRename}
+                                    className="h-6 py-0 px-1"
+                                />
+                            </div>
+                        ) : (
+                            <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
+                                <span>{chat.title}</span>
+                            </Link>
+                        )}
+                    </SidebarMenuButton>
+
+                    <DropdownMenu modal={true}>
+                        <DropdownMenuTrigger asChild>
+                            <SidebarMenuAction
+                                className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
+                                showOnHover={!isActive}
+                            >
+                                <MoreHorizontalIcon />
+                                <span className="sr-only">More</span>
+                            </SidebarMenuAction>
+                        </DropdownMenuTrigger>
+
+                        <DropdownMenuContent side="bottom" align="end">
+                            <span id="chat-options-title" className="sr-only">Chat options</span>
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onClick={() => {
+                                    setIsEditing(true);
                                 }}
-                                onBlur={handleRename}
-                                className="h-6 py-0 px-1"
-                            />
-                        </div>
-                    ) : (
-                        <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-                            <span>{chat.title}</span>
-                        </Link>
-                    )}
-                </SidebarMenuButton>
+                            >
+                                <PencilEditIcon />
+                                <span>Rename</span>
+                            </DropdownMenuItem>
 
-                <DropdownMenu modal={true}>
-                    <DropdownMenuTrigger asChild>
-                        <SidebarMenuAction
-                            className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground mr-0.5"
-                            showOnHover={!isActive}
-                        >
-                            <MoreHorizontalIcon />
-                            <span className="sr-only">More</span>
-                        </SidebarMenuAction>
-                    </DropdownMenuTrigger>
-
-                    <DropdownMenuContent side="bottom" align="end">
-                        <span id="chat-options-title" className="sr-only">Chat options</span>
-                        <DropdownMenuItem
-                            className="cursor-pointer"
-                            onClick={() => {
-                                setIsEditing(true);
-                            }}
-                        >
-                            <PencilEditIcon />
-                            <span>Rename</span>
-                        </DropdownMenuItem>
-
-                        <DropdownMenuItem
-                            className="cursor-pointer"
-                            onClick={() => {
-                                chatMutate();
-                                globalMutate('/api/history', (currentData: any) => {
-                                    if (!currentData) return currentData;
-
-                                    const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                                    const updatedChats = chats.map((c: Chat) =>
-                                        c.id === chat.id ? { ...c, pinned: !c.pinned } : c
-                                    );
-
-                                    return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
-                                }, false);
-
-                                // Perform server update asynchronously
-                                fetch(`/api/chat?id=${chat.id}`, {
-                                    method: 'PATCH',
-                                    headers: {
-                                        'Content-Type': 'application/json',
-                                    },
-                                    body: JSON.stringify({ pinned: !chat.pinned }),
-                                }).catch(() => {
-                                    // Revert the optimistic update if the server request fails
+                            <DropdownMenuItem
+                                className="cursor-pointer"
+                                onClick={() => {
                                     chatMutate();
                                     globalMutate('/api/history', (currentData: any) => {
                                         if (!currentData) return currentData;
 
                                         const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
-                                        const revertedChats = chats.map((c: Chat) =>
-                                            c.id === chat.id ? { ...c, pinned: chat.pinned } : c
+                                        const updatedChats = chats.map((c: Chat) =>
+                                            c.id === chat.id ? { ...c, pinned: !c.pinned } : c
                                         );
 
-                                        return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
+                                        return Array.isArray(currentData) ? updatedChats : { ...currentData, chats: updatedChats };
                                     }, false);
-                                });
-                            }}
-                        >
-                            <PinIcon />
-                            <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
-                        </DropdownMenuItem>
 
-                        <DropdownMenuSub>
-                            <DropdownMenuSubTrigger className="cursor-pointer">
-                                <FolderIcon size={14} />
-                                <span>Folder</span>
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                                <DropdownMenuSubContent key={folders.length} className="min-w-[150px] max-w-[100px]">
-                                    {folders.length === 0 ? (
-                                        <DropdownMenuItem className="text-muted-foreground whitespace-normal" disabled>
-                                            No folders created yet
-                                        </DropdownMenuItem>
-                                    ) : (
-                                        folders.map((folder) => (
-                                            <DropdownMenuItem
-                                                key={folder.id}
-                                                className="cursor-pointer flex-row justify-between gap-2"
-                                                onClick={() => {
-                                                    const isInFolder = folder.chats.some(c => c.id === chat.id);
-                                                    handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
-                                                        globalMutate('/api/folder');
-                                                    });
-                                                }}
-                                            >
-                                                <div className="flex flex-row gap-2 items-center min-w-0 flex-1">
-                                                    <FolderIcon size={14} />
-                                                    <span className="truncate">{folder.name}</span>
-                                                </div>
-                                                {folder.chats.some(c => c.id === chat.id) && (
-                                                    <CheckCircleFillIcon size={14} />
-                                                )}
+                                    // Perform server update asynchronously
+                                    fetch(`/api/chat?id=${chat.id}`, {
+                                        method: 'PATCH',
+                                        headers: {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body: JSON.stringify({ pinned: !chat.pinned }),
+                                    }).catch(() => {
+                                        // Revert the optimistic update if the server request fails
+                                        chatMutate();
+                                        globalMutate('/api/history', (currentData: any) => {
+                                            if (!currentData) return currentData;
+
+                                            const chats = Array.isArray(currentData) ? currentData : currentData.chats || [];
+                                            const revertedChats = chats.map((c: Chat) =>
+                                                c.id === chat.id ? { ...c, pinned: chat.pinned } : c
+                                            );
+
+                                            return Array.isArray(currentData) ? revertedChats : { ...currentData, chats: revertedChats };
+                                        }, false);
+                                    });
+                                }}
+                            >
+                                <PinIcon />
+                                <span>{chat.pinned ? 'Unpin' : 'Pin'}</span>
+                            </DropdownMenuItem>
+
+                            <DropdownMenuSub>
+                                <DropdownMenuSubTrigger className="cursor-pointer">
+                                    <FolderIcon size={14} />
+                                    <span>Folder</span>
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuPortal>
+                                    <DropdownMenuSubContent key={folders.length} className="min-w-[150px] max-w-[100px]">
+                                        {folders.length === 0 ? (
+                                            <DropdownMenuItem className="text-muted-foreground whitespace-normal" disabled>
+                                                No folders created yet
                                             </DropdownMenuItem>
-                                        )))
+                                        ) : (
+                                            folders.map((folder) => (
+                                                <DropdownMenuItem
+                                                    key={folder.id}
+                                                    className="cursor-pointer flex-row justify-between gap-2"
+                                                    onClick={() => {
+                                                        const isInFolder = folder.chats.some(c => c.id === chat.id);
+                                                        handleChatFolderUpdate(folder, chat, isInFolder, folders, setFolders, () => {
+                                                            globalMutate('/api/folder');
+                                                        });
+                                                    }}
+                                                >
+                                                    <div className="flex flex-row gap-2 items-center min-w-0 flex-1">
+                                                        <FolderIcon size={14} />
+                                                        <span className="truncate">{folder.name}</span>
+                                                    </div>
+                                                    {folder.chats.some(c => c.id === chat.id) && (
+                                                        <CheckCircleFillIcon size={14} />
+                                                    )}
+                                                </DropdownMenuItem>
+                                            )))
+                                        }
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuPortal>
+                            </DropdownMenuSub>
+
+                            <DropdownMenuSub aria-labelledby="chat-options-title">
+                                <DropdownMenuSubTrigger className="cursor-pointer">
+                                    <ShareIcon />
+                                    <span>Share</span>
+                                </DropdownMenuSubTrigger>
+                                <DropdownMenuPortal>
+                                    <DropdownMenuSubContent>
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                setVisibilityType('private');
+                                            }}
+                                        >
+                                            <div className="flex flex-row gap-2 items-center">
+                                                <LockIcon size={12} />
+                                                <span>Private</span>
+                                            </div>
+                                            {visibilityType === 'private' ? (
+                                                <CheckCircleFillIcon />
+                                            ) : null}
+                                        </DropdownMenuItem>
+                                        <DropdownMenuItem
+                                            className="cursor-pointer"
+                                            onClick={() => {
+                                                setVisibilityType('public');
+                                            }}
+                                        >
+                                            <div className="flex flex-row gap-2 items-center">
+                                                <GlobeIcon />
+                                                <span>Public</span>
+                                            </div>
+                                            {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
+                                        </DropdownMenuItem>
+                                    </DropdownMenuSubContent>
+                                </DropdownMenuPortal>
+                            </DropdownMenuSub>
+
+                            <DropdownMenuItem
+                                className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+                                onSelect={() => {
+                                    setShowDeleteDialog(true);
+                                }}
+                            >
+                                <TrashIcon />
+                                <span>Delete</span>
+                            </DropdownMenuItem>
+
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                </div>
+            </SidebarMenuItem>
+
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                    </AlertDialogHeader>
+                    <AlertDialogDescription>
+                        This action cannot be undone. This will permanently delete your chat and remove it from our servers.
+                    </AlertDialogDescription>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            const deletePromise = fetch(`/api/chat?id=${chat.id}`, {
+                                method: 'DELETE',
+                            });
+
+                            toast.promise(deletePromise, {
+                                loading: 'Deleting chat...',
+                                success: async () => {
+                                  
+                                    // Update global history and folder data
+                                    await Promise.all([
+                                        globalMutate('/api/history'),
+                                        globalMutate('/api/folder')
+                                    ]);
+                            
+                                    // Update local folder state
+                                    setFolders((prevFolders: Folder[]) =>
+                                        prevFolders.map((folder: Folder) => ({
+                                            ...folder,
+                                            chats: folder.chats.filter((c: Chat) => c.id !== chat.id)
+                                        }))
+                                    );
+                            
+                                    // Redirect if this was the active chat
+                                    if (isActive) {
+                                        router.push('/');
                                     }
-                                </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                        </DropdownMenuSub>
-
-                        <DropdownMenuSub aria-labelledby="chat-options-title">
-                            <DropdownMenuSubTrigger className="cursor-pointer">
-                                <ShareIcon />
-                                <span>Share</span>
-                            </DropdownMenuSubTrigger>
-                            <DropdownMenuPortal>
-                                <DropdownMenuSubContent>
-                                    <DropdownMenuItem
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            setVisibilityType('private');
-                                        }}
-                                    >
-                                        <div className="flex flex-row gap-2 items-center">
-                                            <LockIcon size={12} />
-                                            <span>Private</span>
-                                        </div>
-                                        {visibilityType === 'private' ? (
-                                            <CheckCircleFillIcon />
-                                        ) : null}
-                                    </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        className="cursor-pointer"
-                                        onClick={() => {
-                                            setVisibilityType('public');
-                                        }}
-                                    >
-                                        <div className="flex flex-row gap-2 items-center">
-                                            <GlobeIcon />
-                                            <span>Public</span>
-                                        </div>
-                                        {visibilityType === 'public' ? <CheckCircleFillIcon /> : null}
-                                    </DropdownMenuItem>
-                                </DropdownMenuSubContent>
-                            </DropdownMenuPortal>
-                        </DropdownMenuSub>
-
-                        <DropdownMenuItem
-                            className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-                            onSelect={() => onDelete(chat.id)}
-                        >
-                            <TrashIcon />
-                            <span>Delete</span>
-                        </DropdownMenuItem>
-
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            </div>
-        </SidebarMenuItem>
-
-        <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-            <AlertDialogContent>
-                <AlertDialogHeader>
-                    <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                </AlertDialogHeader>
-                <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete your chat and remove it from our servers.
-                </AlertDialogDescription>
-                <AlertDialogFooter>
-                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                    <AlertDialogAction onClick={() => {
-                        const deletePromise = fetch(`/api/chat?id=${chat.id}`, {
-                            method: 'DELETE',
-                        });
-
-                        toast.promise(deletePromise, {
-                            loading: 'Deleting chat...',
-                            success: async () => {
-                                // Update parent state
-                                onDelete(chat.id);
-                                
-                                // Update global history and folder data
-                                await Promise.all([
-                                    globalMutate('/api/history'),
-                                    globalMutate('/api/folder')
-                                ]);
-
-                                // Update local folder state
-                                const updatedFolders = folders.map(f => ({
-                                    ...f,
-                                    chats: f.chats.filter(c => c.id !== chat.id)
-                                }));
-                                setFolders(updatedFolders);
-
-                                // Redirect if this was the active chat
-                                if (isActive) {
-                                    router.push('/');
-                                }
-                                
-                                return 'Chat deleted successfully';
-                            },
-                            error: 'Failed to delete chat',
-                        });
-                    }}>
-                        Continue
-                    </AlertDialogAction>
-                </AlertDialogFooter>
-            </AlertDialogContent>
-        </AlertDialog>
+                            
+                                    return 'Chat deleted successfully';
+                                },
+                                error: 'Failed to delete chat',
+                            });
+                        }}>
+                            Continue
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
         </>
     );
 };
@@ -481,7 +482,7 @@ const FolderItem = ({
     onToggle: () => void;
     folders: Folder[];
     chats: Chat[];
-    setFolders: (folders: Folder[]) => void;
+    setFolders: (folders: Folder[] | ((prevFolders: Folder[]) => Folder[])) => void;
     foldersMutate: () => Promise<any>;
     setDeleteId: (id: string | null) => void;
     setShowDeleteDialog: (show: boolean) => void;
@@ -685,17 +686,17 @@ const FolderItem = ({
                         {folder.chats
                             ?.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
                             .map((chat) => (
-                            <ChatItemInFolder
-                                key={chat.id}
-                                chat={chat}
-                                isActive={false}
-                                onDelete={onDeleteChat}
-                                setOpenMobile={() => { }}
-                                mutate={() => globalMutate('/api/history')}
-                                folders={folders}
-                                setFolders={setFolders}
-                            />
-                        ))}
+                                <ChatItemInFolder
+                                    key={chat.id}
+                                    chat={chat}
+                                    isActive={false}
+                                    onDelete={onDeleteChat}
+                                    setOpenMobile={() => { }}
+                                    mutate={() => globalMutate('/api/history')}
+                                    folders={folders}
+                                    setFolders={setFolders}
+                                />
+                            ))}
                     </SidebarGroupContent>
                 )}
             </SidebarGroup>
@@ -791,15 +792,15 @@ const NewFolderInput = ({
     );
 };
 
-export function FolderSection({ 
-    folders, 
-    setFolders, 
-    chats, 
-    onDeleteChat, 
-    activeChatId, 
-    isAddingFolder, 
-    setIsAddingFolder, 
-    foldersMutate 
+export function FolderSection({
+    folders,
+    setFolders,
+    chats,
+    onDeleteChat,
+    activeChatId,
+    isAddingFolder,
+    setIsAddingFolder,
+    foldersMutate
 }: FolderSectionProps) {
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
@@ -868,7 +869,7 @@ export function FolderSection({
                         <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction onClick={() => {
                             if (!deleteId) return;
-                            
+
                             const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
                                 method: 'DELETE',
                             });
