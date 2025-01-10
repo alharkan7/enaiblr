@@ -10,6 +10,8 @@ interface OverviewProps {
 }
 
 export function Overview({ selectedModel }: OverviewProps) {
+  if (!selectedModel) return null;
+
   return (
     <motion.div
       key="overview"
@@ -21,10 +23,10 @@ export function Overview({ selectedModel }: OverviewProps) {
     >
       <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
         <p className="flex flex-row justify-center gap-4 items-center">
-          <InfinityIcon className='size-20'/>
+          <InfinityIcon className="size-20" />
         </p>
         <div className="space-y-4">
-          {selectedModel?.overview.map((capability: string, index: number) => (
+          {selectedModel.overview.map((capability: string, index: number) => (
             <div key={index} className="flex items-center space-x-2">
               <CheckCircleFillIcon size={16} />
               <span>{capability}</span>
