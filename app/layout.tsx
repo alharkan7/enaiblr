@@ -20,6 +20,22 @@ const inter = Inter({
   variable: '--font-inter',
 });
 
+// Add service worker registration script
+const registerServiceWorker = `
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').then(
+        function(registration) {
+          console.log('Service Worker registration successful');
+        },
+        function(err) {
+          console.log('Service Worker registration failed: ', err);
+        }
+      );
+    });
+  }
+`;
+
 export const metadata: Metadata = {
   title: {
     template: '%s | enaiblr',
@@ -124,6 +140,11 @@ export default async function RootLayout({
         <script
           dangerouslySetInnerHTML={{
             __html: THEME_COLOR_SCRIPT,
+          }}
+        />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: registerServiceWorker,
           }}
         />
       </head>
