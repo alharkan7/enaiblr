@@ -1,9 +1,15 @@
+'use client';
+
 import { motion } from 'framer-motion';
-import Link from 'next/link';
+import { InfinityIcon } from 'lucide-react';
+import { CheckCircleFillIcon } from './icons';
+import type { Model } from '@/lib/ai/models';
 
-import { MessageIcon, VercelIcon } from './icons';
+interface OverviewProps {
+  selectedModel: Model;
+}
 
-export const Overview = () => {
+export function Overview({ selectedModel }: OverviewProps) {
   return (
     <motion.div
       key="overview"
@@ -15,38 +21,17 @@ export const Overview = () => {
     >
       <div className="rounded-xl p-6 flex flex-col gap-8 leading-relaxed text-center max-w-xl">
         <p className="flex flex-row justify-center gap-4 items-center">
-          <VercelIcon size={32} />
-          <span>+</span>
-          <MessageIcon size={32} />
+          <InfinityIcon className='size-20'/>
         </p>
-        <p>
-          This is an{' '}
-          <Link
-            className="font-medium underline underline-offset-4"
-            href="https://github.com/vercel/ai-chatbot"
-            target="_blank"
-          >
-            open source
-          </Link>{' '}
-          chatbot template built with Next.js and the AI SDK by Vercel. It uses
-          the{' '}
-          <code className="rounded-md bg-muted px-1 py-0.5">streamText</code>{' '}
-          function in the server and the{' '}
-          <code className="rounded-md bg-muted px-1 py-0.5">useChat</code> hook
-          on the client to create a seamless chat experience.
-        </p>
-        <p>
-          You can learn more about the AI SDK by visiting the{' '}
-          <Link
-            className="font-medium underline underline-offset-4"
-            href="https://sdk.vercel.ai/docs"
-            target="_blank"
-          >
-            docs
-          </Link>
-          .
-        </p>
+        <div className="space-y-4">
+          {selectedModel?.overview.map((capability: string, index: number) => (
+            <div key={index} className="flex items-center space-x-2">
+              <CheckCircleFillIcon size={16} />
+              <span>{capability}</span>
+            </div>
+          ))}
+        </div>
       </div>
     </motion.div>
   );
-};
+}

@@ -70,6 +70,7 @@ export async function POST(request: Request) {
   }
 
   const model = models.find((model) => model.id === modelId);
+  const availableTools: AllowedTools[] = model?.tools ? allTools : [];
 
   if (!model) {
     return new Response('Model not found', { status: 404 });
@@ -117,8 +118,9 @@ export async function POST(request: Request) {
           system: systemPrompt,
           messages: coreMessages,
           maxSteps: 5,
-          experimental_activeTools: allTools,
-          tools: {
+          // experimental_activeTools: allTools,
+          experimental_activeTools: availableTools,
+          tools: model?.tools ? {
             getWeather: {
               description: 'Get the current weather at a location',
               parameters: z.object({
@@ -420,7 +422,7 @@ export async function POST(request: Request) {
                 };
               },
             },
-          },
+          } : {},
           onFinish: async ({ response }) => {
             if (session.user?.id) {
               try {
