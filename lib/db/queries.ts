@@ -420,6 +420,7 @@ export async function createSubscription(userId: string) {
 type SubscriptionPlan = 'free' | 'pro';
 type SubscriptionStatus = {
   plan: SubscriptionPlan;
+  validUntil: Date | null;
 };
 
 // For Edge Runtime compatibility, we'll skip caching
@@ -430,14 +431,14 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
       .from(subscription)
       .where(eq(subscription.userId, userId));
 
-    let status: SubscriptionStatus = { plan: 'free' };
+    let status: SubscriptionStatus = { plan: 'free', validUntil: null };
 
     if (subs && subs.length > 0) {
       const sub = subs[0];
       if (sub.plan === 'pro' && sub.validUntil) {
         const now = new Date();
         if (now < sub.validUntil) {
-          status = { plan: 'pro' };
+          status = { plan: 'pro', validUntil: sub.validUntil };
         }
       }
     }
@@ -446,7 +447,7 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
   } catch (error) {
     console.error('Failed to get user subscription status:', error);
     // Default to free on error for security
-    return { plan: 'free' };
+    return { plan: 'free', validUntil: null };
   }
 }
 
@@ -457,14 +458,33 @@ export async function isProUser(userId: string): Promise<boolean> {
 
 export async function updateSubscriptionToPro(userId: string) {
   try {
-    const validUntil = new Date();
-    validUntil.setDate(validUntil.getDate() + 30);
+    const now = new Date();
+    
+    // Get current subscription
+    const currentSub = await db
+      .select()
+      .from(subscription)
+      .where(eq(subscription.userId, userId))
+      .limit(1);
+
+    let newValidUntil = new Date(now);
+    newValidUntil.setDate(newValidUntil.getDate() + 30);
+
+    if (currentSub.length > 0 && currentSub[0].validUntil) {
+      const currentValidUntil = new Date(currentSub[0].validUntil);
+      if (currentValidUntil > now) {
+        // If current valid until is in the future, add 30 days to it
+        newValidUntil = new Date(currentValidUntil);
+        newValidUntil.setDate(currentValidUntil.getDate() + 30);
+      }
+      // If validUntil is in the past, we'll use the already calculated now + 30 days
+    }
 
     return await db
       .update(subscription)
       .set({
         plan: 'pro',
-        validUntil,
+        validUntil: newValidUntil,
       })
       .where(eq(subscription.userId, userId))
       .returning();

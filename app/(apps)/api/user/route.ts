@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server'
 import { auth } from '@/app/(auth)/auth'
-import { getUser, updateUserProfile } from '@/lib/db/queries'
+import { getUser, updateUserProfile, getUserSubscriptionStatus } from '@/lib/db/queries'
 
 export async function GET() {
   const session = await auth()
@@ -22,9 +22,16 @@ export async function GET() {
     }
 
     const user = users[0]
+    const subscription = await getUserSubscriptionStatus(user.id)
+    
     return NextResponse.json({
       name: user.name,
-      phone: user.phone
+      email: user.email,
+      phone: user.phone,
+      avatar: user.avatar,
+      createdAt: user.createdAt,
+      plan: subscription.plan,
+      validUntil: subscription.validUntil
     })
   } catch (error) {
     console.error('Failed to fetch user data:', error)
