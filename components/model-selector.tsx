@@ -75,15 +75,9 @@ export function ModelSelector({
                   setOptimisticModelId(model.id);
                   await saveModelId(model.id);
                   setOpen(false);
-                  
-                  // Only reload if we're not on the root path
+
                   if (pathname !== '/') {
-                    // Clear the chat messages from SWR cache
-                    mutate('/api/chat', null);
-                    mutate('/api/history');
-                    // Force a hard navigation to clear React state
-                    window.location.href = '/';
-                  } else {
+                    router.push('/');
                     router.refresh();
                   }
                 });

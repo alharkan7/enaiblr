@@ -13,7 +13,7 @@ import type { VisibilityType } from '@/components/visibility-selector';
 
 export async function saveModelId(model: string) {
   const cookieStore = await cookies();
-  cookieStore.set('selectedModelId', model);
+  cookieStore.set('model-id', model);
 }
 
 export async function generateTitleFromUserMessage({
@@ -23,7 +23,7 @@ export async function generateTitleFromUserMessage({
 }) {
   const { text: title } = await generateText({
     model: customModel('gpt-4o-mini'),
-    system: `\n
+    system: `
     - you will generate a short title based on the first message a user begins a conversation with
     - ensure it is not more than 80 characters long
     - the title should be a summary of the user's message

@@ -24,20 +24,6 @@ export function AppSidebar({ user }: { user: User | undefined }) {
   const { mutate } = useSWRConfig();
   const pathname = usePathname();
 
-  const handleNewChat = () => {
-    setOpenMobile(false);
-    // Only reload if we're not on the root path
-    if (pathname !== '/') {
-      // Clear the chat messages from SWR cache
-      mutate('/api/chat', null);
-      mutate('/api/history');
-      // Force a hard navigation to clear React state
-      window.location.href = '/';
-    } else {
-      router.refresh();
-    }
-  };
-
   return (
     <Sidebar className="group-data-[side=left]:border-r-0">
       <SidebarHeader>
@@ -60,7 +46,11 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   variant="ghost"
                   type="button"
                   className="p-2 h-fit hidden md:flex"
-                  onClick={handleNewChat}
+                  onClick={() => {
+                    setOpenMobile(false);
+                    router.push('/');
+                    router.refresh();
+                  }}
                 >
                   <PlusIcon />
                 </Button>
@@ -71,7 +61,11 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               variant="ghost"
               type="button"
               className="p-2 h-fit md:hidden"
-              onClick={handleNewChat}
+              onClick={() => {
+                setOpenMobile(false);
+                router.push('/');
+                router.refresh();
+              }}
             >
               <PlusIcon />
             </Button>
