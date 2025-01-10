@@ -77,6 +77,7 @@ export default auth(async function middleware(request: NextRequest) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/apps', request.url));
     }
+    // If logged in, allow access to root
     return NextResponse.next();
   }
 

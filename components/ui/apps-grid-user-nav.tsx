@@ -93,7 +93,8 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               className="w-full cursor-pointer"
               onClick={() => {
                 signOut({
-                  redirectTo: '/',
+                  callbackUrl: '/apps',
+                  redirect: true
                 });
               }}
             >
