@@ -96,6 +96,10 @@ function PureMultimodalInput({
       const finalValue = domValue || localStorageInput || '';
       setInput(finalValue);
       adjustHeight();
+      // Only auto-focus on desktop devices
+      if (width && width > 768) {
+        textareaRef.current.focus();
+      }
     }
     // Only run once after hydration
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -157,7 +161,7 @@ function PureMultimodalInput({
 
       return {
         url,
-        name: originalName || pathname,  // Use original name if available
+        name: originalName || pathname, // Use original name if available
         contentType: contentType,
       };
     } catch (error) {
@@ -244,7 +248,6 @@ function PureMultimodalInput({
           className,
         )}
         rows={2}
-        autoFocus
         onKeyDown={(event) => {
           if (event.key === 'Enter' && !event.shiftKey) {
             event.preventDefault();

@@ -11,6 +11,7 @@ import { models } from '@/lib/ai/models';
 import { Block } from './block';
 import { MultimodalInput } from './multimodal-input';
 import { Messages } from './messages';
+import { Overview } from './overview';
 import { VisibilityType } from './visibility-selector';
 import { useBlockSelector } from '@/hooks/use-block';
 import type { User } from 'next-auth';
@@ -18,7 +19,7 @@ import type { User } from 'next-auth';
 export function Chat({
   id,
   initialMessages,
-  selectedModelId,  // This would come from the chat.llm_id or default
+  selectedModelId,
   selectedVisibilityType,
   isReadonly,
   user,
@@ -52,11 +53,6 @@ export function Chat({
     },
   });
 
-  // const { data: votes } = useSWR<Array<Vote>>(
-  //   `/api/vote?chatId=${id}`,
-  //   fetcher,
-  // );
-
   const [attachments, setAttachments] = useState<Array<Attachment>>([]);
   const isBlockVisible = useBlockSelector((state) => state.isVisible);
   const selectedModel = models.find((model) => model.id === selectedModelId);
@@ -72,16 +68,19 @@ export function Chat({
           user={user}
         />
 
-        <Messages
-          chatId={id}
-          messages={messages}
-          setMessages={setMessages}
-          isLoading={isLoading}
-          reload={reload}
-          isReadonly={isReadonly}
-          isBlockVisible={isBlockVisible}
-          selectedModelId={selectedModelId}
-        />
+        {messages.length > 0 ? (
+          <Messages
+            chatId={id}
+            messages={messages}
+            setMessages={setMessages}
+            isLoading={isLoading}
+            reload={reload}
+            isReadonly={isReadonly}
+            isBlockVisible={isBlockVisible}
+          />
+        ) : (
+          selectedModel && <Overview selectedModel={selectedModel} />
+        )}
 
         <form className="flex mx-auto px-4 bg-background pb-4 md:pb-6 gap-2 w-full md:max-w-3xl">
           {!isReadonly && (
