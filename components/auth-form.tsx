@@ -160,7 +160,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
               className="font-medium underline" 
               href={`/register${searchParams.get('callbackUrl') ? `?callbackUrl=${searchParams.get('callbackUrl')}` : ''}`}
             >
-              Sign up
+              Sign Up
             </Link>
           </>
         ) : (
@@ -170,7 +170,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
               className="font-medium underline" 
               href={`/login${searchParams.get('callbackUrl') ? `?callbackUrl=${searchParams.get('callbackUrl')}` : ''}`}
             >
-              Sign in
+              Sign In
             </Link>
           </>
         )}
