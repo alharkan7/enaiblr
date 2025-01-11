@@ -6,6 +6,7 @@ import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
 import Link from 'next/link';
+import { CircleUserRound, CircleHelp, Sun, Moon } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -66,34 +67,34 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
           <DropdownMenuItem asChild>
             <Link
               href="/account/profile"
-              className="w-full cursor-pointer"
+              className="w-full cursor-pointer flex items-center gap-2"
             >
+              <CircleUserRound className="h-4 w-4" />
               Account Settings
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem
-            className="cursor-pointer"
+            className="cursor-pointer flex items-center gap-2"
             onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
           >
+            {theme === 'light' ? (
+              <Moon className="h-4 w-4" />
+            ) : (
+              <Sun className="h-4 w-4" />
+            )}
             {`${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild
-          // disabled={isPro && plan === 'free'}
-          >
+          <DropdownMenuItem asChild>
             <a
               href="https://wa.me/+6281280077690"
               target="_blank"
               rel="noopener noreferrer"
-              className="relative w-full cursor-pointer"
+              className="relative w-full cursor-pointer flex items-center gap-2"
             >
+              <CircleHelp className="h-4 w-4" />
               Contact Help
-              {/* {isPro && plan === 'free' && (
-                <span className="absolute right-2 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
-                  PRO
-                </span>
-              )} */}
             </a>
           </DropdownMenuItem>
 
