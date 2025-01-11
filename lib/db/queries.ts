@@ -570,15 +570,27 @@ export async function deleteFolder(id: string) {
   await db.delete(folder).where(eq(folder.id, id));
 }
 
-export async function updateUserProfile(email: string, data: { name?: string, phone?: string }) {
+export async function updateUserProfile(
+  email: string, 
+  data: { 
+    name?: string; 
+    phone?: string;
+    password?: string;
+  }
+) {
   try {
+    const updates: any = {};
+    if (data.name !== undefined) updates.name = data.name;
+    if (data.phone !== undefined) updates.phone = data.phone;
+    if (data.password !== undefined) updates.password = data.password;
+
     return await db
       .update(user)
-      .set(data)
+      .set(updates)
       .where(eq(user.email, email))
       .returning();
   } catch (error) {
-    console.error('Failed to update user profile:', error);
+    console.error('Failed to update user profile in database');
     throw error;
   }
 }

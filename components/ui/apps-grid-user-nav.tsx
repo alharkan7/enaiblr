@@ -5,6 +5,7 @@ import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
+import Link from 'next/link';
 
 import {
   DropdownMenu,
@@ -41,7 +42,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
             <span>Get Enaiblr Pro</span>
             <ArrowRight className="ml-auto size-4" />
           </Button>
-          <DropdownMenuSeparator className="mb-1 mt-2"/>
+          <DropdownMenuSeparator className="mb-1 mt-2" />
         </>
       )}
       <DropdownMenu>
@@ -62,6 +63,15 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
           align="end"
           className="w-full min-w-[200px]"
         >
+          <DropdownMenuItem asChild>
+            <Link
+              href="/account/profile"
+              className="w-full cursor-pointer"
+            >
+              Account Settings
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
@@ -69,7 +79,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
             {`${theme === 'light' ? 'Dark' : 'Light'} Mode`}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem asChild 
+          <DropdownMenuItem asChild
           // disabled={isPro && plan === 'free'}
           >
             <a
@@ -86,21 +96,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               )} */}
             </a>
           </DropdownMenuItem>
-          <DropdownMenuSeparator />
-          <DropdownMenuItem asChild>
-            <button
-              type="button"
-              className="w-full cursor-pointer"
-              onClick={() => {
-                signOut({
-                  callbackUrl: '/apps',
-                  redirect: true
-                });
-              }}
-            >
-              Sign Out
-            </button>
-          </DropdownMenuItem>
+
         </DropdownMenuContent>
       </DropdownMenu>
     </div>

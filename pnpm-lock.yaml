@@ -95,6 +95,9 @@ importers:
       '@tavily/core':
         specifier: ^0.0.2
         version: 0.0.2
+      '@types/bcryptjs':
+        specifier: ^2.4.6
+        version: 2.4.6
       '@types/lodash':
         specifier: ^4.17.13
         version: 4.17.13
@@ -122,6 +125,9 @@ importers:
       bcrypt-ts:
         specifier: ^5.0.2
         version: 5.0.2
+      bcryptjs:
+        specifier: ^2.4.3
+        version: 2.4.3
       browser-image-compression:
         specifier: ^2.0.2
         version: 2.0.2
@@ -1957,6 +1963,9 @@ packages:
   '@tavily/core@0.0.2':
     resolution: {integrity: sha512-UabYbp57bdjEloA4efW9zTSzv+FZp13JVDHcfutUNR5XUZ+aDGupe2wpfABECnD+b7Ojp9v9zguZcm1o+h0//w==}
 
+  '@types/bcryptjs@2.4.6':
+    resolution: {integrity: sha512-9xlo6R2qDs5uixm0bcIqCeMCE6HiQsIyel9KQySStiyqNl2tnj2mP3DX1Nf56MD6KMenNNlBBsy3LJ7gUEQPXQ==}
+
   '@types/cookie@0.6.0':
     resolution: {integrity: sha512-4Kh9a6B2bQciAhf7FSuMRRkUWecJgJu9nPnx3yzpsfXX/c50REIqpHY4C82bXP90qrLtXtkDxTZosYO3UpOwlA==}
 
@@ -2295,6 +2304,9 @@ packages:
   bcrypt-ts@5.0.2:
     resolution: {integrity: sha512-gDwQ5784AkkfhHACh3jGcg1hUubyZyeq9AtVd5gXkcyHGVOC+mORjRIHSj+fHfqwY5vxwyBLXQpcfk8MpK0ROg==}
     engines: {node: '>=18'}
+
+  bcryptjs@2.4.3:
+    resolution: {integrity: sha512-V/Hy/X9Vt7f3BbPJEi8BdVFMByHi+jNXrYkW3huaybV/kQ0KJg0Y6PkEMbn+zeT+i+SiKZ/HMqJGIIt4LZDqNQ==}
 
   bent@7.3.12:
     resolution: {integrity: sha512-T3yrKnVGB63zRuoco/7Ybl7BwwGZR0lceoVG5XmQyMIH9s19SV5m+a8qam4if0zQuAmOQTyPTPmsQBdAorGK3w==}
@@ -6116,6 +6128,8 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
+  '@types/bcryptjs@2.4.6': {}
+
   '@types/cookie@0.6.0': {}
 
   '@types/d3-scale@4.0.8':
@@ -6465,6 +6479,8 @@ snapshots:
   base64-js@1.5.1: {}
 
   bcrypt-ts@5.0.2: {}
+
+  bcryptjs@2.4.3: {}
 
   bent@7.3.12:
     dependencies:
