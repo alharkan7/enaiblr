@@ -53,7 +53,7 @@ export const models: Array<Model> = [
     description: 'Google',
     overview: ['Ask Questions', 'Attach Images or Documents'],
     provider: 'google',
-    type: 'pro',
+    type: 'free',
     capabilities: {
       images: true,
       files: true,
