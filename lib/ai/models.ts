@@ -51,7 +51,7 @@ export const models: Array<Model> = [
     label: 'Gemini 1.5',
     apiIdentifier: 'gemini-1.5-flash',
     description: 'Google',
-    overview: ['Ask Questions', 'Attach Images or Documents'],
+    overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
     provider: 'google',
     type: 'free',
     capabilities: {
