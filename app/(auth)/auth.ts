@@ -27,9 +27,13 @@ interface ExtendedSession extends Session {
 export const config = {
   trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
+  session: {
+    strategy: 'jwt',
+    maxAge: 30 * 24 * 60 * 60, // 30 days
+  },
   cookies: {
     sessionToken: {
-      name: 'next-auth.session-token',
+      name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',
@@ -38,7 +42,7 @@ export const config = {
       }
     },
     csrfToken: {
-      name: 'next-auth.csrf-token',
+      name: process.env.NODE_ENV === 'production' ? '__Host-next-auth.csrf-token' : 'next-auth.csrf-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',

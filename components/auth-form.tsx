@@ -73,10 +73,27 @@ export default function AuthForm({ type, action }: AuthFormProps) {
   async function handleGoogleSignIn() {
     try {
       setLoading(true);
+      setError(null);
       const callbackUrl = searchParams.get('callbackUrl');
-      await signIn('google', { callbackUrl: callbackUrl || '/apps' });
+      const result = await signIn('google', { 
+        callbackUrl: callbackUrl || '/apps',
+        redirect: false 
+      });
+      
+      if (result?.error) {
+        setError('Failed to sign in with Google');
+        toast.error('Failed to sign in with Google. Please try again.');
+        return;
+      }
+
+      if (result?.url) {
+        router.push(result.url);
+      }
     } catch (error) {
+      setError('Failed to sign in with Google');
       toast.error('Failed to sign in with Google');
+    } finally {
+      setLoading(false);
     }
   }
 
