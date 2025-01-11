@@ -34,7 +34,7 @@ export const models: Array<Model> = [
   },
   {
     id: 'claude-3-haiku',
-    label: 'Claude 3.5',
+    label: 'Claude 3',
     apiIdentifier: 'claude-3-haiku-20240307',
     description: 'Anthropic',
     overview: ['Ask Questions', 'Attach Images', 'Create Documents', 'Write and Run Codes'],
