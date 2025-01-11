@@ -1,12 +1,11 @@
 'use client';
-import { ChevronDown, ArrowRight } from 'lucide-react';
+import { ChevronDown, ArrowRight, CircleUserRound, CircleHelp, Sun, Moon } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
 import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
 import Link from 'next/link';
-import { CircleUserRound, CircleHelp, Sun, Moon } from 'lucide-react';
 
 import {
   DropdownMenu,
