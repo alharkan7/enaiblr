@@ -97,7 +97,7 @@ export function ModelSelector({
                 )}
               </div>
               {model.type === 'pro' && plan === 'free' && (
-                <span className="absolute top-1 right-2 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
+                <span className="ml-2 sm:ml-3 absolute top-2 right-1 text-[5px] font-medium text-primary bg-primary/10 rounded-lg px-0.5 py-0.5">
                   <InfinityIcon />
                 </span>
               )}
