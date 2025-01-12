@@ -17,7 +17,7 @@ export default async function LoginPage() {
   }
 
   return (
-    <div className="flex h-[calc(100vh-theme(spacing.16))] items-center justify-center py-10 px-4">
+    <div className="flex min-h-screen items-center justify-center px-4">
       <AuthForm
         type="login"
         action={authenticate}

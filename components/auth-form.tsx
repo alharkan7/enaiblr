@@ -257,9 +257,9 @@ export default function AuthForm({ type, action }: AuthFormProps) {
             >
               <b className='text-primary'>Sign Up</b>
             </Link>
-            {' | Contact '}
+            <br></br>Contact{' '}
             <Link
-              className='font-medium'
+              className='font-medium underline'
               href='https://wa.me/+6281280077690'
               target='_blank'>
               <b className='text-primary'>Help</b>
@@ -274,9 +274,9 @@ export default function AuthForm({ type, action }: AuthFormProps) {
             >
               <b className='text-primary'>Sign In</b>
             </Link>
-            {' | Contact '}
+            <br></br>Contact{' '}
             <Link
-              className='font-medium'
+              className='font-medium underline'
               href='https://wa.me/+6281280077690'
               target='_blank'>
               <b className='text-primary'>Help</b>
