@@ -1,7 +1,5 @@
 // Define your models here.
 
-import { List } from "lodash";
-
 export interface Model {
   id: string;
   label: string;
@@ -47,7 +45,7 @@ export const models: Array<Model> = [
   //   tools: true,
   // },
   {
-    id: 'gemini-1.5-flash',
+    id: 'gemini-1.5-flash-gpt',
     label: 'ChatGPT-4o',
     apiIdentifier: 'gemini-1.5-flash',
     description: 'OpenAI',
@@ -61,7 +59,7 @@ export const models: Array<Model> = [
     tools: false,
   },
   {
-    id: 'gemini-1.5-flash',
+    id: 'gemini-1.5-flash-claude',
     label: 'Claude 3.5',
     apiIdentifier: 'gemini-1.5-flash',
     description: 'Anthropic',
