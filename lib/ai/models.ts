@@ -19,30 +19,30 @@ export interface Model {
 
 export const models: Array<Model> = [
   {
-    id: 'gpt-4o-mini',
+    id: 'gpt-4o-2024-11-20',
     label: 'ChatGPT 4o',
-    apiIdentifier: 'gpt-4o-mini',
+    apiIdentifier: 'gpt-4o-2024-11-20',
     description: 'OpenAI',
     overview: ['Ask Questions', 'Attach Images', 'Create Documents', 'Write and Run Codes'],
     provider: 'openai',
     type: 'pro',
     capabilities: {
       images: true,
-      files: false,
+      files: true,
     },
     tools: true,
   },
   {
-    id: 'claude-3-haiku',
-    label: 'Claude 3',
-    apiIdentifier: 'claude-3-haiku-20240307',
+    id: 'claude-3-5-sonnet-20240620',
+    label: 'Claude 3.5',
+    apiIdentifier: 'claude-3-5-sonnet-20240620',
     description: 'Anthropic',
     overview: ['Ask Questions', 'Attach Images', 'Create Documents', 'Write and Run Codes'],
     provider: 'anthropic',
     type: 'pro',
     capabilities: {
       images: true,
-      files: false,
+      files: true,
     },
     tools: true,
   },
