@@ -50,7 +50,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'gemini-1.5-flash',
     description: 'OpenAI',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
-    provider: 'openai',
+    provider: 'google',
     type: 'pro',
     capabilities: {
       images: true,
@@ -64,7 +64,7 @@ export const models: Array<Model> = [
     apiIdentifier: 'gemini-1.5-flash',
     description: 'Anthropic',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
-    provider: 'anthropic',
+    provider: 'google',
     type: 'pro',
     capabilities: {
       images: true,
@@ -130,5 +130,5 @@ export const models: Array<Model> = [
   },
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'llama3-70b-8192';
+export const DEFAULT_MODEL_NAME: string = 'gemini-1.5-flash';
 
