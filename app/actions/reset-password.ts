@@ -34,14 +34,93 @@ export async function requestPasswordReset(formData: FormData) {
 
     // Send reset email
     await resend.emails.send({
-      from: 'noreply@enaiblr.org',
+      from: 'Enaiblr <noreply@enaiblr.org>',
       to: email,
-      subject: 'Enaiblr: Reset your password',
+      subject: 'Reset Your Password - Enaiblr',
       html: `
-        <p>Click the link below to reset your password:</p>
-        <a href="${APP_URL}/reset-password?token=${token}">Reset Password</a>
-        <p>This link will expire in 24 hours.</p>
-      `,
+        <!DOCTYPE html>
+        <html>
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Reset Your Password</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+                line-height: 1.6;
+                color: #333;
+                margin: 0;
+                padding: 0;
+              }
+              .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 40px 20px;
+              }
+              .logo {
+                margin-bottom: 30px;
+                text-align: center;
+              }
+              .content {
+                background: #ffffff;
+                padding: 30px;
+                border-radius: 8px;
+                box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+              }
+              .button {
+                display: inline-block;
+                padding: 12px 24px;
+                background-color: #007bff;
+                color: #ffffff;
+                text-decoration: none;
+                border-radius: 4px;
+                margin: 20px 0;
+              }
+              .footer {
+                margin-top: 30px;
+                font-size: 14px;
+                color: #666;
+                text-align: center;
+              }
+              .warning {
+                color: #666;
+                font-size: 14px;
+                margin-top: 20px;
+              }
+            </style>
+          </head>
+          <body>
+            <div class="container">
+              <div class="logo">
+                <!-- Replace with your actual logo -->
+                <h1 style="color: #007bff; margin: 0;">Enaiblr</h1>
+              </div>
+              
+              <div class="content">
+                <h2>Password Reset Request</h2>
+                <p>Hello,</p>
+                <p>We received a request to reset the password for your Enaiblr account. To proceed with the password reset, please click the button below:</p>
+                
+                <div style="text-align: center;">
+                  <a href="${APP_URL}/reset-password?token=${token}" class="button" style="display: inline-block; padding: 12px 24px; background-color: #007bff; color: #ffffff !important; text-decoration: none; border-radius: 4px; margin: 20px 0;">Reset Your Password</a>
+                </div>
+                
+                <p class="warning">This link will expire in 24 hours for security reasons. If you didn't request this password reset, please ignore this email or contact our support team if you have concerns.</p>
+                
+                <p>If the button above doesn't work, you can copy and paste this link into your browser:</p>
+                <p style="word-break: break-all; font-size: 14px;">
+                  ${APP_URL}/reset-password?token=${token}
+                </p>
+              </div>
+              
+              <div class="footer">
+                <p>&copy; ${new Date().getFullYear()} Enaiblr. All rights reserved.</p>
+                <p>This is an automated message, please do not reply to this email.</p>
+              </div>
+            </div>
+          </body>
+        </html>
+      `
     });
 
     return { success: true };
