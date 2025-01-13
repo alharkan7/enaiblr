@@ -19,10 +19,10 @@ async function resetPasswordWithToken(token: string, formData: FormData) {
 export default async function ResetPasswordPage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>
+  searchParams?: { token?: string };
 }) {
   const session = await auth();
-  const token = typeof searchParams.token === 'string' ? searchParams.token : undefined;
+  const token = searchParams?.token;
   
   if (session?.user) {
     redirect('/');
