@@ -19,7 +19,7 @@ async function resetPasswordWithToken(token: string, formData: FormData) {
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface PageProps {
-  params: { [key: string]: string | undefined };
+  params: Record<string, string>;
   searchParams: SearchParams;
 }
 
