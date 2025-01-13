@@ -33,10 +33,10 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
                 trigger={
                   <Button
                     variant="outline"
-                    className="md:px-2 px-2 md:h-fit"
+                    className="flex items-center px-2 h-fit"
                   >
                     <AppGridIcon size={14} />
-                    <span className="hidden md:inline ml-2">Apps</span>
+                    <span className="ml-2">Apps</span>
                   </Button>
                 }
                 user={session?.user}
@@ -50,10 +50,10 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
               trigger={
                 <Button
                   variant="outline"
-                  className="md:px-2 px-2 md:h-fit"
+                  className="flex items-center px-2 h-fit"
                 >
                   <AppGridIcon size={14} />
-                  <span className="hidden md:inline ml-2">Apps</span>
+                  <span className="ml-2">Apps</span>
                 </Button>
               }
               user={session?.user}

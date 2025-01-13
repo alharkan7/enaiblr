@@ -87,10 +87,10 @@ function PureChatHeader({
         trigger={
           <Button
             variant="outline"
-            className="order-last md:px-2 px-2 md:h-fit md:ml-auto"
+            className="order-last flex items-center px-2 h-fit md:ml-auto"
           >
             <AppGridIcon size={14} />
-            <span className="hidden md:inline ml-2">Apps</span>
+            <span className="ml-2">Apps</span>
           </Button>
         }
         user={user}
