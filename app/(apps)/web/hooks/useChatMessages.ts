@@ -10,13 +10,19 @@ export function useChatMessages() {
         setIsLoading(false);
     };
 
-    const sendMessage = async (input: string) => {
+    const sendMessage = async (input: string, linkMode: boolean = false) => {
         if ((!input.trim()) || isLoading) return;
+
+        // Determine chat mode
+        const currentChatMode = messages.length > 0 
+            ? messages[0].chatMode 
+            : linkMode ? 'gemini' : 'tavily';
 
         const userMessage: Message = {
             id: crypto.randomUUID(),
             role: 'user',
-            content: [{ type: 'text' as const, text: input.trim() }]
+            content: [{ type: 'text' as const, text: input.trim() }],
+            chatMode: currentChatMode
         };
 
         setMessages(prev => [...prev, userMessage]);
@@ -30,6 +36,7 @@ export function useChatMessages() {
                 },
                 body: JSON.stringify({
                     messages: [...messages, userMessage],
+                    chatMode: currentChatMode
                 })
             });
 
@@ -64,14 +71,29 @@ export function useChatMessages() {
                                             type: 'text' as const, 
                                             text: '' 
                                         }],
-                                        sources: data.sources
+                                        sources: data.sources,
+                                        chatMode: currentChatMode
                                     };
                                     setMessages(prev => [...prev, assistantMessage]);
                                 } else if (data.type === 'content') {
-                                    // Update the assistant message with new content
+                                    // For Gemini follow-up messages, initialize the assistant message if it doesn't exist
                                     setMessages(prev => {
                                         const lastMessage = prev[prev.length - 1];
-                                        if (lastMessage?.role === 'assistant' && Array.isArray(lastMessage.content)) {
+                                        if (!lastMessage || lastMessage.role !== 'assistant') {
+                                            const newMessage: Message = {
+                                                id: crypto.randomUUID(),
+                                                role: 'assistant',
+                                                content: [{ 
+                                                    type: 'text' as const, 
+                                                    text: data.content 
+                                                }],
+                                                chatMode: currentChatMode
+                                            };
+                                            return [...prev, newMessage];
+                                        }
+
+                                        // Update existing message
+                                        if (Array.isArray(lastMessage.content)) {
                                             const textContent = lastMessage.content[0];
                                             if (textContent && textContent.type === 'text') {
                                                 return [

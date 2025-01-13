@@ -20,4 +20,5 @@ export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: MessageContent;
     sources?: Source[];
+    chatMode?: 'gemini' | 'tavily';
 }

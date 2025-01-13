@@ -1,4 +1,4 @@
-import { Send, Image } from 'lucide-react'
+import { Send, Image, Link } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useSubscription } from '@/contexts/subscription-context'
 import {
@@ -19,8 +19,9 @@ interface ChatInputProps {
     isLoading: boolean;
     fileInputRef: React.RefObject<HTMLInputElement>;
     autoFocus?: boolean;
-    sendMessage: (text: string) => Promise<void>;
+    sendMessage: (text: string, linkMode: boolean) => Promise<void>;
     onFocusChange?: (focused: boolean) => void;
+    onLinkModeChange?: (linkMode: boolean) => void;
 }
 
 export function ChatInput({ 
@@ -30,12 +31,36 @@ export function ChatInput({
     fileInputRef, 
     autoFocus,
     sendMessage,
-    onFocusChange
+    onFocusChange,
+    onLinkModeChange
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+    const [linkMode, setLinkMode] = useState(false);
     const { plan } = useSubscription();
     const router = useRouter();
+
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const newValue = e.target.value;
+        if (plan === 'free' && newValue.length > webFree_CharactersLimit) {
+            setShowUpgradeDialog(true);
+            return;
+        }
+        setInput(newValue);
+    };
+
+    const isValidUrl = (url: string) => {
+        try {
+            new URL(url);
+            return true;
+        } catch {
+            return false;
+        }
+    };
+
+    const canSubmit = linkMode 
+        ? input.trim() && isValidUrl(input) && !isLoading
+        : input.trim() && !isLoading;
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -49,39 +74,49 @@ export function ChatInput({
             fileInputRef.current.value = '';
         }
 
-        // Send message
-        await sendMessage(input);
+        // Send message with linkMode flag
+        await sendMessage(input, linkMode);
     };
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const newValue = e.target.value;
-        if (plan === 'free' && newValue.length > webFree_CharactersLimit) {
-            setShowUpgradeDialog(true);
-            return;
-        }
-        setInput(newValue);
+    const handleLinkModeChange = (newMode: boolean) => {
+        setLinkMode(newMode);
+        onLinkModeChange?.(newMode);
     };
 
     return (
         <>
             <form onSubmit={handleSubmit} className="p-4">
                 <div className="flex pl-2 items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-input relative focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
-                    <input
-                        ref={inputRef}
-                        type="text"
-                        value={input}
-                        onChange={handleInputChange}
-                        onFocus={() => onFocusChange?.(true)}
-                        onBlur={() => onFocusChange?.(false)}
-                        placeholder="Type a message..."
-                        className="flex-1 p-3 pr-12 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
-                        disabled={isLoading}
-                        autoFocus={autoFocus}
-                    />
+                    <div className="w-full relative flex items-center">
+                        <button
+                            type="button"
+                            onClick={() => handleLinkModeChange(!linkMode)}
+                            className={`p-2 rounded-full ${
+                                linkMode 
+                                    ? "text-primary" 
+                                    : "text-muted-foreground hover:text-muted-foreground/90"
+                            } disabled:opacity-50 disabled:cursor-not-allowed`}
+                            disabled={isLoading}
+                        >
+                            <Link className="size-5" />
+                        </button>
+                        <input
+                            ref={inputRef}
+                            type="text"
+                            value={input}
+                            onChange={handleInputChange}
+                            onFocus={() => onFocusChange?.(true)}
+                            onBlur={() => onFocusChange?.(false)}
+                            placeholder={linkMode ? "Type a valid URL..." : "Type a message..."}
+                            className="flex-1 py-3 px-2 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
+                            disabled={isLoading}
+                            autoFocus={autoFocus}
+                        />
+                    </div>
 
                     <button
                         type="submit"
-                        disabled={!input.trim() || isLoading}
+                        disabled={!canSubmit}
                         className="absolute right-2 p-2 rounded-full text-primary hover:text-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
                         <Send className="size-5" />

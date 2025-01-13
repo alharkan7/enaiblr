@@ -5,9 +5,10 @@ import { AppsHeader } from '@/components/apps-header';
 interface ChatTitleProps {
     compact?: boolean;
     clearMessages: () => void;
+    chatMode?: 'gemini' | 'tavily';
 }
 
-export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
+export function ChatTitle({ compact, clearMessages, chatMode }: ChatTitleProps) {
     const refreshButton = (
         <Button 
             onClick={clearMessages}
@@ -27,10 +28,10 @@ export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
     ) : (
         <div className="text-center py-8">
             <h1 className="text-4xl font-extrabold mb-2">
-                Web&nbsp;Search
+                {chatMode === 'gemini' ? 'Page Summarizer' : 'Web Search'}
             </h1>
             <p className="text-sm text-muted-foreground">
-                <b>Search the web with AI</b>
+                <b>{chatMode === 'gemini' ? 'Chat with Any Page on the Internet' : 'Search the web with AI'}</b>
             </p>
         </div>
     );
