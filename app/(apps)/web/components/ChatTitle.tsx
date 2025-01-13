@@ -22,7 +22,7 @@ export function ChatTitle({ compact, clearMessages, chatMode }: ChatTitleProps) 
 
     return compact ? (
         <AppsHeader
-            title={<>Chat with the Web</>}
+            title={<>Chat with {chatMode === 'gemini' ? 'a Page' : 'the Web'}</>}
             leftButton={refreshButton}
         />
     ) : (
