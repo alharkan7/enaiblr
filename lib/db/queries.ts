@@ -106,7 +106,8 @@ async function createUserOnboarding(userId: string, tx: any) {
     role: 'assistant',
     content: [{
       type: "text",
-      text: "👋 Welcome to Enaiblr! I'm your AI assistant, ready to help you with anything you need. I've created three folders to help you organize your chats:\n\n" +
+      text: "👋 Welcome to Enaiblr!\n\n" +
+            "I'm your AI assistant, ready to help you with anything you need. I've created three folders to help you organize your chats:\n\n" +
             "📁 Personal - For your personal conversations and tasks\n\n" +
             "💼 Work - For work-related discussions and projects\n\n" +
             "📚 Study - For learning and educational content\n\n" +
