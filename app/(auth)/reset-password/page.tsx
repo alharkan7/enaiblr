@@ -20,13 +20,14 @@ type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface PageProps {
   params: Promise<Record<string, string>>;
-  searchParams: SearchParams;
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 const Page = async ({ params, searchParams }: PageProps) => {
-  await params; // Await the params even if we don't use them
+  await params; // Await params even if we don't use them
+  const searchParamsValue = await searchParams;
   const session = await auth();
-  const token = typeof searchParams.token === 'string' ? searchParams.token : undefined;
+  const token = typeof searchParamsValue.token === 'string' ? searchParamsValue.token : undefined;
   
   if (session?.user) {
     redirect('/');
