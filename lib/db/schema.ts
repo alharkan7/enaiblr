@@ -156,3 +156,13 @@ export const token = pgTable('Token', {
 });
 
 export type Token = InferSelectModel<typeof token>;
+
+export const tokenPassword = pgTable('Token Password', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  token: uuid('token').notNull(),
+  used: boolean('used').notNull().default(false),
+  email: varchar('email', { length: 64 }).notNull(),
+});
+
+export type TokenPassword = InferSelectModel<typeof tokenPassword>;

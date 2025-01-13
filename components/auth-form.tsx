@@ -257,7 +257,15 @@ export default function AuthForm({ type, action }: AuthFormProps) {
             >
               <b className='text-primary'>Sign Up</b>
             </Link>
-            <br></br>Contact{' '}
+            <br></br>
+            Click here to{' '}
+            <Link
+              className='font-medium underline'
+              href='reset-password'
+              >
+                <b className='text-primary'>Reset Password</b>
+            </Link>
+            {' '} | Contact{' '}
             <Link
               className='font-medium underline'
               href='https://wa.me/+6281280077690'

@@ -2,25 +2,50 @@ import type { Metadata } from 'next';
 import { redirect } from 'next/navigation';
 
 import { auth } from '../auth';
-import AuthForm from '@/components/auth-form';
+import PasswordResetForm from '@/components/password-reset-form';
+import { resetPassword } from '@/app/actions/reset-password';
 
 export const metadata: Metadata = {
   title: 'Reset Password',
 };
 
-export default async function ResetPasswordPage() {
+// Create a server action wrapper
+async function resetPasswordWithToken(token: string, formData: FormData) {
+  'use server';
+  formData.append('token', token);
+  return resetPassword(formData);
+}
+
+export default async function ResetPasswordPage({
+  searchParams,
+}: {
+  searchParams: { token?: string };
+}) {
   const session = await auth();
+  const { token } = searchParams;
   
   if (session?.user) {
     redirect('/');
   }
 
+  if (!token) {
+    redirect('/forgot-password');
+  }
+
+  // Create a wrapper function that matches the expected type
+  const handleResetPassword = async (formData: FormData) => {
+    'use server';
+    return resetPasswordWithToken(token, formData);
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center px-4">
-      <AuthForm
-        type="reset-password"
-        // action={async () => ({ success: true })} // Placeholder action
-      />
+      <div className="w-full max-w-sm space-y-4">
+        <PasswordResetForm 
+          type="reset" 
+          action={handleResetPassword}
+        />
+      </div>
     </div>
   );
 }
