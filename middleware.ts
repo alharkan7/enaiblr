@@ -11,6 +11,8 @@ function isPublicRoute(pathname: string): boolean {
     '/login',     // Auth pages
     '/register',
     '/api/subscription', // Subscription status endpoint
+    '/forgot-password', // Forgot password page
+    '/reset-password', // Reset password page
   ];
   
   return publicRoutes.some(route => pathname.startsWith(route));
