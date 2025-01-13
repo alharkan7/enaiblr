@@ -1,4 +1,4 @@
-export const price = 49000
+export const price = 39000
 export const originalPrice = 99000
 export const discountValue = Math.round(((originalPrice - price) / originalPrice) * 100);
 
