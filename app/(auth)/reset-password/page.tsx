@@ -19,11 +19,12 @@ async function resetPasswordWithToken(token: string, formData: FormData) {
 type SearchParams = { [key: string]: string | string[] | undefined };
 
 interface PageProps {
-  params: Record<string, string>;
+  params: Promise<Record<string, string>>;
   searchParams: SearchParams;
 }
 
-const Page = async ({ searchParams }: PageProps) => {
+const Page = async ({ params, searchParams }: PageProps) => {
+  await params; // Await the params even if we don't use them
   const session = await auth();
   const token = typeof searchParams.token === 'string' ? searchParams.token : undefined;
   
