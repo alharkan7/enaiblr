@@ -24,7 +24,7 @@ import { useLocalStorage, useWindowSize } from 'usehooks-ts';
 
 import { sanitizeUIMessages } from '@/lib/utils';
 
-import { ArrowUpIcon, PaperclipIcon, StopIcon } from './icons';
+import { ArrowUpIcon, PaperclipIcon, StopIcon, ImageIcon } from './icons';
 import { PreviewAttachment } from './preview-attachment';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
@@ -208,6 +208,11 @@ function PureMultimodalInput({
         className="fixed -top-4 -left-4 size-0.5 opacity-0 pointer-events-none"
         ref={fileInputRef}
         multiple
+        accept={
+          selectedModel?.capabilities?.images && !selectedModel?.capabilities?.files
+            ? 'image/*'
+            : undefined
+        }
         onChange={handleFileChange}
         tabIndex={-1}
       />
@@ -308,6 +313,7 @@ function PureAttachmentsButton({
 }) {
   const hasAttachmentCapability =
     selectedModel?.capabilities?.images || selectedModel?.capabilities?.files;
+  const showImageIcon = selectedModel?.capabilities?.images && !selectedModel?.capabilities?.files;
 
   if (!hasAttachmentCapability) return null;
 
@@ -321,7 +327,7 @@ function PureAttachmentsButton({
       disabled={isLoading}
       variant="ghost"
     >
-      <PaperclipIcon size={14} />
+      {showImageIcon ? <ImageIcon size={14} /> : <PaperclipIcon size={14} />}
     </Button>
   );
 }
