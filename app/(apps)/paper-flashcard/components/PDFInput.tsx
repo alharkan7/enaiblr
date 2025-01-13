@@ -5,8 +5,9 @@ import { X, FileText, Upload } from 'lucide-react';
 import { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 import { useSubscription } from '@/contexts/subscription-context';
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { paperFlashcardFree_PDFSizeLimit } from "@/config/freeLimits";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
+import { US, ID } from 'country-flag-icons/react/3x2';
 
 interface PDFInputProps {
   pdfLink: string;
@@ -14,6 +15,8 @@ interface PDFInputProps {
   handleFileChange: (file: File | null) => void;
   handleProcess: () => void;
   errorMessage: string;
+  language: 'en' | 'id';
+  setLanguage: (lang: 'en' | 'id') => void;
 }
 
 export const PDFInput = ({
@@ -22,6 +25,8 @@ export const PDFInput = ({
   handleFileChange,
   handleProcess,
   errorMessage,
+  language,
+  setLanguage,
 }: PDFInputProps) => {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
@@ -113,13 +118,25 @@ export const PDFInput = ({
           )}
         </div>
         <p className="text-center text-sm text-muted-foreground">or</p>
-        <Input
-          type="text"
-          placeholder="Paste a .pdf link here"
-          value={pdfLink}
-          onChange={handleLinkChange}
-          className="rounded-full"
-        />
+        <div className="flex items-center gap-2">
+          <Input
+            type="text"
+            placeholder="Paste a .pdf link here"
+            value={pdfLink}
+            onChange={handleLinkChange}
+            className="rounded-full"
+          />
+          <Button
+            variant="outline"
+            size="icon"
+            className="rounded-lg w-10 h-10 inline-flex items-center justify-center p-0"
+            onClick={() => setLanguage(language === 'en' ? 'id' : 'en')}
+          >
+            <span className="flex items-center justify-center w-full h-full">
+              {language === 'en' ? <US title="Switch to Indonesian" /> : <ID title="Switch to English" />}
+            </span>
+          </Button>
+        </div>
       </div>
 
       {errorMessage && (
@@ -127,7 +144,7 @@ export const PDFInput = ({
       )}
 
       <Button
-        onClick={handleProcess}
+        onClick={() => handleProcess()}
         disabled={!pdfLink && !selectedFile}
         className="w-full rounded-full"
       >

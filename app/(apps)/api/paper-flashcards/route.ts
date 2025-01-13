@@ -32,7 +32,7 @@ function cleanFlashCardContent(content: FlashCardContent): FlashCardContent {
 
 export async function POST(req: Request) {
   try {
-    const { content } = await req.json();
+    const { content, language = 'en' } = await req.json();
 
     if (!content || typeof content !== 'string' || content.trim().length === 0) {
       return NextResponse.json(
@@ -56,6 +56,7 @@ export async function POST(req: Request) {
     }
 
     Guidelines:
+    - ${language === 'en' ? 'Use English' : 'Use Bahasa Indonesia'} for the output.
     - Each field should contain easy-to-read content, so use simple language.
     - Try to be concise, but still informative, use long paragraphs if necessary.
     - Do not use markdown, code blocks, or special characters.

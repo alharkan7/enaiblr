@@ -27,6 +27,8 @@ export default function PDFProcessor() {
     setHashtag,
     errorMessage,
     handleProcess,
+    language,
+    setLanguage,
   } = usePDFProcessor();
 
   const handleCardEdit = (index: number, newContent: FlashCardContent) => {
@@ -71,79 +73,22 @@ export default function PDFProcessor() {
     return <LoadingSpinner />;
   }
 
-  if (cards.length > 0) {
+  if (cards.length === 0) {
     return (
       <div className="relative min-h-dvh flex flex-col overflow-hidden">
-        <AppsHeader 
-          title="" 
-          leftButton={
-            <Button
-              variant="ghost"
-              onClick={() => {
-                setCards([]);
-                setHashtag([]);
-                setPdfLink("");
-                setFile(null);
-              }}
-            >
-              <ChevronLeft className="size-4" />
-              Back
-            </Button>
-          }
-        />
-        <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center -mt-8">
-
-
-          <div className="w-full max-w-3xl">
-            <FlashCardDisplay
-              cardStyle={cardStyle}
-              currentCard={currentCard}
-              cards={cards}
-              editMode={editMode}
-              hasSwipedUp={hasSwipedUp}
-              handleEdit={handleCardEdit}
-              handlers={handlers}
-              direction={direction}
-            />
-            <div className="relative z-20">
-              <FlashCardControls
-                editMode={editMode}
-                setEditMode={setEditMode}
-                handleColorChange={handleColorChange}
-                handleTextColorChange={handleTextColorChange}
-                openSourceDocument={openSourceDocument}
-                currentCard={cards[currentCard] || {
-                  intro: "",
-                  researcher: "",
-                  question: "",
-                  method: "",
-                  findings: "",
-                  implications: "",
-                  closing: ""
-                }}
-              />
-            </div>
-          </div>
-
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col gap-2 z-[1]">
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigateCard("prev")}
-              className="rounded-full"
-            >
-              <ChevronUp className="size-4" />
-            </Button>
-            <Button
-              variant="outline"
-              size="icon"
-              onClick={() => navigateCard("next")}
-              className="rounded-full"
-            >
-              <ChevronDown className="size-4" />
-            </Button>
-          </div>
+        <AppsHeader title="" />
+        <div className="flex-1 container mx-auto px-4 flex items-center justify-center -mt-8">
+          <PDFInput
+            pdfLink={pdfLink}
+            handleLinkChange={handleLinkChange}
+            handleFileChange={handleFileChange}
+            handleProcess={handleProcess}
+            errorMessage={errorMessage}
+            language={language}
+            setLanguage={setLanguage}
+          />
         </div>
+        <AppsFooter />
       </div>
     );
   }
@@ -152,7 +97,7 @@ export default function PDFProcessor() {
     <div className="relative min-h-dvh flex flex-col overflow-hidden">
       <AppsHeader 
         title="" 
-        leftButton={cards.length > 0 ? (
+        leftButton={
           <Button
             variant="ghost"
             onClick={() => {
@@ -165,18 +110,61 @@ export default function PDFProcessor() {
             <ChevronLeft className="size-4" />
             Back
           </Button>
-        ) : undefined}
+        }
       />
-      <div className="flex-1 container mx-auto px-4 flex items-center justify-center -mt-8">
-        <PDFInput
-          pdfLink={pdfLink}
-          handleLinkChange={handleLinkChange}
-          handleFileChange={handleFileChange}
-          handleProcess={handleProcess}
-          errorMessage={errorMessage}
-        />
+      <div className="flex-1 container mx-auto px-4 flex flex-col items-center justify-center -mt-8">
+
+
+        <div className="w-full max-w-3xl">
+          <FlashCardDisplay
+            cardStyle={cardStyle}
+            currentCard={currentCard}
+            cards={cards}
+            editMode={editMode}
+            hasSwipedUp={hasSwipedUp}
+            handleEdit={handleCardEdit}
+            handlers={handlers}
+            direction={direction}
+          />
+          <div className="relative z-20">
+            <FlashCardControls
+              editMode={editMode}
+              setEditMode={setEditMode}
+              handleColorChange={handleColorChange}
+              handleTextColorChange={handleTextColorChange}
+              openSourceDocument={openSourceDocument}
+              currentCard={cards[currentCard] || {
+                intro: "",
+                researcher: "",
+                question: "",
+                method: "",
+                findings: "",
+                implications: "",
+                closing: ""
+              }}
+            />
+          </div>
+        </div>
+
+        <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col gap-2 z-[1]">
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigateCard("prev")}
+            className="rounded-full"
+          >
+            <ChevronUp className="size-4" />
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={() => navigateCard("next")}
+            className="rounded-full"
+          >
+            <ChevronDown className="size-4" />
+          </Button>
+        </div>
       </div>
-      <AppsFooter />
     </div>
   );
 }

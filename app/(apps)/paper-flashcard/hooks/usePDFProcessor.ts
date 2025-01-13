@@ -14,6 +14,7 @@ export const usePDFProcessor = () => {
   const [cards, setCards] = useState<FlashCardContent[]>([]);
   const [hashtag, setHashtag] = useState<string[]>([]);
   const [errorMessage, setErrorMessage] = useState("");
+  const [language, setLanguage] = useState<'en' | 'id'>('en');
 
   const extractTextFromPDF = async (arrayBuffer: ArrayBuffer): Promise<string> => {
     try {
@@ -104,6 +105,7 @@ export const usePDFProcessor = () => {
         },
         body: JSON.stringify({
           content: pdfText,
+          language,
         }),
       });
 
@@ -143,6 +145,8 @@ export const usePDFProcessor = () => {
     setHashtag,
     errorMessage,
     setErrorMessage,
-    handleProcess
+    handleProcess,
+    language,
+    setLanguage
   };
 };
