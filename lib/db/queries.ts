@@ -39,10 +39,16 @@ export async function createUser(email: string, password: string) {
         password,
         createdAt: new Date()
       }).returning();
+
+      const userId = result[0].id;
+      
       await tx.insert(subscription).values({ 
-        userId: result[0].id,
+        userId,
         createdAt: new Date()
       });
+
+      await createUserOnboarding(userId, tx);
+
       return result;
     });
   } catch (error) {
@@ -59,16 +65,55 @@ export async function createGoogleUser(email: string, avatar?: string) {
         avatar,
         createdAt: new Date()
       }).returning();
+      
+      const userId = result[0].id;
+      
       await tx.insert(subscription).values({ 
-        userId: result[0].id,
+        userId,
         createdAt: new Date()
       });
+
+      await createUserOnboarding(userId, tx);
+
       return result;
     });
   } catch (error) {
     console.error('Failed to create Google user in database');
     throw error;
   }
+}
+
+async function createUserOnboarding(userId: string, tx: any) {
+  // Create default folders
+  const [personalFolder, workFolder, studyFolder] = await Promise.all([
+    tx.insert(folder).values({ name: 'Personal', userId, createdAt: new Date() }).returning(),
+    tx.insert(folder).values({ name: 'Work', userId, createdAt: new Date() }).returning(),
+    tx.insert(folder).values({ name: 'Study', userId, createdAt: new Date() }).returning()
+  ]);
+
+  // Create welcome chat
+  const [welcomeChat] = await tx.insert(chat).values({
+    title: 'Welcome to Enaiblr!',
+    userId,
+    createdAt: new Date(),
+    pinned: true,
+    folderId: personalFolder[0].id
+  }).returning();
+
+  // Add welcome message
+  await tx.insert(message).values({
+    chatId: welcomeChat.id,
+    role: 'assistant',
+    content: [{
+      type: "text",
+      text: "👋 Welcome to Enaiblr! I'm your AI assistant, ready to help you with anything you need. I've created three folders to help you organize your chats:\n\n" +
+            "📁 Personal - For your personal conversations and tasks\n\n" +
+            "💼 Work - For work-related discussions and projects\n\n" +
+            "📚 Study - For learning and educational content\n\n" +
+            "Feel free to create more folders or reorganize your chats however you like. How can I assist you today?"
+    }],
+    createdAt: new Date()
+  });
 }
 
 export async function saveChat({
