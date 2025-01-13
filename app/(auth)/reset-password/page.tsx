@@ -16,15 +16,13 @@ async function resetPasswordWithToken(token: string, formData: FormData) {
   return resetPassword(formData);
 }
 
-interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
-}
-
 export default async function ResetPasswordPage({
   searchParams,
-}: PageProps) {
+}: {
+  searchParams: Record<string, string | string[] | undefined>
+}) {
   const session = await auth();
-  const token = searchParams.token as string | undefined;
+  const token = typeof searchParams.token === 'string' ? searchParams.token : undefined;
   
   if (session?.user) {
     redirect('/');
