@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback, useMemo, Suspense } from "react";
 import { useRouter, useSearchParams, usePathname } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import { AppsHeader } from "@/components/apps-header";
+import { motion, AnimatePresence } from "framer-motion";
 
 import { SearchHeader } from "./SearchHeader";
 import { SearchResultItem } from "./SearchResult";
@@ -91,7 +92,11 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     if (!isHomePage && (searchResults || isLoading)) {
         return (
             <div className="flex flex-col h-dvh">
-                <header className="flex-none sticky top-0 left-0 w-full z-10 bg-background border-b">
+                <motion.header 
+                    initial={{ y: -20, opacity: 0 }}
+                    animate={{ y: 0, opacity: 1 }}
+                    className="flex-none sticky top-0 left-0 w-full z-10 bg-background border-b"
+                >
                     <div className="container max-w-5xl mx-auto py-4 pl-4 sm:pl-0 flex items-center gap-2">
                         <div className="flex-1 min-w-0">
                             <SearchHeader
@@ -106,36 +111,51 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                             <AppsHeader />
                         </div>
                     </div>
-                </header>
+                </motion.header>
                 <main className="flex-1 overflow-y-auto">
                     <div className="container mx-auto px-5 py-8">
-                        {isLoading ? (
-                            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {Array.from({ length: 4 }, (_, index) => (
-                                    <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
-                                        <div className="size-16 bg-muted rounded-lg"></div>
-                                        <div className="flex-1">
-                                            <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
-                                            <div className="h-4 bg-muted rounded w-full mb-2"></div>
-                                            <div className="h-4 bg-muted rounded w-1/2"></div>
+                        <AnimatePresence mode="wait">
+                            {isLoading ? (
+                                <motion.div 
+                                    key="loading"
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
+                                >
+                                    {Array.from({ length: 4 }, (_, index) => (
+                                        <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
+                                            <div className="size-16 bg-muted rounded-lg"></div>
+                                            <div className="flex-1">
+                                                <div className="h-4 bg-muted rounded w-3/4 mb-2"></div>
+                                                <div className="h-4 bg-muted rounded w-full mb-2"></div>
+                                                <div className="h-4 bg-muted rounded w-1/2"></div>
+                                            </div>
                                         </div>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {searchResults.results.map((result: any, index: number) => (
-                                    <SearchResultItem
-                                        key={index}
-                                        result={result}
-                                        index={index}
-                                        isExpanded={expandedResultIndex === index}
-                                        IconComponent={resultIcons[index]}
-                                        onResultClick={handleResultClick}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                                    ))}
+                                </motion.div>
+                            ) : (
+                                <motion.div 
+                                    key="results"
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, y: -20 }}
+                                    transition={{ duration: 0.3 }}
+                                    className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
+                                >
+                                    {searchResults.results.map((result: any, index: number) => (
+                                        <SearchResultItem
+                                            key={index}
+                                            result={result}
+                                            index={index}
+                                            isExpanded={expandedResultIndex === index}
+                                            IconComponent={resultIcons[index]}
+                                            onResultClick={handleResultClick}
+                                        />
+                                    ))}
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                     </div>
                 </main>
                 <div className="flex-none mt-8">
@@ -148,19 +168,33 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     // Home view
     return (
         <div className="h-dvh flex flex-col">
-            <header className="sticky top-0 left-0 w-full z-10">
+            <motion.header 
+                initial={{ y: -20, opacity: 0 }}
+                animate={{ y: 0, opacity: 1 }}
+                className="sticky top-0 left-0 w-full z-10"
+            >
                 <AppsHeader />
-            </header>
+            </motion.header>
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8 pt-1">
-                <div className="text-center space-y-2">
-                    <h1 className="text-4xl sm:text-5xl font-extrabold">
-                        enaiblr
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.5 }}
+                    className="text-center space-y-2"
+                >
+                    <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+                        AI Search Engine
                     </h1>
-                    <p className="text-l text-muted-foreground">AI Tools Search Engine</p>
-                </div>
+                    <p className="text-l text-muted-foreground">Find the Best AI Tools on the Internet</p>
+                </motion.div>
 
-                <div className="w-full max-w-2xl space-y-4">
+                <motion.div 
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2, duration: 0.4 }}
+                    className="w-full max-w-2xl space-y-4"
+                >
                     <div className="relative">
                         <CustomSearchInput
                             className="w-full h-12 rounded-full"
@@ -192,45 +226,77 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                             Surprise Me
                         </Button>
                     </div>
-                </div>
+                </motion.div>
 
-                {error && <p className="text-destructive">{error}</p>}
+                {error && (
+                    <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-destructive"
+                    >
+                        {error}
+                    </motion.p>
+                )}
 
-                <div className="sm:flex sm:flex-wrap justify-center gap-2 max-w-2xl mt-6">
+                <motion.div 
+                    initial={{ opacity: 0, y: 20 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: 0.4, duration: 0.4 }}
+                    className="sm:flex sm:flex-wrap justify-center gap-2 max-w-2xl mt-6"
+                >
                     <div className="sm:hidden relative">
                         <div className="absolute top-0 left-0 right-0 h-8 bg-gradient-to-b from-background to-transparent pointer-events-none z-10" />
                         <div className="max-h-[160px] overflow-y-auto flex flex-col gap-2 px-4 scrollbar-hide">
-                            {TAGS.map((tag) => (
-                                <Button
+                            {TAGS.map((tag, index) => (
+                                <motion.div
                                     key={tag}
-                                    variant="outline"
-                                    className="rounded-full text-xs h-8 hover:bg-secondary w-full"
-                                    onClick={() => handleTagSearch(tag)}
+                                    initial={{ opacity: 0, x: -10 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    transition={{ delay: index * 0.05 }}
+                                    whileHover={{ scale: 1.02 }}
                                 >
-                                    {tag} ↗
-                                </Button>
+                                    <Button
+                                        variant="outline"
+                                        className="rounded-full text-xs h-8 hover:bg-secondary w-full transition-colors duration-200"
+                                        onClick={() => handleTagSearch(tag)}
+                                    >
+                                        {tag} ↗
+                                    </Button>
+                                </motion.div>
                             ))}
                         </div>
                         <div className="absolute bottom-0 left-0 right-0 h-8 bg-gradient-to-t from-background to-transparent pointer-events-none z-10" />
                     </div>
                     <div className="hidden sm:flex sm:flex-wrap sm:justify-center gap-2">
-                        {TAGS.map((tag) => (
-                            <Button
+                        {TAGS.map((tag, index) => (
+                            <motion.div
                                 key={tag}
-                                variant="outline"
-                                className="rounded-full text-xs h-8 hover:bg-secondary"
-                                onClick={() => handleTagSearch(tag)}
+                                initial={{ opacity: 0, y: 10 }}
+                                animate={{ opacity: 1, y: 0 }}
+                                transition={{ delay: index * 0.05 }}
+                                whileHover={{ scale: 1.05 }}
                             >
-                                {tag} ↗
-                            </Button>
+                                <Button
+                                    variant="outline"
+                                    className="rounded-full text-xs h-8 hover:bg-secondary transition-colors duration-200"
+                                    onClick={() => handleTagSearch(tag)}
+                                >
+                                    {tag} ↗
+                                </Button>
+                            </motion.div>
                         ))}
                     </div>
-                </div>
+                </motion.div>
             </main>
 
-            <div className="mt-8">
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.6 }}
+                className="mt-8"
+            >
                 <AppsFooter />
-            </div>
+            </motion.div>
         </div>
     );
 }

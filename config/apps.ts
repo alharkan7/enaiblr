@@ -39,7 +39,7 @@ export const apps: AppConfig[] = [
     type: 'free'
   },
   {
-    name: 'AI Search',
+    name: 'AI Tools Search',
     icon: Search,
     slug: 'search',
     description: 'Find the Best AI Tools on the Internet',
