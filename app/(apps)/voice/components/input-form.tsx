@@ -36,25 +36,25 @@ interface InputFormProps {
 const LANGUAGES = {
   'id-ID': 'Bahasa Indonesia',
   'en-US': 'English',
+  'es-ES': 'Spanish',
+  'fr-FR': 'French',
+  'de-DE': 'German',
+  'ru-RU': 'Russian',
+  'ja-JP': 'Japanese',
+  'mn-CN': 'Chinese',
+  'ko-KR': 'Korean',
+  // 'jv-ID': 'Javanese',
+  'ar-AE': 'Arabic',
+  'hi-IN': 'Hindi',
 } as const;
 
-type VoicesType = {
-  [K in 'id-ID' | 'en-US']: {
-    [key: string]: string;
-  };
-};
-
 // Corrected voice names without language code duplication
-const VOICES: VoicesType = {
-  'id-ID': {
-    'id-ID-GadisNeural': 'Gadis (Perempuan)',
-    'id-ID-ArdiNeural': 'Ardi (Laki-laki)',
-  },
-  'en-US': {
-    'en-US-AvaMultilingualNeural': 'Ava (Female)',
-    'en-US-AndrewMultilingualNeural': 'Andrew (Male)',
-  },
-};
+const VOICES = {
+  'AvaMultilingualNeural': 'Ava (Female)',
+  'AndrewMultilingualNeural': 'Andrew (Male)',
+} as const;
+
+type VoiceId = keyof typeof VOICES;
 
 export function InputForm({
   text,
@@ -65,9 +65,19 @@ export function InputForm({
   onVoiceChange,
   onSubmit,
 }: InputFormProps) {
-  const availableVoices = language ? VOICES[language as keyof typeof VOICES] : {};
+  const availableVoices = Object.keys(VOICES) as VoiceId[];
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const { plan } = useSubscription();
+
+  // Set default values on component mount
+  useEffect(() => {
+    if (!language) {
+      onLanguageChange('en-US');
+    }
+    if (!voice) {
+      onVoiceChange('en-US-AvaMultilingualNeural');
+    }
+  }, []);
 
   // Debounced text change handler
   const debouncedTextChange = useCallback(
@@ -99,8 +109,15 @@ export function InputForm({
   // Reset voice when language changes
   const handleLanguageChange = (newLanguage: string) => {
     onLanguageChange(newLanguage);
-    onVoiceChange(''); // Reset voice selection when language changes
   };
+
+  const handleVoiceChange = (selectedVoice: VoiceId) => {
+    const fullVoiceId = `${language}-${selectedVoice}`;
+    onVoiceChange(fullVoiceId);
+  };
+
+  // Extract base voice ID from full voice ID for display
+  const displayVoice = voice ? voice.split('-').slice(-1)[0] as VoiceId : '';
 
   return (
     <motion.div
@@ -152,17 +169,16 @@ export function InputForm({
         </Select>
 
         <Select
-          value={voice}
-          onValueChange={onVoiceChange}
-          disabled={!language}
+          value={displayVoice}
+          onValueChange={handleVoiceChange}
         >
           <SelectTrigger className="w-full rounded-full">
             <SelectValue placeholder="Voice" />
           </SelectTrigger>
           <SelectContent>
-            {Object.entries(availableVoices).map(([voiceId, label]: [string, string]) => (
+            {availableVoices.map((voiceId) => (
               <SelectItem key={voiceId} value={voiceId}>
-                {label}
+                {VOICES[voiceId]}
               </SelectItem>
             ))}
           </SelectContent>
