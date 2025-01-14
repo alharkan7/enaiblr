@@ -22,6 +22,56 @@ const item = {
   show: { opacity: 1, y: 0 }
 };
 
+const AppCard = ({ app }: { app: typeof apps[0] }) => {
+  const [isHovered, setIsHovered] = useState(false);
+  
+  return (
+    <motion.div
+      variants={item}
+      className="w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
+    >
+      <Link href={`/apps`}>
+        <motion.div
+          whileHover={{ scale: 1.02 }}
+          transition={{ type: "spring", stiffness: 300 }}
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+        >
+          <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black relative overflow-hidden h-[200px]">
+            <CardHeader>
+              <motion.div 
+                initial={{ scale: 0.8 }}
+                animate={{ scale: 1 }}
+                transition={{ duration: 0.2 }}
+                className="w-12 h-12 flex items-center justify-center rounded-lg mb-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
+              >
+                <app.icon className="w-6 h-6 text-white" />
+              </motion.div>
+              <CardTitle className="text-lg font-semibold mb-2">{app.name}</CardTitle>
+              <CardDescription className="line-clamp-3 text-sm">{app.description}</CardDescription>
+              <motion.div 
+                className="absolute top-4 right-4 pointer-events-none"
+                animate={isHovered ? {
+                  opacity: 1,
+                  scale: 1,
+                  rotate: 0,
+                } : {
+                  opacity: 0,
+                  scale: 0.8,
+                  rotate: -45,
+                }}
+                transition={{ duration: 0.2 }}
+              >
+                <ArrowUpRight className="w-12 h-12 text-sky-500" />
+              </motion.div>
+            </CardHeader>
+          </Card>
+        </motion.div>
+      </Link>
+    </motion.div>
+  );
+};
+
 const Features = () => {
   return (
     <section id="features" className="py-20 backdrop-blur-xs">
@@ -51,56 +101,9 @@ const Features = () => {
           viewport={{ once: true }}
           className="flex flex-wrap justify-center gap-8"
         >
-        {apps.map((app) => {
-          const [isHovered, setIsHovered] = useState(false);
-          
-          return (
-            <motion.div
-              key={app.slug}
-              variants={item}
-              className="w-full md:w-[calc(50%-1rem)] lg:w-[280px]"
-            >
-              <Link href={`/apps`}>
-                <motion.div
-                  whileHover={{ scale: 1.02 }}
-                  transition={{ type: "spring", stiffness: 300 }}
-                  onMouseEnter={() => setIsHovered(true)}
-                  onMouseLeave={() => setIsHovered(false)}
-                >
-                  <Card className="border-none shadow-lg hover:shadow-xl transition-shadow cursor-pointer bg-white text-black relative overflow-hidden h-[200px]">
-                    <CardHeader>
-                      <motion.div 
-                        initial={{ scale: 0.8 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.2 }}
-                        className="w-12 h-12 flex items-center justify-center rounded-lg mb-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
-                      >
-                        <app.icon className="w-6 h-6 text-white" />
-                      </motion.div>
-                      <CardTitle className="text-lg font-semibold mb-2">{app.name}</CardTitle>
-                      <CardDescription className="line-clamp-3 text-sm">{app.description}</CardDescription>
-                      <motion.div 
-                        className="absolute top-4 right-4 pointer-events-none"
-                        animate={isHovered ? {
-                          opacity: 1,
-                          scale: 1,
-                          rotate: 0,
-                        } : {
-                          opacity: 0,
-                          scale: 0.8,
-                          rotate: -45,
-                        }}
-                        transition={{ duration: 0.2 }}
-                      >
-                        <ArrowUpRight className="w-12 h-12 text-sky-500" />
-                      </motion.div>
-                    </CardHeader>
-                  </Card>
-                </motion.div>
-              </Link>
-            </motion.div>
-          );
-        })}
+        {apps.map((app) => (
+          <AppCard key={app.slug} app={app} />
+        ))}
         </motion.div>
       </div>
     </section>
