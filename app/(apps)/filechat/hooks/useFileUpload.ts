@@ -9,6 +9,7 @@ interface FileInfo {
     fileName: string;
     fileType: string;
     content: string;
+    fileUrl: string;
 }
 
 export function useFileUpload() {
@@ -70,45 +71,40 @@ export function useFileUpload() {
         }
     };
 
-    const handleFileChange = async (file: File | null) => {
-        setError(null);
-        setWordCount(0);
+    const handleFileChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+        const file = event.target.files?.[0];
+        if (!file) return;
+
         setIsUploading(true);
-
-        if (!file) {
-            setFileInfo(null);
-            setFileContent(null);
-            setIsUploading(false);
-            return;
-        }
-
-        // Check file extension and type
-        const extension = getFileExtension(file.name);
-        const isMarkdown = extension === 'md';
-        const isPDF = extension === 'pdf';
-        const isDoc = ['doc', 'docx'].includes(extension);
-
-        // More permissive type checking
-        const isAllowedType = ALLOWED_TYPES.includes(file.type) ||
-            (isMarkdown && (file.type === 'text/plain' || file.type === '')) ||
-            (isPDF && file.type === 'application/pdf') ||
-            (isDoc && (file.type.includes('word') || file.type.includes('document')));
-
-        if (!isAllowedType) {
-            setError('Allowed file types: .pdf .docx .doc .txt .md');
-            console.error('Unsupported file type:', file.type, 'extension:', extension);
-            setIsUploading(false);
-            return;
-        }
-
-        // Set file info immediately for preview
-        setFileInfo({
-            fileName: file.name,
-            fileType: file.type,
-            content: '' // Will be updated after content extraction
-        });
+        setError(null);
 
         try {
+            setFileInfo({
+                fileName: file.name,
+                fileType: file.name.split('.').pop() || '',
+                fileUrl: URL.createObjectURL(file),
+                content: ''
+            });
+
+            // Check file extension and type
+            const extension = getFileExtension(file.name);
+            const isMarkdown = extension === 'md';
+            const isPDF = extension === 'pdf';
+            const isDoc = ['doc', 'docx'].includes(extension);
+
+            // More permissive type checking
+            const isAllowedType = ALLOWED_TYPES.includes(file.type) ||
+                (isMarkdown && (file.type === 'text/plain' || file.type === '')) ||
+                (isPDF && file.type === 'application/pdf') ||
+                (isDoc && (file.type.includes('word') || file.type.includes('document')));
+
+            if (!isAllowedType) {
+                setError('Allowed file types: .pdf .docx .doc .txt .md');
+                console.error('Unsupported file type:', file.type, 'extension:', extension);
+                setIsUploading(false);
+                return;
+            }
+
             const arrayBuffer = await file.arrayBuffer();
             let content = '';
 

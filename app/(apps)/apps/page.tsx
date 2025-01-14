@@ -9,6 +9,7 @@ import { Button } from '@/components/ui/button';
 import { ThemeToggle } from '@/components/theme-toggle';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
+import { motion } from 'framer-motion';
 
 export default function Page() {
   const { data: session, status } = useSession();
@@ -41,61 +42,111 @@ export default function Page() {
   return (
     <div className="min-h-screen flex flex-col bg-background">
       {status === 'authenticated' ? (
-        <div className="!static">
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="!static"
+        >
           <AppsHeader />
-        </div>
+        </motion.div>
       ) : (
-        <header className="bg-background py-4 px-4 z-50">
+        <motion.header 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="bg-background py-4 px-4 z-50"
+        >
           <div className="max-w-6xl mx-auto flex justify-between items-center">
             <ThemeToggle />
             <Button asChild>
               <Link href="/login">Login</Link>
             </Button>
           </div>
-        </header>
+        </motion.header>
       )}
 
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="w-full">
-          <div className="text-center mb-16">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="text-center mb-16"
+          >
             <h1 className="text-5xl font-bold tracking-tighter mb-2 text-foreground relative inline-block select-none">
               enaiblr
-              {!isLoading && <span className={`absolute top-0 right-[-40] text-xs font-medium ${plan === 'pro' ? 'text-primary-foreground bg-primary' : 'text-foreground bg-muted outline-1 outline outline-primary'} rounded-lg px-1 leading-normal tracking-normal`}>
+              {!isLoading && <motion.span 
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, type: "spring" }}
+                className={`absolute top-0 right-[-40] text-xs font-medium ${plan === 'pro' ? 'text-primary-foreground bg-primary' : 'text-foreground bg-muted outline-1 outline outline-primary'} rounded-lg px-1 leading-normal tracking-normal`}
+              >
                 {plan === 'pro' ? 'PRO' : 'FREE'}
-              </span>}
+              </motion.span>}
             </h1>
-            <p className="text-muted-foreground">Unlimited AI Platform</p>
-          </div>
+            <motion.p 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.2 }}
+              className="text-muted-foreground"
+            >
+              Unlimited AI Platform
+            </motion.p>
+          </motion.div>
 
-          <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto">
-            {apps.map((app) => {
+          <motion.div 
+            initial="hidden"
+            animate="visible"
+            variants={{
+              visible: {
+                transition: {
+                  staggerChildren: 0.1
+                }
+              }
+            }}
+            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto"
+          >
+            {apps.map((app, index) => {
               const Icon = app.icon
               return (
-                <div
+                <motion.div
                   key={app.slug}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    visible: { opacity: 1, y: 0 }
+                  }}
+                  whileHover={{ 
+                    scale: 1.03,
+                    transition: { type: "spring", stiffness: 400 }
+                  }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={() => handleAppClick(app.type, app.slug)}
-                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-colors cursor-pointer select-none"
+                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-all cursor-pointer select-none shadow-sm hover:shadow-xl"
                 >
-                  {/* {!isLoading && plan === 'free' && app.type === 'pro' && (
-                    <div className="absolute -right-[1px] -top-[3px]">
-                      <span className="inline-flex items-center h-[22px] text-xs font-medium px-2 rounded-tr-xl rounded-bl-xl bg-primary text-primary-foreground">
-                        PRO
-                      </span>
-                    </div>
-                  )} */}
-                  <div className="mb-3 md:mb-4 p-2 rounded-lg bg-muted group-hover:bg-accent-foreground/10 transition-colors">
+                  <motion.div 
+                    className="mb-3 md:mb-4 p-2 rounded-lg bg-muted group-hover:bg-accent-foreground/10 transition-colors"
+                    whileHover={{ rotate: [0, -10, 10, -5, 5, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
                     <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
-                  </div>
+                  </motion.div>
                   <h2 className="text-sm md:text-lg font-semibold text-center text-foreground">{app.name}</h2>
                   <p className="text-xs text-muted-foreground text-center mt-2">{app.description}</p>
-                </div>
+                </motion.div>
               )
             })}
-          </div>
+          </motion.div>
         </div>
       </main>
 
-      <AppsFooter />
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+      >
+        <AppsFooter />
+      </motion.div>
     </div>
   );
 }

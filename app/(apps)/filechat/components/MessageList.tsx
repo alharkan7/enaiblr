@@ -2,6 +2,7 @@ import ReactMarkdown from 'react-markdown'
 import { Message } from './types'
 import { useEffect, useRef } from 'react'
 import { DocumentPreview } from './DocumentPreview'
+import { motion, AnimatePresence } from 'framer-motion'
 
 interface MessageListProps {
     messages: Message[];
@@ -10,6 +11,7 @@ interface MessageListProps {
     fileInfo?: {
         fileName: string;
         fileType: string;
+        fileUrl?: string;
     } | null;
     isUploading?: boolean;
     onRemoveFile?: () => void;
@@ -67,26 +69,42 @@ export function MessageList({
     return (
         <div ref={messageListRef} className="h-full overflow-y-auto px-4 pb-4">
             <div className="max-w-4xl mx-auto space-y-4">
-                {messages.length > 0 && fileInfo && (
-                    <div className="flex justify-end mb-4">
-                        <DocumentPreview
-                            fileName={fileInfo.fileName}
-                            fileType={fileInfo.fileType}
-                            isUploading={isUploading}
-                            onRemove={onRemoveFile}
-                            error={error}
-                            wordCount={wordCount}
-                            showRemoveButton={false}
-                        />
-                    </div>
-                )}
+                <AnimatePresence mode="wait">
+                    {messages.length > 0 && fileInfo && (
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            exit={{ opacity: 0, y: -20 }}
+                            transition={{ duration: 0.3 }}
+                            className="flex justify-end mb-4"
+                        >
+                            <DocumentPreview
+                                fileName={fileInfo.fileName}
+                                fileType={fileInfo.fileType}
+                                isUploading={isUploading}
+                                onRemove={onRemoveFile}
+                                error={error}
+                                wordCount={wordCount}
+                                showRemoveButton={false}
+                                fileUrl={fileInfo.fileUrl}
+                            />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
                 {messages.map((message, index) => (
-                    <div
+                    <motion.div
                         key={index}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'
-                            }`}
+                        initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                        animate={{ opacity: 1, y: 0, scale: 1 }}
+                        transition={{
+                            duration: 0.4,
+                            delay: index * 0.1,
+                            ease: "easeOut"
+                        }}
+                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                     >
-                        <div
+                        <motion.div
+                            // whileHover={{ scale: 1.01 }}
                             className={`rounded-2xl px-4 py-2 max-w-[85%] ${message.role === 'user'
                                 ? 'bg-primary text-primary-foreground rounded-br-none'
                                 : 'bg-accent text-accent-foreground rounded-bl-none'
@@ -101,8 +119,8 @@ export function MessageList({
                                     {getVisibleContent(message.content)}
                                 </ReactMarkdown>
                             </div>
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 ))}
             </div>
             <div ref={messagesEndRef} />

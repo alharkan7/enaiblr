@@ -8,6 +8,7 @@ interface DocumentPreviewProps {
     error?: string | null;
     wordCount?: number;
     showRemoveButton?: boolean;
+    fileUrl?: string;
 }
 
 export function DocumentPreview({
@@ -17,7 +18,8 @@ export function DocumentPreview({
     onRemove,
     error,
     wordCount,
-    showRemoveButton = true
+    showRemoveButton = true,
+    fileUrl
 }: DocumentPreviewProps) {
     const getFileIcon = () => {
         switch (fileType.toLowerCase()) {
@@ -54,7 +56,14 @@ export function DocumentPreview({
 
     return (
         <div className="relative flex justify-center">
-            <div className="relative p-4 bg-muted rounded-lg flex flex-col">
+            <div 
+                className={`relative p-4 bg-muted rounded-lg flex flex-col ${fileUrl ? 'cursor-pointer hover:bg-muted/80 transition-colors' : ''}`}
+                onClick={() => {
+                    if (fileUrl) {
+                        window.open(fileUrl, '_blank');
+                    }
+                }}
+            >
                 <div className="flex items-start gap-3">
                     <div className="shrink-0">
                         {getFileIcon()}

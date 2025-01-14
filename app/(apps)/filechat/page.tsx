@@ -10,6 +10,7 @@ import AppsFooter from '@/components/apps-footer';
 import { AppsHeader } from '@/components/apps-header'
 import { RefreshIcon } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import { motion, AnimatePresence } from 'framer-motion';
 
 export default function Filechat() {
     const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
@@ -179,29 +180,50 @@ export default function Filechat() {
                     />
                 ) : (
                     <div className="h-full flex flex-col justify-center items-center gap-4 max-w-5xl mx-auto w-full px-4">
-                        <h1 className="text-3xl sm:text-4xl font-extrabold text-center">Chat&nbsp;with&nbsp;PDFs 
-                            {/* <span className='text-primary'>and&nbsp;Docs</span> */}
-                        </h1>
-                        <p className="text-semibold text-muted-foreground text-center">No Files are Saved to the Server</p>
-                        {fileInfo && (
-                            <div className="w-full">
-                                <DocumentPreview
-                                    fileName={fileInfo.fileName}
-                                    fileType={fileInfo.fileType}
-                                    isUploading={isUploading}
-                                    onRemove={clearFile}
-                                    error={error}
-                                    wordCount={wordCount}
-                                />
-                            </div>
-                        )}
+                        <motion.div
+                            initial={{ opacity: 0, y: 20 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            transition={{ duration: 0.6, ease: "easeOut" }}
+                        >
+                            <h1 className="text-3xl sm:text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
+                                Chat with PDFs
+                            </h1>
+                        </motion.div>
+                        <motion.p 
+                            className="text-semibold text-muted-foreground text-center"
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.6, delay: 0.2 }}
+                        >
+                            No Files are Saved to the Server
+                        </motion.p>
+                        <AnimatePresence mode="wait">
+                            {fileInfo && (
+                                <motion.div 
+                                    className="w-full"
+                                    initial={{ opacity: 0, scale: 0.95 }}
+                                    animate={{ opacity: 1, scale: 1 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ duration: 0.3 }}
+                                >
+                                    <DocumentPreview
+                                        fileName={fileInfo.fileName}
+                                        fileType={fileInfo.fileType}
+                                        isUploading={isUploading}
+                                        onRemove={clearFile}
+                                        error={error}
+                                        wordCount={wordCount}
+                                    />
+                                </motion.div>
+                            )}
+                        </AnimatePresence>
                         <div className="w-full">
                             <ChatInput
                                 input={input}
                                 setInput={setInput}
                                 isLoading={isLoading}
                                 fileInputRef={fileInputRef}
-                                onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
+                                onFileSelect={handleFileChange}
                                 fileContent={fileContent}
                                 clearFile={clearFile}
                                 sendMessage={handleSendMessage}
@@ -227,7 +249,7 @@ export default function Filechat() {
                                 setInput={setInput}
                                 isLoading={isLoading}
                                 fileInputRef={fileInputRef}
-                                onFileSelect={(e) => handleFileChange(e.target.files?.[0] || null)}
+                                onFileSelect={handleFileChange}
                                 autoFocus
                                 fileContent={fileContent}
                                 clearFile={clearFile}
