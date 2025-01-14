@@ -217,7 +217,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
           Audio Transcription
         </h1>
         <p className="text-muted-foreground mb-8">
-          Upload your audio file and we'll convert it to text in seconds
+          Upload your audio file and we&apos;ll convert it to text in seconds
         </p>
       </motion.div>
 
