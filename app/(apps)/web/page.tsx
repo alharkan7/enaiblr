@@ -82,6 +82,7 @@ export default function MinimalistChatbot() {
                                     sendMessage={handleSendMessage}
                                     onFocusChange={setIsInputFocused}
                                     onLinkModeChange={handleLinkModeChange}
+                                    hasMessages={messages.length > 0}
                                 />
                             </div>
                         </div>
@@ -119,6 +120,7 @@ export default function MinimalistChatbot() {
                                     sendMessage={handleSendMessage}
                                     onFocusChange={setIsInputFocused}
                                     onLinkModeChange={handleLinkModeChange}
+                                    hasMessages={messages.length > 0}
                                 />
                             </div>
                         </div>

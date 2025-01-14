@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { useRouter } from 'next/navigation'
 import { webFree_CharactersLimit } from '@/config/freeLimits'
+import { toast } from 'sonner'
 
 interface ChatInputProps {
     input: string;
@@ -22,6 +23,7 @@ interface ChatInputProps {
     sendMessage: (text: string, linkMode: boolean) => Promise<void>;
     onFocusChange?: (focused: boolean) => void;
     onLinkModeChange?: (linkMode: boolean) => void;
+    hasMessages: boolean;
 }
 
 export function ChatInput({ 
@@ -32,7 +34,8 @@ export function ChatInput({
     autoFocus,
     sendMessage,
     onFocusChange,
-    onLinkModeChange
+    onLinkModeChange,
+    hasMessages
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
@@ -68,14 +71,28 @@ export function ChatInput({
         // Blur input immediately to hide keyboard
         inputRef.current?.blur();
         
-        // Clear form state
-        setInput('');
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+        try {
+            // Send message with linkMode flag
+            await sendMessage(input, linkMode);
+            
+            // Clear form state only if successful
+            setInput('');
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        } catch (error) {
+            if (linkMode) {
+                toast.error('Unable to process this URL', {
+                    description: 'The content might be too large or inaccessible. Try a different URL or use regular chat mode.',
+                    duration: 5000,
+                });
+                // Don't clear input so user can try a different URL
+            } else {
+                toast.error('Failed to send message', {
+                    description: 'Please try again later.',
+                });
+            }
         }
-
-        // Send message with linkMode flag
-        await sendMessage(input, linkMode);
     };
 
     const handleLinkModeChange = (newMode: boolean) => {
@@ -88,18 +105,20 @@ export function ChatInput({
             <form onSubmit={handleSubmit} className="p-4">
                 <div className="flex pl-2 items-center bg-background rounded-full shadow-md max-w-4xl mx-auto border border-input relative focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
                     <div className="w-full relative flex items-center">
-                        <button
-                            type="button"
-                            onClick={() => handleLinkModeChange(!linkMode)}
-                            className={`p-2 rounded-full ${
-                                linkMode 
-                                    ? "text-primary" 
-                                    : "text-muted-foreground hover:text-muted-foreground/90"
-                            } disabled:opacity-50 disabled:cursor-not-allowed`}
-                            disabled={isLoading}
-                        >
-                            <Link className="size-5" />
-                        </button>
+                        {!hasMessages && (
+                            <button
+                                type="button"
+                                onClick={() => handleLinkModeChange(!linkMode)}
+                                className={`p-2 rounded-full transition-colors ${
+                                    linkMode 
+                                        ? "bg-primary text-primary-foreground hover:bg-primary/50" 
+                                        : "text-muted-foreground hover:bg-muted hover:text-muted-foreground"
+                                } disabled:opacity-50 disabled:cursor-not-allowed`}
+                                disabled={isLoading}
+                            >
+                                <Link className="size-5" />
+                            </button>
+                        )}
                         <input
                             ref={inputRef}
                             type="text"

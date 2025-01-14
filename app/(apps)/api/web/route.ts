@@ -41,7 +41,10 @@ export async function POST(request: Request) {
         if (messages.length === 1) {
           const article = await extract(userInput);
           if (!article?.content) {
-            throw new Error('Could not extract content from URL');
+            return NextResponse.json(
+              { error: 'Could not extract content from this URL. The page might be too large or not accessible.' },
+              { status: 400 }
+            );
           }
           contents = [{
             role: "user",
@@ -107,8 +110,9 @@ export async function POST(request: Request) {
         });
       } catch (error) {
         console.error('Gemini processing error:', error);
+        const errorMessage = error instanceof Error ? error.message : 'Failed to process with Gemini';
         return NextResponse.json(
-          { error: 'Failed to process with Gemini' },
+          { error: errorMessage },
           { status: 500 }
         );
       }

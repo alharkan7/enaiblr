@@ -25,10 +25,10 @@ export function useChatMessages() {
             chatMode: currentChatMode
         };
 
-        setMessages(prev => [...prev, userMessage]);
-        setIsLoading(true);
-
         try {
+            setMessages(prev => [...prev, userMessage]);
+            setIsLoading(true);
+
             const response = await fetch('/api/web', {
                 method: 'POST',
                 headers: {
@@ -42,11 +42,15 @@ export function useChatMessages() {
 
             if (!response.ok) {
                 const errorData = await response.json();
+                setMessages(prev => prev.slice(0, -1));
                 throw new Error(errorData.error || 'Failed to send message');
             }
 
             const reader = response.body?.getReader();
-            if (!reader) throw new Error('No reader available');
+            if (!reader) {
+                setMessages(prev => prev.slice(0, -1));
+                throw new Error('No reader available');
+            }
 
             const textDecoder = new TextDecoder();
             let receivedResponse = false;
