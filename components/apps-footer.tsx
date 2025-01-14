@@ -6,9 +6,9 @@ const AppsFooter = () => {
                 &copy; {currentYear}&nbsp; 
                 <a className="text-primary hover:text-primary/90">Enaiblr</a>.
                 {" "}
-                All rights reserved. | 
-                {" "}
-                <a href="mailto:enaiblr@gmail.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/90">&nbsp;Report a Bug</a>
+                All rights reserved.
+                {/* {" | "}
+                <a href="mailto:enaiblr@gmail.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/90">&nbsp;Report a Bug</a> */}
             </p>
         </footer>
     )

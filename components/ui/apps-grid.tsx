@@ -7,9 +7,10 @@ import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
 import { AppsGridUserNav } from '@/components/ui/apps-grid-user-nav';
 import type { User } from 'next-auth';
-import { apps } from '@/config/apps';
+import { apps, type AppConfig } from '@/config/apps';
 import { useRouter } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
+import { LayoutGrid } from 'lucide-react';
 
 interface AppsGridProps {
   trigger: React.ReactNode;
@@ -54,8 +55,14 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
             e.preventDefault();
           }
         }}>
-          <div className="apps-grid-content grid grid-cols-3">
-            {apps.map((app) => {
+          <div className="apps-grid-content grid grid-cols-3 max-h-[310px] overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
+            {[{
+              icon: LayoutGrid,
+              name: 'Home',
+              slug: 'apps',
+              type: 'free' as const,
+              description: 'Return to Apps Home'
+            } satisfies AppConfig, ...apps].map((app) => {
               const Icon = app.icon;
               return (
                 <Tooltip key={app.slug}>

@@ -131,7 +131,7 @@ export default function Page() {
                   >
                     <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
                   </motion.div>
-                  <h2 className="text-sm md:text-lg font-semibold text-center text-foreground">{app.name}</h2>
+                  <h2 className="text-lg md:text-xl font-semibold text-center text-foreground leading-tight min-h-[3rem]">{app.name}</h2>
                   <p className="text-xs text-muted-foreground text-center mt-2">{app.description}</p>
                 </motion.div>
               )
