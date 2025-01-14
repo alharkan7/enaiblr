@@ -52,17 +52,15 @@ const AppCard = ({ app }: { app: typeof apps[0] }) => {
               <motion.div 
                 className="absolute top-4 right-4 pointer-events-none"
                 animate={isHovered ? {
-                  opacity: 1,
                   scale: 1,
                   rotate: 0,
                 } : {
-                  opacity: 0,
-                  scale: 0.8,
-                  rotate: -45,
+                  scale: 0.4,
+                  rotate: 45,
                 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-12 h-12 text-sky-500" />
+                <ArrowUpRight className="w-14 h-14 !text-sky-500/70 hover:!text-sky-500" />
               </motion.div>
             </CardHeader>
           </Card>
