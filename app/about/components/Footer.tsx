@@ -23,7 +23,7 @@ const Footer = () => {
                 mail@enaiblr.org
               </a> 
               <br></br>
-              <a href="https://wa.me/+628128007690">
+              <a href="https://wa.me/+6281280077690">
               +62 812-8007-7690
               </a>
             </p>
