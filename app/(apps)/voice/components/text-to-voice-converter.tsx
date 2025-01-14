@@ -4,6 +4,7 @@ import { useState, useCallback, useEffect } from "react";
 import { LoadingState } from "./loading-state";
 import { ResultView } from "./result-view";
 import { InputForm } from "./input-form";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function TextToVoiceConverter() {
   const [text, setText] = useState("");
@@ -93,24 +94,40 @@ export default function TextToVoiceConverter() {
   };
 
   if (isLoading) {
-    return <LoadingState />;
+    return (
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <LoadingState />
+      </motion.div>
+    );
   }
 
   if (isComplete && audioData) {
     return (
-      <ResultView
-        text={text}
-        audioUrl={audioData.url}
-        size={audioData.size}
-        blob={audioData.blob}
-        onReset={() => {
-          setIsComplete(false);
-          setAudioData(null);
-          setText("");
-          setLanguage("");
-          setVoice("");
-        }}
-      />
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.4, ease: "easeOut" }}
+      >
+        <ResultView
+          text={text}
+          audioUrl={audioData.url}
+          size={audioData.size}
+          blob={audioData.blob}
+          onReset={() => {
+            setIsComplete(false);
+            setAudioData(null);
+            setText("");
+            setLanguage("");
+            setVoice("");
+          }}
+        />
+      </motion.div>
     );
   }
 

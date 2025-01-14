@@ -4,6 +4,7 @@ import { Clock, FileAudio, TextQuote, Download } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import AudioPlayer from "./audio-player";
 import { useState, useRef } from "react";
+import { motion } from "framer-motion";
 
 interface ResultViewProps {
   text: string;
@@ -43,27 +44,59 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
     }
   };
 
-  return (
-    <div className="w-full max-w-4xl mx-auto space-y-8 px-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Your Audio is <span className="text-primary">Ready</span></h1>
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.1
+      }
+    }
+  };
 
-      <div className="grid grid-cols-2 gap-x-2 gap-y-4 sm:gap-4 mb-6">
-        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+  const item = {
+    hidden: { opacity: 0, y: 20 },
+    show: { opacity: 1, y: 0 }
+  };
+
+  return (
+    <motion.div 
+      className="w-full max-w-4xl mx-auto space-y-8 px-4"
+      variants={container}
+      initial="hidden"
+      animate="show"
+    >
+      <motion.div variants={item}>
+        <motion.h1 
+          className="text-3xl font-bold text-center mb-8"
+          initial={{ scale: 0.9, opacity: 0 }}
+          animate={{ scale: 1, opacity: 1 }}
+          transition={{ duration: 0.3 }}
+        >
+          Your Audio is <span className="text-primary">Ready</span>
+        </motion.h1>
+      </motion.div>
+
+      <motion.div 
+        className="grid grid-cols-2 gap-x-2 gap-y-4 sm:gap-4 mb-6"
+        variants={container}
+      >
+        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <Clock className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Duration: {formatDuration(duration)}</span>
-        </div>
+        </motion.div>
 
-        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <TextQuote className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Words: {wordCount}</span>
-        </div>
+        </motion.div>
 
-        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <FileAudio className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Size: {size.toFixed(2)} MB</span>
-        </div>
+        </motion.div>
 
-        <div className="flex justify-center">
+        <motion.div variants={item} className="flex justify-center">
           <Button
             onClick={handleDownload}
             aria-label="Download audio file"
@@ -72,18 +105,29 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
             <Download className="size-4 sm:size-5" />
             <span>Download</span>
           </Button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
 
-      <AudioPlayer audioUrl={audioUrl} onDurationChange={setDuration} />
-
-      <Button
-        variant="outline"
-        className="w-full rounded-full"
-        onClick={onReset}
+      <motion.div
+        variants={item}
+        className="w-full"
       >
-        Convert Another Text
-      </Button>
-    </div>
+        <AudioPlayer audioUrl={audioUrl} onDurationChange={setDuration} />
+      </motion.div>
+
+      <motion.div
+        variants={item}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+      >
+        <Button
+          variant="outline"
+          className="w-full rounded-full"
+          onClick={onReset}
+        >
+          Create New Voice
+        </Button>
+      </motion.div>
+    </motion.div>
   );
 }

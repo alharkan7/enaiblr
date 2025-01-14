@@ -30,8 +30,10 @@ export default function Voice() {
                 <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
                     <AppsHeader />
                     <div className="flex-1 flex flex-col w-full min-w-0 overflow-x-hidden">
-                        <main className="grow flex items-center py-6 sm:py-8 px-3 sm:px-6 overflow-y-auto w-full min-w-0">
-                            <TextToVoiceConverter />
+                        <main className="grow flex items-center justify-center py-6 sm:py-8 px-4 sm:px-6 md:px-8 lg:px-12 overflow-y-auto w-full">
+                            <div className="w-full max-w-4xl">
+                                <TextToVoiceConverter />
+                            </div>
                         </main>
                         <AppsFooter />
                     </div>

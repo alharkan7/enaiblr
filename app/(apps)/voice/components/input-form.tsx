@@ -21,6 +21,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { voiceFree_CharactersLimit } from "@/config/freeLimits";
+import { motion } from "framer-motion";
 
 interface InputFormProps {
   text: string;
@@ -102,20 +103,43 @@ export function InputForm({
   };
 
   return (
-    <div className="w-full px-4 md:px-12 lg:px-36 xl:px-48 space-y-4">
-       <h1 className="text-4xl font-extrabold text-center mb-8">
-        Text to Natural Voice
-      </h1>
-      <Textarea
-        placeholder="Enter your text here..."
-        className="min-h-[200px] text-lg rounded-2xl w-full max-w-3xl mx-auto"
-        value={text}
-        onChange={handleTextChange}
-      />
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
+      className="w-full max-w-2xl mx-auto space-y-6"
+    >
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.1, duration: 0.4 }}
+      >
+        <h1 className="text-4xl font-extrabold text-center mb-8">
+          Text to Natural Voice
+        </h1>
+      </motion.div>
 
-      <div className="flex flex-col sm:flex-row gap-4 justify-center">
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+      >
+        <Textarea
+          value={text}
+          onChange={(e) => handleTextChange(e)}
+          placeholder="Enter your text here..."
+          className="min-h-[200px] resize-none"
+        />
+      </motion.div>
+
+      <motion.div 
+        className="grid grid-cols-2 gap-4"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.3, duration: 0.4 }}
+      >
         <Select value={language} onValueChange={handleLanguageChange}>
-          <SelectTrigger className="w-full sm:w-[200px] rounded-full">
+          <SelectTrigger className="w-full rounded-full">
             <SelectValue placeholder="Language" />
           </SelectTrigger>
           <SelectContent>
@@ -132,7 +156,7 @@ export function InputForm({
           onValueChange={onVoiceChange}
           disabled={!language}
         >
-          <SelectTrigger className="w-full sm:w-[200px] rounded-full">
+          <SelectTrigger className="w-full rounded-full">
             <SelectValue placeholder="Voice" />
           </SelectTrigger>
           <SelectContent>
@@ -143,15 +167,21 @@ export function InputForm({
             ))}
           </SelectContent>
         </Select>
+      </motion.div>
 
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+      >
         <Button
-          className="w-full sm:w-[200px] rounded-full"
           onClick={onSubmit}
           disabled={!text.trim() || !language || !voice}
+          className="w-full rounded-full"
         >
-          Convert to Audio
+          Create Voice
         </Button>
-      </div>
+      </motion.div>
 
       <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <AlertDialogContent>
@@ -171,6 +201,6 @@ export function InputForm({
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </div>
+    </motion.div>
   );
 }

@@ -53,7 +53,7 @@ export const apps: AppConfig[] = [
     type: 'pro'
   },
   {
-    name: 'Transcriber',
+    name: 'Audio Transcriber',
     icon: FileAudio,
     slug: 'transcribe',
     description: 'Turn Audio into Text; Useful for Interview Transcription',
