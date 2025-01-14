@@ -42,7 +42,7 @@ export default function Transcriber() {
                         title={transcriptionResult ? "Transcription Result" : ""}
                         leftButton={transcriptionResult ? (
                             <Button
-                                onClick={() => window.location.reload()}
+                                onClick={() => setTranscriptionResult(null)}
                                 className="text-foreground/60 hover:text-primary transition-colors"
                                 title="New Transcription"
                                 variant="outline"

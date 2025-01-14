@@ -10,6 +10,7 @@ import { useSubscription } from '@/contexts/subscription-context';
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { transcribeFree_AudioSizeLimit } from '@/config/freeLimits';
+import { motion, AnimatePresence } from 'framer-motion';
 
 interface UploadFormProps {
   onTranscriptionComplete: (result: TranscriptionResult) => void;
@@ -108,13 +109,13 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         }
       );
 
-      // Start processing progress simulation
-      let progress = 0;
-      const processingInterval = setInterval(() => {
-        progress += 5;
-        setProcessingProgress(Math.min(progress, 95));
-        if (progress >= 95) clearInterval(processingInterval);
-      }, 500);
+      // Simulate upload progress
+      let uploadProgress = 0;
+      const uploadInterval = setInterval(() => {
+        uploadProgress += 10;
+        setUploadProgress(Math.min(uploadProgress, 95));
+        if (uploadProgress >= 95) clearInterval(uploadInterval);
+      }, 200);
 
       // Create transcription directly using Groq
       const transcription = await groq.audio.transcriptions.create({
@@ -124,6 +125,18 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         language: selectedLanguage,
         response_format: "verbose_json",
       }) as GroqTranscription;
+
+      // Clear upload interval and set to 100%
+      clearInterval(uploadInterval);
+      setUploadProgress(100);
+
+      // Start processing progress simulation
+      let progress = 0;
+      const processingInterval = setInterval(() => {
+        progress += 5;
+        setProcessingProgress(Math.min(progress, 95));
+        if (progress >= 95) clearInterval(processingInterval);
+      }, 500);
 
       // Transform Groq response to match TranscriptionResult type
       const processedResult: TranscriptionResult = {
@@ -189,125 +202,179 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
   };
 
   return (
-    <>
-      <div className="w-full">
-        <h1 className="text-4xl font-extrabold text-center mb-8">
-          Audio Transcriber
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="w-full max-w-xl mx-auto text-center"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ delay: 0.2, duration: 0.4 }}
+      >
+        <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Audio Transcription
         </h1>
+        <p className="text-muted-foreground mb-8">
+          Upload your audio file and we'll convert it to text in seconds
+        </p>
+      </motion.div>
 
-        <form onSubmit={handleSubmit} className="space-y-6 w-full max-w-2xl mx-auto">
-          <div className="mb-6 w-full">
-            <LanguageSelector
-              value={selectedLanguage}
-              onChange={setSelectedLanguage}
-            />
-          </div>
-
-          <div className="relative w-full">
-            {error && (
-              <button
-                type="button"
-                onClick={clearAllStates}
-                className="absolute -top-2 -right-2 z-10 p-1 bg-white rounded-full shadow-md hover:bg-gray-100"
-              >
-                <X className="size-5 text-gray-500" />
-              </button>
-            )}
-
-            {!file && (
-              <div
-                {...getRootProps()}
-                className={`relative p-8 border-2 border-dashed rounded-lg text-center cursor-pointer transition-colors
-                  ${isDragActive 
-                    ? 'border-primary bg-primary/5' 
-                    : 'border-border hover:border-primary/50 hover:bg-accent/50'
-                  }
-                  ${error ? 'border-destructive' : ''}
-                `}
-              >
-                <input {...getInputProps()} />
-                
-                <div className="space-y-4">
-                  <div className="mx-auto size-12 rounded-full bg-primary/10 flex items-center justify-center">
-                    <Upload className="size-6 text-primary" />
-                  </div>
-                  
-                  <div className="space-y-2">
-                    <p className="text-base font-medium text-foreground">
-                      {isDragActive ? 'Drop your audio file here' : 'Upload your audio file'}
-                    </p>
-                    {/* <p className="text-sm text-muted-foreground">
-                      Supports flac, mp3, mp4, mpeg, mpga, m4a, ogg, wav, webm (max 40MB)
-                    </p> */}
-                  </div>
-                </div>
-              </div>
-            )}
-
-            {file && !error && (
-              <div className="w-full mt-4 p-4 rounded-lg bg-accent/50 flex items-center gap-3">
-                <div className="size-10 rounded-full bg-primary/10 flex items-center justify-center shrink-0">
-                  <FileAudio className="size-5 text-primary" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-medium text-foreground truncate">{file.name}</p>
-                  <p className="text-xs text-muted-foreground">{(file.size / (1024 * 1024)).toFixed(2)} MB</p>
-                </div>
-                <button
-                  onClick={() => setFile(null)}
-                  className="size-8 rounded-full hover:bg-accent flex items-center justify-center shrink-0"
-                >
-                  <X className="size-4 text-muted-foreground" />
-                </button>
-              </div>
-            )}
-
-            {error && (
-              <div className="w-full mt-4 p-4 rounded-lg bg-destructive/10 flex items-center gap-3">
-                <div className="size-10 rounded-full bg-destructive/10 flex items-center justify-center shrink-0">
-                  <AlertCircle className="size-5 text-destructive" />
-                </div>
-                <div className="flex-1">
-                  <p className="text-sm font-medium text-destructive">{error}</p>
-                  {errorDetails && <p className="text-xs text-destructive/80 mt-1">{errorDetails}</p>}
-                </div>
-              </div>
-            )}
-          </div>
-
-          {isUploading && (
-            <div className="space-y-2 w-full">
-              <Progress value={displayProgress} />
-              <p className="text-sm text-center text-muted-foreground">
-                {processingProgress > 0
-                  ? `Processing transcription... ${displayProgress}%`
-                  : `Uploading... ${displayProgress}%`}
-              </p>
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={!file || isUploading}
-            className={`w-full py-2.5 px-4 rounded-lg font-medium transition-colors
-              ${!file || isUploading
-                ? 'bg-primary/50 text-primary-foreground cursor-not-allowed'
-                : 'bg-primary text-primary-foreground hover:bg-primary/90'
-              }`}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.4, duration: 0.4 }}
+        className="mb-8"
+      >
+        <div
+          {...getRootProps()}
+          className={`
+            relative p-8 border-2 border-dashed rounded-xl transition-all duration-200
+            ${isDragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50 hover:bg-accent/50'}
+            ${error ? 'border-destructive/50 bg-destructive/5' : ''}
+          `}
+        >
+          <input {...getInputProps()} />
+          <motion.div
+            initial={false}
+            animate={{ 
+              scale: isDragActive ? 1.02 : 1,
+              opacity: isDragActive ? 0.8 : 1
+            }}
+            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            className="space-y-4"
           >
-            {isUploading ? (
-              <div className="flex items-center justify-center gap-2">
-                <RefreshIcon size={14} />
-                <span>Processing...</span>
-              </div>
-            ) : (
-              'Start Transcription'
+            {!file && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="flex flex-col items-center gap-4"
+              >
+                <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
+                  <Upload className="w-8 h-8 text-primary" />
+                </div>
+                <div>
+                  <p className="font-medium">Drop your audio file here or click to browse</p>
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Supports MP3, WAV, M4A, FLAC 
+                    {/*(max {plan === 'free' ? `${transcribeFree_AudioSizeLimit}MB` : '40MB'}) */}
+                  </p>
+                </div>
+              </motion.div>
             )}
-          </button>
-        </form>
-      </div>
 
-      {/* Upgrade Dialog */}
+            {file && (
+              <motion.div 
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-center justify-center gap-3"
+              >
+                <FileAudio className="w-6 h-6 text-primary" />
+                <span className="font-medium">{file.name}</span>
+                <motion.button
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setFile(null);
+                  }}
+                  className="p-1 hover:bg-destructive/10 rounded-full"
+                >
+                  <X className="w-4 h-4 text-destructive" />
+                </motion.button>
+              </motion.div>
+            )}
+          </motion.div>
+        </div>
+
+        {error && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="flex items-center gap-2 text-destructive mt-3"
+          >
+            <AlertCircle className="w-4 h-4" />
+            <span>{error}</span>
+          </motion.div>
+        )}
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.6 }}
+      >
+        <LanguageSelector
+          value={selectedLanguage}
+          onChange={setSelectedLanguage}
+          disabled={isUploading || !file}
+        />
+
+        <motion.button
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          disabled={!file || isUploading}
+          onClick={handleSubmit}
+          className={`
+            mt-6 px-8 py-3 rounded-lg font-medium transition-all
+            ${!file || isUploading 
+              ? 'bg-primary/50 text-primary-foreground cursor-not-allowed' 
+              : 'bg-primary text-primary-foreground hover:bg-primary/90'
+            }
+          `}
+        >
+          {isUploading ? (
+            <div className="flex items-center gap-2">
+              <RefreshIcon size={14} />
+              Processing...
+            </div>
+          ) : (
+            'Start Transcription'
+          )}
+        </motion.button>
+      </motion.div>
+
+      {isUploading && (
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mt-8 space-y-4"
+        >
+          <AnimatePresence mode="wait">
+            {uploadProgress < 100 ? (
+              <motion.div
+                key="upload"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-2"
+              >
+                <div className="flex justify-between text-sm">
+                  <span>Uploading</span>
+                  <span>{uploadProgress}%</span>
+                </div>
+                <Progress value={uploadProgress} />
+              </motion.div>
+            ) : (
+              <motion.div
+                key="processing"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="space-y-2"
+              >
+                <div className="flex justify-between text-sm">
+                  <span>Processing</span>
+                  <span>{processingProgress}%</span>
+                </div>
+                <Progress value={processingProgress} />
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
+
       <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>
@@ -322,6 +389,6 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
-    </>
+    </motion.div>
   );
 }
