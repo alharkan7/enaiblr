@@ -1,14 +1,18 @@
 import ReactMarkdown from 'react-markdown'
 import { Message } from './types'
 import { useEffect, useRef } from 'react'
+import { motion, AnimatePresence } from 'framer-motion'
+import { TypingIndicator } from './TypingIndicator'
 
 interface MessageListProps {
     messages: Message[];
     messagesEndRef: React.RefObject<HTMLDivElement>;
     onUpdate: () => void;
+    isLoading?: boolean;
+    isStreaming?: boolean;
 }
 
-export function MessageList({ messages, messagesEndRef, onUpdate }: MessageListProps) {
+export function MessageList({ messages, messagesEndRef, onUpdate, isLoading, isStreaming }: MessageListProps) {
     const messageListRef = useRef<HTMLDivElement>(null);
 
     const scrollToBottom = () => {
@@ -50,50 +54,75 @@ export function MessageList({ messages, messagesEndRef, onUpdate }: MessageListP
             className="flex-1 overflow-y-auto scrollbar-hide relative h-full"
         >
             <div className="max-w-4xl mx-auto px-4 pt-4 space-y-6">
-                {messages.map((message, index) => (
-                    <div
-                        key={index}
-                        className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                    >
-                        <div
-                            className={`rounded-2xl px-4 py-2 max-w-[85%] ${
-                                message.role === 'user'
-                                    ? 'bg-primary text-primary-foreground rounded-br-none'
-                                    : 'bg-accent text-accent-foreground rounded-bl-none'
-                            }`}
+                <AnimatePresence initial={false}>
+                    {messages.map((message, index) => (
+                        <motion.div
+                            key={index}
+                            initial={{ 
+                                opacity: 0, 
+                                x: message.role === 'user' ? 20 : -20
+                            }}
+                            animate={{ 
+                                opacity: 1, 
+                                x: 0
+                            }}
+                            transition={{ 
+                                duration: 0.2,
+                                delay: index * 0.05, // Stagger effect
+                                ease: "easeOut"
+                            }}
+                            className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                         >
-                            <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${
-                                message.role === 'user'
-                                    ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground [&_li]:text-primary-foreground [&_ul]:text-primary-foreground [&_ol]:text-primary-foreground'
-                                    : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground [&_li]:text-accent-foreground [&_ul]:text-accent-foreground [&_ol]:text-accent-foreground'
-                            }`}>
-                                {message.image && (
-                                    <img
-                                        src={message.image}
-                                        alt="Uploaded content"
-                                        className="w-full h-auto object-contain rounded-lg mb-1 max-h-[300px]"
-                                    />
-                                )}
-                                {Array.isArray(message.content) && message.content.map((content, idx) => {
-                                    if ('image_url' in content) {
-                                        return (
-                                            <img
-                                                key={idx}
-                                                src={content.image_url.url}
-                                                alt="Generated content"
-                                                className="w-full h-auto object-contain rounded-lg mb-0 max-h-[300px]"
-                                            />
-                                        );
-                                    }
-                                    return <ReactMarkdown key={idx}>{content.text}</ReactMarkdown>;
-                                })}
-                                {typeof message.content === 'string' && (
-                                    <ReactMarkdown>{message.content}</ReactMarkdown>
-                                )}
-                            </div>
-                        </div>
-                    </div>
-                ))}
+                            <motion.div
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.15 }}
+                                className={`rounded-2xl px-4 py-2 max-w-[85%] ${
+                                    message.role === 'user'
+                                        ? 'bg-primary text-primary-foreground rounded-br-none'
+                                        : 'bg-accent text-accent-foreground rounded-bl-none'
+                                }`}
+                            >
+                                <div className={`prose max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${
+                                    message.role === 'user'
+                                        ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground [&_li]:text-primary-foreground [&_ul]:text-primary-foreground [&_ol]:text-primary-foreground'
+                                        : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground [&_li]:text-accent-foreground [&_ul]:text-accent-foreground [&_ol]:text-accent-foreground'
+                                }`}>
+                                    {message.image && (
+                                        <motion.img
+                                            initial={{ opacity: 0, scale: 0.8 }}
+                                            animate={{ opacity: 1, scale: 1 }}
+                                            transition={{ duration: 0.3 }}
+                                            src={message.image}
+                                            alt="Uploaded content"
+                                            className="w-full h-auto object-contain rounded-lg mb-1 max-h-[300px]"
+                                        />
+                                    )}
+                                    {Array.isArray(message.content) && message.content.map((content, idx) => {
+                                        if ('image_url' in content) {
+                                            return (
+                                                <motion.img
+                                                    key={idx}
+                                                    initial={{ opacity: 0, scale: 0.8 }}
+                                                    animate={{ opacity: 1, scale: 1 }}
+                                                    transition={{ duration: 0.3 }}
+                                                    src={content.image_url.url}
+                                                    alt="Generated content"
+                                                    className="w-full h-auto object-contain rounded-lg mb-0 max-h-[300px]"
+                                                />
+                                            );
+                                        }
+                                        return <ReactMarkdown key={idx}>{content.text}</ReactMarkdown>;
+                                    })}
+                                    {typeof message.content === 'string' && (
+                                        <ReactMarkdown>{message.content}</ReactMarkdown>
+                                    )}
+                                </div>
+                            </motion.div>
+                        </motion.div>
+                    ))}
+                    {isLoading && !isStreaming && <TypingIndicator />}
+                </AnimatePresence>
                 <div ref={messagesEndRef} />
             </div>
         </div>

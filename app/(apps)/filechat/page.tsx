@@ -177,6 +177,7 @@ export default function Filechat() {
                         onRemoveFile={clearFile}
                         error={error}
                         wordCount={wordCount}
+                        isLoading={isLoading}
                     />
                 ) : (
                     <div className="h-full flex flex-col justify-center items-center gap-4 max-w-5xl mx-auto w-full px-4">
@@ -186,7 +187,7 @@ export default function Filechat() {
                             transition={{ duration: 0.6, ease: "easeOut" }}
                         >
                             <h1 className="text-3xl sm:text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
-                                Chat with PDFs
+                                Chat with Docs
                             </h1>
                         </motion.div>
                         <motion.p 

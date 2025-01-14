@@ -9,9 +9,10 @@ import { useImageUpload } from './hooks/useImageUpload'
 import { useChatMessages } from './hooks/useChatMessages'
 import AppsFooter from '@/components/apps-footer'
 import { AppsHeader } from '@/components/apps-header'
+import { motion } from 'framer-motion'
 
 export default function MinimalistChatbot() {
-    const { messages, isLoading, sendMessage, clearMessages } = useChatMessages();
+    const { messages, isLoading, isStreaming, sendMessage, clearMessages } = useChatMessages();
     const {
         isUploading,
         localImageUrl,
@@ -177,23 +178,51 @@ export default function MinimalistChatbot() {
                 }}
             >
                 {messages.length === 0 ? (
-                    <div className="flex flex-col flex-grow bg-background">
+                    <motion.div 
+                        initial={{ opacity: 0 }} 
+                        animate={{ opacity: 1 }} 
+                        transition={{ duration: 0.5 }}
+                        className="flex flex-col flex-grow bg-background"
+                    >
                         {messages.length === 0 && <AppsHeader />}
-                        <div className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8">
+                        <motion.div 
+                            initial={{ opacity: 0, y: 20 }} 
+                            animate={{ opacity: 1, y: 0 }} 
+                            transition={{ delay: 0.2, duration: 0.5 }}
+                            className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8"
+                        >
                             <div className="w-full max-w-[1200px]">
-                                <ChatTitle clearMessages={clearMessages} />
-                                <div className="w-full max-w-3xl mt-8 mx-auto">
+                                <motion.div
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.4, duration: 0.5 }}
+                                >
+                                    <ChatTitle clearMessages={clearMessages} />
+                                </motion.div>
+                                <motion.div 
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    transition={{ delay: 0.6, duration: 0.5 }}
+                                    className="w-full max-w-3xl mt-8 mx-auto"
+                                >
                                     {localImageUrl && (
-                                        <ImagePreview
-                                            localImageUrl={localImageUrl}
-                                            isUploading={isUploading}
-                                            onRemove={() => {
-                                                clearImages();
-                                                if (fileInputRef.current) {
-                                                    fileInputRef.current.value = '';
-                                                }
-                                            }}
-                                        />
+                                        <motion.div
+                                            initial={{ scale: 0.95, opacity: 0 }}
+                                            animate={{ scale: 1, opacity: 1 }}
+                                            exit={{ scale: 0.95, opacity: 0 }}
+                                            transition={{ duration: 0.2 }}
+                                        >
+                                            <ImagePreview
+                                                localImageUrl={localImageUrl}
+                                                isUploading={isUploading}
+                                                onRemove={() => {
+                                                    clearImages();
+                                                    if (fileInputRef.current) {
+                                                        fileInputRef.current.value = '';
+                                                    }
+                                                }}
+                                            />
+                                        </motion.div>
                                     )}
                                     <ChatInput
                                         input={input}
@@ -206,13 +235,18 @@ export default function MinimalistChatbot() {
                                         sendMessage={handleSendMessage}
                                         onFocusChange={setIsInputFocused}
                                     />
-                                </div>
+                                </motion.div>
                             </div>
-                        </div>
-                        <div className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}>
+                        </motion.div>
+                        <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ delay: 0.8, duration: 0.5 }}
+                            className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}
+                        >
                             <AppsFooter />
-                        </div>
-                    </div>
+                        </motion.div>
+                    </motion.div>
                 ) : (
                     <div className="flex flex-col h-full w-full">
                         <div className="flex flex-col w-full min-w-[320px] max-w-[1200px] mx-auto h-full">
@@ -228,6 +262,8 @@ export default function MinimalistChatbot() {
                                         onUpdate={() => {
                                             scrollToBottom();
                                         }}
+                                        isLoading={isLoading}
+                                        isStreaming={isStreaming}
                                     />
                                 </div>
                                 <div className="w-full border-t backdrop-blur-sm border-border bg-background sticky bottom-0 z-10">

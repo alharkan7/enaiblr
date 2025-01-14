@@ -119,7 +119,9 @@ export function ChatInput({
             <div>
               <Upload className="size-12 mx-auto text-muted-foreground mb-2" />
               <p className="text-sm text-muted-foreground">
-                Drag & drop a file here, or click to select
+                <b>Drag & drop a file here, or click to select.</b>
+                <br></br>
+                Supported formats: .pdf, .doc, .docx, .txt, .md
               </p>
             </div>
           </div>

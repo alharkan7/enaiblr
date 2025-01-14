@@ -4,9 +4,11 @@ import { Message } from '../components/types';
 export function useChatMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const [isStreaming, setIsStreaming] = useState(false);
     const clearMessages = () => {
         setMessages([]);
         setIsLoading(false);
+        setIsStreaming(false);
     };
 
     const toTogetherMessage = (msg: Message): any => ({
@@ -48,6 +50,8 @@ export function useChatMessages() {
             let assistantMessage = '';
             const userMessages = [...messages, userMessage];
             setMessages(userMessages);
+            setIsLoading(false);
+            setIsStreaming(true);
 
             const textDecoder = new TextDecoder();
             while (true) {
@@ -81,8 +85,9 @@ export function useChatMessages() {
             console.error('Error:', error);
         } finally {
             setIsLoading(false);
+            setIsStreaming(false);
         }
     };
 
-    return { messages, isLoading, sendMessage, clearMessages };
+    return { messages, isLoading, isStreaming, sendMessage, clearMessages };
 }

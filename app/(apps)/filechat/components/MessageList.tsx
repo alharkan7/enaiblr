@@ -3,6 +3,7 @@ import { Message } from './types'
 import { useEffect, useRef } from 'react'
 import { DocumentPreview } from './DocumentPreview'
 import { motion, AnimatePresence } from 'framer-motion'
+import { TypingIndicator } from './TypingIndicator'
 
 interface MessageListProps {
     messages: Message[];
@@ -17,6 +18,7 @@ interface MessageListProps {
     onRemoveFile?: () => void;
     error?: string | null;
     wordCount?: number;
+    isLoading?: boolean;
 }
 
 export function MessageList({ 
@@ -27,7 +29,8 @@ export function MessageList({
     isUploading = false,
     onRemoveFile = () => {},
     error = null,
-    wordCount
+    wordCount,
+    isLoading = false
 }: MessageListProps) {
     const messageListRef = useRef<HTMLDivElement>(null);
 
@@ -122,6 +125,18 @@ export function MessageList({
                         </motion.div>
                     </motion.div>
                 ))}
+                <AnimatePresence>
+                    {isLoading && messages.length > 0 && messages[messages.length - 1].role === 'user' && (
+                        <motion.div
+                            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                            animate={{ opacity: 1, y: 0, scale: 1 }}
+                            exit={{ opacity: 0, scale: 0.95 }}
+                            transition={{ duration: 0.2 }}
+                        >
+                            <TypingIndicator />
+                        </motion.div>
+                    )}
+                </AnimatePresence>
             </div>
             <div ref={messagesEndRef} />
         </div>
