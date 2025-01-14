@@ -86,19 +86,9 @@ export default function PDFProcessor() {
 
   if (cards.length === 0) {
     return (
-      <motion.div 
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-        className="relative min-h-dvh flex flex-col overflow-hidden"
-      >
+      <div className="relative min-h-dvh flex flex-col overflow-hidden">
         <AppsHeader title="" />
         <div className="flex-1 container max-w-[90%] 2xl:max-w-[80%] mx-auto px-4 flex items-center justify-center -mt-8">
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
             <PDFInput
               pdfLink={pdfLink}
               handleLinkChange={handleLinkChange}
@@ -108,10 +98,9 @@ export default function PDFProcessor() {
               language={language}
               setLanguage={setLanguage}
             />
-          </motion.div>
         </div>
         <AppsFooter />
-      </motion.div>
+      </div>
     );
   }
 

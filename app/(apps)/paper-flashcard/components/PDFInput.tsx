@@ -8,6 +8,7 @@ import { useSubscription } from '@/contexts/subscription-context';
 import { paperFlashcardFree_PDFSizeLimit } from "@/config/freeLimits";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { US, ID } from 'country-flag-icons/react/3x2';
+import { motion } from "framer-motion";
 
 interface PDFInputProps {
   pdfLink: string;
@@ -63,16 +64,23 @@ export const PDFInput = ({
 
   return (
     <div className="flex flex-col items-center justify-center w-full max-w-md mx-auto gap-6">
-      <div className="text-center space-y-2">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.6 }}
+        className="text-center space-y-2"
+      >
         <h1 className="text-4xl font-extrabold">
           Paper to Flashcards
         </h1>
-        {/* <p className="text-l text-muted-foreground">
-          Turn Any Science Paper into Easy-to-Read Flashcards
-        </p> */}
-      </div>
+      </motion.div>
 
-      <div className="w-full space-y-2">
+      <motion.div 
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2, duration: 0.5 }}
+        className="w-full space-y-2"
+      >
         <div
           className={`relative w-full border-2 border-primary/30 border-dashed ${
             isDragActive && !selectedFile ? 'border-primary bg-primary/10' : 'border-muted'
@@ -137,19 +145,32 @@ export const PDFInput = ({
             </span>
           </Button>
         </div>
-      </div>
+      </motion.div>
 
       {errorMessage && (
-        <p className="text-sm text-destructive text-center">{errorMessage}</p>
+        <motion.p 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="text-sm text-destructive text-center"
+        >
+          {errorMessage}
+        </motion.p>
       )}
 
-      <Button
-        onClick={() => handleProcess()}
-        disabled={!pdfLink && !selectedFile}
-        className="w-full rounded-full"
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.3, duration: 0.5 }}
+        className="w-full"
       >
-        Create
-      </Button>
+        <Button
+          onClick={() => handleProcess()}
+          disabled={!pdfLink && !selectedFile}
+          className="w-full rounded-full"
+        >
+          Create
+        </Button>
+      </motion.div>
       <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
         <AlertDialogContent>
           <AlertDialogHeader>

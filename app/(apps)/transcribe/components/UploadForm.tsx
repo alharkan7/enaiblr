@@ -214,11 +214,11 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         transition={{ delay: 0.2, duration: 0.4 }}
       >
         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Audio Transcription
+          Audio Transcriber
         </h1>
-        <p className="text-muted-foreground mb-8">
+        {/* <p className="text-muted-foreground mb-8">
           Upload your audio file and we&apos;ll convert it to text in seconds
-        </p>
+        </p> */}
       </motion.div>
 
       <motion.div
@@ -255,7 +255,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
                   <Upload className="w-8 h-8 text-primary" />
                 </div>
                 <div>
-                  <p className="font-medium">Drop your audio file here or click to browse</p>
+                  <p className="font-medium">Drop your audio file here or browse</p>
                   <p className="text-sm text-muted-foreground mt-1">
                     Supports MP3, WAV, M4A, FLAC 
                     {/*(max {plan === 'free' ? `${transcribeFree_AudioSizeLimit}MB` : '40MB'}) */}
