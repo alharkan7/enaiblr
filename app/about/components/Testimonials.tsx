@@ -3,6 +3,7 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { motion } from "framer-motion";
+import { useState, useEffect } from "react";
 
 const testimonials = [
   {
@@ -25,6 +26,30 @@ const testimonials = [
       "Saya terkesan dengan kemudahan akses ke berbagai tools AI dalam satu platform ini. Sangat membantu untuk riset akademis dan membuat materi presentasi.",
     image: "app/favicon.ico",
   },
+  {
+    name: "Riza",
+    role: "Content Creator",
+    content: "AI Apps untuk kreatif yang ada di platform ini menghemat waktu saya. Sekarang bisa bikin konten visual dan audio dubbing dalam hitungan menit. Game changer!",
+    image: "app/favicon.ico",
+  },
+  {
+    name: "Budi",
+    role: "Jurnalis",
+    content: "Fitur transcriber membantu saya mentranskrip wawancara dengan cepat dan akurat. Web Chat juga berguna untuk fact-checking dan riset real-time data.",
+    image: "app/favicon.ico",
+  },
+  {
+    name: "Diana",
+    role: "Mahasiswa",
+    content: "Fitur Flashcard membantu saya memahami paper ilmiah dengan lebih mudah. Fitur private chat juga membuat saya tidak khawatir tulisan saya terlihat di internet.",
+    image: "app/favicon.ico",
+  },
+  {
+    name: "Hendra",
+    role: "Penulis & Coach",
+    content: "Saya sudah coba pakai semua fiturnya. Karena tiap AI ada kelebihannya, punya semua aksesnya di 1 platform ini bikin saya bisa menulis dan mengorganisir ide tanpa mengganggu flow.",
+    image: "app/favicon.ico",
+  }
 ];
 
 const container = {
@@ -42,91 +67,111 @@ const item = {
   show: { opacity: 1, y: 0, transition: { duration: 0.5 } }
 };
 
+const useMediaQuery = (query: string) => {
+  const [matches, setMatches] = useState(false);
+
+  useEffect(() => {
+    const media = window.matchMedia(query);
+    if (media.matches !== matches) {
+      setMatches(media.matches);
+    }
+    const listener = () => setMatches(media.matches);
+    window.addEventListener('resize', listener);
+    return () => window.removeEventListener('resize', listener);
+  }, [matches, query]);
+
+  return matches;
+}
+
 const Testimonials = () => {
+  const [isPlaying, setIsPlaying] = useState(true);
+  const isDesktop = useMediaQuery('(min-width: 768px)');
+  
+  const togglePlay = () => {
+    setIsPlaying(!isPlaying);
+  };
+
   return (
-    <section id="testimonials" className="py-20">
-      <div className="container px-4 mx-auto">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="max-w-2xl mx-auto text-center mb-16"
-        >
-          <h2 className="text-3xl font-bold mb-4">
-          Cerita 
-          {" "} 
-          <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-            Pengalaman Pengguna
-            </span>{" "}
+    <section className="py-16 bg-slate-50">
+      <div className="w-full">
+        <div className="container mx-auto px-4">
+          <motion.div 
+            initial={{ opacity: 0, y: 20 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.5 }}
+            className="max-w-2xl mx-auto text-center mb-16"
+          >
+            <h2 className="text-3xl font-bold mb-4">
+              Cerita {" "} 
+              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                Pengalaman Pengguna
+              </span>
             </h2>
-          <p className="text-muted-foreground">
-            Platform kami mendukung pengguna dari berbagai profesi dan industri.
-          </p>
-        </motion.div>
+            <p className="text-muted-foreground">
+              Platform kami mendukung pengguna dari berbagai profesi dan industri.
+            </p>
+          </motion.div>
+        </div>
+
         <motion.div 
           variants={container}
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:px-16"
+          className="relative w-full overflow-hidden h-[400px] md:h-[300px]"
         >
-          {testimonials.map((testimonial, index) => (
-            <motion.div
-              key={index}
-              variants={item}
+          <div className="h-full">
+            <motion.div 
+              data-row="top"
+              className="flex flex-col md:flex-row gap-8 w-full h-full md:h-auto overflow-y-auto md:overflow-visible [&::-webkit-scrollbar]:hidden"
+              animate={isDesktop ? {
+                x: isPlaying ? ['0%', '-100%'] : '0%',
+              } : {}}
+              transition={isDesktop ? {
+                x: {
+                  duration: 40,
+                  repeat: Infinity,
+                  ease: "linear",
+                  repeatType: "loop"
+                }
+              } : {}}
+              style={{
+                scrollbarWidth: 'none',
+                msOverflowStyle: 'none',
+                WebkitOverflowScrolling: 'touch',
+              }}
             >
-              <motion.div
-                whileHover={{ 
-                  scale: 1.02,
-                  boxShadow: "0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1)"
-                }}
-                transition={{ type: "spring", stiffness: 300 }}
-              >
-                <Card className="border-none shadow-lg bg-white">
-                  <CardHeader>
-                    <motion.div 
-                      initial={{ x: -20, opacity: 0 }}
-                      animate={{ x: 0, opacity: 1 }}
-                      transition={{ delay: 0.2 * index }}
-                      className="bg-white flex items-center gap-4"
-                    >
-                      <motion.div
-                        whileHover={{ scale: 1.1 }}
-                        transition={{ type: "spring", stiffness: 400 }}
-                      >
+              {(isDesktop ? [...testimonials, ...testimonials] : testimonials).map((testimonial, index) => (
+                <motion.div
+                  key={`top-${index}`}
+                  className="w-full md:w-[400px] shrink-0 max-w-full"
+                >
+                  <Card className="border-none shadow-lg bg-white h-full">
+                    <CardHeader>
+                      <div className="bg-white flex items-center gap-4">
                         <Avatar>
                           <AvatarImage className="bg-white" src={testimonial.image} alt={testimonial.name} />
                           <AvatarFallback className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white font-semibold">
-                            {testimonial.name
-                              .split(" ")
-                              .map((n) => n[0])
-                              .join("")}
+                            {testimonial.name.split(" ").map((n) => n[0]).join("")}
                           </AvatarFallback>
                         </Avatar>
-                      </motion.div>
-                      <div>
-                        <h4 className="font-semibold text-black">{testimonial.name}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {testimonial.role}
-                        </p>
+                        <div>
+                          <h4 className="font-semibold text-black">{testimonial.name}</h4>
+                          <p className="text-sm text-muted-foreground">{testimonial.role}</p>
+                        </div>
                       </div>
-                    </motion.div>
-                  </CardHeader>
-                  <CardContent>
-                    <motion.p 
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: 1 }}
-                      transition={{ delay: 0.3 * index }}
-                      className="text-muted-foreground"
-                    >
-                      {testimonial.content}
-                    </motion.p>
-                  </CardContent>
-                </Card>
-              </motion.div>
+                    </CardHeader>
+                    <CardContent>
+                      <p className="text-muted-foreground break-words whitespace-normal">
+                        {testimonial.content}
+                      </p>
+                    </CardContent>
+                  </Card>
+                </motion.div>
+              ))}
             </motion.div>
-          ))}
+          </div>
         </motion.div>
       </div>
     </section>
