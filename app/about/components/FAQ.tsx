@@ -92,7 +92,7 @@ const FAQ = () => {
   const displayedItems = showAll ? faqItems : faqItems.slice(0, 7);
 
   return (
-    <section className="max-w-6xl mx-auto w-full py-12 md:py-20 lg:py-20 bg-white rounded-lg shadow-lg mx-auto">
+    <section id="faq" className="max-w-6xl mx-auto w-full py-12 md:py-20 lg:py-20 bg-white rounded-lg shadow-lg mx-auto">
       <motion.div
         variants={container}
         initial="hidden"
@@ -111,22 +111,24 @@ const FAQ = () => {
             </h2>
           </motion.div>
           <motion.div variants={item} className="w-full max-w-[700px] space-y-4">
-            <Accordion type="single" collapsible className="w-full">
-              {displayedItems.map((item, index) => (
-                <AccordionItem key={index} value={`item-${index}`}>
-                  <AccordionTrigger className="text-left hover:no-underline">
-                    {item.question}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-gray-500 text-left">
-                    {item.answer}
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
-            </Accordion>
+            <div className={`relative ${!showAll ? 'after:absolute after:bottom-0 after:left-0 after:right-0 after:h-32 after:bg-gradient-to-t after:from-white after:to-transparent after:pointer-events-none' : ''}`}>
+              <Accordion type="single" collapsible className="w-full">
+                {displayedItems.map((item, index) => (
+                  <AccordionItem key={index} value={`item-${index}`}>
+                    <AccordionTrigger className="text-left hover:no-underline">
+                      {item.question}
+                    </AccordionTrigger>
+                    <AccordionContent className="text-gray-500 text-left">
+                      {item.answer}
+                    </AccordionContent>
+                  </AccordionItem>
+                ))}
+              </Accordion>
+            </div>
             {faqItems.length > 7 && (
               <button
                 onClick={() => setShowAll(!showAll)}
-                className="mt-6 px-6 py-2 text-lg font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 mx-auto"
+                className="mt-6 px-6 py-2 text-lg font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 mx-auto relative z-10"
               >
                 <ChevronDown className={`size-5 transition-transform ${showAll ? 'rotate-180' : ''}`} />
                 <span>{showAll ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Seluruhnya'}</span>

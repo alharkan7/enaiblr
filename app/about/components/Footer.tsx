@@ -61,6 +61,11 @@ const Footer = () => {
                   Testimoni
                 </Link>
               </li>
+              <li>
+                <Link href="#faq" className="text-muted-foreground hover:text-foreground">
+                  FAQ
+                </Link>
+              </li>
             </ul>
           </div>
           <div>
