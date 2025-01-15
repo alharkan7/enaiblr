@@ -10,10 +10,10 @@ const Hero = () => {
     <section className="min-h-screen flex items-center">
       <div className="container px-4 mx-auto">
         <div className="max-w-4xl mx-auto text-center">
-          <m.h1 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+          <h1 
+            // initial={{ opacity: 0, y: 20 }}
+            // animate={{ opacity: 1, y: 0 }}
+            // transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight sm:text-6xl mb-6"
           >
             Akses Seluruh {" "}
@@ -21,19 +21,19 @@ const Hero = () => {
               AI Tanpa Batas
             </span>{" "}
             dalam Satu Platform
-          </m.h1>
-          <m.p 
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
+          </h1>
+          <p 
+            // initial={{ opacity: 0 }}
+            // animate={{ opacity: 1 }}
+            // transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
           >
             Tingkatkan produktivitasmu dengan akses ke beragam jenis AI dalam satu akun. Harga terjangkau, tak perlu lagi membayar langganan satu per satu.
-          </m.p>
-          <m.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.4 }}
+          </p>
+          <div 
+            // initial={{ opacity: 0, y: 20 }}
+            // animate={{ opacity: 1, y: 0 }}
+            // transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link href="/apps">
@@ -50,7 +50,7 @@ const Hero = () => {
                 Lihat Fitur
               </Button>
             </Link>
-          </m.div>
+          </div>
         </div>
       </div>
     </section>

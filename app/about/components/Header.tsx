@@ -19,8 +19,8 @@ const Header = () => {
 
   const navigation = [
     { name: "Fitur", href: "#features" },
-    { name: "Testimoni", href: "#testimonials" },
-    { name: "Harga", href: "#pricing" },
+    // { name: "Testimoni", href: "#testimonials" },
+    // { name: "Harga", href: "#pricing" },
     { name: "FAQ", href: "#faq" },
   ];
 

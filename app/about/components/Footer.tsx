@@ -29,13 +29,13 @@ const Footer = () => {
             </p>
           </div>
           <div>
-            <h3 className="font-semibold mb-4">Perusahaan</h3>
+            <h3 className="font-semibold mb-4">Tentang Produk</h3>
             <ul className="space-y-2">
-              <li>
+              {/* <li>
                 <Link href="#Hero" className="text-muted-foreground hover:text-foreground">
                   Tentang Kami
                 </Link>
-              </li>
+              </li> */}
               {/* <li>
                 <Link href="#" className="text-muted-foreground hover:text-foreground">
                   Blog

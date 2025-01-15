@@ -131,7 +131,7 @@ const FAQ = () => {
                 className="mt-6 px-6 py-2 text-lg font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 mx-auto relative z-10"
               >
                 <ChevronDown className={`size-5 transition-transform ${showAll ? 'rotate-180' : ''}`} />
-                <span>{showAll ? 'Tampilkan Lebih Sedikit' : 'Tampilkan Seluruhnya'}</span>
+                <span>{showAll ? 'Tampilkan Ringkas' : 'Tampilkan Seluruhnya'}</span>
               </button>
             )}
           </motion.div>
