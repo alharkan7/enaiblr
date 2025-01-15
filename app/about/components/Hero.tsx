@@ -36,12 +36,12 @@ const Hero = () => {
             // transition={{ duration: 0.5, delay: 0.4 }}
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
-            <Link href="/apps">
+            <Link href="#highlights">
               <Button size="lg" className="gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
                 Mulai <ArrowRight className="size-4" />
               </Button>
             </Link>
-            <Link href="#features">
+            {/* <Link href="#features">
               <Button 
                 size="lg" 
                 variant="outline" 
@@ -49,7 +49,7 @@ const Hero = () => {
               >
                 Lihat Fitur
               </Button>
-            </Link>
+            </Link> */}
           </div>
         </div>
       </div>

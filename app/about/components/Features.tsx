@@ -84,7 +84,7 @@ const Features = () => {
           <h2 className="text-3xl font-bold mb-4">
             {" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Coba Fitur Unlimited
+              Coba Unlimited AI
             </span> {" "}
             yang Kamu Butuhkan
           </h2>

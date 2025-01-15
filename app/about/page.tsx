@@ -10,6 +10,7 @@ import Loading from '@/components/ui/loading';
 import AnimatedBackground from './components/AnimatedBackground';
 import FAQ from './components/FAQ';
 import Statistics from './components/Statistics';
+import Highlights from './components/Highlights';
 
 export default function Home() {
   return (
@@ -20,8 +21,9 @@ export default function Home() {
         <main className="scroll-smooth relative z-[2]">
           <Suspense fallback={<Loading />}>
             <Hero />
-            <Statistics />
+            <Highlights />
             <Features />
+            <Statistics />
             <Testimonials />
             <Pricing />
             <CTA />
