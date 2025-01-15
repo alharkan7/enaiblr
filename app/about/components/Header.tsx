@@ -46,7 +46,7 @@ const Header = () => {
 
   return (
     <header className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? "bg-white/80 backdrop-blur-md shadow-sm" : ""}`}>
-      <nav className="container mx-auto px-4 sm:px-6 lg:px-16">
+      <nav className="container mx-auto px-4 sm:px-6 pr-2 lg:px-16">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/about" className="text-2xl font-bold text-black">
@@ -73,7 +73,7 @@ const Header = () => {
           </div>
 
           {/* Mobile Navigation Button */}
-          <div className="md:hidden flex items-center gap-2">
+          <div className="md:hidden flex items-center gap-0">
             <Button
               className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
             >

@@ -33,7 +33,7 @@ const features = [
 
 const Highlights = () => {
   return (
-    <section id="highlights" className="py-24">
+    <section id="highlights" className="py-24 overflow-hidden">
       <div className="container px-4 mx-auto max-w-7xl">
         <div className="space-y-24">
           {features.map((feature, index) => (
@@ -43,10 +43,10 @@ const Highlights = () => {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6, delay: index * 0.2 }}
-              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 items-center`}
+              className={`flex flex-col ${index % 2 === 0 ? 'lg:flex-row' : 'lg:flex-row-reverse'} gap-8 items-center w-full`}
             >
               <motion.div 
-                className="w-full lg:w-1/2"
+                className="w-full lg:w-1/2 max-w-full"
                 initial={{ opacity: 0, x: index % 2 === 0 ? -50 : 50 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
