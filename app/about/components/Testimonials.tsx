@@ -147,7 +147,7 @@ const Testimonials = () => {
                   key={`top-${index}`}
                   className="w-full md:w-[400px] shrink-0 max-w-full"
                 >
-                  <Card className="border-none shadow-lg bg-white h-full">
+                  <Card className="border-none shadow-lg bg-white h-full mx-4">
                     <CardHeader>
                       <div className="bg-white flex items-center gap-4">
                         <Avatar>
