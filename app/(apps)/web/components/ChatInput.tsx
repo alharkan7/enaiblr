@@ -127,7 +127,7 @@ export function ChatInput({
                             onFocus={() => onFocusChange?.(true)}
                             onBlur={() => onFocusChange?.(false)}
                             placeholder={linkMode ? "Type a valid URL..." : "Type a message..."}
-                            className="flex-1 py-3 px-2 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
+                            className="flex-1 py-3 px-2 pr-12 bg-transparent text-foreground placeholder:text-muted-foreground focus:outline-none"
                             disabled={isLoading}
                             autoFocus={autoFocus}
                         />

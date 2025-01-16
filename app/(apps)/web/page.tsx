@@ -21,6 +21,7 @@ export default function MinimalistChatbot() {
         if (!hasUserSentMessage) {
             setHasUserSentMessage(true);
         }
+        setInput(''); // Clear input immediately after sending
         await sendMessage(text, isLinkMode);
     };
 
@@ -78,7 +79,6 @@ export default function MinimalistChatbot() {
                                     setInput={setInput}
                                     isLoading={isLoading}
                                     fileInputRef={fileInputRef}
-                                    autoFocus
                                     sendMessage={handleSendMessage}
                                     onFocusChange={setIsInputFocused}
                                     onLinkModeChange={handleLinkModeChange}
@@ -116,7 +116,6 @@ export default function MinimalistChatbot() {
                                     setInput={setInput}
                                     isLoading={isLoading}
                                     fileInputRef={fileInputRef}
-                                    autoFocus
                                     sendMessage={handleSendMessage}
                                     onFocusChange={setIsInputFocused}
                                     onLinkModeChange={handleLinkModeChange}

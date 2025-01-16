@@ -53,7 +53,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
                   className="flex items-center px-2 h-fit"
                 >
                   <AppGridIcon size={14} />
-                  <span className="ml-2">Apps</span>
+                  <span>Apps</span>
                 </Button>
               }
               user={session?.user}

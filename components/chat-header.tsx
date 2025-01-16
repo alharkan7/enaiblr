@@ -90,7 +90,7 @@ function PureChatHeader({
             className="order-last flex items-center px-2 h-fit md:ml-auto"
           >
             <AppGridIcon size={14} />
-            <span className="ml-2">Apps</span>
+            <span>Apps</span>
           </Button>
         }
         user={user}
