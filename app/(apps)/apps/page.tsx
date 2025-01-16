@@ -105,7 +105,7 @@ export default function Page() {
                 }
               }
             }}
-            className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3 md:gap-4 max-w-6xl mx-auto"
+            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 gap-y-6 md:gap-x-4 md:gap-y-8 max-w-6xl mx-auto"
           >
             {apps.map((app, index) => {
               const Icon = app.icon
@@ -122,17 +122,16 @@ export default function Page() {
                   }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleAppClick(app.type, app.slug)}
-                  className="group relative flex flex-col items-center p-4 md:p-6 bg-card hover:bg-accent rounded-xl border border-border transition-all cursor-pointer select-none shadow-sm hover:shadow-xl"
+                  className="group relative flex flex-col items-center p-3 rounded-xl transition-all cursor-pointer select-none"
                 >
                   <motion.div 
-                    className="mb-3 md:mb-4 p-2 rounded-lg bg-muted group-hover:bg-accent-foreground/10 transition-colors"
+                    className="mb-2 p-4 rounded-2xl bg-card hover:bg-accent border border-border shadow-sm hover:shadow-xl transition-colors"
                     whileHover={{ rotate: [0, -10, 10, -5, 5, 0] }}
                     transition={{ duration: 0.5 }}
                   >
-                    <Icon className="w-5 h-5 md:w-6 md:h-6 text-primary" />
+                    <Icon className="w-8 h-8 md:w-10 md:h-10 text-primary" />
                   </motion.div>
-                  <h2 className="text-lg md:text-xl font-semibold text-center text-foreground leading-tight min-h-[3rem]">{app.name}</h2>
-                  <p className="text-xs text-muted-foreground text-center mt-2">{app.description}</p>
+                  <h2 className="text-sm font-medium text-center text-foreground max-w-[80px] break-words leading-tight">{app.name}</h2>
                 </motion.div>
               )
             })}
