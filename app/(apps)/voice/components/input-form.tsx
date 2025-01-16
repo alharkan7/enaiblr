@@ -121,15 +121,15 @@ export function InputForm({
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
       className="w-full max-w-2xl mx-auto space-y-6"
     >
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1, duration: 0.4 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
         <h1 className="text-4xl font-extrabold text-center mb-8">
           Text to Natural Voice
@@ -139,7 +139,7 @@ export function InputForm({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
         <Textarea
           value={text}
@@ -153,7 +153,7 @@ export function InputForm({
         className="grid grid-cols-2 gap-4"
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.3, duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
         <Select value={language} onValueChange={handleLanguageChange}>
           <SelectTrigger className="w-full rounded-full">
@@ -188,7 +188,7 @@ export function InputForm({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.4, duration: 0.4 }}
+        transition={{ duration: 0.3 }}
       >
         <Button
           onClick={onSubmit}

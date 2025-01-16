@@ -71,47 +71,29 @@ export default function Home() {
                       transition={{ duration: 1.5, repeat: Infinity, ease: "linear" }}
                     />
                   </div>
-                  <motion.p 
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-muted-foreground font-medium"
-                  >
-                    Creating Visual
-                  </motion.p>
+                  <p className="text-muted-foreground font-medium">Creating Visual</p>
                 </motion.div>
               </div>
             </div>
           ) : !generatedImage ? (
             <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ duration: 0.3 }}
               className="flex flex-col items-center justify-center py-8 mt-8 sm:mt-0"
             >
-              <motion.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.2, duration: 0.5 }}
-                className="relative"
-              >
-                <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-center bg-clip-text text-transparent bg-gradient-to-r from-foreground to-foreground/80 leading-relaxed pb-2">
+              <div className="relative">
+                <h1 className="text-4xl sm:text-5xl font-extrabold mb-4 text-center leading-relaxed pb-2">
                   Image Creator
                 </h1>
-                <motion.div 
-                  className="absolute -z-10 inset-0 blur-3xl opacity-20 bg-gradient-to-r from-blue-600 to-pink-600"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 0.2 }}
-                  transition={{ delay: 0.4 }}
-                />
-              </motion.div>
+              </div>
             </motion.div>
           ) : (
             <div className="relative w-full max-w-screen-sm flex items-center justify-center h-[50vh] mx-auto mb-8">
               <div className={`relative ${getAspectRatioClass(imageAspectRatio)}`} style={{ maxWidth: '100%', maxHeight: '100%' }}>
                 <motion.img
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
                   transition={{ duration: 0.3 }}
                   src={generatedImage}
                   alt="Generated image"
@@ -146,10 +128,10 @@ export default function Home() {
               <div className="flex flex-wrap justify-center gap-2">
                 {EXAMPLE_PROMPTS.map((examplePrompt, index) => (
                   <motion.button
-                    initial={{ opacity: 0, y: 10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: index * 0.1 + 0.5 }}
-                    whileHover={{ scale: 1.05, y: -2 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.2 }}
+                    whileHover={{ scale: 1.05 }}
                     whileTap={{ scale: 0.98 }}
                     key={examplePrompt}
                     onClick={() => {
@@ -178,7 +160,7 @@ export default function Home() {
                     }}
                     className="px-4 py-2 text-sm bg-background/80 hover:bg-background/90 backdrop-blur-sm rounded-full border border-input transition-all shadow-sm hover:shadow-md"
                   >
-                    <span className="text-xs text-foreground/80">{examplePrompt} →</span>
+                    <span className="text-xs text-foreground">{examplePrompt} →</span>
                   </motion.button>
                 ))}
               </div>

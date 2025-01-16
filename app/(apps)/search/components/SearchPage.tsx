@@ -93,8 +93,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
         return (
             <div className="flex flex-col h-dvh">
                 <motion.header 
-                    initial={{ y: -20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="flex-none sticky top-0 left-0 w-full z-10 bg-background border-b"
                 >
                     <div className="container max-w-5xl mx-auto py-4 pl-4 sm:pl-0 flex items-center gap-2">
@@ -113,7 +114,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     </div>
                 </motion.header>
                 <main className="flex-1 overflow-y-auto">
-                    <div className="container mx-auto px-5 py-8">
+                    <div className="container mx-auto px-5 pt-4 pb-0">
                         <AnimatePresence mode="wait">
                             {isLoading ? (
                                 <motion.div 
@@ -121,6 +122,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
                                     exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
                                     className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
                                 >
                                     {Array.from({ length: 4 }, (_, index) => (
@@ -137,9 +139,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                             ) : (
                                 <motion.div 
                                     key="results"
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    exit={{ opacity: 0, y: -20 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
                                     transition={{ duration: 0.3 }}
                                     className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
                                 >
@@ -156,11 +158,11 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                 </motion.div>
                             )}
                         </AnimatePresence>
+                        <div className="mt-8">
+                            <AppsFooter />
+                        </div>
                     </div>
                 </main>
-                <div className="flex-none mt-8">
-                    <AppsFooter />
-                </div>
             </div>
         );
     }
@@ -169,8 +171,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     return (
         <div className="h-dvh flex flex-col">
             <motion.header 
-                initial={{ y: -20, opacity: 0 }}
-                animate={{ y: 0, opacity: 1 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
                 className="sticky top-0 left-0 w-full z-10"
             >
                 <AppsHeader />
@@ -178,21 +181,21 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8 pt-1">
                 <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.5 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="text-center space-y-2"
                 >
-                    <h1 className="text-4xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
+                    <h1 className="text-4xl font-extrabold bg-clip-text">
                         AI Search Engine
                     </h1>
                     <p className="text-l text-muted-foreground">Find the Best AI Tools on the Internet</p>
                 </motion.div>
 
                 <motion.div 
-                    initial={{ opacity: 0, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    transition={{ delay: 0.2, duration: 0.4 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="w-full max-w-2xl space-y-4"
                 >
                     <div className="relative">
@@ -239,9 +242,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                 )}
 
                 <motion.div 
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.4, duration: 0.4 }}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ duration: 0.3 }}
                     className="sm:flex sm:flex-wrap justify-center gap-2 max-w-2xl mt-6"
                 >
                     <div className="sm:hidden relative">
@@ -250,9 +253,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                             {TAGS.map((tag, index) => (
                                 <motion.div
                                     key={tag}
-                                    initial={{ opacity: 0, x: -10 }}
-                                    animate={{ opacity: 1, x: 0 }}
-                                    transition={{ delay: index * 0.05 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.2 }}
                                     whileHover={{ scale: 1.02 }}
                                 >
                                     <Button
@@ -271,10 +274,10 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         {TAGS.map((tag, index) => (
                             <motion.div
                                 key={tag}
-                                initial={{ opacity: 0, y: 10 }}
-                                animate={{ opacity: 1, y: 0 }}
-                                transition={{ delay: index * 0.05 }}
-                                whileHover={{ scale: 1.05 }}
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                transition={{ duration: 0.2 }}
+                                whileHover={{ scale: 1.02 }}
                             >
                                 <Button
                                     variant="outline"
@@ -292,7 +295,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
             <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
+                transition={{ duration: 0.3 }}
                 className="mt-8"
             >
                 <AppsFooter />

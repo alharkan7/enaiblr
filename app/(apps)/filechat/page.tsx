@@ -182,9 +182,9 @@ export default function Filechat() {
                 ) : (
                     <div className="h-full flex flex-col justify-center items-center gap-4 max-w-5xl mx-auto w-full px-4">
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{ duration: 0.6, ease: "easeOut" }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
                         >
                             <h1 className="text-3xl sm:text-4xl font-extrabold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/80">
                                 Chat with Docs
@@ -194,7 +194,7 @@ export default function Filechat() {
                             className="text-semibold text-muted-foreground text-center"
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ duration: 0.6, delay: 0.2 }}
+                            transition={{ duration: 0.3 }}
                         >
                             No Files are Saved to the Server
                         </motion.p>
@@ -202,10 +202,10 @@ export default function Filechat() {
                             {fileInfo && (
                                 <motion.div 
                                     className="w-full"
-                                    initial={{ opacity: 0, scale: 0.95 }}
-                                    animate={{ opacity: 1, scale: 1 }}
-                                    exit={{ opacity: 0, scale: 0.95 }}
-                                    transition={{ duration: 0.3 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    exit={{ opacity: 0 }}
+                                    transition={{ duration: 0.2 }}
                                 >
                                     <DocumentPreview
                                         fileName={fileInfo.fileName}

@@ -40,21 +40,20 @@ export default function Page() {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-background">
+    <div className="min-h-screen flex flex-col bg-background overflow-auto">
       {status === 'authenticated' ? (
         <motion.div 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-          className="!static"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
         >
           <AppsHeader />
         </motion.div>
       ) : (
         <motion.header 
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.2 }}
           className="bg-background py-4 px-4 z-50"
         >
           <div className="max-w-6xl mx-auto flex justify-between items-center">
@@ -69,17 +68,17 @@ export default function Page() {
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="w-full">
           <motion.div 
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
             className="text-center mb-16"
           >
             <h1 className="text-5xl font-bold tracking-tighter mb-2 text-foreground relative inline-block select-none">
               enaiblr
               {!isLoading && <motion.span 
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{ delay: 0.3, type: "spring" }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
                 className={`absolute top-0 right-[-40] text-xs font-medium ${plan === 'pro' ? 'text-primary-foreground bg-primary' : 'text-foreground bg-muted outline-1 outline outline-primary'} rounded-lg px-1 leading-normal tracking-normal`}
               >
                 {plan === 'pro' ? 'PRO' : 'FREE'}
@@ -88,7 +87,7 @@ export default function Page() {
             <motion.p 
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              transition={{ delay: 0.2 }}
+              transition={{ duration: 0.2 }}
               className="text-muted-foreground"
             >
               Unlimited AI Platform
@@ -96,15 +95,9 @@ export default function Page() {
           </motion.div>
 
           <motion.div 
-            initial="hidden"
-            animate="visible"
-            variants={{
-              visible: {
-                transition: {
-                  staggerChildren: 0.1
-                }
-              }
-            }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
             className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-x-3 gap-y-6 md:gap-x-4 md:gap-y-8 max-w-6xl mx-auto"
           >
             {apps.map((app, index) => {
@@ -112,25 +105,14 @@ export default function Page() {
               return (
                 <motion.div
                   key={app.slug}
-                  variants={{
-                    hidden: { opacity: 0, y: 20 },
-                    visible: { opacity: 1, y: 0 }
-                  }}
-                  whileHover={{ 
-                    scale: 1.03,
-                    transition: { type: "spring", stiffness: 400 }
-                  }}
+                  whileHover={{ scale: 1.1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => handleAppClick(app.type, app.slug)}
                   className="group relative flex flex-col items-center p-3 rounded-xl transition-all cursor-pointer select-none"
                 >
-                  <motion.div 
-                    className="mb-2 p-4 rounded-2xl bg-card hover:bg-accent border border-border shadow-sm hover:shadow-xl transition-colors"
-                    whileHover={{ rotate: [0, -10, 10, -5, 5, 0] }}
-                    transition={{ duration: 0.5 }}
-                  >
+                  <div className="mb-2 p-4 rounded-2xl bg-card hover:bg-accent border border-border shadow-sm hover:shadow-md transition-colors">
                     <Icon className="w-8 h-8 md:w-10 md:h-10 text-primary" />
-                  </motion.div>
+                  </div>
                   <h2 className="text-sm font-medium text-center text-foreground max-w-[80px] break-words leading-tight">{app.name}</h2>
                 </motion.div>
               )
@@ -142,7 +124,7 @@ export default function Page() {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.5 }}
+        transition={{ duration: 0.2 }}
       >
         <AppsFooter />
       </motion.div>

@@ -203,28 +203,25 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
   return (
     <motion.div 
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.5 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
       className="w-full max-w-xl mx-auto text-center"
     >
       <motion.div
-        initial={{ opacity: 0, scale: 0.95 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{ delay: 0.2, duration: 0.4 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
         <h1 className="text-4xl font-bold mb-4 bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           Audio Transcriber
         </h1>
-        {/* <p className="text-muted-foreground mb-8">
-          Upload your audio file and we&apos;ll convert it to text in seconds
-        </p> */}
       </motion.div>
 
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4, duration: 0.4 }}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
         className="mb-8"
       >
         <div
@@ -239,16 +236,16 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
           <motion.div
             initial={false}
             animate={{ 
-              scale: isDragActive ? 1.02 : 1,
               opacity: isDragActive ? 0.8 : 1
             }}
-            transition={{ type: "spring", stiffness: 300, damping: 20 }}
+            transition={{ duration: 0.2 }}
             className="space-y-4"
           >
             {!file && (
               <motion.div 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
                 className="flex flex-col items-center gap-4"
               >
                 <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center">
@@ -266,15 +263,16 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
             {file && (
               <motion.div 
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.2 }}
                 className="flex items-center justify-center gap-3"
               >
                 <FileAudio className="w-6 h-6 text-primary" />
                 <span className="font-medium">{file.name}</span>
                 <motion.button
-                  whileHover={{ scale: 1.1 }}
-                  whileTap={{ scale: 0.95 }}
+                  whileHover={{ scale: 1.02 }}
+                  whileTap={{ scale: 0.98 }}
                   onClick={(e) => {
                     e.stopPropagation();
                     setFile(null);
@@ -290,8 +288,9 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
         {error && (
           <motion.div
-            initial={{ opacity: 0, y: -10 }}
-            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.2 }}
             className="flex items-center gap-2 text-destructive mt-3"
           >
             <AlertCircle className="w-4 h-4" />
@@ -303,7 +302,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 0.6 }}
+        transition={{ duration: 0.3 }}
       >
         <LanguageSelector
           value={selectedLanguage}
@@ -337,17 +336,19 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
       {isUploading && (
         <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.3 }}
           className="mt-8 space-y-4"
         >
           <AnimatePresence mode="wait">
             {uploadProgress < 100 ? (
               <motion.div
                 key="upload"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
                 <div className="flex justify-between text-sm">
@@ -359,9 +360,10 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
             ) : (
               <motion.div
                 key="processing"
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.2 }}
                 className="space-y-2"
               >
                 <div className="flex justify-between text-sm">

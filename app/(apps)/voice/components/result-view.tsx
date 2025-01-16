@@ -44,59 +44,41 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
     }
   };
 
-  const container = {
-    hidden: { opacity: 0 },
-    show: {
-      opacity: 1,
-      transition: {
-        staggerChildren: 0.1
-      }
-    }
-  };
-
-  const item = {
-    hidden: { opacity: 0, y: 20 },
-    show: { opacity: 1, y: 0 }
-  };
-
   return (
     <motion.div 
       className="w-full max-w-4xl mx-auto space-y-8 px-4"
-      variants={container}
-      initial="hidden"
-      animate="show"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.3 }}
     >
-      <motion.div variants={item}>
-        <motion.h1 
-          className="text-3xl font-bold text-center mb-8"
-          initial={{ scale: 0.9, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ duration: 0.3 }}
-        >
+      <div>
+        <h1 className="text-3xl font-bold text-center mb-8">
           Your Audio is <span className="text-primary">Ready</span>
-        </motion.h1>
-      </motion.div>
+        </h1>
+      </div>
 
       <motion.div 
         className="grid grid-cols-2 gap-x-2 gap-y-4 sm:gap-4 mb-6"
-        variants={container}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
       >
-        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <Clock className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Duration: {formatDuration(duration)}</span>
-        </motion.div>
+        </div>
 
-        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <TextQuote className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Words: {wordCount}</span>
-        </motion.div>
+        </div>
 
-        <motion.div variants={item} className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
+        <div className="flex items-center space-x-1 sm:space-x-2 text-muted-foreground justify-center">
           <FileAudio className="size-4 sm:size-5 mr-1 sm:mr-2 shrink-0" />
           <span className="truncate text-sm sm:text-base">Size: {size.toFixed(2)} MB</span>
-        </motion.div>
+        </div>
 
-        <motion.div variants={item} className="flex justify-center">
+        <div className="flex justify-center">
           <Button
             onClick={handleDownload}
             aria-label="Download audio file"
@@ -105,18 +87,22 @@ export function ResultView({ text, audioUrl, size, blob, onReset }: ResultViewPr
             <Download className="size-4 sm:size-5" />
             <span>Download</span>
           </Button>
-        </motion.div>
+        </div>
       </motion.div>
 
       <motion.div
-        variants={item}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
         className="w-full"
       >
         <AudioPlayer audioUrl={audioUrl} onDurationChange={setDuration} />
       </motion.div>
 
       <motion.div
-        variants={item}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.3 }}
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
       >
