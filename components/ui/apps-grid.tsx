@@ -1,7 +1,6 @@
 'use client';
 
 import * as React from 'react';
-import * as PopoverPrimitive from '@radix-ui/react-popover';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipContent, TooltipTrigger, TooltipProvider } from '@/components/ui/tooltip';
@@ -23,6 +22,7 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
   const { plan } = useSubscription();
   const [isOpen, setIsOpen] = React.useState(false);
   const [showTooltips, setShowTooltips] = React.useState(false);
+  const [isLoaded, setIsLoaded] = React.useState(false);
 
   const handleAppClick = (type: 'free' | 'pro', slug: string) => {
     if (useHardReload) {
@@ -35,13 +35,18 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
 
   React.useEffect(() => {
     if (isOpen) {
-      // Delay enabling tooltips to prevent them from showing immediately when popover opens
-      const timer = setTimeout(() => setShowTooltips(true), 500);
+      // Reduced delay for better responsiveness
+      const timer = setTimeout(() => setShowTooltips(true), 0);
       return () => clearTimeout(timer);
     } else {
       setShowTooltips(false);
     }
   }, [isOpen]);
+
+  // Mark as loaded on mount
+  React.useEffect(() => {
+    setIsLoaded(true);
+  }, []);
 
   return (
     <TooltipProvider>
@@ -49,12 +54,20 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
         <PopoverTrigger asChild>
           {trigger}
         </PopoverTrigger>
-        <PopoverContent className="w-[320px] p-2" align="end" onPointerDownOutside={(e: Event) => {
-          // Prevent closing when clicking inside the popover
-          if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
-            e.preventDefault();
-          }
-        }}>
+        <PopoverContent 
+          className="w-[320px] p-2" 
+          align="end" 
+          onPointerDownOutside={(e: Event) => {
+            if (e.target instanceof Element && e.target.closest('.apps-grid-content')) {
+              e.preventDefault();
+            }
+          }}
+          // Add a fade-in animation
+          style={{
+            opacity: isLoaded ? 1 : 0,
+            transition: 'opacity 0.15s ease-in-out'
+          }}
+        >
           <div className="apps-grid-content grid grid-cols-3 max-h-[310px] overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
             {[{
               icon: LayoutGrid,
