@@ -5,8 +5,8 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
 
 const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
-const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY!);
+const together = new Together({ apiKey: process.env.TOGETHER_AI_API_KEY });
+const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 const generationConfig = {

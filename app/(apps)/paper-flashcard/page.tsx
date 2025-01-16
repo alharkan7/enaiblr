@@ -142,7 +142,7 @@ export default function PDFProcessor() {
           transition={{ duration: 0.3 }}
           className="flex-1 container max-w-[90%] 2xl:max-w-[80%] mx-auto px-4 flex flex-col items-center justify-center -mt-8"
         >
-          <div className="w-full max-w-3xl">
+          <div className="w-full max-w-3xl relative">
             <FlashCardDisplay
               cardStyle={cardStyle}
               currentCard={currentCard}
@@ -153,6 +153,28 @@ export default function PDFProcessor() {
               handlers={handlers}
               direction={direction}
             />
+            <div className="absolute right-[-3rem] top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col gap-2 z-[1]">
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => navigateCard("prev")}
+                  className="rounded-full backdrop-blur-sm bg-opacity-80"
+                >
+                  <ChevronUp className="size-4" />
+                </Button>
+              </motion.div>
+              <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  onClick={() => navigateCard("next")}
+                  className="rounded-full backdrop-blur-sm bg-opacity-80"
+                >
+                  <ChevronDown className="size-4" />
+                </Button>
+              </motion.div>
+            </div>
             <motion.div 
               className="relative z-20 mt-6"
               initial={{ opacity: 0, y: 20 }}
@@ -175,29 +197,6 @@ export default function PDFProcessor() {
                   closing: ""
                 }}
               />
-            </motion.div>
-          </div>
-
-          <div className="absolute right-4 top-1/2 transform -translate-y-1/2 hidden sm:flex flex-col gap-2 z-[1]">
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => navigateCard("prev")}
-                className="rounded-full backdrop-blur-sm bg-opacity-80"
-              >
-                <ChevronUp className="size-4" />
-              </Button>
-            </motion.div>
-            <motion.div whileHover={{ scale: 1.1 }} whileTap={{ scale: 0.9 }}>
-              <Button
-                variant="outline"
-                size="icon"
-                onClick={() => navigateCard("next")}
-                className="rounded-full backdrop-blur-sm bg-opacity-80"
-              >
-                <ChevronDown className="size-4" />
-              </Button>
             </motion.div>
           </div>
         </motion.div>

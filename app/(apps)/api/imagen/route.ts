@@ -3,8 +3,8 @@ import { NextResponse } from "next/server";
 
 export async function POST(request: Request) {
   try {
-    if (!process.env.TOGETHER_API_KEY) {
-      console.error('TOGETHER_API_KEY is not set in environment variables');
+    if (!process.env.TOGETHER_AI_API_KEY) {
+      console.error('TOGETHER_AI_API_KEY is not set in environment variables');
       return NextResponse.json(
         { error: 'API key not configured' },
         { status: 500 }
@@ -22,7 +22,7 @@ export async function POST(request: Request) {
     }
 
     console.log('Generating image with prompt:', prompt);
-    const together = new Together({ apiKey: process.env.TOGETHER_API_KEY });
+    const together = new Together({ apiKey: process.env.TOGETHER_AI_API_KEY });
 
     const response = await together.images.create({
       model: "black-forest-labs/FLUX.1-schnell-Free",

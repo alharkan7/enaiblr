@@ -266,7 +266,7 @@ export default function MinimalistChatbot() {
                                         isStreaming={isStreaming}
                                     />
                                 </div>
-                                <div className="w-full border-t backdrop-blur-sm border-border bg-background sticky bottom-0 z-10">
+                                <div className="w-full backdrop-blur-sm border-border bg-background sticky bottom-0 z-10">
 
                                     {localImageUrl && (
                                         <ImagePreview
