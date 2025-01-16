@@ -181,35 +181,35 @@ export default function MinimalistChatbot() {
                     <motion.div 
                         initial={{ opacity: 0 }} 
                         animate={{ opacity: 1 }} 
-                        transition={{ duration: 0.5 }}
+                        transition={{ duration: 0.3 }}
                         className="flex flex-col flex-grow bg-background"
                     >
                         {messages.length === 0 && <AppsHeader />}
                         <motion.div 
-                            initial={{ opacity: 0, y: 20 }} 
-                            animate={{ opacity: 1, y: 0 }} 
-                            transition={{ delay: 0.2, duration: 0.5 }}
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.3 }}
                             className="flex-grow flex flex-col items-center justify-center px-4 sm:px-6 md:px-8"
                         >
                             <div className="w-full max-w-[1200px]">
                                 <motion.div
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.4, duration: 0.5 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
                                 >
                                     <ChatTitle clearMessages={clearMessages} />
                                 </motion.div>
                                 <motion.div 
-                                    initial={{ opacity: 0, y: 20 }}
-                                    animate={{ opacity: 1, y: 0 }}
-                                    transition={{ delay: 0.6, duration: 0.5 }}
+                                    initial={{ opacity: 0 }}
+                                    animate={{ opacity: 1 }}
+                                    transition={{ duration: 0.3 }}
                                     className="w-full max-w-3xl mt-8 mx-auto"
                                 >
                                     {localImageUrl && (
                                         <motion.div
-                                            initial={{ scale: 0.95, opacity: 0 }}
-                                            animate={{ scale: 1, opacity: 1 }}
-                                            exit={{ scale: 0.95, opacity: 0 }}
+                                            initial={{ opacity: 0 }}
+                                            animate={{ opacity: 1 }}
+                                            exit={{ opacity: 0 }}
                                             transition={{ duration: 0.2 }}
                                         >
                                             <ImagePreview
@@ -241,7 +241,7 @@ export default function MinimalistChatbot() {
                         <motion.div 
                             initial={{ opacity: 0 }}
                             animate={{ opacity: 1 }}
-                            transition={{ delay: 0.8, duration: 0.5 }}
+                            transition={{ duration: 0.3 }}
                             className={`w-full mt-8 ${isInputFocused ? 'hidden' : ''}`}
                         >
                             <AppsFooter />

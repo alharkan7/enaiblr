@@ -21,29 +21,6 @@ export function ChatTitle({ compact, clearMessages, chatMode }: ChatTitleProps) 
         </Button>
     );
 
-    const containerVariants = {
-        hidden: { opacity: 0 },
-        visible: {
-            opacity: 1,
-            transition: {
-                staggerChildren: 0.2
-            }
-        }
-    };
-
-    const itemVariants = {
-        hidden: { opacity: 0, y: 20 },
-        visible: {
-            opacity: 1,
-            y: 0,
-            transition: {
-                type: "spring",
-                stiffness: 100,
-                damping: 15
-            }
-        }
-    };
-
     return compact ? (
         <AppsHeader
             title={<>Chat with {chatMode === 'gemini' ? 'a Page' : 'the Web'}</>}
@@ -52,19 +29,23 @@ export function ChatTitle({ compact, clearMessages, chatMode }: ChatTitleProps) 
     ) : (
         <motion.div 
             className="text-center py-8"
-            variants={containerVariants}
-            initial="hidden"
-            animate="visible"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.3 }}
         >
             <motion.h1 
                 className="text-4xl font-extrabold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/70"
-                variants={itemVariants}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
             >
                 {chatMode === 'gemini' ? 'Page Summarizer' : 'Web Search'}
             </motion.h1>
             <motion.p 
                 className="text-sm text-muted-foreground"
-                variants={itemVariants}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.3 }}
             >
                 <b>{chatMode === 'gemini' ? 'Chat with Any Page on the Internet' : 'Search the web with AI'}</b>
             </motion.p>
