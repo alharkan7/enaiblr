@@ -69,7 +69,7 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
       const dimensions = getDimensions(quality, aspectRatio);
       const finalPrompt = selectedStyle ? `${prompt}\nStyle: ${selectedStyle}` : prompt;
 
-      const response = await fetch('/api/generate', {
+      const response = await fetch('/api/imagen', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

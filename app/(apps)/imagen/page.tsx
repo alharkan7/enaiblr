@@ -156,7 +156,7 @@ export default function Home() {
                       setDefaultPrompt(examplePrompt);
                       handleGenerateStart();
                       const dimensions = { width: 768, height: 768 }; // default to standard square
-                      fetch('/api/generate', {
+                      fetch('/api/imagen', {
                         method: 'POST',
                         headers: {
                           'Content-Type': 'application/json',

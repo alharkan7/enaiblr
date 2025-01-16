@@ -33,7 +33,7 @@ export default function Results() {
   useEffect(() => {
     const fetchPapers = async () => {
       try {
-        const response = await fetch(`/api/papers?${searchParams.toString()}`)
+        const response = await fetch(`/api/paper-scraper?${searchParams.toString()}`)
         if (!response.ok) {
           const errorData = await response.json()
           throw new Error(errorData.error || 'Failed to fetch papers')

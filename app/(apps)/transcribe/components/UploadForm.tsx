@@ -76,7 +76,7 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
 
     try {
       // Get Groq API key
-      const tokenResponse = await fetch('/api/groq-token', {
+      const tokenResponse = await fetch('/api/transcribe/groq-token', {
         headers: {
           'Content-Type': 'application/json'
         }

@@ -12,7 +12,7 @@ import { memo } from 'react';
 import { Tooltip, TooltipContent, TooltipTrigger } from './ui/tooltip';
 import { type VisibilityType, VisibilitySelector } from './visibility-selector';
 import { AppsGrid } from './ui/apps-grid';
-import { mutate } from 'swr';
+// import { mutate } from 'swr';
 
 function PureChatHeader({
   chatId,

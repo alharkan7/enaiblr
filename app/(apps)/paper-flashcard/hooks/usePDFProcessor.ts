@@ -72,7 +72,7 @@ export const usePDFProcessor = () => {
       } else if (pdfLink && isValidUrl(pdfLink)) {
         try {
           // Always use the proxy for URL-based PDFs
-          const proxyResponse = await fetch('/api/proxy-pdf', {
+          const proxyResponse = await fetch('/api/paper-flashcards/proxy-pdf', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
