@@ -124,7 +124,7 @@ const Testimonials = () => {
           <div className="h-full">
             <motion.div 
               data-row="top"
-              className="flex flex-col md:flex-row gap-8 w-full h-full md:h-auto overflow-y-auto md:overflow-visible [&::-webkit-scrollbar]:hidden"
+              className="flex flex-col md:flex-row gap-4 sm:gap-2 w-full h-full md:h-auto overflow-y-auto md:overflow-visible [&::-webkit-scrollbar]:hidden"
               animate={isDesktop ? {
                 x: isPlaying ? ['0%', '-100%'] : '0%',
               } : {}}
