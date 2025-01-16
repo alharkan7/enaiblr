@@ -3,7 +3,7 @@ import { redirect } from 'next/navigation';
 
 import { auth } from '../auth';
 import PasswordResetForm from '@/components/password-reset-form';
-import { resetPassword } from '@/app/actions/reset-password';
+import { resetPassword } from '@/app/(account)/actions/reset-password';
 
 export const metadata: Metadata = {
   title: 'Reset Password',
