@@ -11,6 +11,11 @@ interface SearchParams {
 
 const EXCLUDED_TITLE_KEYWORDS = ['best', 'top', 'ai tools for'];
 
+const isFirstWordNumber = (title: string) => {
+    const firstWord = title.trim().split(/\s+/)[0];
+    return /^\d+$/.test(firstWord);
+};
+
 export async function POST(request: Request) {
     const { query, numResults, offset = 0, text_decorations = false } = await request.json() as SearchParams;
 
@@ -40,10 +45,11 @@ export async function POST(request: Request) {
             throw new Error("Invalid response format from Brave Search API");
         }
         
-        // Filter out results with excluded keywords in title
+        // Filter out results with excluded keywords in title or starting with numbers
         const filteredResults = data.web.results.filter((result: any) => {
             const titleLower = result.title.toLowerCase();
-            return !EXCLUDED_TITLE_KEYWORDS.some(keyword => titleLower.includes(keyword));
+            return !EXCLUDED_TITLE_KEYWORDS.some(keyword => titleLower.includes(keyword)) && 
+                   !isFirstWordNumber(result.title);
         });
         
         // Transform Brave Search results to match our app's format
