@@ -119,7 +119,7 @@ const Testimonials = () => {
           initial="hidden"
           whileInView="show"
           viewport={{ once: true }}
-          className="relative w-full overflow-hidden h-[400px] md:h-[300px]"
+          className="relative w-full overflow-hidden h-[600px] md:h-[300px]"
         >
           <div className="h-full">
             <motion.div 
