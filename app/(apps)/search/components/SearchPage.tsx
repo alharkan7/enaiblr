@@ -158,14 +158,56 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                             onToggleExpand={() => handleResultClick(index)}
                                         />
                                     ))}
+
+                                    {/* Loading skeletons for "Load More" */}
+                                    {isLoadingMore && (
+                                        Array.from({ length: 6 }, (_, i) => (
+                                            <div key={`skeleton-${i}`} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
+                                                <div className="size-16 bg-muted rounded-lg"></div>
+                                                <div className="flex-1">
+                                                    <div className="h-4 bg-muted rounded w-3/4"></div>
+                                                    <div className="h-3 bg-muted rounded w-1/2 mt-2"></div>
+                                                    <div className="flex justify-between items-center mt-4">
+                                                        <div className="h-3 bg-muted rounded w-1/3"></div>
+                                                        <div className="h-3 bg-muted rounded w-8"></div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        ))
+                                    )}
                                 </motion.div>
                             )}
                         </AnimatePresence>
-                        <div className="mt-8">
-                            <AppsFooter />
-                        </div>
+
+                        {/* Load More button */}
+                        {!isLoading && searchResults && searchResults.length > 0 && hasMore && (
+                            <motion.div 
+                                initial={{ opacity: 0 }}
+                                animate={{ opacity: 1 }}
+                                className="flex justify-center mt-8"
+                            >
+                                <Button
+                                    variant="outline"
+                                    onClick={() => loadMore(query)}
+                                    disabled={isLoadingMore}
+                                    className="min-w-[200px]"
+                                >
+                                    {isLoadingMore ? (
+                                        <span className="flex items-center gap-2">
+                                            <div className="w-4 h-4 border-2 border-current border-t-transparent rounded-full animate-spin"></div>
+                                            Loading...
+                                        </span>
+                                    ) : (
+                                        'Load More'
+                                    )}
+                                </Button>
+                            </motion.div>
+                        )}
                     </div>
                 </main>
+                <div className="mt-8">
+                    <AppsFooter />
+                </div>
             </div>
         );
     }

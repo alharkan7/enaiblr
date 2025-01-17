@@ -43,7 +43,8 @@ export const useSearch = () => {
                 body: JSON.stringify({ 
                     query: searchQuery, 
                     ...SEARCH_PARAMS,
-                    offset: 0 
+                    offset: 0,
+                    text_decorations: false
                 }),
             });
 
@@ -51,14 +52,14 @@ export const useSearch = () => {
 
             const data = await response.json() as SearchResponse;
             setSearchResults(data.results);
-            setHasMore(data.hasMore);
+            setHasMore(data.hasMore && currentPage < 9);
         } catch (error: any) {
             console.error("Search error:", error);
             setError(error.message || "An error occurred");
         } finally {
             setIsLoading(false);
         }
-    }, [router]);
+    }, [router, currentPage]);
 
     const loadMore = useCallback(async (searchQuery: string) => {
         if (!searchQuery || isLoadingMore || currentPage >= 9) return;
@@ -73,14 +74,22 @@ export const useSearch = () => {
                 body: JSON.stringify({
                     query: searchQuery,
                     ...SEARCH_PARAMS,
-                    offset: nextPage
+                    offset: nextPage,
+                    text_decorations: false
                 }),
             });
 
             if (!response.ok) throw new Error("Failed to fetch more results");
 
             const data = await response.json() as SearchResponse;
-            setSearchResults((prev: SearchResult[] | null) => [...(prev || []), ...data.results]);
+            
+            // Filter out duplicates based on URL
+            setSearchResults((prev: SearchResult[] | null) => {
+                const existingUrls = new Set((prev || []).map(r => r.url));
+                const newResults = data.results.filter(result => !existingUrls.has(result.url));
+                return [...(prev || []), ...newResults];
+            });
+
             setHasMore(data.hasMore && nextPage < 9);
             setCurrentPage(nextPage);
         } catch (error: any) {
