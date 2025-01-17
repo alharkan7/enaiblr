@@ -15,6 +15,13 @@ interface CollapsibleTextProps {
     content: string;
 }
 
+// Helper function to decode HTML entities
+function decodeHTMLEntities(text: string) {
+    const textarea = document.createElement('textarea');
+    textarea.innerHTML = text;
+    return textarea.value;
+}
+
 function CollapsibleText({ content }: CollapsibleTextProps) {
     const [isExpanded, setIsExpanded] = useState(false);
 
@@ -23,7 +30,7 @@ function CollapsibleText({ content }: CollapsibleTextProps) {
             <motion.p
                 initial={false}
                 animate={{ height: isExpanded ? 'auto' : '3em' }}
-                className={`text-foreground text-sm pr-6 ${!isExpanded ? 'line-clamp-2' : ''}`}
+                className={`text-foreground/80 text-sm pr-6 ${!isExpanded ? 'line-clamp-2' : ''}`}
             >
                 {content}
             </motion.p>
@@ -158,7 +165,7 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                             whileHover={{ backgroundColor: 'var(--muted-hover)' }}
                                                             whileTap={{ scale: 0.98 }}
                                                         >
-                                                            <div className="font-bold ">Sources:</div>
+                                                            <div className="font-bold ">Top 5 Sources:</div>
                                                             <svg
                                                                 className={`size-5 transform transition-transform duration-200 ${expandedSources[message.id] ? 'rotate-180' : ''}`
                                                                 }
@@ -167,33 +174,41 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                                 viewBox="0 0 24 24"
                                                                 xmlns="http://www.w3.org/2000/svg"
                                                             >
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                                                                <path
+                                                                    strokeLinecap="round"
+                                                                    strokeLinejoin="round"
+                                                                    strokeWidth={2}
+                                                                    d="M19 9l-7 7-7-7"
+                                                                />
                                                             </svg>
                                                         </motion.div>
-                                                        <motion.div 
-                                                            initial={false}
-                                                            animate={{ 
-                                                                height: expandedSources[message.id] ? 'auto' : 0,
-                                                                opacity: expandedSources[message.id] ? 1 : 0
-                                                            }}
-                                                            className="overflow-hidden"
-                                                        >
-                                                            <div className="space-y-3">
-                                                                {message.sources.map((source, index) => (
-                                                                    <div key={index} className="space-y-1">
-                                                                        <a
-                                                                            href={source.url}
-                                                                            target="_blank"
-                                                                            rel="noopener noreferrer"
-                                                                            className="text-primary underline font-medium hover:text-primary/90"
-                                                                        >
-                                                                            {source.title}
-                                                                        </a>
-                                                                        <CollapsibleText content={source.content} />
-                                                                    </div>
-                                                                ))}
-                                                            </div>
-                                                        </motion.div>
+                                                        <AnimatePresence initial={false}>
+                                                            {expandedSources[message.id] && (
+                                                                <motion.div
+                                                                    initial={{ height: 0, opacity: 0 }}
+                                                                    animate={{ height: 'auto', opacity: 1 }}
+                                                                    exit={{ height: 0, opacity: 0 }}
+                                                                    transition={{ duration: 0.2 }}
+                                                                    className="space-y-3"
+                                                                >
+                                                                    {message.sources.map((source, index) => (
+                                                                        <div key={index} className="space-y-1">
+                                                                            <a
+                                                                                href={source.url}
+                                                                                target="_blank"
+                                                                                rel="noopener noreferrer"
+                                                                                className="text-muted-foreground font-semibold hover:underline font-medium block"
+                                                                            >
+                                                                                {source.title}
+                                                                            </a>
+                                                                            {source.snippet && (
+                                                                                <CollapsibleText content={decodeHTMLEntities(source.snippet)} />
+                                                                            )}
+                                                                        </div>
+                                                                    ))}
+                                                                </motion.div>
+                                                            )}
+                                                        </AnimatePresence>
                                                     </motion.div>
                                                 )}
                                             </div>

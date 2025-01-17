@@ -1,10 +1,8 @@
 import { NextResponse } from 'next/server';
-import { tavily } from '@tavily/core';
 import { Together } from 'together-ai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
 
-const tvly = tavily({ apiKey: process.env.TAVILY_API_KEY });
 const together = new Together({ apiKey: process.env.TOGETHER_AI_API_KEY });
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
@@ -116,83 +114,115 @@ export async function POST(request: Request) {
           { status: 500 }
         );
       }
-    }
+    } else {
+      // Use Brave Search API for web search
+      try {
+        const searchResponse = await fetch(
+          `https://api.search.brave.com/res/v1/web/search?` + 
+          new URLSearchParams({
+            q: userInput,
+            country: 'US',
+            search_lang: 'en',
+            ui_lang: 'en-US',
+            count: '20',
+            offset: '0',
+            safesearch: 'moderate',
+            freshness: 'pm',  // Past month
+            text_decorations: 'false',
+            extra_snippets: 'true',
+            result_filter: 'web',
+            spellcheck: 'true'
+          }).toString(),
+          {
+            headers: {
+              'Accept': 'application/json',
+              'Accept-Encoding': 'gzip',
+              'X-Subscription-Token': process.env.BRAVE_SEARCH_API_KEY || ''
+            }
+          }
+        );
 
-    // Convert messages to LLM format
-    const llmMessages = messages.map(msg => ({
-      role: msg.role,
-      content: msg.content[0].text
-    }));
-
-    // Process query with LLM to include context
-    const llmResponse = await together.chat.completions.create({
-      messages: [
-        {
-          role: 'system',
-          content: 'You are a helpful assistant. Your task is to rephrase the latest user query to include context from the chat history. Return only the rephrased query without any additional text or explanation.'
-        },
-        ...llmMessages
-      ],
-      model: 'meta-llama/Llama-Vision-Free',
-      max_tokens: 256,
-      temperature: 0.3,
-      top_p: 0.7,
-      top_k: 50,
-      repetition_penalty: 1,
-      stop: ['<|eot_id|>', '<|eom_id|>'],
-      stream: false
-    });
-
-    if (!llmResponse.choices?.[0]?.message?.content) {
-      throw new Error('Failed to process query with AI');
-    }
-
-    const processedQuery = llmResponse.choices[0].message.content;
-
-    // Perform Tavily search with processed query
-    const response = await tvly.search(processedQuery, {
-      searchDepth: "advanced",
-      includeAnswer: true,
-      maxResults: 5
-    });
-
-    if (!response.answer) {
-      throw new Error('No answer received from the server');
-    }
-
-    // Create a ReadableStream to send the response
-    const stream = new ReadableStream({
-      async start(controller) {
-        try {
-          // First, send the sources data
-          const sourcesData = {
-            type: 'sources',
-            sources: response.results || []
-          };
-          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(sourcesData)}\n\n`));
-
-          // Send Tavily's answer directly
-          const answerData = {
-            type: 'content',
-            content: response.answer
-          };
-          controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(answerData)}\n\n`));
-          
-          controller.close();
-        } catch (error) {
-          controller.error(error);
-          throw error;
+        if (!searchResponse.ok) {
+          throw new Error('Failed to fetch search results');
         }
-      },
-    });
 
-    return new NextResponse(stream, {
-      headers: {
-        'Content-Type': 'text/event-stream',
-        'Cache-Control': 'no-cache',
-        'Connection': 'keep-alive',
-      },
-    });
+        const searchData = await searchResponse.json();
+        let searchResults = searchData.web?.results || [];
+
+        // Filter and rank results
+        searchResults = searchResults
+          // Remove results without descriptions
+          .filter((result: any) => result.description?.trim())
+          // Take top 10 results
+          .slice(0, 5);
+
+        // Format search results for Gemini
+        const searchContext = searchResults
+          .map((result: any) => `[${result.title}]\n${result.description}\nURL: ${result.url}`)
+          .join('\n\n');
+
+        const prompt = `Based on the following search results about "${userInput}", provide a brief and informative response:
+
+${searchContext}
+
+Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources. If there's missing information from the source, you can add from your latest knowledge base.`;
+
+        // Process with Gemini
+        const result = await model.generateContentStream({
+          contents: [{
+            role: "user",
+            parts: [{ text: prompt }]
+          }],
+          generationConfig,
+        });
+
+        // Create stream for response
+        const stream = new ReadableStream({
+          async start(controller) {
+            try {
+              // Send search results metadata first
+              const sources = searchResults.slice(0, 10).map((result: any) => ({
+                url: result.url,
+                title: result.title,
+                snippet: result.description
+              }));
+              
+              const metaData = {
+                type: 'sources',
+                sources
+              };
+              controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(metaData)}\n\n`));
+
+              // Stream Gemini response
+              for await (const chunk of result.stream) {
+                const chunkText = chunk.text();
+                if (chunkText) {
+                  const data = { type: 'content', content: chunkText };
+                  controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data)}\n\n`));
+                }
+              }
+              controller.close();
+            } catch (error) {
+              controller.error(error);
+            }
+          },
+        });
+
+        return new NextResponse(stream, {
+          headers: {
+            'Content-Type': 'text/event-stream',
+            'Cache-Control': 'no-cache',
+            'Connection': 'keep-alive',
+          },
+        });
+      } catch (error: any) {
+        console.error('Search error:', error);
+        return NextResponse.json(
+          { error: error.message || 'Failed to process search request' },
+          { status: 500 }
+        );
+      }
+    }
   } catch (error) {
     console.error('API route error:', error);
     return NextResponse.json(

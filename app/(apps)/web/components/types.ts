@@ -11,8 +11,7 @@ export type MessageContent = string | Array<{
 export interface Source {
     title: string;
     url: string;
-    content: string;
-    score: number;
+    snippet: string;
 }
 
 export interface Message {
@@ -20,5 +19,5 @@ export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: MessageContent;
     sources?: Source[];
-    chatMode?: 'gemini' | 'tavily';
+    chatMode?: 'gemini' | 'brave';
 }

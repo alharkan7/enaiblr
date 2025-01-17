@@ -16,7 +16,7 @@ export function useChatMessages() {
         // Determine chat mode
         const currentChatMode = messages.length > 0 
             ? messages[0].chatMode 
-            : linkMode ? 'gemini' : 'tavily';
+            : linkMode ? 'gemini' : 'brave';
 
         const userMessage: Message = {
             id: crypto.randomUUID(),
