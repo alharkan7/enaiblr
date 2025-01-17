@@ -1,9 +1,7 @@
 import { NextResponse } from 'next/server';
-import { Together } from 'together-ai';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
 
-const together = new Together({ apiKey: process.env.TOGETHER_AI_API_KEY });
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
@@ -13,6 +11,20 @@ const generationConfig = {
   topK: 40,
   maxOutputTokens: 8192,
 };
+
+async function paraphraseWithContext(messages: any[]) {
+  const contextModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const history = messages.slice(0, -1)
+    .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content[0].text}`)
+    .join('\n');
+  const currentQuery = messages[messages.length - 1].content[0].text;
+
+  const prompt = `Given this conversation history:\n${history}\n\nThe user asked: "${currentQuery}"\n\nPlease rephrase the user's question to include necessary context from the conversation history. Return ONLY the rephrased question, nothing else.`;
+
+  const result = await contextModel.generateContent(prompt);
+  const paraphrasedQuery = result.response.text().trim();
+  return paraphrasedQuery;
+}
 
 export async function POST(request: Request) {
   try {
@@ -117,10 +129,15 @@ export async function POST(request: Request) {
     } else {
       // Use Brave Search API for web search
       try {
+        // Paraphrase the query if it's a follow-up question
+        const searchQuery = messages.length > 1 
+          ? await paraphraseWithContext(messages)
+          : userInput;
+
         const searchResponse = await fetch(
           `https://api.search.brave.com/res/v1/web/search?` + 
           new URLSearchParams({
-            q: userInput,
+            q: searchQuery,
             country: 'US',
             search_lang: 'en',
             ui_lang: 'en-US',
@@ -161,11 +178,11 @@ export async function POST(request: Request) {
           .map((result: any) => `[${result.title}]\n${result.description}\nURL: ${result.url}`)
           .join('\n\n');
 
-        const prompt = `Based on the following search results about "${userInput}", provide a brief and informative response:
+        const prompt = `Based on the following search results about "${searchQuery}", provide a brief and informative response. Prioritize accuracy and relevance from your knowledge base. If it's beyond your knowledge cutoff, use the information from the search results to answer the question.
 
 ${searchContext}
 
-Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources. If there's missing information from the source, you can add from your latest knowledge base.`;
+Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources.`;
 
         // Process with Gemini
         const result = await model.generateContentStream({
