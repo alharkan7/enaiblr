@@ -197,7 +197,7 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading }: M
                                                                                 href={source.url}
                                                                                 target="_blank"
                                                                                 rel="noopener noreferrer"
-                                                                                className="text-muted-foreground font-semibold hover:underline font-medium block"
+                                                                                className="text-muted-foreground font-semibold hover:underline block"
                                                                             >
                                                                                 {source.title}
                                                                             </a>
