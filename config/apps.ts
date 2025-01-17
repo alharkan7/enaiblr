@@ -25,6 +25,13 @@ export const apps: AppConfig[] = [
     type: 'free'
   },
   {
+    name: 'AI Tools Search',
+    icon: Search,
+    slug: 'search',
+    description: 'Find the Best AI Tools on the Internet',
+    type: 'pro'
+  },
+  {
     name: 'Private PDF Chat',
     icon: FileText,
     slug: 'filechat',
@@ -37,13 +44,6 @@ export const apps: AppConfig[] = [
     slug: 'incognito',
     description: 'Private Chat with AI; No Text is Saved',
     type: 'free'
-  },
-  {
-    name: 'AI Tools Search',
-    icon: Search,
-    slug: 'search',
-    description: 'Find the Best AI Tools on the Internet',
-    type: 'pro'
   },
   {
     name: 'Web Chat',
