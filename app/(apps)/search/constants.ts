@@ -16,8 +16,5 @@ export const TAGS = [
 ];
 
 export const SEARCH_PARAMS = {
-    type: 'neural',
-    useAutoprompt: true,
-    numResults: 20,
-    summary: false,
+    numResults: 20
 };

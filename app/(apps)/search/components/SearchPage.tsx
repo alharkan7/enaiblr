@@ -15,6 +15,7 @@ import { useSearch } from "../hooks/useSearch";
 import { TAGS } from "../constants";
 import { getRandomIcon } from "../utils";
 import type { SearchPageProps } from "../types";
+import type { SearchResult } from "../hooks/useSearch";
 
 export default function SearchPage({ initialQuery }: SearchPageProps) {
     return (
@@ -39,16 +40,19 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     const {
         searchResults,
         isLoading,
+        isLoadingMore,
         error,
         expandedResultIndex,
         setExpandedResultIndex,
-        handleSearch
+        handleSearch,
+        loadMore,
+        hasMore
     } = useSearch();
 
     const resultIcons = useMemo(() => {
         if (!searchResults) return [];
-        return searchResults.results.map(() => getRandomIcon());
-    }, [searchResults?.results]);
+        return searchResults.map(() => getRandomIcon());
+    }, [searchResults]);
 
     useEffect(() => {
         const urlQuery = searchParams.get('q');
@@ -91,7 +95,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
 
     if (!isHomePage && (searchResults || isLoading)) {
         return (
-            <div className="flex flex-col h-dvh">
+            <div className="flex flex-col min-h-dvh">
                 <motion.header 
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -125,7 +129,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                     transition={{ duration: 0.2 }}
                                     className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
                                 >
-                                    {Array.from({ length: 4 }, (_, index) => (
+                                    {Array.from({ length: 6 }, (_, index) => (
                                         <div key={index} className="p-4 rounded-xl border bg-card flex gap-4 animate-pulse">
                                             <div className="size-16 bg-muted rounded-lg"></div>
                                             <div className="flex-1">
@@ -145,14 +149,13 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                     transition={{ duration: 0.3 }}
                                     className="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-4"
                                 >
-                                    {searchResults.results.map((result: any, index: number) => (
+                                    {searchResults?.map((result: SearchResult, index: number) => (
                                         <SearchResultItem
-                                            key={index}
+                                            key={result.url}
                                             result={result}
-                                            index={index}
-                                            isExpanded={expandedResultIndex === index}
                                             IconComponent={resultIcons[index]}
-                                            onResultClick={handleResultClick}
+                                            isExpanded={expandedResultIndex === index}
+                                            onToggleExpand={() => handleResultClick(index)}
                                         />
                                     ))}
                                 </motion.div>
@@ -230,7 +233,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         </Button>
                     </div>
                 </motion.div>
-
+{/* 
                 {error && (
                     <motion.p 
                         initial={{ opacity: 0 }}
@@ -239,7 +242,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     >
                         {error}
                     </motion.p>
-                )}
+                )} */}
 
                 <motion.div 
                     initial={{ opacity: 0 }}
