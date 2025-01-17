@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
+import { toast } from "sonner";
 import { SEARCH_PARAMS } from '../constants';
 
 export interface SearchResult {
@@ -12,7 +13,7 @@ export interface SearchResult {
 
 interface SearchResponse {
     results: SearchResult[];
-    hasMore: boolean;
+    more_results_available?: boolean;
 }
 
 export const useSearch = () => {
@@ -22,15 +23,15 @@ export const useSearch = () => {
     const [isLoadingMore, setIsLoadingMore] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [expandedResultIndex, setExpandedResultIndex] = useState<number | null>(null);
-    const [hasMore, setHasMore] = useState(false);
     const [currentPage, setCurrentPage] = useState(0);
+    const [hasMoreResults, setHasMoreResults] = useState(true);
 
     const handleSearch = useCallback(async (searchQuery: string, updateURL: boolean = true) => {
         setIsLoading(true);
         setError(null);
         setExpandedResultIndex(null);
-        setHasMore(false);
         setCurrentPage(0);
+        setHasMoreResults(true);
 
         try {
             if (updateURL) {
@@ -48,25 +49,35 @@ export const useSearch = () => {
                 }),
             });
 
-            if (!response.ok) throw new Error("Failed to fetch results");
+            const data = await response.json();
 
-            const data = await response.json() as SearchResponse;
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to fetch results");
+            }
+
+            if (!Array.isArray(data.results)) {
+                throw new Error("Invalid response format from API");
+            }
+
             setSearchResults(data.results);
-            setHasMore(data.hasMore && currentPage < 9);
+            setHasMoreResults(data.more_results_available ?? false);
         } catch (error: any) {
             console.error("Search error:", error);
             setError(error.message || "An error occurred");
+            setSearchResults(null);
         } finally {
             setIsLoading(false);
         }
-    }, [router, currentPage]);
+    }, [router]);
 
     const loadMore = useCallback(async (searchQuery: string) => {
-        if (!searchQuery || isLoadingMore || currentPage >= 9) return;
+        if (!searchQuery || isLoadingMore || currentPage >= 9 || !hasMoreResults) return;
 
         setIsLoadingMore(true);
+        setError(null);
+
         try {
-            const nextPage = currentPage + 1;
+            const nextOffset = currentPage + 1;
 
             const response = await fetch("/api/search", {
                 method: "POST",
@@ -74,31 +85,58 @@ export const useSearch = () => {
                 body: JSON.stringify({
                     query: searchQuery,
                     ...SEARCH_PARAMS,
-                    offset: nextPage,
+                    offset: nextOffset,
                     text_decorations: false
                 }),
             });
 
-            if (!response.ok) throw new Error("Failed to fetch more results");
+            const data = await response.json();
 
-            const data = await response.json() as SearchResponse;
-            
-            // Filter out duplicates based on URL
+            if (!response.ok || data.error) {
+                throw new Error(data.error || "Failed to fetch more results");
+            }
+
+            if (!Array.isArray(data.results)) {
+                throw new Error("Invalid response format from API");
+            }
+
+            if (!data.more_results_available) {
+                setHasMoreResults(false);
+                toast.info("No more results available");
+                return;
+            }
+
+            if (data.results.length === 0) {
+                setHasMoreResults(false);
+                toast.info("No more results available");
+                return;
+            }
+
             setSearchResults((prev: SearchResult[] | null) => {
-                const existingUrls = new Set((prev || []).map(r => r.url));
-                const newResults = data.results.filter(result => !existingUrls.has(result.url));
-                return [...(prev || []), ...newResults];
+                if (!prev) return data.results;
+                
+                // Filter out results with URLs that already exist in prev
+                const existingUrls = new Set(prev.map(result => result.url));
+                const uniqueNewResults = data.results.filter((result: SearchResult) => !existingUrls.has(result.url));
+                
+                if (uniqueNewResults.length === 0) {
+                    setHasMoreResults(false);
+                    toast.info("No new results available");
+                    return prev;
+                }
+                
+                return [...prev, ...uniqueNewResults];
             });
-
-            setHasMore(data.hasMore && nextPage < 9);
-            setCurrentPage(nextPage);
+            setCurrentPage(nextOffset);
         } catch (error: any) {
             console.error("Load more error:", error);
-            setError(error.message || "Failed to load more results");
+            const errorMessage = typeof error === 'string' ? error : error.message || "Failed to load more results";
+            setError(errorMessage);
+            toast.error(errorMessage);
         } finally {
             setIsLoadingMore(false);
         }
-    }, [currentPage, isLoadingMore]);
+    }, [currentPage, isLoadingMore, hasMoreResults]);
 
     return {
         searchResults,
@@ -109,6 +147,7 @@ export const useSearch = () => {
         setExpandedResultIndex,
         handleSearch,
         loadMore,
-        hasMore
+        currentPage,
+        hasMoreResults
     };
 };

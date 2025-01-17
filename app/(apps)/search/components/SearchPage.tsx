@@ -46,7 +46,8 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
         setExpandedResultIndex,
         handleSearch,
         loadMore,
-        hasMore
+        currentPage,
+        hasMoreResults
     } = useSearch();
 
     const resultIcons = useMemo(() => {
@@ -96,7 +97,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     if (!isHomePage && (searchResults || isLoading)) {
         return (
             <div className="flex flex-col min-h-dvh">
-                <motion.header 
+                <motion.header
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -121,7 +122,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     <div className="container mx-auto px-5 pt-4 pb-0">
                         <AnimatePresence mode="wait">
                             {isLoading ? (
-                                <motion.div 
+                                <motion.div
                                     key="loading"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -141,7 +142,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                                     ))}
                                 </motion.div>
                             ) : (
-                                <motion.div 
+                                <motion.div
                                     key="results"
                                     initial={{ opacity: 0 }}
                                     animate={{ opacity: 1 }}
@@ -180,12 +181,21 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         </AnimatePresence>
 
                         {/* Load More button */}
-                        {!isLoading && searchResults && searchResults.length > 0 && hasMore && (
-                            <motion.div 
+                        {!isLoading && searchResults && searchResults.length > 0 && currentPage < 9 && hasMoreResults && (
+                            <motion.div
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
-                                className="flex justify-center mt-8"
+                                className="flex flex-col items-center gap-4 mt-8"
                             >
+                                {error && (
+                                    <motion.p 
+                                        initial={{ opacity: 0 }}
+                                        animate={{ opacity: 1 }}
+                                        className="text-destructive"
+                                    >
+                                        {error}
+                                    </motion.p>
+                                )}
                                 <Button
                                     variant="outline"
                                     onClick={() => loadMore(query)}
@@ -205,6 +215,15 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         )}
                     </div>
                 </main>
+                {error && (
+                    <motion.p 
+                        initial={{ opacity: 0 }}
+                        animate={{ opacity: 1 }}
+                        className="text-destructive"
+                    >
+                        {error}
+                    </motion.p>
+                )}
                 <div className="mt-8">
                     <AppsFooter />
                 </div>
@@ -215,7 +234,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     // Home view
     return (
         <div className="h-dvh flex flex-col">
-            <motion.header 
+            <motion.header
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
@@ -225,7 +244,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
             </motion.header>
 
             <main className="flex-1 flex flex-col items-center justify-center px-4 gap-8 pt-1">
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -237,7 +256,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     <p className="text-l text-muted-foreground">Find the Best AI Tools on the Internet</p>
                 </motion.div>
 
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -275,7 +294,6 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                         </Button>
                     </div>
                 </motion.div>
-{/* 
                 {error && (
                     <motion.p 
                         initial={{ opacity: 0 }}
@@ -284,9 +302,9 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                     >
                         {error}
                     </motion.p>
-                )} */}
+                )}
 
-                <motion.div 
+                <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
                     transition={{ duration: 0.3 }}
@@ -337,7 +355,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
                 </motion.div>
             </main>
 
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.3 }}
