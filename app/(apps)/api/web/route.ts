@@ -19,7 +19,7 @@ async function paraphraseWithContext(messages: any[]) {
     .join('\n');
   const currentQuery = messages[messages.length - 1].content[0].text;
 
-  const prompt = `Given this conversation history:\n${history}\n\nThe user asked: "${currentQuery}"\n\nPlease rephrase the user's question to include necessary context from the conversation history. Return ONLY the rephrased question, nothing else.`;
+  const prompt = `Given this conversation history:\n${history}\n\nThe user asked: "${currentQuery}"\n\nPlease rephrase the user's question to include necessary context from the conversation history. Return ONLY the rephrased question, nothing else. Use user's language, so do translation when necessary.`;
 
   const result = await contextModel.generateContent(prompt);
   const paraphrasedQuery = result.response.text().trim();
@@ -182,7 +182,7 @@ export async function POST(request: Request) {
 
 ${searchContext}
 
-Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources.`;
+Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources. Use user's language, so do translation when necessary.`;
 
         // Process with Gemini
         const result = await model.generateContentStream({
