@@ -26,6 +26,16 @@ async function paraphraseWithContext(messages: any[]) {
   return paraphrasedQuery;
 }
 
+async function detectLanguage(text: string) {
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
+  const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
+
+"${text}"`;
+  
+  const result = await model.generateContent(prompt);
+  return result.response.text().trim();
+}
+
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -41,6 +51,9 @@ export async function POST(request: Request) {
     }
 
     const userInput = lastMessage.content[0].text;
+    
+    // Detect language from user input
+    const detectedLang = await detectLanguage(userInput);
 
     // Use Gemini for article processing and follow-up questions
     if (chatMode === 'gemini') {
@@ -138,9 +151,9 @@ export async function POST(request: Request) {
           `https://api.search.brave.com/res/v1/web/search?` + 
           new URLSearchParams({
             q: searchQuery,
-            country: 'US',
-            search_lang: 'en',
-            ui_lang: 'en-US',
+            // country: 'US',
+            // search_lang: 'en',
+            // ui_lang: 'en-US',
             count: '20',
             offset: '0',
             safesearch: 'moderate',
@@ -178,11 +191,11 @@ export async function POST(request: Request) {
           .map((result: any) => `[${result.title}]\n${result.description}\nURL: ${result.url}`)
           .join('\n\n');
 
-        const prompt = `Based on the following search results about "${searchQuery}", provide a brief and informative response. Prioritize accuracy and relevance from your knowledge base. If it's beyond your knowledge cutoff, use the information from the search results to answer the question.
+        const prompt = `Based on the following search results about "${searchQuery}", provide a brief and informative response. The user is writing in ${detectedLang} language, so please provide your response in ${detectedLang} language. If the language is not English, translate your response. Prioritize accuracy and relevance from your knowledge base. If it's beyond your knowledge cutoff, use the information from the search results to answer the question.
 
 ${searchContext}
 
-Please synthesize this information into a clear and helpful response. Include relevant facts and details from the sources. Use user's language, so do translation when necessary.`;
+Please synthesize this information into a clear and helpful response in the user's language (${detectedLang}). Include relevant facts and details from the sources.`;
 
         // Process with Gemini
         const result = await model.generateContentStream({
