@@ -2,10 +2,10 @@
 import { ChevronDown, ArrowRight, CircleUserRound, CircleHelp, Sun, Moon } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
-import { signOut } from 'next-auth/react';
 import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
 import Link from 'next/link';
+import { WhatsAppIcon } from '../icons';
 
 import {
   DropdownMenu,
@@ -92,8 +92,8 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               rel="noopener noreferrer"
               className="relative w-full cursor-pointer flex items-center gap-2"
             >
-              <CircleHelp className="h-4 w-4" />
-              Contact Help
+              <WhatsAppIcon size={16} />
+              WhatsApp Help
             </a>
           </DropdownMenuItem>
 

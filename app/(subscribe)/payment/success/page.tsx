@@ -107,7 +107,7 @@ export default function PaymentSuccessPage() {
                 href="https://wa.me/+6281280077690"
                 className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
-                Contact Help
+                WhatsApp Help
               </Link>
             </CardContent>
           </Card>
