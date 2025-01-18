@@ -3,6 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
 const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const contextModel = genAI.getGenerativeModel({ model: "gemini-1.5-pro" });
 
 const generationConfig = {
   temperature: 0.7,
@@ -13,7 +14,17 @@ const generationConfig = {
 
 const SYSTEM_PROMPT = `You are a helpful AI assistant. You have access to a document that was uploaded at the start of this conversation. 
 Use this document to provide accurate and relevant responses throughout our conversation. 
-Even if the user doesn't explicitly mention the document in their follow-up questions, consider the document's content in your responses.`;
+Even if the user doesn't explicitly mention the document in their follow-up questions, consider the document's content in your responses.
+Always respond in the same language that the user is using to ask their questions.`;
+
+async function detectLanguage(text: string) {
+  const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
+
+"${text}"`;
+  
+  const result = await contextModel.generateContent(prompt);
+  return result.response.text().trim();
+}
 
 export async function POST(request: Request) {
   try {
@@ -32,10 +43,13 @@ export async function POST(request: Request) {
       ? lastMessage.content
       : lastMessage.content.map((c: any) => c.text).join('\n');
 
-    // Combine system prompt, document context, and user messages
+    // Detect user's language
+    const detectedLang = await detectLanguage(latestPrompt);
+
+    // Combine system prompt, document context, and user messages with language instruction
     const fullPrompt = messages.length === 1
-      ? latestPrompt // First message already contains document
-      : `${SYSTEM_PROMPT}\n\nDocument for reference:\n${documentContent}\n\nUser question: ${latestPrompt}`;
+      ? `${latestPrompt}\n\nPlease provide your response in ${detectedLang} language.` // First message already contains document
+      : `${SYSTEM_PROMPT}\n\nDocument for reference:\n${documentContent}\n\nUser question (in ${detectedLang}): ${latestPrompt}\n\nPlease provide your response in ${detectedLang} language. If the language is not English, make sure to translate your response appropriately.`;
 
     // Send the message and get response
     const result = await model.generateContentStream({
