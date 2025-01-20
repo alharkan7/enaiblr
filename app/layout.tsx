@@ -24,7 +24,10 @@ const inter = Inter({
 const registerServiceWorker = `
   if ('serviceWorker' in navigator) {
     window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').then(
+      const swUrl = window.location.origin + '/sw.js';
+      navigator.serviceWorker.register(swUrl, {
+        scope: '/'
+      }).then(
         function(registration) {
           console.log('Service Worker registration successful');
         },
