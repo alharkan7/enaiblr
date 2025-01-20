@@ -15,17 +15,6 @@ interface SuggestedActionsProps {
 
 function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
   const suggestedActions = [
-
-    {
-      title: 'Help me write an essay',
-      label: `about Indonesian street food`,
-      action: `Help me write an essay about Indonesian street food`,
-    },
-    {
-      title: 'Write a Python script',
-      label: `to plan my weekly grocery budget`,
-      action: `Write a Python script to plan my weekly grocery budget`,
-    },
     {
       title: "What's the difference",	
       label: 'between cappuccino and latte?',
@@ -36,7 +25,16 @@ function PureSuggestedActions({ chatId, append }: SuggestedActionsProps) {
       label: 'in Greater Jakarta?',
       action: 'What is the weather in Greater Jakarta?',
     },
-
+    {
+      title: 'Help me write an essay',
+      label: `about Indonesian street food`,
+      action: `Help me write an essay about Indonesian street food`,
+    },
+    {
+      title: 'Write a Python script',
+      label: `to plan my weekly grocery budget`,
+      action: `Write a Python script to plan my weekly grocery budget`,
+    },
   ];
 
   return (
