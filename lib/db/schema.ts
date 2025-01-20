@@ -153,6 +153,7 @@ export const token = pgTable('Token', {
   userId: uuid('userId')
     .notNull()
     .references(() => user.id),
+  packageName: varchar('packageName', { length: 32 }).notNull(),
 });
 
 export type Token = InferSelectModel<typeof token>;

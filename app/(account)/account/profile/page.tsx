@@ -289,7 +289,7 @@ export default function UserProfile() {
                   onClick={() => router.push('/payment')}
                   className="text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/80 rounded-full px-2 py-0.5 transition-colors"
                 >
-                  {user.plan === 'pro' ? 'Extend 30 Days ↗' : 'Get Enaiblr Pro ↗'}
+                  {user.plan === 'pro' ? 'Extend Enaiblr Pro ↗' : 'Get Enaiblr Pro ↗'}
                 </button>
               </p>
               {user.plan === 'pro' && user.validUntil && (

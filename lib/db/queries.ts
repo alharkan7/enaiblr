@@ -17,6 +17,7 @@ import {
   token,
 } from './schema';
 import type { BlockKind } from '@/components/block';
+import { subscriptionPackages } from '@/config/subscriptionPackages';
 
 // Optionally, if not using email/pass login, you can
 // use the Drizzle adapter for Auth.js / NextAuth
@@ -502,9 +503,12 @@ export async function isProUser(userId: string): Promise<boolean> {
   return status.plan === 'pro';
 }
 
-export async function updateSubscriptionToPro(userId: string) {
+export async function updateSubscriptionToPro(userId: string, packageName: string) {
   try {
     const now = new Date();
+    
+    // Find the selected package
+    const selectedPackage = subscriptionPackages.find(pkg => pkg.name === packageName) || subscriptionPackages[0];
     
     // Get current subscription
     const currentSub = await db
@@ -514,16 +518,16 @@ export async function updateSubscriptionToPro(userId: string) {
       .limit(1);
 
     let newValidUntil = new Date(now);
-    newValidUntil.setDate(newValidUntil.getDate() + 30);
+    newValidUntil.setDate(newValidUntil.getDate() + selectedPackage.activeDays);
 
     if (currentSub.length > 0 && currentSub[0].validUntil) {
       const currentValidUntil = new Date(currentSub[0].validUntil);
       if (currentValidUntil > now) {
-        // If current valid until is in the future, add 30 days to it
+        // If current valid until is in the future, add the package's activeDays to it
         newValidUntil = new Date(currentValidUntil);
-        newValidUntil.setDate(currentValidUntil.getDate() + 30);
+        newValidUntil.setDate(currentValidUntil.getDate() + selectedPackage.activeDays);
       }
-      // If validUntil is in the past, we'll use the already calculated now + 30 days
+      // If validUntil is in the past, we'll use the already calculated now + activeDays
     }
 
     return await db
@@ -672,7 +676,7 @@ async function generateToken(): Promise<string> {
   ].join('-');
 }
 
-export async function createPaymentToken(userId: string) {
+export async function createPaymentToken(userId: string, packageName: string) {
   try {
     const tokenValue = await generateToken();
     return await db.insert(token).values({
@@ -680,6 +684,7 @@ export async function createPaymentToken(userId: string) {
       token: tokenValue,
       createdAt: new Date(),
       status: 'open',
+      packageName,
     }).returning();
   } catch (error) {
     console.error('Failed to create payment token');

@@ -15,17 +15,17 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { email, name, mobile, amount, userId } = body
+    const { email, name, mobile, amount, userId, packageName } = body
 
-    if (!email || !name || !mobile || !amount || !userId) {
+    if (!email || !name || !mobile || !amount || !userId || !packageName) {
       return NextResponse.json(
-        { error: 'Email, name, mobile, amount and userId are required' },
+        { error: 'Email, name, mobile, amount, userId and packageName are required' },
         { status: 400 }
       )
     }
 
     // Generate payment verification token
-    const [paymentToken] = await createPaymentToken(userId)
+    const [paymentToken] = await createPaymentToken(userId, packageName)
     
     // Calculate expiry date 24 hours from now
     const expiry = new Date()
@@ -37,7 +37,7 @@ export async function POST(request: Request) {
       amount:amount,
       mobile: mobile.replace(/\D/g, ''),
       redirectUrl: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
-      description: `Enaiblr Pro Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
+      description: `Enaiblr Pro ${packageName} Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
       expired_at: expiry.toISOString(),
       success_url: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
       failure_url: `${process.env.APP_URL}/payment`,

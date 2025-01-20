@@ -48,7 +48,7 @@ export async function POST(request: Request) {
 
     // Mark token as used and upgrade subscription
     await markTokenAsUsed(token);
-    await updateSubscriptionToPro(session.user.id);
+    await updateSubscriptionToPro(session.user.id, paymentToken.packageName);
     
     return NextResponse.json({ success: true });
   } catch (error) {
