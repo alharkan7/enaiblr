@@ -63,7 +63,7 @@ function isAppRoute(pathname: string): boolean {
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
-const ADMIN_EMAIL = 'raihankalla@gmail.com';
+const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com'];
 
 export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
@@ -83,7 +83,8 @@ export default auth(async function middleware(request: NextRequest) {
     }
     
     // Check if user is admin
-    if (session?.user?.email !== ADMIN_EMAIL) {
+    const userEmail = session?.user?.email;
+    if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
       return NextResponse.redirect(new URL('/apps', request.url));
     }
   }

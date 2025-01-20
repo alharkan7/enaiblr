@@ -77,7 +77,7 @@ export default async function DashboardPage({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Users</BreadcrumbLink>
+                  <BreadcrumbLink href="#">Platform</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

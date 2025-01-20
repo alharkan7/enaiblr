@@ -38,7 +38,7 @@ export const data = {
     ],
     navUser: [
         {
-            title: "Users",
+            title: "Users Info",
             url: "/dashboard?view=users",
             icon: UsersRound,
             isActive: true,
