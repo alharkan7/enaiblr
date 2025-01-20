@@ -63,6 +63,8 @@ function isAppRoute(pathname: string): boolean {
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
+const ADMIN_EMAIL = 'raihankalla@gmail.com';
+
 export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
   const isLoggedIn = !!session?.user;
@@ -72,6 +74,18 @@ export default auth(async function middleware(request: NextRequest) {
   // Allow API auth routes to pass through
   if (isAuthRoute(pathname)) {
     return NextResponse.next();
+  }
+
+  // Protect dashboard route
+  if (pathname.startsWith('/dashboard')) {
+    if (!isLoggedIn) {
+      return NextResponse.redirect(new URL('/login', request.url));
+    }
+    
+    // Check if user is admin
+    if (session?.user?.email !== ADMIN_EMAIL) {
+      return NextResponse.redirect(new URL('/apps', request.url));
+    }
   }
 
   // Redirect root path to /apps if not logged in
