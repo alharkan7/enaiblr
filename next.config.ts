@@ -41,8 +41,8 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  // Disable static page caching
-  staticPageGenerationTimeout: 0,
+  // Set a reasonable timeout for static generation
+  staticPageGenerationTimeout: 120,
   generateEtags: false
 };
 
