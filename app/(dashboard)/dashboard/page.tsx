@@ -44,6 +44,7 @@ export default async function DashboardPage({
       email: string;
       plan: string;
       validUntil: Date | null;
+      createdAt: Date;
     }[];
     total: number;
     pages: number;

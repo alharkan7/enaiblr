@@ -3,6 +3,7 @@ import {
     BookOpen,
     Bot,
     Command,
+    Gem,
     Frame,
     ShieldCheck,
     Map,
@@ -38,19 +39,15 @@ export const data = {
     navUser: [
         {
             title: "Users",
-            url: "#",
+            url: "/dashboard?view=users",
             icon: UsersRound,
             isActive: true,
-            items: [
-                {
-                    title: "Users Info",
-                    url: "/dashboard?view=users",
-                },
-                {
-                    title: "Subscriptions",
-                    url: "/dashboard?view=subscriptions",
-                }
-            ]
+        },
+        {
+          title: "Subscriptions",
+          url: "/dashboard?view=subscriptions",
+          icon: Gem,
+          isActive: true,
         }
     ],
     navMain: [
@@ -58,7 +55,7 @@ export const data = {
         title: "Playground",
         url: "#",
         icon: SquareTerminal,
-        isActive: true,
+        isActive: false,
         items: [
           {
             title: "History",

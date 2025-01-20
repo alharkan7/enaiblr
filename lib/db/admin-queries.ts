@@ -35,6 +35,7 @@ export async function getPaginatedSubscriptions(page: number = 1, limit: number 
       email: user.email,
       plan: subscription.plan,
       validUntil: subscription.validUntil,
+      createdAt: subscription.createdAt,
     })
     .from(subscription)
     .innerJoin(user, eq(subscription.userId, user.id))

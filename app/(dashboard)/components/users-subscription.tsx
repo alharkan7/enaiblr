@@ -17,6 +17,7 @@ interface Subscription {
   email: string;
   plan: string;
   validUntil: Date | null;
+  createdAt: Date;
 }
 
 interface SubscriptionTableProps {
@@ -51,6 +52,7 @@ export function SubscriptionTable({ initialSubscriptions, totalPages }: Subscrip
         <TableHeader>
           <TableRow>
             <TableHead>Email</TableHead>
+            <TableHead>Created At</TableHead>
             <TableHead>Plan</TableHead>
             <TableHead>Expiration</TableHead>
           </TableRow>
@@ -59,6 +61,11 @@ export function SubscriptionTable({ initialSubscriptions, totalPages }: Subscrip
           {subscriptions.map((subscription, index) => (
             <TableRow key={index}>
               <TableCell>{subscription.email}</TableCell>
+              <TableCell>
+                {formatDistance(new Date(subscription.createdAt), new Date(), {
+                  addSuffix: true,
+                })}
+              </TableCell>
               <TableCell className="capitalize">{subscription.plan}</TableCell>
               <TableCell>
                 {subscription.validUntil 
