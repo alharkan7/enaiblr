@@ -23,7 +23,7 @@ import { SubscriptionTable } from "../components/users-subscription";
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { view?: string };
+  searchParams: { [key: string]: string | string[] | undefined };
 }) {
   const session = await auth();
   
