@@ -20,6 +20,8 @@ import {
 import { UsersTable } from "../components/users-info"; 
 import { SubscriptionTable } from "../components/users-subscription";
 import { Metadata } from 'next';
+import { DashboardStats } from "../components/dashboard-stats";
+import { data as navData } from "../components/nav-data";
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -38,23 +40,35 @@ export default async function DashboardPage({
   }
 
   const params = await searchParams;
-  const view = params.view || 'users';
-  let data: {
-    users?: {
-      id: string;
-      email: string;
-      name: string | null;
-      phone: string | null;
-      createdAt: Date | null;
-    }[];
-    subscriptions?: {
-      email: string;
-      plan: string;
-      validUntil: Date | null;
-      createdAt: Date;
-    }[];
+  const view = params.view;
+
+  type User = {
+    id: string;
+    email: string;
+    name: string | null;
+    phone: string | null;
+    createdAt: Date | null;
+  };
+
+  type Subscription = {
+    email: string;
+    plan: string;
+    validUntil: Date | null;
+    createdAt: Date;
+  };
+
+  type DashboardData = {
+    users?: User[];
+    subscriptions?: Subscription[];
     total: number;
     pages: number;
+  };
+
+  let data: DashboardData = {
+    users: undefined,
+    subscriptions: undefined,
+    total: 0,
+    pages: 0
   };
   
   if (view === 'subscriptions') {
@@ -62,14 +76,16 @@ export default async function DashboardPage({
     data = {
       subscriptions: subscriptionData.subscriptions,
       total: subscriptionData.total,
-      pages: subscriptionData.pages
+      pages: subscriptionData.pages,
+      users: undefined
     };
-  } else {
+  } else if (view === 'users') {
     const userData = await getPaginatedUsers(1, 25);
     data = {
       users: userData.users,
       total: userData.total,
-      pages: userData.pages
+      pages: userData.pages,
+      subscriptions: undefined
     };
   }
 
@@ -83,32 +99,48 @@ export default async function DashboardPage({
             <Separator orientation="vertical" className="mr-2 h-4" />
             <Breadcrumb>
               <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">Platform</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>
-                    {view === 'subscriptions' ? 'Subscriptions' : 'Users Info'}
-                  </BreadcrumbPage>
+                  <BreadcrumbLink href="/dashboard">Overview</BreadcrumbLink>
                 </BreadcrumbItem>
+                {view && (
+                  <>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>
+                        {navData.navUser.find((nav: { url: string; title: string }) => nav.url.includes(`view=${view}`))?.title || view}
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>
+                )}
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="rounded-xl bg-muted/50 p-4">
-            {view === 'subscriptions' ? (
-              <SubscriptionTable 
-                initialSubscriptions={data.subscriptions!} 
-                totalPages={data.pages} 
-              />
-            ) : (
-              <UsersTable 
-                initialUsers={data.users!} 
-                totalPages={data.pages} 
-              />
-            )}
+          <div className="rounded-xl bg-muted/50 p-0">
+            <div className="flex-1 space-y-4 p-4 md:p-8 pt-6">
+              {!view && (
+                <>
+                  <div className="flex items-center justify-between space-y-2">
+                    <h2 className="text-3xl font-bold tracking-tight">Overview</h2>
+                  </div>
+                  <Separator />
+                  <DashboardStats />
+                </>
+              )}
+              {view === 'subscriptions' && (
+                <SubscriptionTable 
+                  initialSubscriptions={data.subscriptions!} 
+                  totalPages={data.pages} 
+                />
+              )}
+              {view === 'users' && (
+                <UsersTable 
+                  initialUsers={data.users!} 
+                  totalPages={data.pages} 
+                />
+              )}
+            </div>
           </div>
         </div>
       </SidebarInset>
