@@ -77,6 +77,21 @@ export const models: Array<Model> = [
     tools: true,
   },
   {
+    id: 'deepseek-ai/deepseek-llm-67b-chat',
+    label: 'DeepSeek',
+    apiIdentifier: 'deepseek-ai/deepseek-llm-67b-chat',
+    description: 'Text',
+    // description: 'Google',
+    overview: ['Ask Questions'],
+    provider: 'togetherai',
+    type: 'free',
+    capabilities: {
+      images: false,
+      files: false,
+    },
+    tools: false,
+  },
+  {
     id: 'mixtral-8x7b-32768',
     label: 'Mixtral 8x',
     apiIdentifier: 'mixtral-8x7b-32768',
@@ -86,9 +101,9 @@ export const models: Array<Model> = [
     provider: 'groq',
     type: 'free',
     capabilities: {
-        images: false,
-        files: false,
-      },
+      images: false,
+      files: false,
+    },
     tools: true,
   },
   {
@@ -101,10 +116,10 @@ export const models: Array<Model> = [
     provider: 'groq',
     type: 'free',
     capabilities: {
-        images: false,
-        files: false,
-      },
-   tools: true,
+      images: false,
+      files: false,
+    },
+    tools: true,
   },
 ] as const;
 
