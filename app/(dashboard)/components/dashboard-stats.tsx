@@ -121,15 +121,15 @@ const CustomActivityTooltip = ({ active, payload, label }: any) => {
 const CustomLegend = (props: any) => {
   const { payload } = props;
   return (
-    <div className="flex items-center justify-center gap-6 text-sm">
+    <div className="flex flex-wrap items-center justify-center gap-2 sm:gap-4 md:gap-6 text-sm px-2">
       {payload.map((entry: any) => {
         return (
-          <div key={entry.value} className="flex items-center gap-2">
+          <div key={entry.value} className="flex items-center gap-2 min-w-fit">
             <div 
-              className="h-4 w-4 rounded-full" 
+              className="h-3 w-3 sm:h-4 sm:w-4 rounded-full" 
               style={{ backgroundColor: entry.color }}
             />
-            <span className="text-muted-foreground">
+            <span className="text-muted-foreground whitespace-nowrap">
               {entry.value}
             </span>
           </div>

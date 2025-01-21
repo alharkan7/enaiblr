@@ -22,6 +22,7 @@ import { SubscriptionTable } from "../components/users-subscription";
 import { Metadata } from 'next';
 import { DashboardStats } from "../components/dashboard-stats";
 import { data as navData } from "../components/nav-data";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: 'Dashboard',
@@ -100,7 +101,9 @@ export default async function DashboardPage({
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href="/dashboard">Overview</BreadcrumbLink>
+                  <BreadcrumbLink asChild>
+                    <Link href="/dashboard">Overview</Link>
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 {view && (
                   <>
