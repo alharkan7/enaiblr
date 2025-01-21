@@ -29,7 +29,7 @@ export const metadata: Metadata = {
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | undefined }
+  searchParams: Promise<{ [key: string]: string | undefined }>
 }) {
   const session = await auth();
   
@@ -37,7 +37,8 @@ export default async function DashboardPage({
     redirect('/auth/signin');
   }
 
-  const view = searchParams.view || 'users';
+  const params = await searchParams;
+  const view = params.view || 'users';
   let data: {
     users?: {
       id: string;
