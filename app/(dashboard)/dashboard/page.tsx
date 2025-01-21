@@ -19,11 +19,17 @@ import {
 } from "@/components/ui/sidebar"
 import { UsersTable } from "../components/users-info"; 
 import { SubscriptionTable } from "../components/users-subscription";
+import { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Dashboard',
+  description: 'Admin dashboard for managing users and subscriptions',
+};
 
 export default async function DashboardPage({
   searchParams,
 }: {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: { [key: string]: string | undefined }
 }) {
   const session = await auth();
   
