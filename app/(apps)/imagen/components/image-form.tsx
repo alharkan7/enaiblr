@@ -28,13 +28,12 @@ interface ImageFormProps {
 
 export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onAspectRatioChange, imageDisplayed = false }: ImageFormProps) {
   const { plan } = useSubscription()
-  const [showControls, setShowControls] = useState(imageDisplayed)
+  const [showControls, setShowControls] = useState(true) // Start with controls visible
   const [prompt, setPrompt] = useState(defaultPrompt)
   const [isGenerating, setIsGenerating] = useState(false)
   const [quality, setQuality] = useState<'standard' | 'hd'>('standard')
   const [aspectRatio, setAspectRatio] = useState<'wide' | 'square' | 'portrait'>('square')
   const [selectedStyle, setSelectedStyle] = useState("")
-  const [showUpgradeDialog, setShowUpgradeDialog] = useState(false)
   const router = useRouter()
 
   useEffect(() => {
@@ -44,6 +43,15 @@ export function ImageForm({ defaultPrompt = "", onGenerate, onGenerateStart, onA
   useEffect(() => {
     onAspectRatioChange?.(aspectRatio)
   }, [aspectRatio, onAspectRatioChange])
+
+  // Add effect to auto-hide controls after mount
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowControls(false);
+    }, 2000); // Hide after 3 seconds
+
+    return () => clearTimeout(timer);
+  }, []); // Run only on mount
 
   const getDimensions = (quality: 'standard' | 'hd', aspectRatio: 'wide' | 'square' | 'portrait'): { width: number, height: number } => {
     if (quality === 'standard') {

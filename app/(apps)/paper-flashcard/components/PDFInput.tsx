@@ -73,6 +73,7 @@ export const PDFInput = ({
         <h1 className="text-4xl font-extrabold">
           Paper to Flashcards
         </h1>
+        <p className="text-sm text-muted-foreground">Turn Scientific Papers into Swipeable Flashcards for Easy Reading</p>
       </motion.div>
 
       <motion.div 
