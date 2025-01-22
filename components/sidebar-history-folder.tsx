@@ -41,6 +41,17 @@ import type { Chat } from '@/lib/db/schema';
 import { useChatVisibility } from '@/hooks/use-chat-visibility';
 import { Input } from './ui/input';
 import styles from './sidebar-history.module.css';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 export interface Folder {
     id: string;
@@ -421,13 +432,37 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                                 </DropdownMenuPortal>
                             </DropdownMenuSub>
 
-                            <DropdownMenuItem
-                                className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-                                onSelect={handleDelete}
-                            >
-                                <TrashIcon />
-                                <span>Delete</span>
-                            </DropdownMenuItem>
+                            <AlertDialog>
+                                <AlertDialogTrigger asChild>
+                                    <DropdownMenuItem
+                                        className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+                                        onSelect={(e) => {
+                                            // Prevent the default onSelect to avoid immediate deletion
+                                            e.preventDefault();
+                                        }}
+                                    >
+                                        <TrashIcon />
+                                        <span>Delete</span>
+                                    </DropdownMenuItem>
+                                </AlertDialogTrigger>
+                                <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                        <AlertDialogTitle>Delete Chat</AlertDialogTitle>
+                                        <AlertDialogDescription>
+                                            Are you sure you want to delete this chat? This action cannot be undone.
+                                        </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                        <AlertDialogAction
+                                            className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                            onClick={handleDelete}
+                                        >
+                                            Delete
+                                        </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                </AlertDialogContent>
+                            </AlertDialog>
 
                         </DropdownMenuContent>
                     </DropdownMenu>
