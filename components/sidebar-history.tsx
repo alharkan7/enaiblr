@@ -445,6 +445,8 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     // Check if we're on a chat page URL pattern
     if (pathname?.startsWith('/chat/')) {
       router.push('/');
+      // Force refresh after navigation to clear cached chat messages
+      router.refresh();
     }
   }, [globalMutate, pathname, router]);
 
