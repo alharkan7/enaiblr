@@ -435,7 +435,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                             <AlertDialog>
                                 <AlertDialogTrigger asChild>
                                     <DropdownMenuItem
-                                        className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+                                        className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
                                         onSelect={(e) => {
                                             // Prevent the default onSelect to avoid immediate deletion
                                             e.preventDefault();
@@ -499,7 +499,6 @@ const FolderItem = ({
     const [isEditing, setIsEditing] = useState(false);
     const [editedName, setEditedName] = useState(folder.name);
     const [displayName, setDisplayName] = useState(folder.name);
-    const [folderDeleteDialog, setFolderDeleteDialog] = useState(false);
     const { mutate: globalMutate } = useSWRConfig();
 
     useEffect(() => {
@@ -550,7 +549,11 @@ const FolderItem = ({
     };
 
     const handleDelete = async () => {
+        // Store the previous state for rollback
+        const previousFolders = [...folders];
+        
         try {
+            // Optimistic update
             const updatedFolders = folders.filter(f => f.id !== folder.id);
             setFolders(updatedFolders);
 
@@ -562,11 +565,15 @@ const FolderItem = ({
                 throw new Error('Failed to delete folder');
             }
 
+            // On success
             toast.success('Folder deleted successfully');
+            await foldersMutate(); // Ensure we revalidate the data
         } catch (error) {
             console.error('Failed to delete folder:', error);
             toast.error('Failed to delete folder');
-            foldersMutate();
+            // Revert to previous state on error
+            setFolders(previousFolders);
+            await foldersMutate(); // Revalidate to ensure consistency
         }
     };
 
@@ -675,13 +682,60 @@ const FolderItem = ({
                                         <PencilEditIcon size={14} />
                                         <span>Rename</span>
                                     </DropdownMenuItem>
-                                    <DropdownMenuItem
-                                        onClick={handleDelete}
-                                        className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-                                    >
-                                        <TrashIcon size={14} />
-                                        <span>Delete</span>
-                                    </DropdownMenuItem>
+                                    <AlertDialog>
+                                        <AlertDialogTrigger asChild>
+                                            <DropdownMenuItem
+                                                className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
+                                                onSelect={(e) => {
+                                                    // Prevent the default onSelect to avoid immediate deletion
+                                                    e.preventDefault();
+                                                }}
+                                            >
+                                                <TrashIcon size={14} />
+                                                <span>Delete</span>
+                                            </DropdownMenuItem>
+                                        </AlertDialogTrigger>
+                                        <AlertDialogContent>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Delete Folder</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Are you sure you want to delete this folder? All chats will be moved out of the folder.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                                <AlertDialogAction
+                                                    className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                                    onClick={() => {
+                                                        const deletePromise = fetch(`/api/folder?id=${folder.id}`, {
+                                                            method: 'DELETE',
+                                                        });
+
+                                                        toast.promise(deletePromise, {
+                                                            loading: 'Deleting folder...',
+                                                            success: async () => {
+                                                                // Update global history and folder data
+                                                                await Promise.all([
+                                                                    globalMutate('/api/history'),
+                                                                    globalMutate('/api/folder')
+                                                                ]);
+
+                                                                // Update local folder state
+                                                                setFolders((prevFolders: Folder[]) =>
+                                                                    prevFolders.filter((f: Folder) => f.id !== folder.id)
+                                                                );
+
+                                                                return 'Folder deleted successfully';
+                                                            },
+                                                            error: 'Failed to delete folder',
+                                                        });
+                                                    }}
+                                                >
+                                                    Delete
+                                                </AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </AlertDialogContent>
+                                    </AlertDialog>
                                 </DropdownMenuContent>
                             </DropdownMenu>
                         </div>
