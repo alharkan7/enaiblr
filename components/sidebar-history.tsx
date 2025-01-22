@@ -442,10 +442,11 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       error: 'Failed to delete chat',
     });
 
-    if (chatId === id) {
+    // Check if we're on a chat page URL pattern
+    if (pathname?.startsWith('/chat/')) {
       router.push('/');
     }
-  }, [globalMutate, id, router]);
+  }, [globalMutate, pathname, router]);
 
   // Memoize folders with expanded state and sort alphabetically
   const foldersMemo = useMemo(() => {
