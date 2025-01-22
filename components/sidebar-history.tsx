@@ -20,16 +20,6 @@ import {
   PencilEditIcon,
 } from '@/components/icons';
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
@@ -399,13 +389,31 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
     }
   );
 
-  const [deleteId, setDeleteId] = useState<string | null>(null);
-  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+  const [folders, setFolders] = useState<Folder[]>(dbFolders);
   const [isAddingFolder, setIsAddingFolder] = useState(false);
   const router = useRouter();
 
+  const handleDelete = useCallback((chatId: string) => {
+    const deletePromise = fetch(`/api/chat?id=${chatId}`, {
+      method: 'DELETE',
+    });
+
+    toast.promise(deletePromise, {
+      loading: 'Deleting chat...',
+      success: () => {
+        globalMutate('/api/history');
+        return 'Chat deleted successfully';
+      },
+      error: 'Failed to delete chat',
+    });
+
+    if (chatId === id) {
+      router.push('/');
+    }
+  }, [globalMutate, id, router]);
+
   // Memoize folders with expanded state and sort alphabetically
-  const folders = useMemo(() => {
+  const foldersMemo = useMemo(() => {
     return dbFolders
       .map(folder => ({
         ...folder,
@@ -415,9 +423,9 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       .sort((a, b) => a.name.localeCompare(b.name));
   }, [dbFolders]);
 
-  const setFolders = useCallback((newFolders: Folder[] | ((prev: Folder[]) => Folder[])) => {
+  const setFoldersMemo = useCallback((newFolders: Folder[] | ((prev: Folder[]) => Folder[])) => {
     if (typeof newFolders === 'function') {
-      const updatedFolders = newFolders(folders);
+      const updatedFolders = newFolders(foldersMemo);
       // Sort before updating
       const sortedFolders = [...updatedFolders].sort((a, b) => a.name.localeCompare(b.name));
       foldersMutate(sortedFolders, { revalidate: false });
@@ -426,7 +434,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
       const sortedFolders = [...newFolders].sort((a, b) => a.name.localeCompare(b.name));
       foldersMutate(sortedFolders, { revalidate: false });
     }
-  }, [folders, foldersMutate]);
+  }, [foldersMemo, foldersMutate]);
 
   // Only mutate on pathname change
   useEffect(() => {
@@ -494,7 +502,7 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
 
     // Get all chat IDs that are in folders
     const chatIdsInFolders = new Set(
-      folders.flatMap(folder => folder.chats?.map(chat => chat.id) ?? [])
+      foldersMemo.flatMap(folder => folder.chats?.map(chat => chat.id) ?? [])
     );
 
     // Filter out chats that are in folders, except pinned chats
@@ -544,16 +552,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                           key={chat.id}
                           chat={chat}
                           isActive={chat.id === id}
-                          onDelete={(chatId) => {
-                            setDeleteId(chatId);
-                            setShowDeleteDialog(true);
-                          }}
+                          onDelete={handleDelete}
                           setOpenMobile={setOpenMobile}
                           mutate={() => {
                             globalMutate('/api/history');
                           }}
-                          folders={folders}
-                          setFolders={setFolders}
+                          folders={foldersMemo}
+                          setFolders={setFoldersMemo}
                         />
                       ))}
                     </>
@@ -563,14 +568,11 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
             })()}
 
           <FolderSection
-            folders={folders}
-            setFolders={setFolders}
+            folders={foldersMemo}
+            setFolders={setFoldersMemo}
             chats={history || []}
             setOpenMobile={setOpenMobile}
-            onDeleteChat={(chatId) => {
-              setDeleteId(chatId);
-              setShowDeleteDialog(true);
-            }}
+            onDeleteChat={handleDelete}
             activeChatId={typeof id === 'string' ? id : undefined}
             isAddingFolder={isAddingFolder}
             setIsAddingFolder={setIsAddingFolder}
@@ -593,16 +595,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
+                            onDelete={handleDelete}
                             setOpenMobile={setOpenMobile}
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
-                            folders={folders}
-                            setFolders={setFolders}
+                            folders={foldersMemo}
+                            setFolders={setFoldersMemo}
                           />
                         ))}
                       </>
@@ -618,16 +617,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
+                            onDelete={handleDelete}
                             setOpenMobile={setOpenMobile}
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
-                            folders={folders}
-                            setFolders={setFolders}
+                            folders={foldersMemo}
+                            setFolders={setFoldersMemo}
                           />
                         ))}
                       </>
@@ -643,16 +639,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
+                            onDelete={handleDelete}
                             setOpenMobile={setOpenMobile}
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
-                            folders={folders}
-                            setFolders={setFolders}
+                            folders={foldersMemo}
+                            setFolders={setFoldersMemo}
                           />
                         ))}
                       </>
@@ -668,16 +661,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
+                            onDelete={handleDelete}
                             setOpenMobile={setOpenMobile}
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
-                            folders={folders}
-                            setFolders={setFolders}
+                            folders={foldersMemo}
+                            setFolders={setFoldersMemo}
                           />
                         ))}
                       </>
@@ -693,16 +683,13 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
                             key={chat.id}
                             chat={chat}
                             isActive={chat.id === id}
-                            onDelete={(chatId) => {
-                              setDeleteId(chatId);
-                              setShowDeleteDialog(true);
-                            }}
+                            onDelete={handleDelete}
                             setOpenMobile={setOpenMobile}
                             mutate={() => {
                               globalMutate('/api/history');
                             }}
-                            folders={folders}
-                            setFolders={setFolders}
+                            folders={foldersMemo}
+                            setFolders={setFoldersMemo}
                           />
                         ))}
                       </>
@@ -713,41 +700,6 @@ export function SidebarHistory({ user }: { user: User | undefined }) {
           </SidebarMenu>
         </SidebarGroupContent>
       </SidebarGroup>
-      <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-          </AlertDialogHeader>
-          <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete your chat and remove it from our servers.
-          </AlertDialogDescription>
-          <AlertDialogFooter>
-            <AlertDialogCancel>Cancel</AlertDialogCancel>
-            <AlertDialogAction onClick={() => {
-              const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-                method: 'DELETE',
-              });
-
-              toast.promise(deletePromise, {
-                loading: 'Deleting chat...',
-                success: () => {
-                  globalMutate('/api/history');
-                  return 'Chat deleted successfully';
-                },
-                error: 'Failed to delete chat',
-              });
-
-              setShowDeleteDialog(false);
-
-              if (deleteId === id) {
-                router.push('/');
-              }
-            }}>
-              Continue
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
     </>
   );
 }

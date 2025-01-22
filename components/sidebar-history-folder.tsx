@@ -21,16 +21,6 @@ import {
     FolderOpenIcon,
 } from '@/components/icons';
 import {
-    AlertDialog,
-    AlertDialogAction,
-    AlertDialogCancel,
-    AlertDialogContent,
-    AlertDialogDescription,
-    AlertDialogFooter,
-    AlertDialogHeader,
-    AlertDialogTitle,
-} from '@/components/ui/alert-dialog';
-import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
@@ -224,6 +214,39 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
         e.stopPropagation(); // Prevent click from bubbling up to parent elements
     };
 
+    const handleDelete = useCallback(() => {
+        const deletePromise = fetch(`/api/chat?id=${chat.id}`, {
+            method: 'DELETE',
+        });
+
+        toast.promise(deletePromise, {
+            loading: 'Deleting chat...',
+            success: async () => {
+                // Update global history and folder data
+                await Promise.all([
+                    globalMutate('/api/history'),
+                    globalMutate('/api/folder')
+                ]);
+
+                // Update local folder state
+                setFolders((prevFolders: Folder[]) =>
+                    prevFolders.map((folder: Folder) => ({
+                        ...folder,
+                        chats: folder.chats.filter((c: Chat) => c.id !== chat.id)
+                    }))
+                );
+
+                // Redirect if this was the active chat
+                if (isActive) {
+                    router.push('/');
+                }
+
+                return 'Chat deleted successfully';
+            },
+            error: 'Failed to delete chat',
+        });
+    }, [chat.id, globalMutate, isActive, router, setFolders]);
+
     return (
         <>
             <SidebarMenuItem className="ml-6 list-none">
@@ -400,9 +423,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
 
                             <DropdownMenuItem
                                 className="cursor-pointer text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
-                                onSelect={() => {
-                                    setShowDeleteDialog(true);
-                                }}
+                                onSelect={handleDelete}
                             >
                                 <TrashIcon />
                                 <span>Delete</span>
@@ -412,55 +433,6 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
                     </DropdownMenu>
                 </div>
             </SidebarMenuItem>
-
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your chat and remove it from our servers.
-                    </AlertDialogDescription>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => {
-                            const deletePromise = fetch(`/api/chat?id=${chat.id}`, {
-                                method: 'DELETE',
-                            });
-
-                            toast.promise(deletePromise, {
-                                loading: 'Deleting chat...',
-                                success: async () => {
-                                  
-                                    // Update global history and folder data
-                                    await Promise.all([
-                                        globalMutate('/api/history'),
-                                        globalMutate('/api/folder')
-                                    ]);
-                            
-                                    // Update local folder state
-                                    setFolders((prevFolders: Folder[]) =>
-                                        prevFolders.map((folder: Folder) => ({
-                                            ...folder,
-                                            chats: folder.chats.filter((c: Chat) => c.id !== chat.id)
-                                        }))
-                                    );
-                            
-                                    // Redirect if this was the active chat
-                                    if (isActive) {
-                                        router.push('/');
-                                    }
-                            
-                                    return 'Chat deleted successfully';
-                                },
-                                error: 'Failed to delete chat',
-                            });
-                        }}>
-                            Continue
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 };
@@ -669,7 +641,7 @@ const FolderItem = ({
                                         <span>Rename</span>
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                        onClick={() => setFolderDeleteDialog(true)}
+                                        onClick={handleDelete}
                                         className="text-destructive focus:bg-destructive/15 focus:text-destructive dark:text-red-500"
                                     >
                                         <TrashIcon size={14} />
@@ -700,36 +672,6 @@ const FolderItem = ({
                     </SidebarGroupContent>
                 )}
             </SidebarGroup>
-
-            <AlertDialog open={folderDeleteDialog} onOpenChange={setFolderDeleteDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Folder</AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogDescription>
-                        Are you sure you want to delete this folder? The chats inside will not be deleted.
-                    </AlertDialogDescription>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => {
-                            const deletePromise = fetch(`/api/folder?id=${folder.id}`, {
-                                method: 'DELETE',
-                            });
-
-                            toast.promise(deletePromise, {
-                                loading: 'Deleting folder...',
-                                success: () => {
-                                    handleDelete();
-                                    return 'Folder deleted successfully';
-                                },
-                                error: 'Failed to delete folder',
-                            });
-                        }}>
-                            Delete
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </div>
     );
 };
@@ -856,43 +798,6 @@ export function FolderSection({
                     />
                 ))}
             </div>
-
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                    </AlertDialogHeader>
-                    <AlertDialogDescription>
-                        This action cannot be undone. This will permanently delete your chat and remove it from our servers.
-                    </AlertDialogDescription>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => {
-                            if (!deleteId) return;
-
-                            const deletePromise = fetch(`/api/chat?id=${deleteId}`, {
-                                method: 'DELETE',
-                            });
-
-                            toast.promise(deletePromise, {
-                                loading: 'Deleting chat...',
-                                success: () => {
-                                    globalMutate('/api/history');
-                                    foldersMutate();
-                                    return 'Chat deleted successfully';
-                                },
-                                error: 'Failed to delete chat',
-                            });
-
-                            if (deleteId === activeChatId) {
-                                router.push('/');
-                            }
-                        }}>
-                            Continue
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
         </>
     );
 }
