@@ -4,6 +4,7 @@ import { useSession } from 'next-auth/react';
 import { Button } from '@/components/ui/button';
 import { AppGridIcon } from './icons';
 import { AppsGrid } from './ui/apps-grid';
+import { useSearchParams } from 'next/navigation';
 
 interface AppsHeaderProps {
   title?: React.ReactNode;
@@ -12,6 +13,8 @@ interface AppsHeaderProps {
 
 export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
   const { data: session } = useSession();
+  const searchParams = useSearchParams();
+  const refCode = searchParams?.get('ref');
 
   return (
     <header className="sticky top-0 bg-background py-1.5 px-2 md:px-2">
@@ -41,6 +44,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
                 }
                 user={session?.user}
                 useHardReload={false}
+                refCode={refCode}
               />
             </div>
           </>
@@ -58,6 +62,7 @@ export function AppsHeader({ title, leftButton }: AppsHeaderProps) {
               }
               user={session?.user}
               useHardReload={false}
+              refCode={refCode}
             />
           </div>
         )}

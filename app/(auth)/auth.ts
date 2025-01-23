@@ -21,6 +21,9 @@ interface ExtendedToken extends JWT {
 interface ExtendedSession extends Session {
   user: User & {
     id: string;
+    email: string;
+    name?: string | null;
+    image?: string | null;
   };
 }
 
@@ -74,61 +77,65 @@ export const config = {
   ],
   callbacks: {
     async signIn({ user, account }) {
-      if (account?.provider === 'google') {
-        // console.log('Google sign in - user data:', { email: user.email, image: user.image, name: user.name });
-        const users = await getUser(user.email!);
-        if (users.length > 0) {
-          user.id = users[0].id;
-          // Update avatar for existing user
-          if (user.image && (!users[0].avatar || users[0].avatar !== user.image)) {
-            await updateUserAvatar(user.email!, user.image);
+      if (account?.type === 'oauth' && account.provider === 'google') {
+        try {
+          const existingUser = await getUser(user.email || '');
+          if (!existingUser || existingUser.length === 0) {
+            await createGoogleUser(user.email || '', user.image || undefined);
+          } else if (user.image && existingUser[0].avatar !== user.image) {
+            await updateUserAvatar(existingUser[0].id, user.image);
           }
-        } else {
-          // Create new user for Google sign-in
-          const newUser = await createGoogleUser(user.email!, user.image || undefined);
-          user.id = newUser[0].id;
+        } catch (error) {
+          console.error('Error in signIn callback:', error);
+          return false;
         }
       }
       return true;
     },
-    async jwt({ token, user, account, profile }): Promise<ExtendedToken> {
+    async jwt({ token, user }): Promise<ExtendedToken> {
       if (user) {
-        token.id = user.id;
-        token.email = user.email as string;
-        token.name = user.name;
-        token.picture = user.image;
+        // Ensure token has required properties
+        return {
+          ...token,
+          id: user.id || token.id,
+          email: user.email || token.email || '',
+          name: user.name || token.name,
+          picture: user.image || token.picture
+        } as ExtendedToken;
       }
+      // Ensure existing token has id property
       return token as ExtendedToken;
     },
     async session({ session, token }): Promise<ExtendedSession> {
-      if (token && session.user) {
-        session.user.id = token.id as string;
-        session.user.email = token.email as string;
-        session.user.name = token.name as string | null;
-        session.user.image = token.picture as string | null;
+      if (session.user && token) {
+        session.user.id = (token as ExtendedToken).id;
+        session.user.email = (token as ExtendedToken).email;
+        session.user.name = (token as ExtendedToken).name || null;
+        session.user.image = (token as ExtendedToken).picture || null;
       }
       return session as ExtendedSession;
     },
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;
-      const isAuthPage = nextUrl.pathname.startsWith('/login') ||
+      const isAuthPage = nextUrl.pathname.startsWith('/login') || 
                         nextUrl.pathname.startsWith('/register');
 
-      // Redirect to login if accessing protected routes while not logged in
-      if (!isLoggedIn && !isAuthPage) {
-        return false;
-      }
-
-      // Redirect to callback URL or apps if accessing auth pages while logged in
-      if (isLoggedIn && isAuthPage) {
-        const callbackUrl = nextUrl.searchParams.get('callbackUrl');
-        if (callbackUrl && callbackUrl.startsWith('/')) {
-          return Response.redirect(new URL(callbackUrl, BASE_URL));
+      if (isAuthPage) {
+        if (isLoggedIn) {
+          // If there's a ref code, add it to the redirect
+          const refCode = nextUrl.searchParams.get('ref');
+          const callbackUrl = nextUrl.searchParams.get('callbackUrl');
+          if (refCode) {
+            const redirectUrl = new URL(callbackUrl || '/apps', nextUrl.origin);
+            redirectUrl.searchParams.set('ref', refCode);
+            return Response.redirect(redirectUrl);
+          }
+          return Response.redirect(new URL(callbackUrl || '/apps', nextUrl.origin));
         }
-        return Response.redirect(new URL('/apps', BASE_URL));
+        return true;
       }
 
-      return true;
+      return isLoggedIn;
     },
   },
 } satisfies NextAuthConfig;

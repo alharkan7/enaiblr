@@ -10,6 +10,7 @@ import { ThemeToggle } from '@/components/theme-toggle';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
 import { motion } from 'framer-motion';
+import { useEffect } from 'react';
 
 export default function Page() {
   const { data: session, status } = useSession();
@@ -30,14 +31,30 @@ export default function Page() {
   };
 
   const handleAppClick = (appType: 'free' | 'pro', appSlug: string) => {
+    // Get ref code from URL if it exists
+    const refCode = searchParams.get('ref');
+    
     if (status !== 'authenticated') {
       const callbackUrl = `/${appSlug}`;
       const encodedCallback = encodeURIComponent(callbackUrl);
-      router.push(`/login?callbackUrl=${encodedCallback}`);
+      // Add ref code to login URL if it exists
+      const loginUrl = `/login?callbackUrl=${encodedCallback}${refCode ? `&ref=${refCode}` : ''}`;
+      router.push(loginUrl);
       return;
     }
-    router.push(`/${appSlug}`);
+
+    // Add ref code to app URL if it exists
+    const appUrl = `/${appSlug}${refCode ? `?ref=${refCode}` : ''}`;
+    router.push(appUrl);
   };
+
+  // Save ref code to localStorage when it exists in URL
+  useEffect(() => {
+    const refCode = searchParams.get('ref');
+    if (refCode) {
+      localStorage.setItem('referralCode', refCode);
+    }
+  }, [searchParams]);
 
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-auto">

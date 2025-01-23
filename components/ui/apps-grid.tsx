@@ -15,9 +15,10 @@ interface AppsGridProps {
   trigger: React.ReactNode;
   user?: User;
   useHardReload?: boolean;
+  refCode?: string | null;
 }
 
-export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps) {
+export function AppsGrid({ trigger, user, useHardReload = false, refCode }: AppsGridProps) {
   const router = useRouter();
   const { plan } = useSubscription();
   const [isOpen, setIsOpen] = React.useState(false);
@@ -25,10 +26,11 @@ export function AppsGrid({ trigger, user, useHardReload = false }: AppsGridProps
   const [isLoaded, setIsLoaded] = React.useState(false);
 
   const handleAppClick = (type: 'free' | 'pro', slug: string) => {
+    const appUrl = `/${slug}${refCode ? `?ref=${refCode}` : ''}`;
     if (useHardReload) {
-      window.location.href = `/${slug}`;
+      window.location.href = appUrl;
     } else {
-      router.push(`/${slug}`, { scroll: false });
+      router.push(appUrl, { scroll: false });
     }
     setIsOpen(false);
   };
