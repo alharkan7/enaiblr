@@ -1,4 +1,5 @@
 import type { InferSelectModel } from 'drizzle-orm';
+import { sql } from 'drizzle-orm';
 import {
   pgTable,
   varchar,
@@ -177,6 +178,7 @@ export const transactions = pgTable('Transactions', {
     .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
   name: varchar('name', { length: 50 }).notNull(),
   amount: numeric('amount', { precision: 2, scale: 10 }).notNull(),
+  commission: numeric('commission', { precision: 2, scale: 10 }).default(sql`amount * 0.25`),
   status: varchar('status', { length: 20 }).notNull(),
   affiliate_code: varchar('affiliate_code', { length: 12 }),
 });
@@ -189,7 +191,7 @@ export const affiliate = pgTable('Affiliate', {
   userId: uuid('userId')
     .notNull()
     .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
-  code: varchar('code', { length: 12 }).notNull(),
+  code: varchar('code', { length: 12 }).notNull().unique(),
 });
 
 export type Affiliate = InferSelectModel<typeof affiliate>;

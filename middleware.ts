@@ -110,9 +110,19 @@ export default auth(async function middleware(request: NextRequest) {
 
   // Redirect to login if not logged in trying to access protected routes
   if (!isLoggedIn && !isAuthPage) {
-    const loginUrl = new URL('/login', request.url);
-    loginUrl.searchParams.set('callbackUrl', pathname);
-    return NextResponse.redirect(loginUrl);
+    // If there's a referral code and we're redirecting from payment page, preserve it
+    if (pathname === '/payment') {
+      const refCode = request.nextUrl.searchParams.get('ref')
+      if (refCode) {
+        const appsUrl = new URL('/apps', request.url)
+        appsUrl.searchParams.set('ref', refCode)
+        return NextResponse.redirect(appsUrl)
+      }
+    }
+    
+    const loginUrl = new URL('/login', request.url)
+    loginUrl.searchParams.set('callbackUrl', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   // Redirect to callback URL or apps if accessing auth pages while logged in

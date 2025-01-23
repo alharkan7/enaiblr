@@ -16,6 +16,7 @@ export default function PaymentPage() {
   const [loadingPackage, setLoadingPackage] = useState<number | null>(null)
   const [name, setName] = useState('')
   const [mobile, setMobile] = useState('')
+  const [referralCode, setReferralCode] = useState('')
   const [isExpanded, setIsExpanded] = useState(false)
   const [activePackageIndex, setActivePackageIndex] = useState<number | null>(null)
   const [userData, setUserData] = useState<{ name: string | null, phone: string | null } | null>(null)
@@ -36,6 +37,34 @@ export default function PaymentPage() {
     }
     fetchUserData()
   }, [session?.user?.email])
+
+  useEffect(() => {
+    // Check URL parameters
+    const params = new URLSearchParams(window.location.search)
+    const refCode = params.get('ref')
+    
+    if (refCode) {
+      // If URL has referral code, save it and use it
+      localStorage.setItem('referralCode', refCode)
+      setReferralCode(refCode)
+    } else {
+      // If no URL parameter, check localStorage
+      const savedCode = localStorage.getItem('referralCode')
+      if (savedCode) {
+        setReferralCode(savedCode)
+      }
+    }
+  }, []) // This effect runs only once on component mount
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search)
+      const refCode = params.get('ref')
+      if (refCode) {
+        setReferralCode(refCode)
+      }
+    }
+  }, [window?.location?.search]) // This effect runs when URL changes
 
   const handlePayment = async (pkg: typeof subscriptionPackages[0], index: number) => {
     if (!session?.user?.email || !name || !mobile) {
@@ -70,6 +99,7 @@ export default function PaymentPage() {
           amount: pkg.priceTotal,
           userId: session.user.id,
           packageName: pkg.name,
+          referralCode,
         }),
       })
 
@@ -180,10 +210,20 @@ export default function PaymentPage() {
                           <Input
                             id="mobile"
                             type="tel"
-                            placeholder="085xxxxxxxxx"
+                            placeholder="08xxxxxxxxxx"
                             value={mobile}
                             onChange={(e) => setMobile(e.target.value)}
                             required
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="referralCode">Referral Code</Label>
+                          <Input
+                            id="referralCode"
+                            type="text"
+                            placeholder="Enter referral code (optional)"
+                            value={referralCode}
+                            onChange={(e) => setReferralCode(e.target.value)}
                           />
                         </div>
                       </div>

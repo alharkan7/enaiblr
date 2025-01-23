@@ -3,54 +3,121 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Separator } from "@/components/ui/separator"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Copy, ChevronLeft, Pencil, Check, Share2 } from "lucide-react"
+import { Copy, ChevronLeft, Pencil, Check, Share2, X } from "lucide-react"
 import { toast } from "sonner"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { format } from 'date-fns'
 import { useRouter } from 'next/navigation'
+import { useSession } from 'next-auth/react'
+
+interface AffiliateTransaction {
+  email: string;
+  date: string;
+  amount: number;
+  status: string;
+}
 
 export default function AffiliatePage() {
-  const dummyAffiliateData = {
-    totalAmount: 1000000.50,
-    affiliateCode: "ENAIBLR123",
-    referrals: [
-      { email: "user1@example.com", date: "2025-01-20", amount: 50.00, status: "Completed" },
-      { email: "user2@example.com", date: "2025-01-21", amount: 75.50, status: "Pending" },
-      { email: "user3@example.com", date: "2025-01-22", amount: 125.00, status: "Completed" },
-      { email: "user1@example.com", date: "2025-01-20", amount: 50.00, status: "Completed" },
-      { email: "user2@example.com", date: "2025-01-21", amount: 75.50, status: "Pending" },
-      { email: "user3@example.com", date: "2025-01-22", amount: 125.00, status: "Completed" },
-      { email: "user1@example.com", date: "2025-01-20", amount: 50.00, status: "Completed" },
-      { email: "user2@example.com", date: "2025-01-21", amount: 75.50, status: "Pending" },
-      { email: "user3@example.com", date: "2025-01-22", amount: 125.00, status: "Completed" },
-      { email: "user1@example.com", date: "2025-01-20", amount: 50.00, status: "Completed" },
-      { email: "user2@example.com", date: "2025-01-21", amount: 75.50, status: "Pending" },
-      { email: "user3@example.com", date: "2025-01-22", amount: 125.00, status: "Completed" },
-      { email: "user1@example.com", date: "2025-01-20", amount: 50.00, status: "Completed" },
-      { email: "user2@example.com", date: "2025-01-21", amount: 75.50, status: "Pending" },
-      { email: "user3@example.com", date: "2025-01-22", amount: 125.00, status: "Completed" },
-
-    ]
-  }
-
-  const [affiliateCode, setAffiliateCode] = useState(dummyAffiliateData.affiliateCode)
-  const [isEditing, setIsEditing] = useState(false)
-  const [tempCode, setTempCode] = useState(affiliateCode)
+  const [affiliateCode, setAffiliateCode] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
+  const [tempCode, setTempCode] = useState("");
+  const [transactions, setTransactions] = useState<AffiliateTransaction[]>([]);
+  const [isTransactionsLoading, setIsTransactionsLoading] = useState(true);
+  const { data: session } = useSession();
 
   const router = useRouter()
+
+  useEffect(() => {
+    const fetchAffiliateCode = async () => {
+      try {
+        const response = await fetch('/api/user/affiliate');
+        const data = await response.json();
+        if (response.ok) {
+          setAffiliateCode(data.code);
+          setTempCode(data.code);
+          // After getting the affiliate code, fetch transactions
+          fetchTransactions(data.code);
+        } else {
+          toast.error(data.error || 'Failed to fetch affiliate code');
+        }
+      } catch (error) {
+        console.error('Error fetching affiliate code:', error);
+        toast.error('Failed to fetch affiliate code');
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    const fetchTransactions = async (code: string) => {
+      try {
+        const response = await fetch(`/api/user/affiliate/transactions?code=${code}`);
+        const data = await response.json();
+        if (response.ok) {
+          setTransactions(data.transactions);
+        } else {
+          toast.error(data.error || 'Failed to fetch transactions');
+        }
+      } catch (error) {
+        console.error('Error fetching transactions:', error);
+        toast.error('Failed to fetch transactions');
+      } finally {
+        setIsTransactionsLoading(false);
+      }
+    };
+
+    if (session?.user) {
+      fetchAffiliateCode();
+    }
+  }, [session]);
+
+  const handleSave = async () => {
+    if (!tempCode || tempCode.length !== 7) {
+      toast.error('Affiliate code must be 7 characters');
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const response = await fetch('/api/user/affiliate', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ code: tempCode }),
+      });
+
+      const data = await response.json();
+      if (response.ok) {
+        setAffiliateCode(data.code);
+        setIsEditing(false);
+        toast.success('Affiliate code updated successfully');
+      } else {
+        toast.error(data.error || 'Failed to update affiliate code');
+      }
+    } catch (error) {
+      console.error('Error updating affiliate code:', error);
+      toast.error('Failed to update affiliate code');
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleStartEditing = () => {
+    setTempCode(affiliateCode);
+    setIsEditing(true);
+  };
+
+  const handleCancel = () => {
+    setTempCode(affiliateCode);
+    setIsEditing(false);
+  };
 
   const getReferralUrl = () => `enaiblr.org?ref=${affiliateCode}`
 
   const getShareText = () => {
     return `Enaiblr: Dozens of AI apps with unlimited file upload and features!\n\nTry here: ${getReferralUrl()}`
-  }
-
-  const handleSave = () => {
-    setAffiliateCode(tempCode)
-    setIsEditing(false)
-    toast.success("Affiliate code updated!")
   }
 
   const copyToClipboard = async () => {
@@ -110,7 +177,7 @@ Saya ingin menarik earnings dari affiliate saya. Berikut datanya:
 Email: 
 Bank/e-Wallet Tujuan: 
 Nomor/Rekening: 
-Jumlah: ${formatCurrency(dummyAffiliateData.totalAmount)}
+Jumlah: ${formatCurrency(transactions.reduce((acc, transaction) => acc + transaction.amount, 0))}
 
 Terima kasih,
 Mohon segera diproses ya`)
@@ -137,7 +204,7 @@ Mohon segera diproses ya`)
           </div>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-4xl font-bold mb-6">{formatCurrency(dummyAffiliateData.totalAmount)}</p>
+          <p className="text-4xl font-bold mb-6">{formatCurrency(transactions.reduce((acc, transaction) => acc + transaction.amount, 0))}</p>
           
           <div className="relative">
               <div className="relative flex justify-center text-xs uppercase">
@@ -155,18 +222,37 @@ Mohon segera diproses ya`)
                     <span className="text-sm text-muted-foreground">enaiblr.org?ref=</span>
                     <Input 
                       value={tempCode}
-                      onChange={(e) => setTempCode(e.target.value)}
+                      onChange={(e) => setTempCode(e.target.value.toUpperCase())}
                       className="max-w-[120px]"
+                      maxLength={7}
+                      placeholder="ABCD123"
                       autoFocus
                     />
-                    <Button onClick={handleSave} variant="outline" size="icon" className="h-8 w-8 shrink-0">
-                      <Check className="h-4 w-4" />
-                    </Button>
+                    <div className="flex gap-1">
+                      <Button onClick={handleSave} variant="outline" size="icon" className="h-8 w-8 shrink-0" disabled={isLoading}>
+                        <Check className="h-4 w-4" />
+                      </Button>
+                      <Button onClick={handleCancel} variant="ghost" size="icon" className="h-8 w-8 shrink-0" disabled={isLoading}>
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
                   </>
                 ) : (
                   <>
-                    <span className="text-sm text-primary/80 font-medium">enaiblr.org?ref={affiliateCode}</span>
-                    <Button onClick={() => setIsEditing(true)} variant="ghost" size="icon" className="h-8 w-8 shrink-0">
+                    <span className="text-sm text-primary/80 font-medium">
+                      {isLoading ? (
+                        <span className="animate-pulse">Loading...</span>
+                      ) : (
+                        `enaiblr.org?ref=${affiliateCode}`
+                      )}
+                    </span>
+                    <Button 
+                      onClick={handleStartEditing} 
+                      variant="ghost" 
+                      size="icon" 
+                      className="h-8 w-8 shrink-0"
+                      disabled={isLoading}
+                    >
                       <Pencil className="h-4 w-4" />
                     </Button>
                   </>
@@ -200,14 +286,28 @@ Mohon segera diproses ya`)
               </TableRow>
             </TableHeader>
             <TableBody>
-              {dummyAffiliateData.referrals.map((referral, index) => (
-                <TableRow key={index}>
-                  <TableCell className="sm:pl-8">{censorEmail(referral.email)}</TableCell>
-                  <TableCell className="text-center">{format(new Date(referral.date), 'd MMM yyyy')}</TableCell>
-                  <TableCell className="text-right sm:pr-8">{formatCurrency(referral.amount)}</TableCell>
-                  <TableCell className="text-center">{referral.status}</TableCell>
+              {isTransactionsLoading ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-4">
+                    <span className="animate-pulse">Loading transactions...</span>
+                  </TableCell>
                 </TableRow>
-              ))}
+              ) : transactions.length === 0 ? (
+                <TableRow>
+                  <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
+                    No transactions found
+                  </TableCell>
+                </TableRow>
+              ) : (
+                transactions.map((transaction, index) => (
+                  <TableRow key={index}>
+                    <TableCell className="sm:pl-8">{censorEmail(transaction.email)}</TableCell>
+                    <TableCell className="text-center">{format(new Date(transaction.date), 'd MMM yyyy')}</TableCell>
+                    <TableCell className="text-right sm:pr-8">{formatCurrency(transaction.amount)}</TableCell>
+                    <TableCell className="text-center">{transaction.status}</TableCell>
+                  </TableRow>
+                ))
+              )}
             </TableBody>
           </Table>
         </CardContent>
