@@ -304,7 +304,7 @@ Mohon segera diproses ya`)
                     <TableCell className="sm:pl-8">{censorEmail(transaction.email)}</TableCell>
                     <TableCell className="text-center">{format(new Date(transaction.date), 'd MMM yyyy')}</TableCell>
                     <TableCell className="text-right sm:pr-8">{formatCurrency(transaction.amount)}</TableCell>
-                    <TableCell className="text-center">{transaction.status}</TableCell>
+                    <TableCell className="text-center">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</TableCell>
                   </TableRow>
                 ))
               )}

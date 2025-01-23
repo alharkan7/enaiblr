@@ -1,6 +1,9 @@
 import { auth } from '@/app/(auth)/auth';
 import { updateSubscriptionToPro, getPaymentToken, markTokenAsUsed } from '@/lib/db/queries';
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { transactions } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
 
 export async function POST(request: Request) {
   try {
@@ -50,6 +53,14 @@ export async function POST(request: Request) {
     await markTokenAsUsed(token);
     await updateSubscriptionToPro(session.user.id, paymentToken.packageName);
     
+    // Update transaction status to success
+    await db.update(transactions)
+      .set({ status: 'success' })
+      .where(
+        eq(transactions.userId, session.user.id) &&
+        eq(transactions.status, 'pending')
+      );
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to update subscription:', error);

@@ -177,8 +177,8 @@ export const transactions = pgTable('Transactions', {
     .notNull()
     .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
   name: varchar('name', { length: 50 }).notNull(),
-  amount: numeric('amount', { precision: 2, scale: 10 }).notNull(),
-  commission: numeric('commission', { precision: 2, scale: 10 }).default(sql`amount * 0.25`),
+  amount: numeric('amount', { precision: 10, scale: 2 }).notNull(),
+  commission: numeric('commission', { precision: 10, scale: 2 }).default(sql`ROUND(amount * 0.25, 2)`),
   status: varchar('status', { length: 20 }).notNull(),
   affiliate_code: varchar('affiliate_code', { length: 12 }),
 });

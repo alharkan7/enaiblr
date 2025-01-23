@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server'
 import { PRO_FEATURES } from '@/lib/constants'
 import { createPaymentToken } from '@/lib/db/queries'
+import { db } from '@/lib/db'
+import { transactions } from '@/lib/db/schema'
+import { sql } from 'drizzle-orm'
 
 export async function POST(request: Request) {
   const apiKey = process.env.MAYAR_API_KEY
@@ -27,6 +30,17 @@ export async function POST(request: Request) {
     // Generate payment verification token
     const [paymentToken] = await createPaymentToken(userId, packageName)
     
+    // Record transaction
+    await db.insert(transactions).values({
+      userId,
+      name: packageName,
+      amount: sql`${amount}::numeric`,
+      commission: sql`${amount * 0.25}::numeric`,
+      status: 'pending',
+      affiliate_code: body.referralCode || null,
+      createdAt: new Date(),
+    })
+
     // Calculate expiry date 24 hours from now
     const expiry = new Date()
     expiry.setHours(expiry.getHours() + 24)
