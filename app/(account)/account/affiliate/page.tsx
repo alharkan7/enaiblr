@@ -169,15 +169,24 @@ export default function AffiliatePage() {
     }).format(amount)
   }
 
+  const getTotalEarnings = () => {
+    return transactions.reduce((acc, transaction) => acc + transaction.amount, 0);
+  }
+
   const handleWithdraw = () => {
+    if (getTotalEarnings() < 25000) {
+      toast.error("Minimum withdrawal is Rp25.000");
+      return;
+    }
+
     const message = encodeURIComponent(`Halo Enaiblr Admin,
 
 Saya ingin menarik earnings dari affiliate saya. Berikut datanya:
 
-Email: 
+Email: ${session?.user?.email}
 Bank/e-Wallet Tujuan: 
 Nomor/Rekening: 
-Jumlah: ${formatCurrency(transactions.reduce((acc, transaction) => acc + transaction.amount, 0))}
+Jumlah: ${formatCurrency(getTotalEarnings())}
 
 Terima kasih,
 Mohon segera diproses ya`)
@@ -204,7 +213,7 @@ Mohon segera diproses ya`)
           </div>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-4xl font-bold mb-6">{formatCurrency(transactions.reduce((acc, transaction) => acc + transaction.amount, 0))}</p>
+          <p className="text-4xl font-bold mb-6">{formatCurrency(getTotalEarnings())}</p>
           
           <div className="relative">
               <div className="relative flex justify-center text-xs uppercase">
@@ -314,7 +323,7 @@ Mohon segera diproses ya`)
       </Card>
 
       <div className="mt-8 flex justify-center">
-        <Button size="lg" className="rounded-full" onClick={handleWithdraw}>
+        <Button size="lg" className="rounded-full" onClick={handleWithdraw} disabled={getTotalEarnings() < 25000}>
           Withdraw Earnings
         </Button>
       </div>
