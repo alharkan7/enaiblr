@@ -22,6 +22,7 @@ const Header = () => {
     // { name: "Testimoni", href: "#testimonials" },
     { name: "Harga", href: "#pricing" },
     { name: "FAQ", href: "#faq" },
+    { name: "Affiliate", href: "/affiliate" },
   ];
 
   const menuRef = useRef<HTMLDivElement>(null);

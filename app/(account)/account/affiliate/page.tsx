@@ -117,7 +117,15 @@ export default function AffiliatePage() {
   const getReferralUrl = () => `enaiblr.org?ref=${affiliateCode}`
 
   const getShareText = () => {
-    return `Enaiblr: Dozens of AI apps with unlimited file upload and features!\n\nTry here: ${getReferralUrl()}`
+    return `Ayo Coba Enaiblr AI Platform
+
+Unlimited ChatGPT, Claude, Gemini, dll. bundling mulai dari Rp25.000 per bulan!
+
+Bukan sharing account. Bisa login via akun Google sendiri.
+
+Plus bonus puluhan fitur dan aplikasi AI, tanpa batas file upload dan fitur organisir chat.
+
+Coba di sini: ${getReferralUrl()}`
   }
 
   const copyToClipboard = async () => {

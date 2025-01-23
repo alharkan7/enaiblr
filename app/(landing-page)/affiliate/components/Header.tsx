@@ -3,7 +3,6 @@
 import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -16,13 +15,6 @@ const Header = () => {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
-
-  const navigation = [
-    { name: "Fitur", href: "#features" },
-    // { name: "Testimoni", href: "#testimonials" },
-    { name: "Harga", href: "#pricing" },
-    { name: "FAQ", href: "#faq" },
-  ];
 
   const menuRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
@@ -54,62 +46,15 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:block">
-            <div className="flex items-center space-x-8">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
-                >
-                  {item.name}
-                </Link>
-              ))}
-              <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                <Link href="/apps">Mulai</Link>
-              </Button>
-            </div>
-          </div>
-
-          {/* Mobile Navigation Button */}
-          <div className="md:hidden flex items-center gap-0">
+          <div className="flex items-center gap-0">
             <Button
               className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
             >
-              <Link href="/apps">Mulai</Link>
-            </Button>
-            <Button
-              ref={buttonRef}
-              variant="ghost"
-              size="icon"
-              onClick={() => setIsMenuOpen(!isMenuOpen)}
-              className="text-black hover:bg-black/10"
-            >
-              {isMenuOpen ? <X /> : <Menu />}
+              <Link href="/account/affiliate">Mulai</Link>
             </Button>
           </div>
         </div>
 
-        {/* Mobile Navigation Menu */}
-        <div
-          ref={menuRef}
-          className={`md:hidden overflow-hidden transition-all duration-300 ease-in-out rounded-lg shadow-md ${isMenuOpen ? "max-h-[300px] opacity-100" : "max-h-0 opacity-0"
-            }`}
-        >
-          <div className="bg-white/80 backdrop-blur-md px-2 pt-2 pb-3 space-y-1">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                href={item.href}
-                className="block px-3 py-2 text-base font-medium text-muted-foreground hover:text-foreground"
-                onClick={() => setIsMenuOpen(false)}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-        </div>
       </nav>
     </header>
   );

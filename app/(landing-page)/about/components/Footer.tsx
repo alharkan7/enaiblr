@@ -66,6 +66,11 @@ const Footer = () => {
                   FAQ
                 </Link>
               </li>
+              <li>
+                <Link href="/affiliate" className="text-muted-foreground hover:text-foreground">
+                  Affiliate
+                </Link>
+              </li>
             </ul>
           </div>
           <div>

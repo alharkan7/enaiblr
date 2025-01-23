@@ -31,21 +31,6 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Tentang Produk</h3>
             <ul className="space-y-2">
-              {/* <li>
-                <Link href="#Hero" className="text-muted-foreground hover:text-foreground">
-                  Tentang Kami
-                </Link>
-              </li> */}
-              {/* <li>
-                <Link href="#" className="text-muted-foreground hover:text-foreground">
-                  Blog
-                </Link>
-              </li>
-              <li>
-                <Link href="/careers" className="text-muted-foreground hover:text-foreground">
-                  Careers
-                </Link>
-              </li> */}
               <li>
                 <Link href="#features" className="text-muted-foreground hover:text-foreground">
                   Fitur
