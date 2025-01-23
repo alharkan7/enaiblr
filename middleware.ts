@@ -7,6 +7,7 @@ import { apps } from './config/apps';
 function isPublicRoute(pathname: string): boolean {
   const publicRoutes = [
     '/about',     // About page
+    '/affiliate',
     '/apps',      // Apps page
     '/login',     // Auth pages
     '/register',

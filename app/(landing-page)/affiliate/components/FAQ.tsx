@@ -31,7 +31,7 @@ const faqItems = [{
 },
 {
   question: "Apakah ini sharing account?",
-  answer: "Tidak. User bisa <a href='/login' class='text-blue-600 hover:text-blue-800 underline'>login</a> menggunakan akun Google masing-masing untuk menghindari sharing account.",
+  answer: "Tidak. User bisa login menggunakan akun Google masing-masing untuk menghindari sharing account.",
 },
 {
   question: "Bagaimana paket AI di Enaiblr bisa lebih murah dibandingkan dengan harga asalnya?",
@@ -43,7 +43,7 @@ const faqItems = [{
 },
 {
   question: "Apa saja aplikasi AI yang ada di Enaiblr?",
-  answer: "Unlimited AI Chat, Image Generator HD, Private Document Chat, Incognito Chat, Web Search, AI Tools Search Engine, Audio Transcriber, AI Natural Voice, dll. Kamu dapat mencoba semuanya di <a href='/apps' class='text-blue-600 hover:text-blue-800 underline'>halaman Apps</a>. Kami juga akan terus menambah jumlah aplikasi AI di platform kami tanpa tambahan biaya.",
+  answer: "Unlimited AI Chat, Image Generator HD, Private Document Chat, Incognito Chat, Web Search, AI Tools Search Engine, Audio Transcriber, AI Natural Voice, dll. Kamu dapat mencoba semuanya di halaman Apps setelah login. Kami juga akan terus menambah jumlah aplikasi AI di platform kami tanpa tambahan biaya.",
 },
 {
   question: "Apa saja yang bisa dilakukan oleh AI Chat di Enaiblr?",
@@ -59,7 +59,7 @@ const faqItems = [{
 },
 {
   question: "Apakah ada program affiliate?",
-  answer: "Ada. Silakan membuka laman <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> atau menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> untuk mendaftar di program Enaiblr Affiliate. Kami menawarkan komisi Rp25.000 per transaksi yang berhasil.",
+  answer: "Ada. Silakan menghubungi WhatsApp kami di +62-812-8007-7690 untuk mendaftar di program Enaiblr Affiliate. Kami menawarkan komisi hingga Rp25.000 per transaksi yang berhasil.",
 },
 {
   question: "Apakah data saya aman?",
@@ -75,21 +75,17 @@ const faqItems = [{
 },
 {
   question: "Bagaimana jika paket langganan saya telah habis?",
-  answer: "Apabila langganan Enaiblr Pro kamu sudah habis setelah satu periode, kamu dapat <a href='/account/profile' class='text-blue-600 hover:text-blue-800 underline'>memperpanjang</a> subscription untuk periode berikutnya. Tenang, data kamu tetap tersimpan meskipun kamu belum sempat untuk memperpanjang subscription.",
+  answer: "Apabila langganan Enaiblr Pro kamu sudah habis setelah satu periode, kamu dapat memperpanjang subscription untuk periode berikutnya. Tenang, data kamu tetap tersimpan meskipun kamu belum sempat untuk memperpanjang subscription.",
 },
 {
   question: "Saya mengalami kendala aktivasi akun Enaiblr Pro setelah melakukan pembayaran, apa yang harus saya lakukan?",
-  answer: "Apabila ada kendala aktivasi Enaiblr Pro, kamu bisa menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a>. Kami akan segera melakukan aktivasi dan membantu menyelesaikan kendala terkait.",
+  answer: "Apabila ada kendala aktivasi Enaiblr Pro, kamu bisa menghubungi WhatsApp kami di +62-812-8007-7690. Kami akan segera melakukan aktivasi dan membantu menyelesaikan kendala terkait.",
 },
 {
   question: "Apakah ada aplikasinya di smartphone?",
   answer: "Kamu bisa menginstall Enaiblr sebagai Web App dengan cara membuka enaiblr.org di Google Chrome, kemudian dari menu browser, pilih 'Add to Home Screen' ('Tambahkan ke Layar Utama'). Setelah itu, kamu bisa menggunakan semua Enaiblr Apps seperti aplikasi Android pada umumnya.",
 }
 ]
-
-const createMarkup = (content: string) => {
-  return { __html: content };
-};
 
 const FAQ = () => {
   const [showAll, setShowAll] = useState(false);
@@ -123,7 +119,7 @@ const FAQ = () => {
                       {item.question}
                     </AccordionTrigger>
                     <AccordionContent className="text-gray-500 text-left">
-                      <div dangerouslySetInnerHTML={createMarkup(item.answer)} />
+                      {item.answer}
                     </AccordionContent>
                   </AccordionItem>
                 ))}
