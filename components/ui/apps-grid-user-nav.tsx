@@ -69,7 +69,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               className="w-full cursor-pointer flex items-center gap-2"
             >
               <CircleUserRound className="h-4 w-4" />
-              Account Settings
+              Account
             </Link>
           </DropdownMenuItem>
           <DropdownMenuSeparator />

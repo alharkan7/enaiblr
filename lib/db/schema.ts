@@ -9,6 +9,7 @@ import {
   primaryKey,
   foreignKey,
   boolean,
+  numeric,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -167,3 +168,28 @@ export const tokenPassword = pgTable('Token Password', {
 });
 
 export type TokenPassword = InferSelectModel<typeof tokenPassword>;
+
+export const transactions = pgTable('Transactions', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
+  name: varchar('name', { length: 50 }).notNull(),
+  amount: numeric('amount', { precision: 2, scale: 10 }).notNull(),
+  status: varchar('status', { length: 20 }).notNull(),
+  affiliate_code: varchar('affiliate_code', { length: 12 }),
+});
+
+export type Transaction = InferSelectModel<typeof transactions>;
+
+export const affiliate = pgTable('Affiliate', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
+  code: varchar('code', { length: 12 }).notNull(),
+});
+
+export type Affiliate = InferSelectModel<typeof affiliate>;

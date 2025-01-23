@@ -128,7 +128,7 @@ export default function UserProfile() {
       // Clear password fields after successful update
       setNewPassword('');
       setConfirmPassword('');
-      
+
       toast.success('Profile updated', {
         description: 'Your profile has been updated successfully.'
       });
@@ -155,10 +155,18 @@ export default function UserProfile() {
               <ChevronLeft className="" />
               Back
             </Button>
-            <CardTitle className="text-2xl font-bold text-center">Account Settings</CardTitle>
-            <div className="w-[72px]" /> {/* Spacer to center the title */}
+            <Button
+              variant="outline"
+              className="flex items-center outline outline-1 outline-primary/80"
+              onClick={() => router.push('/account/affiliate')}
+            >
+              Affiliate
+            </Button>
           </div>
         </CardHeader>
+
+        <CardTitle className="text-2xl font-bold text-center mb-4">Account Settings</CardTitle>
+        
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col items-center space-y-4">
@@ -285,7 +293,7 @@ export default function UserProfile() {
               <p className="text-center">:</p>
               <p className="flex items-start justify-between gap-4">
                 {user.plan.charAt(0).toUpperCase() + user.plan.slice(1)}
-                <button 
+                <button
                   onClick={() => router.push('/payment')}
                   className="text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/80 rounded-full px-2 py-0.5 transition-colors"
                 >
@@ -307,8 +315,8 @@ export default function UserProfile() {
               )}
             </div>
 
-            <Button 
-              onClick={handleSaveChanges} 
+            <Button
+              onClick={handleSaveChanges}
               disabled={isSaving || (newPassword !== '' && newPassword !== confirmPassword)}
               className='w-full rounded-full'
             >
@@ -316,8 +324,8 @@ export default function UserProfile() {
             </Button>
           </form>
           <div className="mt-2 pt-2">
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               className="w-full rounded-full"
               onClick={() => {
                 signOut({
