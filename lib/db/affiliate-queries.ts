@@ -124,7 +124,12 @@ export async function getAffiliateTransactions(affiliateCode: string): Promise<A
       })
       .from(transactions)
       .innerJoin(user, eq(transactions.userId, user.id))
-      .where(eq(transactions.affiliate_code, affiliateCode))
+      .where(
+        and(
+          eq(transactions.affiliate_code, affiliateCode),
+          eq(transactions.status, 'success')
+        )
+      )
       .orderBy(desc(transactions.createdAt));
 
     return results.map(result => ({

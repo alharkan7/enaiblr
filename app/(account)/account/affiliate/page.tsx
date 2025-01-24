@@ -228,7 +228,13 @@ Mohon segera diproses ya`)
           </div>
         </CardHeader>
         <CardContent className="text-center">
-          <p className="text-4xl font-bold mb-6">{formatCurrency(getTotalEarnings())}</p>
+          <p className="text-4xl font-bold mb-6">
+            {isTransactionsLoading ? (
+              <span className="text-muted-foreground">-</span>
+            ) : (
+              formatCurrency(getTotalEarnings())
+            )}
+          </p>
           
           <div className="relative">
               <div className="relative flex justify-center text-xs uppercase">
@@ -303,6 +309,7 @@ Mohon segera diproses ya`)
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead className="text-center w-16">#</TableHead>
                 <TableHead className="text-center">Email</TableHead>
                 <TableHead className="text-center">Date</TableHead>
                 <TableHead className="text-center">Amount</TableHead>
@@ -312,19 +319,20 @@ Mohon segera diproses ya`)
             <TableBody>
               {isTransactionsLoading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-4">
-                    <span className="animate-pulse">Loading transactions...</span>
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    Loading...
                   </TableCell>
                 </TableRow>
-              ) : transactions.length === 0 ? (
+              ) : transactions?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="text-center py-4 text-muted-foreground">
-                    No transactions found
+                  <TableCell colSpan={5} className="h-24 text-center">
+                    No transactions found.
                   </TableCell>
                 </TableRow>
               ) : (
-                transactions.map((transaction, index) => (
-                  <TableRow key={index}>
+                transactions?.map((transaction, index) => (
+                  <TableRow key={transaction.email + transaction.date}>
+                    <TableCell className="text-center">{transactions ? index + 1 : null}</TableCell>
                     <TableCell className="sm:pl-8">{censorEmail(transaction.email)}</TableCell>
                     <TableCell className="text-center">{format(new Date(transaction.date), 'd MMM yyyy')}</TableCell>
                     <TableCell className="text-right sm:pr-8">{formatCurrency(transaction.amount)}</TableCell>

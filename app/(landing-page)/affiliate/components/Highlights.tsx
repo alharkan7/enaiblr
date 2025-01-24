@@ -21,7 +21,7 @@ const features = [
   },
   {
     title: "Pantau Pendapatanmu di Dashboard",
-    subtitle: "Setiap mereka berhasil melakukan subscription <b>Enaiblr Pro Akses 4 Bulan</b> dengan kode referral-mu, maka kamu otomatis akan mendapatkan komisi <b>25%</b> atau <b>Rp25.000</b>. Tanpa limit jumlah transaksi.",
+    subtitle: "Setiap mereka berhasil melakukan subscription <b>Enaiblr Pro Akses 4 Bulan</b> dengan kode referral-mu, maka kamu otomatis akan mendapatkan komisi <b>25%</b> hingga <b>Rp25.000</b>. Tanpa limit jumlah transaksi.",
     image: hl4
   },
   {

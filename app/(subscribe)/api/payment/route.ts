@@ -35,7 +35,7 @@ export async function POST(request: Request) {
       userId,
       name: packageName,
       amount: sql`${amount}::numeric`,
-      commission: sql`${amount * 0.25}::numeric`,
+      commission: sql`CEIL((${amount} * 0.25) / 1000) * 1000::numeric`,
       status: 'pending',
       affiliate_code: body.referralCode || null,
       createdAt: new Date(),

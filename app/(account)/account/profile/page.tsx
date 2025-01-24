@@ -327,11 +327,15 @@ export default function UserProfile() {
             <Button
               variant="outline"
               className="w-full rounded-full"
-              onClick={() => {
-                signOut({
+              onClick={async () => {
+                // Clear any local storage or state if you have any
+                localStorage.clear();
+                // Force reload after sign out to ensure clean state
+                await signOut({
                   callbackUrl: '/apps',
-                  redirect: true
+                  redirect: false
                 });
+                window.location.href = '/apps';
               }}
             >
               Sign Out

@@ -17,7 +17,7 @@ const benefits = [
   {
     icon: DollarSign,
     title: "Nilai Komisi Tinggi",
-    description: "Nilai komisi kami tinggi sebesar 25% atau Rp25.000 per transaksi adalah di atas rata-rata komisi program affiliate pada umumnya."
+    description: "Nilai komisi kami tinggi sebesar 25% hingga Rp25.000 per transaksi adalah di atas rata-rata komisi program affiliate pada umumnya."
   },
   {
     icon: Wallet,

@@ -59,7 +59,7 @@ const faqItems = [{
 },
 {
   question: "Apakah ada program affiliate?",
-  answer: "Ada. Silakan membuka laman <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> atau menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> untuk mendaftar di program Enaiblr Affiliate. Kami menawarkan komisi Rp25.000 per transaksi yang berhasil.",
+  answer: "Ada. Silakan membuka laman <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> atau menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> untuk mendaftar di program Enaiblr Affiliate. Kami menawarkan komisi <b>25%</b> hingga <b>Rp25.000</b> per transaksi yang berhasil.",
 },
 {
   question: "Apakah data saya aman?",

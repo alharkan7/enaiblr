@@ -7,7 +7,7 @@ const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Enaiblr AI Platform - Affiliate Program',
-  description: 'Dapatkan Komisi Rp25.000 per Transaksi dan Potensi Penghasilan Tanpa Batas'
+  description: 'Dapatkan Komisi 25% per Transaksi dan Potensi Penghasilan Tanpa Batas'
 };
 
 export default function AffiliateLayout({
