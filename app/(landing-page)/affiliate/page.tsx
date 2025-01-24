@@ -7,6 +7,7 @@ import Footer from './components/Footer';
 import Loading from '@/components/ui/loading';
 import FAQ from './components/FAQ';
 import Highlights from './components/Highlights';
+import Benefits from './components/Benefits';
 
 export default function Home() {
   return (
@@ -16,6 +17,7 @@ export default function Home() {
         <main className="scroll-smooth relative z-[2]">
           <Suspense fallback={<Loading />}>
             <Hero />
+            <Benefits />
             <Highlights />
             <Features />
             <CTA />

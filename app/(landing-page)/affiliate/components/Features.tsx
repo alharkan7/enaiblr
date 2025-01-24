@@ -81,15 +81,15 @@ const Features = () => {
           transition={{ duration: 0.5 }}
           className="max-w-2xl mx-auto text-center mb-16"
         >
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-4xl font-bold mb-4">
             {" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Coba Unlimited AI
+              Bikin Konten
             </span> {" "}
-            yang Kamu Butuhkan
+            dari Semua Fiturnya. Gratis.
           </h2>
-          <p className="text-muted-foreground">
-            Mulai dari produktivitas hingga kreativitas, platform kami punya semua tools dan fitur AI yang kamu butuhkan.
+          <p className="text-lg text-muted-foreground">
+            Kamu bisa mencoba semua fitur yang ada di Enaiblr Platform, kemudian bagikan kontennya untuk membuat <b className="text-black/80">referral-mu semakin menarik</b>.
           </p>
         </motion.div>
         <motion.div 

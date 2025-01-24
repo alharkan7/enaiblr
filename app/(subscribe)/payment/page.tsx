@@ -216,16 +216,18 @@ export default function PaymentPage() {
                             required
                           />
                         </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="referralCode">Referral Code</Label>
-                          <Input
-                            id="referralCode"
-                            type="text"
-                            placeholder="Enter referral code (optional)"
-                            value={referralCode}
-                            onChange={(e) => setReferralCode(e.target.value)}
-                          />
-                        </div>
+                        {activePackageIndex !== null && subscriptionPackages[activePackageIndex].name === '4 Months' && (
+                          <div className="space-y-2">
+                            <Label htmlFor="referralCode">Referral Code</Label>
+                            <Input
+                              id="referralCode"
+                              type="text"
+                              placeholder="Enter referral code (optional)"
+                              value={referralCode}
+                              onChange={(e) => setReferralCode(e.target.value)}
+                            />
+                          </div>
+                        )}
                       </div>
                     </div>
                   </CardContent>

@@ -215,6 +215,13 @@ Mohon segera diproses ya`)
               <ChevronLeft className="" />
               Back
             </Button>
+            <Button
+              variant="link"
+              className="flex items-center"
+              onClick={() => router.push('/affiliate')}
+            >
+              Learn More
+            </Button>
           </div>
           <div className="text-center">
             <CardTitle>Total Earnings</CardTitle>

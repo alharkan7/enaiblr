@@ -11,7 +11,7 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:px-16">
           <div>
             <Link href="/about" className="text-2xl font-bold mb-4 block !text-black">
-              en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
+              en<span className="text-blue-600">ai</span>blr
             </Link>
             <p className="text-muted-foreground">
               Platform AI All-in-One Tanpa Batas
@@ -32,22 +32,22 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Tentang Produk</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#features" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about/#features" className="text-muted-foreground hover:text-foreground">
                   Fitur
                 </Link>
               </li>
               <li>
-                <Link href="#pricing" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about/#pricing" className="text-muted-foreground hover:text-foreground">
                   Harga
                 </Link>
               </li>
               <li>
-                <Link href="#testimonials" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about/#testimonials" className="text-muted-foreground hover:text-foreground">
                   Testimoni
                 </Link>
               </li>
               <li>
-                <Link href="#faq" className="text-muted-foreground hover:text-foreground">
+                <Link href="/about/#faq" className="text-muted-foreground hover:text-foreground">
                   FAQ
                 </Link>
               </li>

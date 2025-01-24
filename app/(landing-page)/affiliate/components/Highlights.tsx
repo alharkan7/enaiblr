@@ -10,23 +10,23 @@ import hl5 from "../assets/hl-5.webp";
 
 const features = [
   {
-    title: "Semua Model AI Tersedia",
+    title: "Login dan Buka Halaman Affiliate",
+    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau <a href=/register style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Register</a> terlebih dulu jika belum memiliki akun.",
     image: hl1
   },
   {
-    title: "Kelola Chat dengan Folder & Pin",
+    title: "Bagikan Link & Kode Affiliate-mu",
+    subtitle: "Copy dan bagikan kode referral-mu ke followers, teman-teman, atau koneksi yang kamu punya. Kamu juga bisa meng-customize kode referral-mu sesuai yang kamu mau.",
     image: hl2
   },
   {
-    title: "Incognito Mode & Private Google Login",
-    image: hl3
-  },
-  {
-    title: "Canvas/Artifact untuk Dokumen & Coding",
+    title: "Pantau Pendapatanmu di Dashboard",
+    subtitle: "Setiap mereka berhasil melakukan subscription <b>Enaiblr Pro Akses 4 Bulan</b> dengan kode referral-mu, maka kamu otomatis akan mendapatkan komisi <b>25%</b> atau <b>Rp25.000</b>. Tanpa limit jumlah transaksi.",
     image: hl4
   },
   {
-    title: "Bonus Beragam AI Apps",
+    title: "Tarik Dana Kapan Saja",
+    subtitle: "Kamu bisa menarik danamu kapan saja, tanpa minimum nilai. Tinggal klik tombol 'Withdraw Earnings', maka Admin kami akan segera memproses pencairan danamu.",
     image: hl5
   },
 ];
@@ -35,6 +35,22 @@ const Highlights = () => {
   return (
     <section id="highlights" className="py-24 overflow-hidden">
       <div className="container px-4 mx-auto max-w-7xl">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          className="text-center mb-16"
+        >
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            Bagaimana{" "}
+            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+              Caranya?
+            </span>
+          </h2>
+          <p className="text-gray-500 mx-auto max-w-3xl text-lg">
+            Ikuti 4 langkah mudah berikut untuk langsung bergabung di <b>Enaiblr Affiliate</b>.
+          </p>
+        </motion.div>
         <div className="space-y-24">
           {features.map((feature, index) => (
             <motion.div 
@@ -52,9 +68,13 @@ const Highlights = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.3 }}
               >
-                <h2 className="text-3xl font-semibold tracking-tight sm:text-5xl bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
                   {feature.title}
                 </h2>
+                <p 
+                  className="mt-3 text-gray-600 text-lg"
+                  dangerouslySetInnerHTML={{ __html: feature.subtitle }}
+                />
               </motion.div>
               <div className="w-full lg:w-1/2">
                 <motion.div 
