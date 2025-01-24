@@ -6,13 +6,8 @@ import { Zap, Wallet, DollarSign, Sparkles } from "lucide-react";
 const benefits = [
   {
     icon: Sparkles,
-    title: "Mudah Dijual",
+    title: "Produk Populer & Mudah Dijual",
     description: "Produk software AI sedang sangat ramai pengguna, dan Enaiblr adalah yang paling murah dengan fitur paling lengkap, sehingga akan mudah dijual."
-  },
-  {
-    icon: Zap,
-    title: "Pemasukan Instan",
-    description: "Tak seperti produk fisik yang menunggu pengiriman, penghasilan Enaiblr Affiliate akan seketika masuk di setiap transaksi yang berhasil."
   },
   {
     icon: DollarSign,
@@ -20,9 +15,14 @@ const benefits = [
     description: "Nilai komisi kami tinggi sebesar 25% hingga Rp25.000 per transaksi adalah di atas rata-rata komisi program affiliate pada umumnya."
   },
   {
+    icon: Zap,
+    title: "Pemasukan Instan",
+    description: "Tak seperti produk fisik yang menunggu pengiriman, penghasilan Enaiblr Affiliate akan seketika masuk di setiap transaksi yang berhasil."
+  },
+  {
     icon: Wallet,
-    title: "Tanpa Minimum Pencairan Dana",
-    description: "Berbeda dengan affiliate lain yang memiliki minimum target atau periode tertentu, pencairan dana Enaiblr Affiliate bisa kapanpun dan berapapun."
+    title: "Pencairan Dana Kapanpun & Berapapun",
+    description: "Berbeda dengan affiliate lain yang memiliki minimum target atau periode tertentu, pencairan dana Enaiblr Affiliate bisa kapan saja."
   }
 ];
 
