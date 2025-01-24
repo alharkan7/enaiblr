@@ -6,12 +6,11 @@ import hl1 from "../assets/hl-1.webp";
 import hl2 from "../assets/hl-2.webp";
 import hl3 from "../assets/hl-3.webp";
 import hl4 from "../assets/hl-4.webp";
-import hl5 from "../assets/hl-5.webp";
 
 const features = [
   {
     title: "Login dan Buka Halaman Affiliate",
-    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau <a href=/register style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Register</a> terlebih dulu jika belum memiliki akun.",
+    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau register terlebih dulu jika belum memiliki akun.",
     image: hl1
   },
   {
@@ -22,12 +21,12 @@ const features = [
   {
     title: "Pantau Pendapatanmu di Dashboard",
     subtitle: "Setiap mereka berhasil melakukan subscription <b>Enaiblr Pro Akses 4 Bulan</b> dengan kode referral-mu, maka kamu otomatis akan mendapatkan komisi <b>25%</b> hingga <b>Rp25.000</b>. Tanpa limit jumlah transaksi.",
-    image: hl4
+    image: hl3
   },
   {
     title: "Tarik Dana Kapan Saja",
     subtitle: "Kamu bisa menarik danamu kapan saja, tanpa minimum nilai. Tinggal klik tombol 'Withdraw Earnings', maka Admin kami akan segera memproses pencairan danamu.",
-    image: hl5
+    image: hl4
   },
 ];
 

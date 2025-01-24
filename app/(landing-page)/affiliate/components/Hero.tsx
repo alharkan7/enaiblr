@@ -21,7 +21,7 @@ const Hero = () => {
           <p 
             className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
           >
-            Dapatkan komisi <span className="font-semibold">25%</span> untuk setiap transaksi + Enaiblr Pro 30 hari. <span className="font-semibold">Tanpa limit. Bisa dicairkan kapanpun.</span>
+            Dapatkan komisi <span className="font-semibold">25%</span> untuk setiap transaksi + Enaiblr Pro Subscription. <span className="font-semibold">Tanpa limit. Bisa dicairkan kapanpun.</span>
           </p>
           <div 
             className="flex flex-col sm:flex-row gap-4 justify-center"
