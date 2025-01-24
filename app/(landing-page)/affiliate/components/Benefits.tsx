@@ -37,9 +37,9 @@ export default function Benefits() {
           transition={{ duration: 0.5 }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
             Apa Saja {" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
               Keuntungannya?
             </span>
           </h2>
@@ -60,7 +60,7 @@ export default function Benefits() {
             >
               <div className="flex gap-6 items-start p-8 rounded-2xl bg-white hover:bg-gray-50 transition-all duration-300">
                 <div>
-                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-blue-600 to-cyan-500 text-white">
+                  <div className="w-12 h-12 flex items-center justify-center rounded-xl bg-gradient-to-r from-yellow-500 to-orange-600 text-white">
                     <benefit.icon className="w-6 h-6" />
                   </div>
                 </div>

@@ -40,7 +40,7 @@ const faqItems = [
   },
   {
     question: "Bagaimana cara mencairkan dana komisi?",
-    answer: "Kamu dapat mencairkan dana komisi kapan saja melalui <a href='/account/affiliate' class='text-blue-600 hover:text-blue-800 underline'>dashboard Affiliate</a> dengan mengklik tombol '<b>Withdraw Earnings</b>'. Dari sana, kamu akan diarahkan ke Admin, kemudian sampaikan Bank dan nomor rekening tujuan untuk pencairan danamu. Setelah itu, tinggal tunggu danamu masuk setelah segera diproses."
+    answer: "Kamu dapat mencairkan dana komisi kapan saja melalui <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>dashboard Affiliate</a> dengan mengklik tombol '<b>Withdraw Earnings</b>'. Dari sana, kamu akan diarahkan ke Admin, kemudian sampaikan Bank dan nomor rekening tujuan untuk pencairan danamu. Setelah itu, tinggal tunggu danamu masuk setelah segera diproses."
   },
   {
     question: "Apakah ada batasan jumlah referral yang bisa saya dapatkan?",
@@ -48,7 +48,7 @@ const faqItems = [
   },
   {
     question: "Metode pembayaran apa saja yang tersedia untuk pencairan komisi?",
-    answer: "Kami mendukung berbagai metode pembayaran umum seperti transfer bank, e-wallet, dan metode pembayaran digital lainnya. Jika ada pertanyaan, bisa ditanyakan ke Admin di halaman <a href='/account/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a>."
+    answer: "Kami mendukung berbagai metode pembayaran umum seperti transfer bank, e-wallet, dan metode pembayaran digital lainnya. Jika ada pertanyaan, bisa ditanyakan ke Admin di halaman <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate</a>."
   },
   {
     question: "Berapa lama proses pencairan dana komisi?",
@@ -56,11 +56,11 @@ const faqItems = [
   },
   {
     question: "Apakah saya bisa melihat riwayat komisi saya?",
-    answer: "Ya, kamu dapat melihat seluruh riwayat transaksi, komisi, dan status pembayaran melalui <a href='/account/affiliate' class='text-blue-600 hover:text-blue-800 underline'>dashboard Affiliate</a>."
+    answer: "Ya, kamu dapat melihat seluruh riwayat transaksi, komisi, dan status pembayaran melalui <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>dashboard Affiliate</a>."
   },
   {
     question: "Bagaimana cara meng-kustomisasi kode referral?",
-    answer: "Di <a href='/account/affiliate' class='text-blue-600 hover:text-blue-800 underline'>halaman Affiliate</a>, kamu akan menemukan opsi untuk mengedit kode referral secara custom sesuai keinginanmu. Pastikan kode yang kamu pilih unik dan mudah dibagikan."
+    answer: "Di <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>halaman Affiliate</a>, kamu akan menemukan opsi untuk mengedit kode referral secara custom sesuai keinginanmu. Pastikan kode yang kamu pilih unik dan mudah dibagikan."
   }
 ];
 
@@ -81,7 +81,7 @@ const FAQ = () => {
           <motion.div variants={item} className="space-y-2 mb-8">
             <h2 className="text-3xl font-bold text-black-900 tracking-tighter sm:text-3xl md:text-4xl">
               Frequently Asked {' '}
-              <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-[length:200%_100%] bg-clip-text text-transparent"
+              <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-[length:200%_100%] bg-clip-text text-transparent"
               >
                 Questions
               </span>

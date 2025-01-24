@@ -42,13 +42,13 @@ const Header = () => {
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
             <Link href="/about" className="text-2xl font-bold text-black">
-              en<span className="text-blue-600">ai</span>blr <span className="font-light">Affiliate</span>
+              en<span className="text-yellow-500">ai</span>blr <span className="font-light">Affiliate</span>
             </Link>
           </div>
 
           <div className="flex items-center gap-0">
             <Button
-              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
+              className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:opacity-90 rounded-full"
             >
               <Link href="/account/affiliate">Mulai</Link>
             </Button>

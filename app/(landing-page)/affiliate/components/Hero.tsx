@@ -13,7 +13,7 @@ const Hero = () => {
             className="text-4xl font-bold tracking-tight sm:text-6xl mb-6"
           >
             Raih {" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
               Penghasilan Tanpa Batas
             </span>{" "}
             dengan <span className="font-light">Affiliate</span>
@@ -27,7 +27,7 @@ const Hero = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <Link href="#benefits">
-              <Button size="lg" className="gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
+              <Button size="lg" className="gap-2 w-full sm:w-auto bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:opacity-90 rounded-full">
                 Mulai <ArrowRight className="size-4" />
               </Button>
             </Link>

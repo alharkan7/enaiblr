@@ -10,7 +10,7 @@ import hl4 from "../assets/hl-4.webp";
 const features = [
   {
     title: "Login dan Buka Halaman Affiliate",
-    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #2563eb; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau register terlebih dulu jika belum memiliki akun.",
+    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #f59e0b; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau register terlebih dulu jika belum memiliki akun.",
     image: hl1
   },
   {
@@ -40,9 +40,9 @@ const Highlights = () => {
           viewport={{ once: true }}
           className="text-center mb-16"
         >
-          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+          <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
             Bagaimana{" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
               Caranya?
             </span>
           </h2>
@@ -67,7 +67,7 @@ const Highlights = () => {
                 viewport={{ once: true }}
                 transition={{ duration: 0.6, delay: index * 0.3 }}
               >
-                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+                <h2 className="text-3xl font-semibold tracking-tight sm:text-4xl bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
                   {feature.title}
                 </h2>
                 <p 
@@ -77,7 +77,7 @@ const Highlights = () => {
               </motion.div>
               <div className="w-full lg:w-1/2">
                 <motion.div 
-                  className="relative w-full outline outline-2 outline-sky-500 shadow-lg aspect-[4/3] rounded-2xl overflow-hidden"
+                  className="relative w-full outline outline-2 outline-yellow-500 shadow-lg aspect-[4/3] rounded-2xl overflow-hidden"
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
                 >

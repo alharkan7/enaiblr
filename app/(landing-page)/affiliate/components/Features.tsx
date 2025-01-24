@@ -43,7 +43,7 @@ const AppCard = ({ app }: { app: typeof apps[0] }) => {
                 initial={{ scale: 0.8 }}
                 animate={{ scale: 1 }}
                 transition={{ duration: 0.2 }}
-                className="w-12 h-12 flex items-center justify-center rounded-lg mb-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white"
+                className="w-12 h-12 flex items-center justify-center rounded-lg mb-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white"
               >
                 <app.icon className="w-6 h-6 text-white" />
               </motion.div>
@@ -60,7 +60,7 @@ const AppCard = ({ app }: { app: typeof apps[0] }) => {
                 }}
                 transition={{ duration: 0.2 }}
               >
-                <ArrowUpRight className="w-14 h-14 !text-sky-500/70 hover:!text-sky-500" />
+                <ArrowUpRight className="w-14 h-14 !text-yellow-500/70 hover:!text-yellow-500" />
               </motion.div>
             </CardHeader>
           </Card>
@@ -83,7 +83,7 @@ const Features = () => {
         >
           <h2 className="text-4xl font-bold mb-4">
             {" "}
-            <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
               Bikin Konten
             </span> {" "}
             dari Semua Fiturnya. Gratis.

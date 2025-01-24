@@ -26,7 +26,7 @@ const CTA = () => {
             Gabung
             {" "}
             <span 
-              className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-[length:200%_100%] bg-clip-text text-transparent"
+              className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-[length:200%_100%] bg-clip-text text-transparent"
             >
               Sekarang
             </span> {" "}
@@ -48,7 +48,7 @@ const CTA = () => {
             className="flex flex-col sm:flex-row gap-4 justify-center"
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full group" asChild>
+              <Button size="lg" className="gap-2 bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:opacity-90 rounded-full group" asChild>
                 <Link href="/account/affiliate">
                   Join Affiliate 
                   <motion.span
@@ -62,7 +62,7 @@ const CTA = () => {
               </Button>
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
-              <Button size="lg" variant="outline" className="rounded-full text-black hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white hover:border-transparent" asChild>
+              <Button size="lg" variant="outline" className="rounded-full text-black hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-600 hover:text-white hover:border-transparent" asChild>
                 <a href="https://wa.me/+6281280077690" target="_blank" rel="noopener noreferrer">Hubungi Kami</a>
               </Button>
             </motion.div>
