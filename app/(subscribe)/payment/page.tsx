@@ -157,12 +157,12 @@ export default function PaymentPage() {
                           <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-1 rounded-full">Disc. {pkg.discount}%</span>
                         </span>
                       </div>
-                      <div className="flex flex-col items-start gap-2 items-center">
+                      <div className="flex flex-col gap-2 items-center">
                         <div className="flex items-center">
                           <span className="text-4xl !text-primary font-bold">Rp{pkg.price.toLocaleString('id-ID')}</span>
                           <span className="text-muted-foreground">/bulan</span>
                         </div>
-                        <div className="inline-block text-sm bg-secondary text-muted-foreground rounded-full py-1 px-2">Total: Rp{pkg.priceTotal.toLocaleString('id-ID')}</div>
+                        <div className="inline-block text-sm bg-secondary text-muted-foreground rounded-full py-1 px-2">Total Rp{pkg.priceTotal.toLocaleString('id-ID')}</div>
                       </div>
                     </div>
                   </CardHeader>
