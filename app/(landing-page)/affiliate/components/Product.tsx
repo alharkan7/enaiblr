@@ -133,7 +133,7 @@ const Product = () => {
                         transition={{ delay: 0.5 }}
                         className="ml-2 text-xs bg-yellow-400/90 text-black px-2 py-1 rounded-full"
                       >
-                        Komisi {plan.commission}% = {formatPrice(plan.commissionValue)}
+                        Komisi {plan.commission}% = <b>{formatPrice(plan.commissionValue)}</b>
                       </motion.span>
                     </span>
                   </motion.div>
@@ -206,7 +206,7 @@ const Product = () => {
                     )}
                   </div>
                 </CardContent>
-                <CardFooter className="mt-auto">
+                {/* <CardFooter className="mt-auto">
                   <Link href="/account/affiliate" className="w-full">
                     <motion.button
                       whileHover={{ scale: 1.02 }}
@@ -216,7 +216,7 @@ const Product = () => {
                       Mulai Affiliate
                     </motion.button>
                   </Link>
-                </CardFooter>
+                </CardFooter> */}
               </Card>
             </motion.div>
           ))}
