@@ -17,7 +17,8 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Affiliate code is required" }, { status: 400 });
     }
 
-    const transactions = await getAffiliateTransactions(code);
+    // Pass the user ID directly instead of looking it up through affiliate code
+    const transactions = await getAffiliateTransactions(session.user.id);
     return NextResponse.json({ transactions });
   } catch (error) {
     console.error('Error fetching affiliate transactions:', error);

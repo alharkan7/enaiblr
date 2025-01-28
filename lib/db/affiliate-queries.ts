@@ -113,7 +113,7 @@ export type AffiliateTransaction = {
   status: string;
 }
 
-export async function getAffiliateTransactions(affiliateCode: string): Promise<AffiliateTransaction[]> {
+export async function getAffiliateTransactions(userId: string): Promise<AffiliateTransaction[]> {
   try {
     const results = await db
       .select({
@@ -126,7 +126,7 @@ export async function getAffiliateTransactions(affiliateCode: string): Promise<A
       .innerJoin(user, eq(transactions.userId, user.id))
       .where(
         and(
-          eq(transactions.affiliate_code, affiliateCode),
+          eq(transactions.affiliator, userId),
           eq(transactions.status, 'success')
         )
       )
@@ -137,7 +137,7 @@ export async function getAffiliateTransactions(affiliateCode: string): Promise<A
       amount: Number(result.amount) || 0, // Convert numeric to number, default to 0 if null
     }));
   } catch (error) {
-    console.error('Failed to get affiliate transactions:', error);
-    throw new Error('Failed to get affiliate transactions');
+    console.error('Error getting affiliate transactions:', error);
+    throw error;
   }
 }

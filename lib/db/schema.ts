@@ -181,6 +181,8 @@ export const transactions = pgTable('Transactions', {
   commission: numeric('commission', { precision: 10, scale: 2 }).default(sql`ROUND(amount * 0.25, 2)`),
   status: varchar('status', { length: 20 }).notNull(),
   affiliate_code: varchar('affiliate_code', { length: 12 }),
+  affiliator: uuid('affiliator')
+  .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
 });
 
 export type Transaction = InferSelectModel<typeof transactions>;

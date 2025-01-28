@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server'
 import { PRO_FEATURES } from '@/lib/constants'
 import { createPaymentToken } from '@/lib/db/queries'
+import { getAffiliateByCode } from '@/lib/db/affiliate-queries'
 import { db } from '@/lib/db'
 import { transactions } from '@/lib/db/schema'
 import { sql } from 'drizzle-orm'
@@ -30,6 +31,15 @@ export async function POST(request: Request) {
     // Generate payment verification token
     const [paymentToken] = await createPaymentToken(userId, packageName)
     
+    // Get affiliator ID if referral code is provided
+    let affiliatorId = null
+    if (body.referralCode) {
+      const affiliate = await getAffiliateByCode(body.referralCode)
+      if (affiliate) {
+        affiliatorId = affiliate.userId
+      }
+    }
+
     // Record transaction
     await db.insert(transactions).values({
       userId,
@@ -38,6 +48,7 @@ export async function POST(request: Request) {
       commission: sql`CEIL((${amount} * 0.25) / 1000) * 1000::numeric`,
       status: 'pending',
       affiliate_code: body.referralCode || null,
+      affiliator: affiliatorId,
       createdAt: new Date(),
     })
 
