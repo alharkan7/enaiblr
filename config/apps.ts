@@ -1,5 +1,4 @@
-import { FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap } from 'lucide-react'
-import { LucideIcon } from 'lucide-react'
+import { FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
 
 export interface AppConfig {
   name: string

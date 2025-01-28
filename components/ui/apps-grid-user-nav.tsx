@@ -37,7 +37,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
               alt="Enaiblr Logo"
               width={24}
               height={24}
-              className="rounded-full"
+              className="rounded-lg"
             />
             <span>Get Enaiblr Pro</span>
             <ArrowRight className="ml-auto size-4" />

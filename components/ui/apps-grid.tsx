@@ -9,7 +9,7 @@ import type { User } from 'next-auth';
 import { apps, type AppConfig } from '@/config/apps';
 import { useRouter } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
-import { LayoutGrid } from 'lucide-react';
+import { House } from 'lucide-react';
 
 interface AppsGridProps {
   trigger: React.ReactNode;
@@ -72,7 +72,7 @@ export function AppsGrid({ trigger, user, useHardReload = false, refCode }: Apps
         >
           <div className="apps-grid-content grid grid-cols-3 max-h-[310px] overflow-y-auto overflow-x-hidden [&::-webkit-scrollbar]:w-1.5 [&::-webkit-scrollbar-thumb]:bg-muted-foreground/20 [&::-webkit-scrollbar-thumb]:rounded-full">
             {[{
-              icon: LayoutGrid,
+              icon: House,
               name: 'Home',
               slug: 'apps',
               type: 'free' as const,

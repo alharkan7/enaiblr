@@ -1,15 +1,19 @@
 import { compare } from 'bcrypt-ts';
 import NextAuth from 'next-auth';
 import type { NextAuthConfig } from 'next-auth';
+import type { User as NextAuthUser } from '@auth/core/types';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
 import { getUser, createGoogleUser, updateUserAvatar } from '@/lib/db/queries';
 
 import type { JWT } from 'next-auth/jwt';
-import type { Session, User } from 'next-auth';
+import type { Session } from 'next-auth';
 
-const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
+// Extend NextAuth's User type with our database fields
+interface User extends NextAuthUser {
+  avatar?: string | null;
+}
 
 interface ExtendedToken extends JWT {
   id: string;
@@ -95,13 +99,14 @@ export const config = {
     },
     async jwt({ token, user }): Promise<ExtendedToken> {
       if (user) {
+        const dbUser = user as User;
         // Ensure token has required properties
         return {
           ...token,
-          id: user.id || token.id,
-          email: user.email || token.email || '',
-          name: user.name || token.name,
-          picture: user.image || token.picture
+          id: dbUser.id || token.id,
+          email: dbUser.email || token.email || '',
+          name: dbUser.name || token.name,
+          picture: dbUser.image || dbUser.avatar || token.picture
         } as ExtendedToken;
       }
       // Ensure existing token has id property
