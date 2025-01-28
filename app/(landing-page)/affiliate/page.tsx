@@ -8,6 +8,7 @@ import Loading from '@/components/ui/loading';
 import FAQ from './components/FAQ';
 import Highlights from './components/Highlights';
 import Benefits from './components/Benefits';
+import Product from './components/Product';
 
 export default function Home() {
   return (
@@ -18,6 +19,7 @@ export default function Home() {
           <Suspense fallback={<Loading />}>
             <Hero />
             <Benefits />
+            <Product />
             <Highlights />
             <Features />
             <CTA />
