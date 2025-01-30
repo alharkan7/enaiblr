@@ -115,7 +115,7 @@ const Footer = () => {
             </div>
           </div>
         </div>
-        <div className="border-t border-border mt-12 pt-4 text-center text-muted-foreground">
+        <div className="mt-12 pt-4 text-center text-muted-foreground">
           <p>&copy; {currentYear} <Link href="#Hero" className="text-blue-600 hover:text-blue-700">Enaiblr</Link>. All rights reserved.</p>
         </div>
       </div>

@@ -140,6 +140,9 @@ importers:
       '@types/lodash':
         specifier: ^4.17.13
         version: 4.17.13
+      '@types/react-modal-video':
+        specifier: ^1.2.3
+        version: 1.2.3
       '@types/uuid':
         specifier: ^10.0.0
         version: 10.0.0
@@ -305,6 +308,9 @@ importers:
       react-markdown:
         specifier: ^9.0.1
         version: 9.0.1(@types/react@18.3.12)(react@18.3.1)
+      react-modal-video:
+        specifier: ^2.0.2
+        version: 2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
       react-resizable-panels:
         specifier: ^2.1.7
         version: 2.1.7(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -2561,6 +2567,9 @@ packages:
   '@types/react-dom@18.3.1':
     resolution: {integrity: sha512-qW1Mfv8taImTthu4KoXgDfLuk4bydU6Q/TkADnDWWHwi4NX4BR+LWfTp2sVmTqRrsHvyDDTelgelxJ+SsejKKQ==}
 
+  '@types/react-modal-video@1.2.3':
+    resolution: {integrity: sha512-HzaySdWD7sECBHUtLMGx0ddj0a84Xoy6DKxUpLMCXrIhOehcoQLKvFFbfaBUtzoP3rmUaCsYkldFnVCkSZW8tw==}
+
   '@types/react-transition-group@4.4.12':
     resolution: {integrity: sha512-8TV6R3h2j7a91c+1DXdJi3Syo69zzIZbz7Lg5tORM5LEJG7X/E6a1V3drRyBRZq7/utz7A+c4OgYLiLcYGHG6w==}
     peerDependencies:
@@ -3024,6 +3033,9 @@ packages:
   cookie@0.7.1:
     resolution: {integrity: sha512-6DnInpx7SJ2AK3+CTUE/ZM0vWTUboZCegxhC2xiIydHR9jNuTAASBrfEpHhiGOZw/nX51bHt6YQl8jsGo4y/0w==}
     engines: {node: '>= 0.6'}
+
+  core-js@3.40.0:
+    resolution: {integrity: sha512-7vsMc/Lty6AGnn7uFpYT56QesI5D2Y/UkgKounk87OP9Z2H9Z8kj6jzcSGAxFmUtDOS0ntK6lbQz+Nsa0Jj6mQ==}
 
   core-util-is@1.0.3:
     resolution: {integrity: sha512-ZQBvi1DcpJ4GDqanjucZ2Hj3wEO5pZDS89BWbkcrvdxksJorwUDDZamX9ldFkp9aw2lmBDLgkObEA4DWNJ9FYQ==}
@@ -4921,6 +4933,12 @@ packages:
     peerDependencies:
       '@types/react': '>=18'
       react: '>=18'
+
+  react-modal-video@2.0.2:
+    resolution: {integrity: sha512-Cfo3rEsxU5BL+Et/nRK7l2ajW/TLZOKTMPgpD8FDlhIxRR3yqo3Xdo1ufNxONApN0XL6iXqmMkqyEKmGOmcEiw==}
+    peerDependencies:
+      react: ^17.0.0 || ^18.2.0
+      react-dom: ^17.0.0 || ^18.2.0
 
   react-promise-suspense@0.3.4:
     resolution: {integrity: sha512-I42jl7L3Ze6kZaq+7zXWSunBa3b1on5yfvUW6Eo/3fFOj6dZ5Bqmcd264nJbTK/gn1HjjILAjSwnZbV4RpSaNQ==}
@@ -7983,6 +8001,10 @@ snapshots:
     dependencies:
       '@types/react': 18.3.12
 
+  '@types/react-modal-video@1.2.3':
+    dependencies:
+      '@types/react': 18.3.12
+
   '@types/react-transition-group@4.4.12(@types/react@18.3.12)':
     dependencies:
       '@types/react': 18.3.12
@@ -8442,6 +8464,8 @@ snapshots:
       proto-list: 1.2.4
 
   cookie@0.7.1: {}
+
+  core-js@3.40.0: {}
 
   core-util-is@1.0.3: {}
 
@@ -10804,6 +10828,13 @@ snapshots:
       vfile: 6.0.3
     transitivePeerDependencies:
       - supports-color
+
+  react-modal-video@2.0.2(react-dom@18.3.1(react@18.3.1))(react@18.3.1):
+    dependencies:
+      core-js: 3.40.0
+      react: 18.3.1
+      react-dom: 18.3.1(react@18.3.1)
+      react-transition-group: 4.4.5(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
 
   react-promise-suspense@0.3.4:
     dependencies:

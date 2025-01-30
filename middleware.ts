@@ -14,6 +14,7 @@ function isPublicRoute(pathname: string): boolean {
     '/api/subscription', // Subscription status endpoint
     '/forgot-password', // Forgot password page
     '/reset-password', // Reset password page
+    '/'
   ];
   
   return publicRoutes.some(route => pathname.startsWith(route));
@@ -90,9 +91,9 @@ export default auth(async function middleware(request: NextRequest) {
     }
   }
 
-  // Redirect root path to /apps if not logged in
+  // Handle root path access
   if (pathname === '/') {
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       const appsUrl = new URL('/apps', request.url)
       // Preserve ref code if present
       const refCode = request.nextUrl.searchParams.get('ref')
@@ -101,7 +102,7 @@ export default auth(async function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(appsUrl)
     }
-    // If logged in, allow access to root
+    // If not logged in, allow access to root
     return NextResponse.next()
   }
 
@@ -118,15 +119,6 @@ export default auth(async function middleware(request: NextRequest) {
     }
     return NextResponse.next()
   }
-
-  // Redirect root path to /apps if not logged in
-  // if (pathname === '/') {
-  //   if (!isLoggedIn) {
-  //     return NextResponse.redirect(new URL('/apps', request.url));
-  //   }
-  //   // If logged in, allow access to root
-  //   return NextResponse.next();
-  // }
 
   // Handle preview URLs
   if (request.nextUrl.searchParams.get('preview')) {
