@@ -14,7 +14,8 @@ function isPublicRoute(pathname: string): boolean {
     '/api/subscription', // Subscription status endpoint
     '/forgot-password', // Forgot password page
     '/reset-password', // Reset password page
-    '/'
+    '/',
+    '/blog',
   ];
   
   return publicRoutes.some(route => pathname.startsWith(route));
