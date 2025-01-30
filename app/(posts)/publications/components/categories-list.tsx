@@ -8,7 +8,7 @@ export default async function CategoriesList() {
   return (
     <div className="flex flex-wrap gap-2 justify-center">
       {categories.map((category) => (
-        <Link key={category} href={`/blog/category/${category}`}>
+        <Link key={category} href={`/publications/category/${category}`}>
           <Badge
             variant="secondary"
             className="hover:bg-primary hover:text-primary-foreground transition-colors cursor-pointer"

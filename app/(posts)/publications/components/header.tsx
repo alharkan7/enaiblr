@@ -5,10 +5,10 @@ import { Input } from "@/components/ui/input"
 import { ThemeToggle } from "@/components/theme-toggle"
 
 const navigation = [
-  { name: "Latest", href: "/blog" },
-  { name: "Tutorials", href: "/blog/category/tutorials" },
-  { name: "News", href: "/blog/category/news" },
-  { name: "Technology", href: "/blog/category/technology" },
+  { name: "Latest", href: "/publications" },
+  { name: "Blog", href: "/publications/category/blog" },
+  { name: "Research", href: "/publications/category/research" },
+  { name: "Data", href: "/publications/category/data" },
 ]
 
 export default function BlogHeader() {
@@ -18,8 +18,8 @@ export default function BlogHeader() {
         <div className="flex h-16 items-center justify-between">
           {/* Logo and Navigation */}
           <div className="flex items-center gap-8">
-            <Link href="/blog" className="text-xl font-bold text-primary">
-              Enaiblr Blog
+            <Link href="/publications" className="text-xl font-bold text-primary">
+              Publications
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               {navigation.map((item) => (

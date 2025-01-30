@@ -10,13 +10,9 @@ const footerLinks = {
     { name: "Contact", href: "/contact" },
   ],
   Categories: [
-    { name: "Tutorials", href: "/blog/category/tutorials" },
-    { name: "News", href: "/blog/category/news" },
-    { name: "Technology", href: "/blog/category/technology" },
-  ],
-  Legal: [
-    { name: "Privacy Policy", href: "/privacy" },
-    { name: "Terms of Service", href: "/terms" },
+    { name: "Blog", href: "/publications/category/blog" },
+    { name: "Research", href: "/publications/category/reserch" },
+    { name: "Data", href: "/publications/category/data" },
   ],
 }
 
