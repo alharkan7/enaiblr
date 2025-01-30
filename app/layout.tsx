@@ -1,5 +1,5 @@
-import "./css/style.css";
-import "../globals.css";
+import "./(landing-page)/css/style.css";
+import "./globals.css";
 import type { Metadata } from 'next';
 
 import { Inter } from "next/font/google";
@@ -12,7 +12,7 @@ import { TooltipProvider } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 
 import { SessionProvider } from 'next-auth/react';
-import { auth } from '../(auth)/auth';
+import { auth } from './(auth)/auth';
 import { headers } from 'next/headers';
 import { SubscriptionProvider } from '@/contexts/subscription-context';
 

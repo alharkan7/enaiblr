@@ -1,11 +1,11 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getBlogPost } from "@/lib/blog"
+import { getPublication } from "@/lib/publications"
 import { CalendarIcon, UserIcon, ClockIcon, FolderIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-export default async function BlogPost({ params }: { params: { slug: string } }) {
-  const post = await getBlogPost(params.slug)
+export default async function Publication({ params }: { params: { slug: string } }) {
+  const post = await getPublication(params.slug)
 
   if (!post) {
     notFound()
@@ -33,7 +33,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
           <ClockIcon className="w-4 h-4" />
           <span>{post.readingTime}</span>
         </div>
-        <Link href={`/blog/category/${post.category}`}>
+        <Link href={`/publications/category/${post.category}`}>
           <Badge variant="secondary" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground">
             <FolderIcon className="w-3 h-3" />
             {post.category}
@@ -46,7 +46,7 @@ export default async function BlogPost({ params }: { params: { slug: string } })
       />
       <div className="not-prose mt-16">
         <Link 
-          href="/blog"
+          href="/publications"
           className="text-primary hover:underline"
         >
           ← Back to all posts

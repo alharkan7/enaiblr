@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { getCategories } from "@/lib/blog"
+import { getCategories } from "@/lib/publications"
 import { Badge } from "@/components/ui/badge"
 
 export default async function CategoriesList() {

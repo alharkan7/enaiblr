@@ -5,7 +5,7 @@ import { remark } from 'remark'
 import html from 'remark-html'
 import remarkGfm from 'remark-gfm'
 
-const POSTS_PATH = path.join(process.cwd(), "content/research")
+const POSTS_PATH = path.join(process.cwd(), "content/publications")
 
 // Average reading speed (words per minute)
 const WORDS_PER_MINUTE = 200
@@ -16,7 +16,7 @@ function calculateReadingTime(content: string): string {
   return `${minutes} min read`
 }
 
-export interface Research {
+export interface Publication {
   slug: string
   title: string
   excerpt: string
@@ -27,7 +27,7 @@ export interface Research {
   category: string
 }
 
-export async function getResearches(): Promise<Research[]> {
+export async function getPublications(): Promise<Publication[]> {
   const files = fs.readdirSync(POSTS_PATH)
   
   const posts = await Promise.all(
@@ -59,10 +59,10 @@ export async function getResearches(): Promise<Research[]> {
   return posts.sort((a, b) => (new Date(b.date).getTime() - new Date(a.date).getTime()))
 }
 
-export async function getResearch(slug: string): Promise<Research | null> {
+export async function getPublication(slug: string): Promise<Publication | null> {
   try {
     const filePath = path.join(POSTS_PATH, `${slug}.mdx`)
-    console.log("Attempting to read research post:", { filePath, exists: fs.existsSync(filePath) })
+    console.log("Attempting to read publications:", { filePath, exists: fs.existsSync(filePath) })
     const source = fs.readFileSync(filePath, "utf8")
     const { data, content } = matter(source)
 
@@ -82,7 +82,18 @@ export async function getResearch(slug: string): Promise<Research | null> {
       category: data.category || 'Uncategorized'
     }
   } catch (error) {
-    console.error("Error reading research:", { slug, error })
+    console.error("Error reading publication post:", { slug, error })
     return null
   }
+}
+
+export async function getCategories(): Promise<string[]> {
+  const posts = await getPublications()
+  const categories = new Set(posts.map(post => post.category))
+  return Array.from(categories).sort()
+}
+
+export async function getPostsByCategory(category: string): Promise<Publication[]> {
+  const posts = await getPublications()
+  return posts.filter(post => post.category === category)
 }

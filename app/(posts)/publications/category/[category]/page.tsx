@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getPostsByCategory, getCategories } from "@/lib/blog"
+import { getPostsByCategory, getCategories } from "@/lib/publications"
 import { Card } from "@/components/ui/card"
 import { CalendarIcon, UserIcon, ClockIcon } from "lucide-react"
 
@@ -35,7 +35,7 @@ export default async function CategoryPage({
 
       <div className="grid gap-8 md:grid-cols-2">
         {posts.map((post) => (
-          <Link key={post.slug} href={`/blog/${post.slug}`}>
+          <Link key={post.slug} href={`/publications/${post.slug}`}>
             <Card className="h-full group hover:shadow-md transition-all duration-300">
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
@@ -70,7 +70,7 @@ export default async function CategoryPage({
 
       <div className="text-center mt-8">
         <Link 
-          href="/blog"
+          href="/publications"
           className="text-primary hover:underline"
         >
           ← Back to all posts

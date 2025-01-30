@@ -1,12 +1,12 @@
 import Link from "next/link"
-import { getResearches } from "@/lib/research"
+import { getPublications } from "@/lib/publications"
 import { CalendarIcon, ClockIcon, UserIcon } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import CategoriesList from "../blog/components/categories-list"
+import CategoriesList from "./components/categories-list"
 
-interface Research {
+interface Publication {
   slug: string
   title: string
   excerpt: string
@@ -15,8 +15,8 @@ interface Research {
   readingTime?: string
 }
 
-export default async function ResearchPage() {
-  const posts = await getResearches()
+export default async function PublicationsPage() {
+  const posts = await getPublications()
   const featuredPost = posts[0]
   const regularPosts = posts.slice(1)
 
@@ -25,17 +25,17 @@ export default async function ResearchPage() {
       {/* Featured Post */}
       <header className="text-center mb-16">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Research
+          Publications
         </h1>
         <p className="text-xl text-muted-foreground mt-4 max-w-2xl mx-auto">
-          Explore our latest research, insights, and stories about AI, technology, and innovation.
+          Explore our latest thoughts, insights, and stories about AI, technology, and innovation.
         </p>
         <div className="mt-8">
           <CategoriesList />
         </div>
       </header>
       <section>
-        <Link href={`/research/${featuredPost.slug}`}>
+        <Link href={`/publications/${featuredPost.slug}`}>
           <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300">
             <div className="p-6 md:p-8">
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
@@ -75,7 +75,7 @@ export default async function ResearchPage() {
       {/* Regular Posts Grid */}
       <section className="grid gap-8 md:grid-cols-2">
         {regularPosts.map((post) => (
-          <Link key={post.slug} href={`/research/${post.slug}`}>
+          <Link key={post.slug} href={`/publications/${post.slug}`}>
             <Card className="h-full group hover:shadow-md transition-all duration-300">
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
