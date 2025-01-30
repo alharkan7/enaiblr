@@ -10,9 +10,9 @@ const footerLinks = {
     { name: "Contact", href: "/contact" },
   ],
   Categories: [
-    { name: "Tutorials", href: "/blog/category/tutorials" },
-    { name: "News", href: "/blog/category/news" },
-    { name: "Technology", href: "/blog/category/technology" },
+    { name: "Tutorials", href: "/research/category/tutorials" },
+    { name: "News", href: "/research/category/news" },
+    { name: "Technology", href: "/research/category/technology" },
   ],
   Legal: [
     { name: "Privacy Policy", href: "/privacy" },
@@ -43,7 +43,7 @@ const socialLinks = [
   },
 ]
 
-export default function BlogFooter() {
+export default function PostFooter() {
   return (
     <footer className="border-t bg-muted/30">
       <div className="container mx-auto px-4 py-12">
