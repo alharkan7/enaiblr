@@ -4,7 +4,13 @@ import { getPublication } from "@/lib/publications"
 import { CalendarIcon, UserIcon, ClockIcon, FolderIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-export default async function Publication({ params }: { params: { slug: string } }) {
+export default async function Publication({
+  params,
+  searchParams,
+}: {
+  params: { slug: string };
+  searchParams?: { [key: string]: string | string[] | undefined };
+}) {
   const post = await getPublication(params.slug)
 
   if (!post) {
