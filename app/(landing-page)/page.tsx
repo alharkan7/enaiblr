@@ -11,10 +11,14 @@ import Testimonials from "./components/testimonials";
 import Cta from "./components/cta";
 import Header from "./components/ui/header";
 import Footer from "./components/ui/footer";
+import { auth } from "../(auth)/auth";
+import { cn } from "@/lib/utils";
 
-export default function Home() {
+export default async function Home() {
+  const session = await auth();
+  
   return (
-    <>
+    <div className={cn("font-['var(--font-nacelle)',var(--font-inter)]")}>
       <Header />
       <PageIllustration />
       <Hero />
@@ -23,6 +27,6 @@ export default function Home() {
       <Testimonials />
       <Cta />
       <Footer />
-    </>
+    </div>
   );
 }

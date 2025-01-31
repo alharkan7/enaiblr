@@ -8,11 +8,11 @@ export default function Footer() {
       <div className="relative mx-auto max-w-6xl px-4 sm:px-6">
         {/* Footer illustration */}
         <div
-          className="pointer-events-none absolute bottom-0 left-1/2 -z-10 -translate-x-1/2"
+          className="pointer-events-none absolute bottom-0 left-1/2 -z-10 -translate-x-1/2 w-[90%] md:w-auto"
           aria-hidden="true"
         >
           <Image
-            className="max-w-none"
+            className="max-w-none w-full md:w-auto h-auto object-contain"
             src={FooterIllustration}
             width={1076}
             height={378}
@@ -205,14 +205,14 @@ export default function Footer() {
             </div>
             <div className="text-sm">
               <p className="mb-3 text-indigo-200/65">
-                © Cruip.com
-                <span className="text-gray-700"> · </span>
+                &copy; enaiblr.org
+                {/* <span className="text-gray-700"> · </span>
                 <a
                   className="text-indigo-200/65 transition hover:text-indigo-500"
                   href="#0"
                 >
                   Terms
-                </a>
+                </a> */}
               </p>
               <ul className="inline-flex gap-1">
                 <li>
