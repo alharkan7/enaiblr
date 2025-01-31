@@ -38,7 +38,7 @@ const testimonials = [
     name: "Andrew K.",
     company: "Samsung",
     content:
-      "I've tried several content generation tools, but this AI-driven tool is by far the best. It understands my brand's voice and consistently produces content that resonates with my audience!",
+      "I&apos;ve tried several content generation tools, but this AI-driven tool is by far the best. It understands my brand&apos;s voice and consistently produces content that resonates with my audience!",
     categories: [1, 2, 4],
   },
   {
@@ -47,7 +47,7 @@ const testimonials = [
     name: "Lucy D.",
     company: "Rio",
     content:
-      "Content creation used to be a bottleneck in our workflow, but not anymore. This AI tool is intuitive and produces top-notch content every time. It's like having an extra team member who never sleeps! Definitely recommend.",
+      "Content creation used to be a bottleneck in our workflow, but not anymore. This AI tool is intuitive and produces top-notch content every time. It&apos;s like having an extra team member who never sleeps! Definitely recommend.",
     categories: [1, 2, 5],
   },
   {
@@ -65,7 +65,7 @@ const testimonials = [
     name: "Miriam E.",
     company: "Cadbury",
     content:
-      "The AI-driven content tool has been a lifesaver for my marketing agency. We can now produce high-quality content for multiple clients quickly and efficiently. It's an invaluable asset to our team.",
+      "The AI-driven content tool has been a lifesaver for my marketing agency. We can now produce high-quality content for multiple clients quickly and efficiently. It&apos;s an invaluable asset to our team.",
     categories: [1, 3, 5],
   },
   {
@@ -74,7 +74,7 @@ const testimonials = [
     name: "Eloise V.",
     company: "Maffell",
     content:
-      "I'm amazed at how well this AI-driven content tool performs. It's incredibly versatile and can generate content for blogs, social media, and even product descriptions effortlessly. It's fantastic!",
+      "I&apos;m amazed at how well this AI-driven content tool performs. It&apos;s incredibly versatile and can generate content for blogs, social media, and even product descriptions effortlessly. It&apos;s fantastic!",
     categories: [1, 3],
   },
   {
@@ -92,7 +92,7 @@ const testimonials = [
     name: "Danielle K.",
     company: "Forbes Inc.",
     content:
-      "I've never been a fan of complicated website AI tools, which is why Open PRO is perfect for me. Its minimalist design and simple functionality make staying organized feel like second nature.",
+      "I&apos;ve never been a fan of complicated website AI tools, which is why Open PRO is perfect for me. Its minimalist design and simple functionality make staying organized feel like second nature.",
     categories: [1, 4],
   },
   {
@@ -101,7 +101,7 @@ const testimonials = [
     name: "Mary P.",
     company: "Ray Ban",
     content:
-      "I've never been one for coding, so finding an AI tool that doesn't require any technical skills was a dream come true. This tool exceeded my expectations, and I'm proud to show off my new stuff to friends.",
+      "I&apos;ve never been one for coding, so finding an AI tool that doesn&apos;t require any technical skills was a dream come true. This tool exceeded my expectations, and I&apos;m proud to show off my new stuff to friends.",
     categories: [1, 2],
   },
 ];
