@@ -4,6 +4,11 @@ import { getPostsByCategory, getCategories } from "@/lib/publications"
 import { Card } from "@/components/ui/card"
 import { CalendarIcon, UserIcon, ClockIcon } from "lucide-react"
 
+interface PageProps {
+  params: Promise<{ category: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
 export async function generateStaticParams() {
   const categories = await getCategories()
   return categories.map((category) => ({
@@ -11,12 +16,9 @@ export async function generateStaticParams() {
   }))
 }
 
-export default async function CategoryPage({
-  params,
-}: {
-  params: { category: string }
-}) {
-  const posts = await getPostsByCategory(params.category)
+export default async function CategoryPage({ params }: PageProps) {
+  const resolvedParams = await params;
+  const posts = await getPostsByCategory(resolvedParams.category)
 
   if (!posts.length) {
     notFound()
@@ -26,7 +28,7 @@ export default async function CategoryPage({
     <div className="space-y-8">
       <header className="text-center">
         <h2 className="text-3xl font-bold">
-          Category: {params.category}
+          Category: {resolvedParams.category}
         </h2>
         <p className="text-muted-foreground mt-2">
           {posts.length} post{posts.length === 1 ? "" : "s"}
