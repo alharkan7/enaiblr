@@ -48,7 +48,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
                   className="p-2 h-fit hidden md:flex"
                   onClick={() => {
                     setOpenMobile(false);
-                    router.push('/');
+                    router.push('/chat');
                     router.refresh();
                   }}
                 >
@@ -63,7 +63,7 @@ export function AppSidebar({ user }: { user: User | undefined }) {
               className="p-2 h-fit md:hidden"
               onClick={() => {
                 setOpenMobile(false);
-                router.push('/');
+                router.push('/chat');
                 router.refresh();
               }}
             >

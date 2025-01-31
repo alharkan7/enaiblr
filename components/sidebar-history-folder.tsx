@@ -249,7 +249,7 @@ const ChatItemInFolder = ({ chat, isActive, onDelete, setOpenMobile, mutate: cha
 
                 // Redirect if this was the active chat
                 if (isActive) {
-                    router.push('/');
+                    router.push('/chat');
                 }
 
                 return 'Chat deleted successfully';
