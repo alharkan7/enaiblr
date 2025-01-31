@@ -4,14 +4,14 @@ import { getPublication } from "@/lib/publications"
 import { CalendarIcon, UserIcon, ClockIcon, FolderIcon } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 
-export default async function Publication({
-  params,
-  searchParams,
-}: {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
-}) {
-  const post = await getPublication(params.slug)
+interface PageProps {
+  params: Promise<{ slug: string }>;
+  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+}
+
+export default async function Publication({ params, searchParams }: PageProps) {
+  const resolvedParams = await params;
+  const post = await getPublication(resolvedParams.slug)
 
   if (!post) {
     notFound()
