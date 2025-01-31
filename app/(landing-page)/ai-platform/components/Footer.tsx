@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:px-16">
           <div>
-            <Link href="/about" className="text-2xl font-bold mb-4 block !text-black">
+            <Link href="/ai-platform" className="text-2xl font-bold mb-4 block !text-black">
               en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
             </Link>
             <p className="text-muted-foreground">
@@ -109,7 +109,7 @@ const Footer = () => {
               <Link href="#Hero" className="text-muted-foreground hover:text-foreground">
                 <Globe className="size-5" />
               </Link>
-              {/* <Link href="/about" className="text-muted-foreground hover:text-foreground">
+              {/* <Link href="/ai-platform" className="text-muted-foreground hover:text-foreground">
                 <Linkedin className="size-5" />
               </Link> */}
             </div>

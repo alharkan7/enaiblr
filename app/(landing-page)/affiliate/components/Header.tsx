@@ -41,7 +41,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 sm:px-6 pr-2 lg:px-16">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/about" className="text-2xl font-bold text-black">
+            <Link href="/ai-platform" className="text-2xl font-bold text-black">
               en<span className="text-yellow-500">ai</span>blr <span className="font-light">Affiliate</span>
             </Link>
           </div>

@@ -6,7 +6,7 @@ import { apps } from './config/apps';
 // Helper function to check if a route is public
 function isPublicRoute(pathname: string): boolean {
   const publicRoutes = [
-    '/about',     // About page
+    '/ai-platform',     // About page
     '/affiliate',
     '/apps',      // Apps page
     '/login',     // Auth pages

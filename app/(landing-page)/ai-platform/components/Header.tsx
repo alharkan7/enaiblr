@@ -50,7 +50,7 @@ const Header = () => {
       <nav className="container mx-auto px-4 sm:px-6 pr-2 lg:px-16">
         <div className="flex items-center justify-between h-16">
           <div className="flex items-center">
-            <Link href="/about" className="text-2xl font-bold text-black">
+            <Link href="/ai-platform" className="text-2xl font-bold text-black">
               en<span className="text-blue-600 font-ibm-plex-mono-regular">ai</span>blr
             </Link>
           </div>

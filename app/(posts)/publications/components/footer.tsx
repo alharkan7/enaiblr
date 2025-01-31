@@ -6,7 +6,7 @@ import { Github, Twitter, Linkedin, Mail } from "lucide-react"
 const footerLinks = {
   Resources: [
     { name: "Documentation", href: "/docs" },
-    { name: "About", href: "/about" },
+    { name: "About", href: "/ai-platform" },
     { name: "Contact", href: "/contact" },
   ],
   Categories: [

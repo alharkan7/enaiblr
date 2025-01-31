@@ -10,7 +10,7 @@ const Footer = () => {
       <div className="container px-4 mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 lg:px-16">
           <div>
-            <Link href="/about" className="text-2xl font-bold mb-4 block !text-black">
+            <Link href="/ai-platform" className="text-2xl font-bold mb-4 block !text-black">
               en<span className="text-yellow-500">ai</span>blr
             </Link>
             <p className="text-muted-foreground">
@@ -32,22 +32,22 @@ const Footer = () => {
             <h3 className="font-semibold mb-4">Tentang Produk</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/about/#features" className="text-muted-foreground hover:text-foreground">
+                <Link href="/ai-platform/#features" className="text-muted-foreground hover:text-foreground">
                   Fitur
                 </Link>
               </li>
               <li>
-                <Link href="/about/#pricing" className="text-muted-foreground hover:text-foreground">
+                <Link href="/ai-platform/#pricing" className="text-muted-foreground hover:text-foreground">
                   Harga
                 </Link>
               </li>
               <li>
-                <Link href="/about/#testimonials" className="text-muted-foreground hover:text-foreground">
+                <Link href="/ai-platform/#testimonials" className="text-muted-foreground hover:text-foreground">
                   Testimoni
                 </Link>
               </li>
               <li>
-                <Link href="/about/#faq" className="text-muted-foreground hover:text-foreground">
+                <Link href="/ai-platform/#faq" className="text-muted-foreground hover:text-foreground">
                   FAQ
                 </Link>
               </li>
@@ -89,7 +89,7 @@ const Footer = () => {
               <Link href="#Hero" className="text-muted-foreground hover:text-foreground">
                 <Globe className="size-5" />
               </Link>
-              {/* <Link href="/about" className="text-muted-foreground hover:text-foreground">
+              {/* <Link href="/ai-platform" className="text-muted-foreground hover:text-foreground">
                 <Linkedin className="size-5" />
               </Link> */}
             </div>
