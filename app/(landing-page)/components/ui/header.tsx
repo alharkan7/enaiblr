@@ -14,7 +14,7 @@ export default function Header() {
           {/* Site branding */}
           <div className="flex flex-1 items-center gap-2">
             <Logo />
-            <span className="animate-[gradient_6s_linear_infinite] bg-[linear-gradient(to_right,theme(colors.gray.200),theme(colors.indigo.200),theme(colors.gray.50),theme(colors.indigo.300),theme(colors.gray.200))] bg-[length:200%_auto] bg-clip-text text-xl font-semibold text-transparent">Enaiblr</span>
+            <span className="inline-flex bg-gradient-to-r from-indigo-500 to-indigo-200 bg-clip-text text-xl font-semibold text-transparent">Enaiblr</span>
           </div>
 
           {/* Desktop sign in links */}
