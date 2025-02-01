@@ -1,22 +1,24 @@
 import Link from "next/link"
-import { getPublications } from "@/lib/publications"
-import { CalendarIcon, ClockIcon, UserIcon } from "lucide-react"
+import { CalendarIcon, ClockIcon, UserIcon, FolderIcon } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import CategoriesList from "./components/categories-list"
 
 interface Publication {
-  slug: string
+  id: string
   title: string
   excerpt: string
-  date: string
+  createdAt: string
   author: string
-  readingTime?: string
+  category?: string
 }
 
 export default async function PublicationsPage() {
-  const posts = await getPublications()
+  const response = await fetch(`/api/publications`, {
+    next: { revalidate: 3600 } // Revalidate every hour
+  })
+  const posts = await response.json()
   const featuredPost = posts[0]
   const regularPosts = posts.slice(1)
 
@@ -35,14 +37,14 @@ export default async function PublicationsPage() {
         </div>
       </header>
       <section>
-        <Link href={`/publications/${featuredPost.slug}`}>
+        <Link href={`/publications/${featuredPost.id}`}>
           <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300">
             <div className="p-6 md:p-8">
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                 <div className="flex items-center gap-2">
                   <CalendarIcon className="w-4 h-4" />
                   <time>
-                    {new Date(featuredPost.date).toLocaleDateString("en-US", {
+                    {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
@@ -53,36 +55,39 @@ export default async function PublicationsPage() {
                   <UserIcon className="w-4 h-4" />
                   <span>{featuredPost.author}</span>
                 </div>
-                {featuredPost.readingTime && (
+                {featuredPost.category && (
                   <div className="flex items-center gap-2">
-                    <ClockIcon className="w-4 h-4" />
-                    <span>{featuredPost.readingTime}</span>
+                    <FolderIcon className="w-4 h-4" />
+                    <Link href={`/publications/category/${featuredPost.category}`}>
+                      <span className="hover:text-primary transition-colors">
+                        {featuredPost.category}
+                      </span>
+                    </Link>
                   </div>
                 )}
               </div>
-              <h2 className="text-3xl font-bold group-hover:text-primary transition-colors mb-4">
+              <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">
                 {featuredPost.title}
               </h2>
-              <p className="text-muted-foreground text-lg mb-6">{featuredPost.excerpt}</p>
-              <Button variant="outline" className="group-hover:bg-primary group-hover:text-white transition-colors">
-                Read More
-              </Button>
+              {featuredPost.excerpt && (
+                <p className="text-muted-foreground mt-2">{featuredPost.excerpt}</p>
+              )}
             </div>
           </Card>
         </Link>
       </section>
 
-      {/* Regular Posts Grid */}
+      {/* Regular Posts */}
       <section className="grid gap-8 md:grid-cols-2">
-        {regularPosts.map((post) => (
-          <Link key={post.slug} href={`/publications/${post.slug}`}>
+        {regularPosts.map((post:any) => (
+          <Link key={post.id} href={`/publications/${post.id}`}>
             <Card className="h-full group hover:shadow-md transition-all duration-300">
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="w-4 h-4" />
                     <time>
-                      {new Date(post.date).toLocaleDateString("en-US", {
+                      {new Date(post.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -94,10 +99,14 @@ export default async function PublicationsPage() {
                     <span>{post.author}</span>
                   </div>
                 </div>
-                <h2 className="text-xl font-semibold group-hover:text-primary transition-colors mb-3">
+                <h3 className="font-bold group-hover:text-primary transition-colors">
                   {post.title}
-                </h2>
-                <p className="text-muted-foreground line-clamp-3">{post.excerpt}</p>
+                </h3>
+                {post.excerpt && (
+                  <p className="text-muted-foreground mt-2 line-clamp-2">
+                    {post.excerpt}
+                  </p>
+                )}
               </div>
             </Card>
           </Link>

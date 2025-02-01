@@ -4,7 +4,14 @@ import { db } from './';
 import { publications, type Publication } from './schema';
 import { randomUUID } from 'crypto';
 
-export async function createPublication(data: {
+function generateSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-+|-+$/g, '');
+}
+
+type CreatePublicationInput = {
   title: string;
   excerpt?: string;
   author: string;
@@ -12,16 +19,22 @@ export async function createPublication(data: {
   content: string;
   userId: string;
   cover?: string;
-}) {
+  slug?: string;
+};
+
+export async function createPublication(data: CreatePublicationInput) {
   try {
     console.log('Creating publication with data:', data);
     const now = new Date();
+    const slug = data.slug || generateSlug(data.title);
+    
     const [publication] = await db
       .insert(publications)
       .values({
         id: randomUUID(),
         createdAt: now,
-        ...data
+        ...data,
+        slug // Override any provided slug or use generated one
       })
       .returning();
     console.log('Publication created:', publication);

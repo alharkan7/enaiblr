@@ -208,6 +208,7 @@ export const publications = pgTable('Publications', {
   content: text('content').notNull(),
   cover: varchar('cover', { length: 500 }),
   updatedAt: timestamp('updatedAt'),
+  slug: varchar('slug', { length: 255 }).unique(),
   userId: uuid('userId')
     .notNull()
     .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' })

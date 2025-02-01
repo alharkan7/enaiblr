@@ -1,17 +1,19 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { getPublication } from "@/lib/publications"
 import { CalendarIcon, UserIcon, ClockIcon, FolderIcon } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
 
 interface PageProps {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ id: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
-export default async function Publication({ params, searchParams }: PageProps) {
+export default async function Publication({ params }: PageProps) {
   const resolvedParams = await params;
-  const post = await getPublication(resolvedParams.slug)
+  const response = await fetch(
+    `${process.env.NEXT_PUBLIC_APP_URL}/api/publications/${resolvedParams.id}`,
+    { next: { revalidate: 3600 } }
+  )
+  const post = await response.json()
 
   if (!post) {
     notFound()
@@ -24,7 +26,7 @@ export default async function Publication({ params, searchParams }: PageProps) {
         <div className="flex items-center gap-2">
           <CalendarIcon className="w-4 h-4" />
           <time>
-            {new Date(post.date).toLocaleDateString("en-US", {
+            {new Date(post.createdAt).toLocaleDateString("en-US", {
               year: "numeric",
               month: "long",
               day: "numeric",
@@ -35,21 +37,18 @@ export default async function Publication({ params, searchParams }: PageProps) {
           <UserIcon className="w-4 h-4" />
           <span>{post.author}</span>
         </div>
-        <div className="flex items-center gap-2">
-          <ClockIcon className="w-4 h-4" />
-          <span>{post.readingTime}</span>
-        </div>
-        <Link href={`/publications/category/${post.category}`}>
-          <Badge variant="secondary" className="flex items-center gap-2 hover:bg-primary hover:text-primary-foreground">
-            <FolderIcon className="w-3 h-3" />
-            {post.category}
-          </Badge>
-        </Link>
+        {post.category && (
+          <div className="flex items-center gap-2">
+            <FolderIcon className="w-4 h-4" />
+            <Link href={`/publications/category/${post.category}`}>
+              <span className="hover:text-primary transition-colors">
+                {post.category}
+              </span>
+            </Link>
+          </div>
+        )}
       </div>
-      <div 
-        className="mt-8"
-        dangerouslySetInnerHTML={{ __html: post.content }}
-      />
+      <div dangerouslySetInnerHTML={{ __html: post.content }} />
       <div className="not-prose mt-16">
         <Link 
           href="/publications"

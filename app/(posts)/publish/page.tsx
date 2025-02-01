@@ -35,20 +35,20 @@ function PublishPage() {
   async function handleCoverUpload(e: React.ChangeEvent<HTMLInputElement>) {
     const file = e.target.files?.[0];
     if (!file) return;
-    
+
     try {
       setUploadingCover(true);
-      
+
       const formData = new FormData();
       formData.append('file', file);
-      
+
       const res = await fetch('/api/upload/cover', {
         method: 'POST',
         body: formData,
       });
-      
+
       if (!res.ok) throw new Error('Upload failed');
-      
+
       const { url } = await res.json();
       setCoverUrl(url);
     } catch (error) {
@@ -64,7 +64,7 @@ function PublishPage() {
       console.log('No session or user ID');
       return;
     }
-    
+
     setLoading(true);
     const formData = new FormData(e.currentTarget);
     const data = {
@@ -77,7 +77,7 @@ function PublishPage() {
       cover: coverUrl
     };
     console.log('Submitting data:', data);
-    
+
     try {
       const res = await fetch('/api/publish', {
         method: 'POST',
@@ -91,7 +91,7 @@ function PublishPage() {
       console.log('Response:', { ok: res.ok, status: res.status, result });
 
       if (!res.ok) throw new Error('Failed to publish');
-      
+
       router.push('/publications');
     } catch (error) {
       console.error('Failed to publish:', error);
@@ -148,6 +148,19 @@ function PublishPage() {
               </SelectContent>
             </Select>
           </div>
+
+          <div className="flex-1">
+            <label htmlFor="slug" className="block text-sm font-medium mb-2">
+              Slug
+            </label>
+            <Input
+              type="text"
+              id="slug"
+              name="slug"
+              className="w-full"
+            />
+          </div>
+
         </div>
 
         <div>
@@ -193,9 +206,9 @@ function PublishPage() {
             {coverUrl && (
               <div className="relative w-full aspect-video rounded-lg overflow-hidden border">
                 {/* eslint-disable-next-line @next/next/no-img-element */}
-                <img 
-                  src={coverUrl} 
-                  alt="Cover preview" 
+                <img
+                  src={coverUrl}
+                  alt="Cover preview"
                   className="object-cover w-full h-full"
                 />
               </div>
