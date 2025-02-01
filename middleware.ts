@@ -16,10 +16,21 @@ function isPublicRoute(pathname: string): boolean {
     '/reset-password', // Reset password page
     '/',
     '/publications', // Only the public publications list
+    '/api/publications', // Public publications API
+    '/icons', // Static icons
+    '/favicon.ico', // Favicon
   ];
 
-  // Check if the pathname exactly matches a public route
-  return publicRoutes.includes(pathname);
+  // Check if the path starts with any of these prefixes
+  const publicPrefixes = [
+    '/icons/',
+    '/images/',
+    '/_next/static/',
+    '/_next/image/',
+  ];
+
+  return publicRoutes.includes(pathname) ||
+    publicPrefixes.some(prefix => pathname.startsWith(prefix));
 }
 
 // Helper function to check if a route is auth-related
@@ -56,9 +67,9 @@ function getPageType(pathname: string): 'free' | 'pro' | null {
 // Helper function to check if a path is an app route
 function isAppRoute(pathname: string): boolean {
   if (pathname === '/apps') return true;
-  
+
   // Get slug either from direct path or /apps/ path
-  const slug = pathname.startsWith('/apps/') 
+  const slug = pathname.startsWith('/apps/')
     ? pathname.replace('/apps/', '').split('/')[0]
     : pathname.slice(1);
 
@@ -70,6 +81,11 @@ const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https
 const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com'];
 
 export default auth(async function middleware(request: NextRequest) {
+  // Skip auth middleware for publications API
+  if (request.nextUrl.pathname.startsWith('/api/publications')) {
+    return NextResponse.next();
+  }
+
   const session = await auth();
   const isLoggedIn = !!session?.user;
   const pathname = request.nextUrl.pathname;
@@ -85,7 +101,7 @@ export default auth(async function middleware(request: NextRequest) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-    
+
     // Check if user is admin
     const userEmail = session?.user?.email;
     if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
@@ -138,7 +154,7 @@ export default auth(async function middleware(request: NextRequest) {
         return NextResponse.redirect(appsUrl)
       }
     }
-    
+
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
@@ -173,5 +189,8 @@ export default auth(async function middleware(request: NextRequest) {
 });
 
 export const config = {
-  matcher: ['/((?!api/ws|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    // Protected routes
+    '/((?!_next/static|_next/image|favicon.ico|icons|images|api/publications).*)',
+  ],
 };

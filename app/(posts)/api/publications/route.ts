@@ -12,9 +12,7 @@ export async function GET() {
 
     return NextResponse.json(allPublications)
   } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to fetch publications' },
-      { status: 500 }
-    )
+    console.error('Failed to fetch publications:', error)
+    return NextResponse.json({ error: 'Failed to fetch publications' }, { status: 500 })
   }
 }

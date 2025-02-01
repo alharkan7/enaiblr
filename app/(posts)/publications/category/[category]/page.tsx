@@ -19,7 +19,7 @@ export async function generateStaticParams() {
 export default async function CategoryPage({ params }: PageProps) {
   const resolvedParams = await params;
   const response = await fetch(
-    `/api/publications/category/${resolvedParams.category}`,
+    `${process.env.APP_URL}/api/publications/category/${resolvedParams.category}`,
     { next: { revalidate: 3600 } }
   )
   const posts = await response.json()

@@ -11,14 +11,15 @@ export default function PageIllustration({
   return (
     <>
       <div
-        className="pointer-events-none absolute left-1/2 top-0 -z-10 -translate-x-1/4"
+        className="pointer-events-none fixed inset-0 -z-10 overflow-hidden"
         aria-hidden="true"
       >
         <Image
-          className="max-w-none"
+          className="w-full h-auto object-cover"
           src={Illustration}
           width={846}
           height={594}
+          priority
           alt="Page illustration"
         />
       </div>

@@ -1,19 +1,41 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { CalendarIcon, UserIcon, ClockIcon, FolderIcon } from "lucide-react"
+import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
+
+interface Publication {
+  id: string
+  title: string
+  excerpt?: string | null
+  createdAt: string
+  author: string
+  category?: string | null
+  content: string
+  cover?: string | null
+  updatedAt?: string | null
+  slug: string
+  userId: string
+}
 
 interface PageProps {
-  params: Promise<{ id: string }>;
+  params: Promise<{ slug: string }>;
   searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function Publication({ params }: PageProps) {
   const resolvedParams = await params;
   const response = await fetch(
-    `${process.env.NEXT_PUBLIC_APP_URL}/api/publications/${resolvedParams.id}`,
+    `${process.env.APP_URL}/api/publications/${resolvedParams.slug}`,
     { next: { revalidate: 3600 } }
   )
-  const post = await response.json()
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      notFound()
+    }
+    throw new Error(`Failed to fetch publication: ${response.statusText}`)
+  }
+
+  const post: Publication = await response.json()
 
   if (!post) {
     notFound()

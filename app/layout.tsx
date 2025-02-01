@@ -131,7 +131,9 @@ export const viewport = {
   themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  minimumScale: 1,
+  userScalable: true,
+  viewportFit: 'cover',
 };
 
 const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';

@@ -1,9 +1,94 @@
+'use client';
+
 import Image from "next/image";
 import BlurredShapeGray from "@/public/images/blurred-shape-gray.svg";
 import BlurredShape from "@/public/images/blurred-shape.svg";
-import FeaturesImage from "@/public/images/features.png";
+import { useState } from 'react';
+
+const logoPath = '/images/experiences/';
 
 export default function Features() {
+  const [imageErrors, setImageErrors] = useState<Record<string, boolean>>({});
+
+  const logos = [
+    {
+      src: '1-logo-telkom.svg',
+      alt: 'Telkom Indoesia Logo'
+    },
+    {
+      src: '2-logo-dsi.svg',
+      alt: 'Data Science Indonesia Logo'
+    },
+    {
+      src: '3-logo-amsi.svg',
+      alt: 'Asosiasi Media Siber Indonesia Logo'
+    },
+    {
+      src: '4-logo-super.svg',
+      alt: 'SuperApp.id Logo'
+    },
+    {
+      src: '5-logo-seatoday.svg',
+      alt: 'SEA Today Logo'
+    },
+    {
+      src: '6-logo-google-developers.svg',
+      alt: 'Google Developers Logo'
+    },
+    {
+      src: '7-logo-aws-cp.svg',
+      alt: 'AWS Cloud Practitioner Logo'
+    },
+    {
+      src: '8-logo-hackerrank.svg',
+      alt: 'HackerRank Logo'
+    },
+    {
+      src: '9-logo-ui.svg',
+      alt: 'Universitas Indonesia Logo'
+    },
+    {
+      src: '10-logo-purwadhika.svg',
+      alt: 'Purwadhika Digital Technology School Logo'
+    },
+    {
+      src: '11-logo-iykra.svg',
+      alt: 'IYKRA Logo'
+    },
+    {
+      src: '12-logo-bitlabs.svg',
+      alt: 'Bitlabs Academy Logo'
+    },
+    {
+      src: '13-logo-umm.svg',
+      alt: 'UMM Logo'
+    },
+    {
+      src: '14-logo-nus.svg',
+      alt: 'National University of Singapore Logo'
+    },
+    {
+      src: '15-logo-yseali.svg',
+      alt: 'YSEALI Logo'
+    },
+    {
+      src: '16-logo-1000-startup.svg',
+      alt: '1000 Startup Digital Logo'
+    },
+    {
+      src: '17-logo-startup-weekend.svg',
+      alt: 'Startup Weekend Logo'
+    },
+    {
+      src: '18-logo-embassy-netherlands.svg',
+      alt: 'Embassy of Netherlands Logo'
+    },
+    {
+      src: '19-logo-im.svg',
+      alt: 'Indonesia Mengajar Logo'
+    },
+  ]
+
   return (
     <section className="relative">
       <div
@@ -43,37 +128,17 @@ export default function Features() {
               Trusted by Leading Organizations
             </h2>
             <p className="text-lg text-indigo-200/65">
-            We&apos;ve won awards, collaborated, and get certified by top companies and organizations.
+              We&apos;ve won awards, collaborated, and get certified by top companies and organizations.
             </p>
           </div>
           {/* Items */}
-          <div className="mx-auto flex max-w-7xl flex-wrap items-center justify-center gap-12 md:gap-x-14 md:gap-y-16">
-            {[
-              '1-logo-telkom.svg',
-              '2-logo-dsi.svg',
-              '3-logo-amsi.svg',
-              '4-logo-super.svg',
-              '5-logo-seatoday.svg',
-              '6-logo-google-developers.svg',
-              '7-logo-aws-cp.svg',
-              '8-logo-hackerrank.svg',
-              '9-logo-ui.svg',
-              '10-logo-purwadhika.svg',
-              '11-logo-iykra.svg',
-              '12-logo-bitlabs.svg',
-              '13-logo-umm.svg',
-              '14-logo-nus.svg',
-              '15-logo-asu.svg',
-              '16-logo-1000-startup.svg',
-              '17-logo-startup-weekend.svg',
-              '18-logo-embassy-netherlands.svg',
-              '19-logo-im.svg'
-            ].map((logo) => (
-              <div key={logo} className="flex items-center justify-center">
-                <div className="relative h-12 min-w-[180px] max-w-[200px] flex-1 transition-transform duration-300 ease-out hover:[transform:scale(1.3)]">
+          <div className="mx-auto my-4 grid max-w-7xl grid-cols-2 gap-8 px-4 md:flex md:flex-wrap md:items-center md:justify-center md:gap-x-14 md:gap-y-16">
+            {logos.map(({ src, alt }) => (
+              <div key={src} className="flex items-center justify-center">
+                <div className="relative h-12 min-w-[100px] max-w-[120px] md:min-w-[160px] md:max-w-[180px] flex-1 transition-transform duration-300 ease-out hover:[transform:scale(1.3)]">
                   <Image
-                    src={`/images/experiences/${logo}`}
-                    alt={logo.replace('.svg', '').split('-').slice(1).join(' ')}
+                    src={`${logoPath}${src}`}
+                    alt={alt}
                     fill
                     className="object-contain [filter:invert(1)_saturate(0)_brightness(1.75)_contrast(0.8)_opacity(0.5)]"
                   />

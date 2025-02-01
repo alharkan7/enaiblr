@@ -8,17 +8,39 @@ import CategoriesList from "./components/categories-list"
 interface Publication {
   id: string
   title: string
-  excerpt: string
+  excerpt?: string | null
   createdAt: string
   author: string
-  category?: string
+  category?: string | null
+  content: string
+  cover?: string | null
+  updatedAt?: string | null
+  slug: string
+  userId: string
 }
 
 export default async function PublicationsPage() {
-  const response = await fetch(`/api/publications`, {
+  const response = await fetch(`${process.env.APP_URL}/api/publications`, {
     next: { revalidate: 3600 } // Revalidate every hour
   })
-  const posts = await response.json()
+  
+  if (!response.ok) {
+    throw new Error(`Failed to fetch publications: ${response.statusText}`)
+  }
+
+  const posts: Publication[] = await response.json()
+  
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          Publications
+        </h1>
+        <p className="text-xl text-muted-foreground mt-4">No publications found.</p>
+      </div>
+    )
+  }
+
   const featuredPost = posts[0]
   const regularPosts = posts.slice(1)
 
@@ -37,7 +59,7 @@ export default async function PublicationsPage() {
         </div>
       </header>
       <section>
-        <Link href={`/publications/${featuredPost.id}`}>
+        <Link href={`/publications/${featuredPost.slug}`}>
           <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300">
             <div className="p-6 md:p-8">
               <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
@@ -79,8 +101,8 @@ export default async function PublicationsPage() {
 
       {/* Regular Posts */}
       <section className="grid gap-8 md:grid-cols-2">
-        {regularPosts.map((post:any) => (
-          <Link key={post.id} href={`/publications/${post.id}`}>
+        {regularPosts.map((post: Publication) => (
+          <Link key={post.id} href={`/publications/${post.slug}`}>
             <Card className="h-full group hover:shadow-md transition-all duration-300">
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
