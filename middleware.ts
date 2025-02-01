@@ -15,10 +15,11 @@ function isPublicRoute(pathname: string): boolean {
     '/forgot-password', // Forgot password page
     '/reset-password', // Reset password page
     '/',
-    '/publications',
+    '/publications', // Only the public publications list
   ];
-  
-  return publicRoutes.some(route => pathname.startsWith(route));
+
+  // Check if the pathname exactly matches a public route
+  return publicRoutes.includes(pathname);
 }
 
 // Helper function to check if a route is auth-related
@@ -66,7 +67,7 @@ function isAppRoute(pathname: string): boolean {
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com'];
+const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com'];
 
 export default auth(async function middleware(request: NextRequest) {
   const session = await auth();
@@ -79,8 +80,8 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect dashboard route
-  if (pathname.startsWith('/dashboard')) {
+  // Protect dashboard and publish routes
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/publish')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
