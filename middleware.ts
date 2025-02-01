@@ -15,7 +15,7 @@ function isPublicRoute(pathname: string): boolean {
     '/forgot-password', // Forgot password page
     '/reset-password', // Reset password page
     '/',
-    '/publications', // Only the public publications list
+    '/publications', // Public publications list
     '/api/publications', // Public publications API
     '/icons', // Static icons
     '/favicon.ico', // Favicon
@@ -27,6 +27,8 @@ function isPublicRoute(pathname: string): boolean {
     '/images/',
     '/_next/static/',
     '/_next/image/',
+    '/publications/', // Allow access to all publication routes
+    '/api/publications/', // Allow access to all publication API routes
   ];
 
   return publicRoutes.includes(pathname) ||
