@@ -1,23 +1,19 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
-interface RouteParams {
-  params: { slug: string }
-}
-
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  request: Request,
-  context: RouteParams
-) {
+  request: NextRequest,
+  { params }: { params: { slug: string } }
+): Promise<NextResponse> {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(eq(publications.slug, context.params.slug))
+      .where(eq(publications.slug, params.slug))
       .limit(1)
 
     if (!publication.length) {

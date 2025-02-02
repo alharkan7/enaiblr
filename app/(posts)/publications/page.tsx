@@ -59,44 +59,51 @@ export default async function PublicationsPage() {
         </div>
       </header>
       <section>
-        <Link href={`/publications/${featuredPost.slug}`}>
-          <Card className="group overflow-hidden hover:shadow-lg transition-all duration-300">
-            <div className="p-6 md:p-8">
-              <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
-                <div className="flex items-center gap-2">
-                  <CalendarIcon className="w-4 h-4" />
-                  <time>
-                    {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })}
-                  </time>
-                </div>
-                <div className="flex items-center gap-2">
-                  <UserIcon className="w-4 h-4" />
-                  <span>{featuredPost.author}</span>
-                </div>
-                {featuredPost.category && (
+        <div className="group">
+          <Link href={`/publications/${featuredPost.slug}`}>
+            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
+              <div className="p-6 md:p-8">
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center gap-2">
-                    <FolderIcon className="w-4 h-4" />
-                    <Link href={`/publications/category/${featuredPost.category}`}>
-                      <span className="hover:text-primary transition-colors">
-                        {featuredPost.category}
-                      </span>
-                    </Link>
+                    <CalendarIcon className="w-4 h-4" />
+                    <time>
+                      {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "long",
+                        day: "numeric",
+                      })}
+                    </time>
                   </div>
+                  <div className="flex items-center gap-2">
+                    <UserIcon className="w-4 h-4" />
+                    <span>{featuredPost.author}</span>
+                  </div>
+                  {featuredPost.category && (
+                    <div className="flex items-center gap-2">
+                      <FolderIcon className="w-4 h-4" />
+                      <Button
+                        variant="link"
+                        className="p-0 h-auto font-normal hover:text-primary transition-colors"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          window.location.href = `/publications/category/${featuredPost.category}`;
+                        }}
+                      >
+                        {featuredPost.category}
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">
+                  {featuredPost.title}
+                </h2>
+                {featuredPost.excerpt && (
+                  <p className="text-muted-foreground mt-2">{featuredPost.excerpt}</p>
                 )}
               </div>
-              <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">
-                {featuredPost.title}
-              </h2>
-              {featuredPost.excerpt && (
-                <p className="text-muted-foreground mt-2">{featuredPost.excerpt}</p>
-              )}
-            </div>
-          </Card>
-        </Link>
+            </Card>
+          </Link>
+        </div>
       </section>
 
       {/* Regular Posts */}
