@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { publications } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
+import CategoryButton from './components/CategoryButton';
 
 interface Publication {
   id: string;
@@ -89,15 +90,7 @@ export default async function PublicationsPage() {
                   {featuredPost.category && (
                     <div className="flex items-center gap-2">
                       <FolderIcon className="w-4 h-4" />
-                      <button
-                        className="p-0 h-auto font-normal hover:text-primary transition-colors"
-                        onClick={(e) => {
-                          e.preventDefault();
-                          window.location.href = `/publications/category/${featuredPost.category}`;
-                        }}
-                      >
-                        {featuredPost.category}
-                      </button>
+                      <CategoryButton category={featuredPost.category} />
                     </div>
                   )}
                 </div>

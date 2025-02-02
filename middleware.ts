@@ -98,14 +98,12 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect dashboard and publish routes
+  // Protect /publish and /dashboard routes with an admin check.
   if (pathname.startsWith('/dashboard') || pathname.startsWith('/publish')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-
-    // Check if user is admin
-    const userEmail = session?.user?.email;
+    const userEmail = session?.user?.email?.toLowerCase();
     if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
       return NextResponse.redirect(new URL('/apps', request.url));
     }

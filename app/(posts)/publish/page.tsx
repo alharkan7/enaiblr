@@ -46,8 +46,9 @@ function PublishPage() {
   const [publication, setPublication] = React.useState<Publication | null>(null);
 
   React.useEffect(() => {
-    if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
-      router.push('/');
+    // Only check for a logged in user now (removed admin check)
+    if (!session?.user?.email) {
+      router.push('/login');
       return;
     }
 
@@ -207,16 +208,20 @@ function PublishPage() {
             <label htmlFor="category" className="block text-sm font-medium mb-2">
               Category
             </label>
-            <Select name="category" defaultValue={publication?.category || undefined}>
+            <Select name="category" defaultValue={publication?.category || 'blog'}>
               <SelectTrigger>
                 <SelectValue placeholder="Select a category" />
               </SelectTrigger>
               <SelectContent>
-                {CATEGORIES.map((category) => (
-                  <SelectItem key={category} value={category}>
-                    {category}
-                  </SelectItem>
-                ))}
+                {CATEGORIES.map((category) => {
+                  const storedValue = category.toLowerCase();
+                  const displayText = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+                  return (
+                    <SelectItem key={storedValue} value={storedValue}>
+                      {displayText}
+                    </SelectItem>
+                  );
+                })}
               </SelectContent>
             </Select>
           </div>
