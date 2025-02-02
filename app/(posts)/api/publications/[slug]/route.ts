@@ -10,10 +10,11 @@ export async function GET(
   context: { params: { slug: string } }
 ): Promise<NextResponse> {
   try {
+    const { params } = context;
     const publication = await db
       .select()
       .from(publications)
-      .where(sql`${publications.slug} = ${context.params.slug}`)
+      .where(sql`${publications.slug} = ${params.slug}`)
       .limit(1)
 
     if (!publication.length) {
