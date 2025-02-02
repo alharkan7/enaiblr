@@ -3,17 +3,21 @@ import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
 
+interface RouteParams {
+  params: { slug: string }
+}
+
 export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  context: RouteParams
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(eq(publications.slug, params.slug))
+      .where(eq(publications.slug, context.params.slug))
       .limit(1)
 
     if (!publication.length) {
