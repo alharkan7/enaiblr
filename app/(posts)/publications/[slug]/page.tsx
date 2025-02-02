@@ -1,6 +1,11 @@
 import { notFound } from "next/navigation"
 import Link from "next/link"
-import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
+import { CalendarIcon, UserIcon, FolderIcon, PencilIcon } from "lucide-react"
+import { auth } from "@/app/(auth)/auth"
+import { Button } from "@/components/ui/button"
+import { use } from "react"
+
+const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com']
 
 interface Publication {
   id: string
@@ -22,9 +27,12 @@ interface PageProps {
 }
 
 export default async function Publication({ params }: PageProps) {
-  const resolvedParams = await params;
+  const { slug } = use(params);
+  const session = await auth();
+  const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email);
+
   const response = await fetch(
-    `${process.env.APP_URL}/api/publications/${resolvedParams.slug}`,
+    `${process.env.APP_URL}/api/publications/${slug}`,
     { next: { revalidate: 3600 } }
   )
 
@@ -42,7 +50,17 @@ export default async function Publication({ params }: PageProps) {
   }
 
   return (
-    <article className="prose prose-zinc dark:prose-invert mx-auto">
+    <article className="prose prose-zinc dark:prose-invert mx-auto relative">
+      {isAdmin && (
+        <Link 
+          href={`/publish/${post.slug}`}
+          className="absolute top-0 right-0 no-underline"
+        >
+          <Button variant="ghost" size="icon" className="w-8 h-8">
+            <PencilIcon className="w-4 h-4" />
+          </Button>
+        </Link>
+      )}
       <h1>{post.title}</h1>
       <div className="flex flex-wrap gap-4 text-sm text-muted-foreground not-prose mb-8">
         <div className="flex items-center gap-2">

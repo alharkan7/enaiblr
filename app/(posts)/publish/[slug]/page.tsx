@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { toast } from "sonner";
 import { AppsHeader } from '@/components/apps-header';
@@ -30,10 +30,13 @@ interface Publication {
   slug: string;
 }
 
-function PublishPage() {
+interface PageProps {
+  params: { slug: string };
+}
+
+export default function EditPublicationPage({ params }: PageProps) {
+  const { slug } = params;
   const router = useRouter();
-  const searchParams = useSearchParams();
-  const slug = searchParams.get('slug');
   const { data: session, status } = useSession({
     required: true,
     onUnauthenticated() {
@@ -51,21 +54,19 @@ function PublishPage() {
       return;
     }
 
-    if (slug) {
-      fetch(`/api/publish/${slug}`)
-        .then((res) => {
-          if (!res.ok) throw new Error('Failed to fetch publication');
-          return res.json();
-        })
-        .then((data) => {
-          setPublication(data);
-          setCoverUrl(data.cover || undefined);
-        })
-        .catch((error) => {
-          console.error('Error fetching publication:', error);
-          toast.error('Failed to fetch publication');
-        });
-    }
+    fetch(`/api/publish/${slug}`)
+      .then((res) => {
+        if (!res.ok) throw new Error('Failed to fetch publication');
+        return res.json();
+      })
+      .then((data) => {
+        setPublication(data);
+        setCoverUrl(data.cover || undefined);
+      })
+      .catch((error) => {
+        console.error('Error fetching publication:', error);
+        toast.error('Failed to fetch publication');
+      });
   }, [slug, session, router]);
 
   if (status === 'loading') {
@@ -118,29 +119,23 @@ function PublishPage() {
         cover: coverUrl,
       };
 
-      const endpoint = slug 
-        ? `/api/publish/${slug}`
-        : '/api/publish';
-      
-      const method = slug ? 'PUT' : 'POST';
-
-      const res = await fetch(endpoint, {
-        method,
+      const res = await fetch(`/api/publish/${slug}`, {
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify(data),
       });
 
-      if (!res.ok) throw new Error('Failed to publish');
+      if (!res.ok) throw new Error('Failed to update');
 
       const result = await res.json();
       
-      toast.success(slug ? 'Publication updated' : 'Publication created');
+      toast.success('Publication updated');
       router.push(`/publications/${result.slug}`);
     } catch (error) {
-      console.error('Error publishing:', error);
-      toast.error('Failed to publish');
+      console.error('Error updating:', error);
+      toast.error('Failed to update publication');
     } finally {
       setLoading(false);
     }
@@ -150,9 +145,7 @@ function PublishPage() {
     <div className="min-h-screen">
       <AppsHeader />
       <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <h1 className="text-3xl font-bold mb-8">
-          {slug ? 'Edit Publication' : 'New Publication'}
-        </h1>
+        <h1 className="text-3xl font-bold mb-8">Edit Publication</h1>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
             <label htmlFor="title" className="block text-sm font-medium mb-2">
@@ -242,12 +235,10 @@ function PublishPage() {
           </div>
 
           <Button type="submit" disabled={loading || uploadingCover}>
-            {loading ? 'Publishing...' : slug ? 'Update' : 'Publish'}
+            {loading ? 'Updating...' : 'Update'}
           </Button>
         </form>
       </main>
     </div>
   );
 }
-
-export default PublishPage;
