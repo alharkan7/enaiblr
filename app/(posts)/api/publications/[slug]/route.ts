@@ -6,9 +6,9 @@ import { sql } from 'drizzle-orm'
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  _req: Request,
-  { params }: { params: Record<string, string> }
-) {
+  request: Request,
+  { params }: { params: { slug: string } }
+): Promise<NextResponse> {
   try {
     const publication = await db
       .select()
