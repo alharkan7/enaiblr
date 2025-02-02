@@ -17,7 +17,6 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 
 const CATEGORIES = ['Blog', 'Data', 'Research'] as const;
-const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 interface Publication {
   id: string;
@@ -104,7 +103,7 @@ function PublishPage() {
     e.preventDefault();
     const form = e.currentTarget;
     const formData = new FormData(form);
-    
+
     if (!session?.user?.email) return;
 
     try {
@@ -119,10 +118,10 @@ function PublishPage() {
         cover: coverUrl,
       };
 
-      const endpoint = slug 
+      const endpoint = slug
         ? `/api/publish/${slug}`
         : '/api/publish';
-      
+
       const method = slug ? 'PUT' : 'POST';
 
       const res = await fetch(endpoint, {
@@ -136,7 +135,7 @@ function PublishPage() {
       if (!res.ok) throw new Error('Failed to publish');
 
       const result = await res.json();
-      
+
       toast.success(slug ? 'Publication updated' : 'Publication created');
       router.push(`/publications/${result.slug}`);
     } catch (error) {
@@ -148,108 +147,135 @@ function PublishPage() {
   }
 
   return (
-    <div className="min-h-screen">
-      <AppsHeader />
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <h1 className="text-3xl font-bold mb-8">
-          {slug ? 'Edit Publication' : 'New Publication'}
-        </h1>
-        <form onSubmit={handleSubmit} className="space-y-6">
-          <div>
-            <label htmlFor="title" className="block text-sm font-medium mb-2">
-              Title
-            </label>
-            <Input
-              id="title"
-              name="title"
-              required
-              defaultValue={publication?.title}
-            />
-          </div>
+    <div className="min-h-screen bg-gray-50/30 dark:bg-gray-900/20">
+      <AppsHeader
+        title={slug ? 'Edit Publication' : 'New Publication'}
+      />
+      <main className="container mx-auto px-4 py-12 max-w-3xl">
+        <div className="bg-background rounded-xl shadow-sm border p-8">
+          <form onSubmit={handleSubmit} className="space-y-8">
 
-          <div>
-            <label htmlFor="excerpt" className="block text-sm font-medium mb-2">
-              Excerpt
-            </label>
-            <Textarea
-              id="excerpt"
-              name="excerpt"
-              rows={3}
-              defaultValue={publication?.excerpt || ''}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="content" className="block text-sm font-medium mb-2">
-              Content
-            </label>
-            <Textarea
-              id="content"
-              name="content"
-              required
-              rows={10}
-              defaultValue={publication?.content}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="author" className="block text-sm font-medium mb-2">
-              Author
-            </label>
-            <Input
-              id="author"
-              name="author"
-              required
-              defaultValue={publication?.author}
-            />
-          </div>
-
-          <div>
-            <label htmlFor="category" className="block text-sm font-medium mb-2">
-              Category
-            </label>
-            <Select name="category" defaultValue={publication?.category || 'blog'}>
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {CATEGORIES.map((category) => {
-                  const storedValue = category.toLowerCase();
-                  const displayText = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
-                  return (
-                    <SelectItem key={storedValue} value={storedValue}>
-                      {displayText}
-                    </SelectItem>
-                  );
-                })}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label htmlFor="cover" className="block text-sm font-medium mb-2">
-              Cover Image
-            </label>
-            <Input
-              id="cover"
-              type="file"
-              accept="image/*"
-              onChange={handleCoverUpload}
-              disabled={uploadingCover}
-            />
-            {coverUrl && (
-              <img
-                src={coverUrl}
-                alt="Cover preview"
-                className="mt-2 rounded-lg max-h-48 object-cover"
+            {/* Title */}
+            <div className="space-y-2">
+              <label htmlFor="title" className="text-sm font-medium text-muted-foreground">
+                Title
+              </label>
+              <Input
+                id="title"
+                name="title"
+                required
+                defaultValue={publication?.title}
+                className="h-12"
+                placeholder="Enter publication title"
               />
-            )}
-          </div>
+            </div>
 
-          <Button type="submit" disabled={loading || uploadingCover}>
-            {loading ? 'Publishing...' : slug ? 'Update' : 'Publish'}
-          </Button>
-        </form>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+              {/* Author */}
+              <div className="space-y-2">
+                <label htmlFor="author" className="text-sm font-medium text-muted-foreground">
+                  Author
+                </label>
+                <Input
+                  id="author"
+                  name="author"
+                  readOnly
+                  value={session?.user?.name || ''}
+                  className="h-12 bg-muted cursor-not-allowed"
+                />
+              </div>
+
+              {/* Category */}
+              <div className="space-y-2">
+                <label htmlFor="category" className="text-sm font-medium text-muted-foreground">
+                  Category
+                </label>
+                <Select name="category" defaultValue={publication?.category || 'blog'}>
+                  <SelectTrigger className="h-12">
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {CATEGORIES.map((category) => {
+                      const storedValue = category.toLowerCase();
+                      const displayText = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase();
+                      return (
+                        <SelectItem key={storedValue} value={storedValue}>
+                          {displayText}
+                        </SelectItem>
+                      );
+                    })}
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-2">
+              <label htmlFor="content" className="text-sm font-medium text-muted-foreground">
+                Content
+              </label>
+              <Textarea
+                id="content"
+                name="content"
+                required
+                rows={12}
+                defaultValue={publication?.content}
+                placeholder="Write your publication content here..."
+                className="resize-none"
+              />
+            </div>
+
+            {/* Cover Image - Moved up for better visual hierarchy */}
+            <div className="space-y-2">
+              <label htmlFor="cover" className="text-sm font-medium text-muted-foreground">
+                Cover Image
+              </label>
+              <div className="flex flex-col gap-4">
+                {coverUrl && (
+                  <img
+                    src={coverUrl}
+                    alt="Cover preview"
+                    className="rounded-lg w-full h-[200px] object-cover bg-muted"
+                  />
+                )}
+                <Input
+                  id="cover"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleCoverUpload}
+                  disabled={uploadingCover}
+                  className="cursor-pointer"
+                />
+              </div>
+            </div>
+
+            {/* Excerpt */}
+            <div className="space-y-2">
+              <label htmlFor="excerpt" className="text-sm font-medium text-muted-foreground">
+                Excerpt
+              </label>
+              <Textarea
+                id="excerpt"
+                name="excerpt"
+                rows={3}
+                defaultValue={publication?.excerpt || ''}
+                placeholder="Brief summary of the publication"
+                className="resize-none"
+              />
+            </div>
+
+            <div className="pt-4">
+              <Button
+                type="submit"
+                disabled={loading || uploadingCover}
+                className="w-full sm:w-auto h-12 px-8"
+              >
+                {loading ? 'Publishing...' : slug ? 'Update' : 'Publish'}
+              </Button>
+            </div>
+          </form>
+        </div>
       </main>
     </div>
   );
