@@ -1,35 +1,32 @@
-import Link from "next/link"
-import { CalendarIcon, ClockIcon, UserIcon, FolderIcon } from "lucide-react"
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import Image from "next/image"
-import CategoriesList from "./components/categories-list"
+import Link from "next/link";
+import Image from "next/image";
+import CategoriesList from "./components/categories-list";
+import { db } from "@/lib/db";
+import { publications } from "@/lib/db/schema";
+import { desc } from "drizzle-orm";
+import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
 
 interface Publication {
-  id: string
-  title: string
-  excerpt?: string | null
-  createdAt: string
-  author: string
-  category?: string | null
-  content: string
-  cover?: string | null
-  updatedAt?: string | null
-  slug: string
-  userId: string
+  id: string;
+  title: string;
+  excerpt?: string | null;
+  createdAt: Date; // now a Date
+  author: string;
+  category?: string | null;
+  content: string;
+  cover?: string | null;
+  updatedAt?: Date | null; // now a Date or null
+  slug: string | null; // allow nullable
+  userId: string;
 }
 
 export default async function PublicationsPage() {
-  const response = await fetch(`${process.env.APP_URL}/api/publications`, {
-    next: { revalidate: 3600 } // Revalidate every hour
-  })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch publications: ${response.statusText}`)
-  }
+  // Query the database directly
+  const posts: Publication[] = await db
+    .select()
+    .from(publications)
+    .orderBy(desc(publications.createdAt));
 
-  const posts: Publication[] = await response.json()
-  
   if (!posts || posts.length === 0) {
     return (
       <div className="text-center py-10">
@@ -38,11 +35,11 @@ export default async function PublicationsPage() {
         </h1>
         <p className="text-xl text-muted-foreground mt-4">No publications found.</p>
       </div>
-    )
+    );
   }
 
-  const featuredPost = posts[0]
-  const regularPosts = posts.slice(1)
+  const featuredPost = posts[0];
+  const regularPosts = posts.slice(1);
 
   return (
     <div className="space-y-16">
@@ -61,7 +58,7 @@ export default async function PublicationsPage() {
       <section>
         <div className="group">
           <Link href={`/publications/${featuredPost.slug}`}>
-            <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
+            <div className="overflow-hidden hover:shadow-lg transition-all duration-300">
               {featuredPost.cover && (
                 <div className="relative w-full h-[400px]">
                   <Image
@@ -78,7 +75,7 @@ export default async function PublicationsPage() {
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="w-4 h-4" />
                     <time>
-                      {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
+                    {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
                         year: "numeric",
                         month: "long",
                         day: "numeric",
@@ -92,8 +89,7 @@ export default async function PublicationsPage() {
                   {featuredPost.category && (
                     <div className="flex items-center gap-2">
                       <FolderIcon className="w-4 h-4" />
-                      <Button
-                        variant="link"
+                      <button
                         className="p-0 h-auto font-normal hover:text-primary transition-colors"
                         onClick={(e) => {
                           e.preventDefault();
@@ -101,7 +97,7 @@ export default async function PublicationsPage() {
                         }}
                       >
                         {featuredPost.category}
-                      </Button>
+                      </button>
                     </div>
                   )}
                 </div>
@@ -112,7 +108,7 @@ export default async function PublicationsPage() {
                   <p className="text-muted-foreground mt-2">{featuredPost.excerpt}</p>
                 )}
               </div>
-            </Card>
+            </div>
           </Link>
         </div>
       </section>
@@ -121,7 +117,7 @@ export default async function PublicationsPage() {
       <section className="grid gap-8 md:grid-cols-2">
         {regularPosts.map((post) => (
           <Link key={post.slug} href={`/publications/${post.slug}`}>
-            <Card className="h-full group hover:shadow-md transition-all duration-300">
+            <div className="h-full group hover:shadow-md transition-all duration-300">
               {post.cover && (
                 <div className="relative w-full h-[200px]">
                   <Image
@@ -158,10 +154,10 @@ export default async function PublicationsPage() {
                   </p>
                 )}
               </div>
-            </Card>
+            </div>
           </Link>
         ))}
       </section>
     </div>
-  )
+  );
 }
