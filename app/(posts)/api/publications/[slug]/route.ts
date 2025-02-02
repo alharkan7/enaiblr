@@ -6,14 +6,14 @@ import { sql } from 'drizzle-orm'
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  req: Request,
-  context: { params: { slug: string } }
+  _req: Request,
+  { params }: { params: Record<string, string> }
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(sql`${publications.slug} = ${context.params.slug}`)
+      .where(sql`${publications.slug} = ${params.slug}`)
       .limit(1)
 
     if (!publication.length) {
