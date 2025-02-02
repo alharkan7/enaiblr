@@ -23,16 +23,16 @@ interface Publication {
 }
 
 interface PageProps {
-  params: { slug: string };
-  searchParams?: { [key: string]: string | string[] | undefined };
+  params: Promise<{ slug: string }>
 }
 
 export default async function Publication({ params }: PageProps) {
+  const { slug } = await params;
   const session = await auth();
   const isAdmin = session?.user?.email && ADMIN_EMAILS.includes(session.user.email);
 
   const response = await fetch(
-    `${process.env.APP_URL}/api/publications/${params.slug}`,
+    `${process.env.APP_URL}/api/publications/${slug}`,
     { next: { revalidate: 3600 } }
   )
 

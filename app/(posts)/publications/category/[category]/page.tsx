@@ -7,8 +7,21 @@ import BlogHeader from "../../components/header"
 import Image from "next/image"
 
 interface PageProps {
-  params: Promise<{ category: string }>;
-  searchParams?: Promise<{ [key: string]: string | string[] | undefined }>;
+  params: Promise<{ category: string }>
+}
+
+interface Publication {
+  id: string
+  title: string
+  excerpt?: string | null
+  createdAt: string
+  author: string
+  category?: string | null
+  content: string
+  cover?: string | null
+  updatedAt?: string | null
+  slug: string
+  userId: string
 }
 
 export async function generateStaticParams() {
@@ -20,14 +33,23 @@ export async function generateStaticParams() {
 
 export default async function CategoryPage({ params }: PageProps) {
   const resolvedParams = await params;
-  const response = await fetch(
-    `${process.env.APP_URL}/api/publications/category/${resolvedParams.category}`,
-    { next: { revalidate: 3600 } }
-  )
-  const posts = await response.json()
+  const response = await fetch(`${process.env.APP_URL}/api/publications?category=${resolvedParams.category}`, {
+    next: { revalidate: 3600 } // Revalidate every hour
+  })
 
-  if (!posts.length) {
-    notFound()
+  if (!response.ok) {
+    throw new Error(`Failed to fetch publications: ${response.statusText}`)
+  }
+
+  const posts: Publication[] = await response.json()
+
+  if (!posts || posts.length === 0) {
+    return (
+      <div className="text-center py-10">
+        <h1 className="text-3xl font-bold">Category: {resolvedParams.category}</h1>
+        <p className="text-xl text-muted-foreground mt-4">No publications found.</p>
+      </div>
+    )
   }
 
   return (
@@ -45,7 +67,7 @@ export default async function CategoryPage({ params }: PageProps) {
           </header>
 
           <div className="grid gap-8 md:grid-cols-2">
-            {posts.map((post:any) => (
+            {posts.map((post) => (
               <Link key={post.slug} href={`/publications/${post.slug}`}>
                 <Card className="h-full group hover:shadow-md transition-all duration-300">
                   {post.cover && (
