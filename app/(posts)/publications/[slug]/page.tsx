@@ -4,6 +4,7 @@ import { CalendarIcon, UserIcon, FolderIcon, PencilIcon } from "lucide-react"
 import { auth } from "@/app/(auth)/auth"
 import { Button } from "@/components/ui/button"
 import BlogHeader from "../components/header"
+import Image from "next/image"
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
@@ -62,6 +63,17 @@ export default async function Publication({ params }: PageProps) {
                 <PencilIcon className="w-4 h-4" />
               </Button>
             </Link>
+          )}
+          {post.cover && (
+            <div className="relative w-full aspect-[21/9] mb-8 not-prose">
+              <Image
+                src={post.cover}
+                alt={post.title}
+                fill
+                className="object-cover rounded-lg"
+                priority
+              />
+            </div>
           )}
           <h1>{post.title}</h1>
           <div className="flex flex-wrap gap-4 text-sm text-muted-foreground not-prose mb-8">

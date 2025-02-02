@@ -4,6 +4,7 @@ import { getCategories } from "@/lib/publications"
 import { Card } from "@/components/ui/card"
 import { CalendarIcon, UserIcon } from "lucide-react"
 import BlogHeader from "../../components/header"
+import Image from "next/image"
 
 interface PageProps {
   params: Promise<{ category: string }>;
@@ -47,6 +48,16 @@ export default async function CategoryPage({ params }: PageProps) {
             {posts.map((post:any) => (
               <Link key={post.slug} href={`/publications/${post.slug}`}>
                 <Card className="h-full group hover:shadow-md transition-all duration-300">
+                  {post.cover && (
+                    <div className="relative w-full h-[200px]">
+                      <Image
+                        src={post.cover}
+                        alt={post.title}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  )}
                   <div className="p-6">
                     <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
                       <div className="flex items-center gap-2">

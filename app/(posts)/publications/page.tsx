@@ -2,6 +2,7 @@ import Link from "next/link"
 import { CalendarIcon, ClockIcon, UserIcon, FolderIcon } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import Image from "next/image"
 import CategoriesList from "./components/categories-list"
 
 interface Publication {
@@ -61,6 +62,17 @@ export default async function PublicationsPage() {
         <div className="group">
           <Link href={`/publications/${featuredPost.slug}`}>
             <Card className="overflow-hidden hover:shadow-lg transition-all duration-300">
+              {featuredPost.cover && (
+                <div className="relative w-full h-[400px]">
+                  <Image
+                    src={featuredPost.cover}
+                    alt={featuredPost.title}
+                    fill
+                    className="object-cover"
+                    priority
+                  />
+                </div>
+              )}
               <div className="p-6 md:p-8">
                 <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
                   <div className="flex items-center gap-2">
@@ -107,9 +119,19 @@ export default async function PublicationsPage() {
 
       {/* Regular Posts */}
       <section className="grid gap-8 md:grid-cols-2">
-        {regularPosts.map((post: Publication) => (
-          <Link key={post.id} href={`/publications/${post.slug}`}>
+        {regularPosts.map((post) => (
+          <Link key={post.slug} href={`/publications/${post.slug}`}>
             <Card className="h-full group hover:shadow-md transition-all duration-300">
+              {post.cover && (
+                <div className="relative w-full h-[200px]">
+                  <Image
+                    src={post.cover}
+                    alt={post.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              )}
               <div className="p-6">
                 <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
                   <div className="flex items-center gap-2">
