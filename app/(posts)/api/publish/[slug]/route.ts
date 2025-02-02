@@ -6,10 +6,10 @@ import { sql } from 'drizzle-orm'
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
-export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function GET(request: Request, context: unknown) {
+  // Extract params from the context after type assertion.
+  const { params } = context as { params: { slug: string } }
+  
   try {
     const session = await auth()
     if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {
@@ -32,10 +32,10 @@ export async function GET(
   }
 }
 
-export async function PUT(
-  request: Request,
-  { params }: { params: { slug: string } }
-) {
+export async function PUT(request: Request, context: unknown) {
+  // Extract params from the context after type assertion.
+  const { params } = context as { params: { slug: string } }
+
   try {
     const session = await auth()
     if (!session?.user?.email || !ADMIN_EMAILS.includes(session.user.email)) {

@@ -3,10 +3,10 @@ import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { eq, desc } from 'drizzle-orm'
 
-export async function GET(
-  request: Request,
-  { params }: { params: { category: string } }
-) {
+export async function GET(request: Request, context: unknown) {
+  // Destructure params from context by asserting the expected type
+  const { params } = context as { params: { category: string } }
+
   try {
     const publicationsByCategory = await db
       .select()

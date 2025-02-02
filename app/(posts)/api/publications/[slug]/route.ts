@@ -7,8 +7,11 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  context: unknown
 ): Promise<NextResponse> {
+  // Use a type assertion to get the params object
+  const { params } = context as { params: { slug: string } }
+
   try {
     const publication = await db
       .select()
