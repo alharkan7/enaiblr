@@ -76,13 +76,13 @@ export async function getCategories(): Promise<string[]> {
   const result = await db
     .select({ category: publications.category })
     .from(publications)
-    .where(sql`${publications.category} IS NOT NULL`)
+    .where(sql`${publications.category} IS NOT NULL AND ${publications.category} != ''`)
     .groupBy(publications.category)
     .orderBy(publications.category)
 
   return result
     .map(row => row.category)
-    .filter((category): category is string => category !== null)
+    .filter((category): category is string => category !== null && category.trim() !== '')
 }
 
 export async function getPostsByCategory(category: string): Promise<Publication[]> {

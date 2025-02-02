@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { eq } from 'drizzle-orm'
@@ -6,9 +6,9 @@ import { eq } from 'drizzle-orm'
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  request: NextRequest,
+  request: Request,
   { params }: { params: { slug: string } }
-): Promise<NextResponse> {
+) {
   try {
     const publication = await db
       .select()

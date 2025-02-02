@@ -2,7 +2,6 @@ import Link from "next/link"
 import { CalendarIcon, ClockIcon, UserIcon, FolderIcon } from "lucide-react"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
 import CategoriesList from "./components/categories-list"
 
 interface Publication {
@@ -47,7 +46,7 @@ export default async function PublicationsPage() {
   return (
     <div className="space-y-16">
       {/* Featured Post */}
-      <header className="text-center mb-16">
+      <header className="text-center mb-16 pt-12">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
           Publications
         </h1>
