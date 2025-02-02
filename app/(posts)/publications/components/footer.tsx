@@ -24,7 +24,7 @@ const socialLinks = [
 export default function PostFooter() {
   return (
     <footer className="border-t bg-muted/30">
-      <div className="my-2 py-2 px-4 flex flex-col md:flex-row justify-between items-center gap-4">
+      <div className="mt-2 mb-4 py-2 px-4 flex flex-col md:flex-row justify-between items-center gap-6">
         <form className="flex gap-2 max-w-md">
           <Input
             type="email"
@@ -34,8 +34,11 @@ export default function PostFooter() {
           <Button type="submit">Subscribe</Button>
         </form>
 
-        <div className="flex flex-col items-end gap-4">
-        <div className="flex items-center gap-4">
+        <div className="flex flex-col md:flex-col items-center md:items-end gap-2">
+          <div className="flex items-center gap-2">
+            <p className="text-sm text-muted-foreground text-center md:hidden">
+              &copy; {new Date().getFullYear()} enaiblr.org | 
+            </p>
             {socialLinks.map((link) => {
               const Icon = link.icon
               return (
@@ -52,10 +55,9 @@ export default function PostFooter() {
               )
             })}
           </div>
-          <p className="text-sm text-muted-foreground align-right">
-            {new Date().getFullYear()} Enaiblr.<br />All rights reserved.
+          <p className="text-sm text-muted-foreground text-right hidden md:block">
+            &copy; {new Date().getFullYear()} enaiblr.org
           </p>
-
         </div>
       </div>
     </footer>
