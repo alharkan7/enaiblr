@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useParams } from 'next/navigation';
 import { useSession } from 'next-auth/react';
 import { toast } from "sonner";
 import { AppsHeader } from '@/components/apps-header';
@@ -30,12 +30,10 @@ interface Publication {
   slug: string;
 }
 
-interface PageProps {
-  params: { slug: string };
-}
+export default function EditPublicationPage() {
+  // Get parameters using the useParams hook.
+  const { slug } = useParams() as { slug: string };
 
-export default function EditPublicationPage({ params }: PageProps) {
-  const { slug } = params;
   const router = useRouter();
   const { data: session, status } = useSession({
     required: true,
