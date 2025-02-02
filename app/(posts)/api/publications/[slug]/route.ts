@@ -5,15 +5,19 @@ import { eq } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
+type Props = {
+  params: { slug: string }
+}
+
 export async function GET(
-  request: NextRequest,
-  { params }: { params: { slug: string } }
+  _request: NextRequest,
+  props: Props
 ): Promise<NextResponse> {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(eq(publications.slug, params.slug))
+      .where(eq(publications.slug, props.params.slug))
       .limit(1)
 
     if (!publication.length) {
