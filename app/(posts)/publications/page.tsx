@@ -6,6 +6,7 @@ import { publications } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
 import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
 import CategoryButton from './components/CategoryButton';
+import { getRandomGradient } from "./components/GradientCover";
 
 interface Publication {
   id: string;
@@ -56,49 +57,46 @@ export default async function PublicationsPage() {
           <CategoriesList />
         </div>
       </header>
-      <section>
-        <div className="group">
+
+      {/* Featured Post */}
+      <section className="container mx-auto px-4">
+        <div className="group bg-card rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300">
           <Link href={`/publications/${featuredPost.slug}`}>
-            <div className="overflow-hidden hover:shadow-lg transition-all duration-300">
-              {featuredPost.cover && (
-                <div className="relative w-full h-[400px]">
+            <div className="md:grid md:grid-cols-5 gap-6">
+              {featuredPost.cover ? (
+                <div className="relative w-full aspect-[16/9] md:col-span-3 md:aspect-auto">
                   <Image
                     src={featuredPost.cover}
                     alt={featuredPost.title}
                     fill
-                    className="object-cover"
+                    className="object-cover transition-transform duration-300 group-hover:scale-105"
                     priority
                   />
                 </div>
+              ) : (
+                <div className={`relative w-full aspect-[16/9] md:col-span-3 md:aspect-auto ${getRandomGradient()} transition-transform duration-300 group-hover:scale-105`} />
               )}
-              <div className="p-6 md:p-8">
-                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mb-4">
+              <div className="p-8 md:col-span-2 flex flex-col justify-center">
+
+                <h2 className="text-3xl font-bold group-hover:text-primary transition-colors">
+                  {featuredPost.title}
+                </h2>
+                <div className="flex flex-wrap gap-4 text-sm text-muted-foreground mt-4">
                   <div className="flex items-center gap-2">
                     <CalendarIcon className="w-4 h-4" />
                     <time>
-                    {new Date(featuredPost.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
+                      {new Date(featuredPost.createdAt).toLocaleDateString("id-ID", {
                         day: "numeric",
-                      })}
+                        month: "short",
+                        year: "numeric",
+                      }).replace(",", "")}
                     </time>
                   </div>
-                  <div className="flex items-center gap-2">
-                    <UserIcon className="w-4 h-4" />
-                    <span>{featuredPost.author}</span>
-                  </div>
-                  {featuredPost.category && (
-                    <div className="flex items-center gap-2">
-                      <FolderIcon className="w-4 h-4" />
-                      <CategoryButton category={featuredPost.category} />
-                    </div>
-                  )}
                 </div>
-                <h2 className="text-2xl font-bold group-hover:text-primary transition-colors">
-                  {featuredPost.title}
-                </h2>
                 {featuredPost.excerpt && (
-                  <p className="text-muted-foreground mt-2">{featuredPost.excerpt}</p>
+                  <p className="text-muted-foreground mt-4 line-clamp-3">
+                    {featuredPost.excerpt}
+                  </p>
                 )}
               </div>
             </div>
@@ -107,49 +105,49 @@ export default async function PublicationsPage() {
       </section>
 
       {/* Regular Posts */}
-      <section className="grid gap-8 md:grid-cols-2">
-        {regularPosts.map((post) => (
-          <Link key={post.slug} href={`/publications/${post.slug}`}>
-            <div className="h-full group hover:shadow-md transition-all duration-300">
-              {post.cover && (
-                <div className="relative w-full h-[200px]">
-                  <Image
-                    src={post.cover}
-                    alt={post.title}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              )}
-              <div className="p-6">
-                <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mb-3">
-                  <div className="flex items-center gap-2">
-                    <CalendarIcon className="w-4 h-4" />
-                    <time>
-                      {new Date(post.createdAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "long",
-                        day: "numeric",
-                      })}
-                    </time>
+      <section className="container mx-auto px-4">
+        <div className="grid gap-8 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-2">
+          {regularPosts.map((post) => (
+            <Link key={post.slug} href={`/publications/${post.slug}`}>
+              <div className="group h-full bg-card rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300">
+                {post.cover ? (
+                  <div className="relative w-full aspect-[16/9]">
+                    <Image
+                      src={post.cover}
+                      alt={post.title}
+                      fill
+                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                    />
                   </div>
-                  <div className="flex items-center gap-2">
-                    <UserIcon className="w-4 h-4" />
-                    <span>{post.author}</span>
-                  </div>
-                </div>
-                <h3 className="font-bold group-hover:text-primary transition-colors">
-                  {post.title}
-                </h3>
-                {post.excerpt && (
-                  <p className="text-muted-foreground mt-2 line-clamp-2">
-                    {post.excerpt}
-                  </p>
+                ) : (
+                  <div className={`relative w-full aspect-[16/9] ${getRandomGradient()} transition-transform duration-300 group-hover:scale-105`} />
                 )}
+                <div className="p-6">
+                  <h3 className="text-xl font-semibold group-hover:text-primary transition-colors">
+                    {post.title}
+                  </h3>
+                  <div className="flex flex-wrap gap-3 text-sm text-muted-foreground mt-3">
+                    <div className="flex items-center gap-2">
+                      <CalendarIcon className="w-4 h-4" />
+                      <time>
+                        {new Date(featuredPost.createdAt).toLocaleDateString("id-ID", {
+                          day: "numeric",
+                          month: "short",
+                          year: "numeric",
+                        }).replace(",", "")}
+                      </time>
+                    </div>
+                  </div>
+                  {post.excerpt && (
+                    <p className="text-muted-foreground mt-2 line-clamp-2">
+                      {post.excerpt}
+                    </p>
+                  )}
+                </div>
               </div>
-            </div>
-          </Link>
-        ))}
+            </Link>
+          ))}
+        </div>
       </section>
     </div>
   );

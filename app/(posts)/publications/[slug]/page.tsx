@@ -52,67 +52,78 @@ export default async function Publication({ params }: PageProps) {
   return (
     <>
       <BlogHeader />
-      <div className="container mx-auto px-4 py-8 max-w-4xl">
-        <article className="prose prose-zinc dark:prose-invert mx-auto relative">
+      <article className="min-h-screen">
+        {post.cover && (
+          <div className="relative w-full h-[50vh] mb-8">
+            <Image
+              src={post.cover}
+              alt={post.title}
+              fill
+              className="object-cover"
+              priority
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-transparent to-background" />
+          </div>
+        )}
+
+        <div className="container mx-auto px-4 py-8 max-w-4xl relative">
           {isAdmin && (
-            <Link 
+            <Link
               href={`/publish/${post.slug}`}
-              className="absolute top-0 right-0 no-underline"
+              className="absolute top-0 right-4 no-underline"
             >
               <Button variant="ghost" size="icon" className="w-8 h-8">
                 <PencilIcon className="w-4 h-4" />
               </Button>
             </Link>
           )}
-          {post.cover && (
-            <div className="relative w-full aspect-[21/9] mb-8 not-prose">
-              <Image
-                src={post.cover}
-                alt={post.title}
-                fill
-                className="object-cover rounded-lg"
-                priority
-              />
-            </div>
-          )}
-          <h1>{post.title}</h1>
-          <div className="flex flex-wrap gap-4 text-sm text-muted-foreground not-prose mb-8">
-            <div className="flex items-center gap-2">
-              <CalendarIcon className="w-4 h-4" />
-              <time>
-                {new Date(post.createdAt).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
-              </time>
-            </div>
-            <div className="flex items-center gap-2">
-              <UserIcon className="w-4 h-4" />
-              <span>{post.author}</span>
-            </div>
-            {post.category && (
+
+          <div className="prose prose-zinc dark:prose-invert mx-auto">
+            <h1 className="text-4xl md:text-5xl font-bold mb-6">{post.title}</h1>
+
+            <div className="flex flex-wrap gap-4 text-sm text-muted-foreground not-prose mb-8">
+
               <div className="flex items-center gap-2">
-                <FolderIcon className="w-4 h-4" />
-                <Link href={`/publications/category/${post.category}`}>
-                  <span className="hover:text-primary transition-colors">
-                    {post.category}
-                  </span>
-                </Link>
+                <CalendarIcon className="w-4 h-4" />
+                <time>
+                  {new Date(post.createdAt).toLocaleDateString("id-ID", {
+                    day: "numeric",
+                    month: "short",
+                    year: "numeric",
+                  }).replace(",", "")}
+                </time>
               </div>
-            )}
+              <div className="flex items-center gap-2">
+                <UserIcon className="w-4 h-4" />
+                <span>{post.author}</span>
+              </div>
+              {post.category && (
+                <div className="flex items-center gap-2">
+                  <FolderIcon className="w-4 h-4" />
+                  <Link href={`/publications/category/${post.category}`}>
+                    <span className="hover:text-primary transition-colors capitalize">
+                      {post.category}
+                    </span>
+                  </Link>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8">
+              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            </div>
+
+            <div className="not-prose mt-16 border-t pt-8">
+              <Link
+                href="/publications"
+                className="text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-2"
+              >
+                ← Back to all posts
+              </Link>
+            </div>
           </div>
-          <div dangerouslySetInnerHTML={{ __html: post.content }} />
-          <div className="not-prose mt-16">
-            <Link 
-              href="/publications"
-              className="text-primary hover:underline"
-            >
-              ← Back to all posts
-            </Link>
-          </div>
-        </article>
-      </div>
+        </div>
+      </article>
     </>
   )
 }
