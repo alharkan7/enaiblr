@@ -7,10 +7,9 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(
   request: Request,
-  context: { params: { slug: string } }
+  { params }: { params: { slug: string } }
 ): Promise<NextResponse> {
   try {
-    const { params } = context;
     const publication = await db
       .select()
       .from(publications)
