@@ -5,13 +5,13 @@ import { eq } from 'drizzle-orm'
 
 export async function GET(
   request: Request,
-  { params }: { params: { slug: string } }
+  context: { params: { slug: string } }
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(eq(publications.slug, params.slug))
+      .where(eq(publications.slug, context.params.slug))
       .limit(1)
 
     if (!publication.length) {

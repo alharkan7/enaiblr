@@ -4,7 +4,7 @@ import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { sql } from 'drizzle-orm'
 
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com']
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 export async function GET(
   request: Request,

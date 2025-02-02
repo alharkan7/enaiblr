@@ -17,7 +17,7 @@ import {
 import { Textarea } from '@/components/ui/textarea';
 
 const CATEGORIES = ['Blog', 'Data', 'Research'] as const;
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com'];
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 interface Publication {
   id: string;

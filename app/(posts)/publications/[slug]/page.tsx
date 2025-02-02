@@ -5,7 +5,7 @@ import { auth } from "@/app/(auth)/auth"
 import { Button } from "@/components/ui/button"
 import { use } from "react"
 
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com']
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 interface Publication {
   id: string

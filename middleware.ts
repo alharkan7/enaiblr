@@ -80,7 +80,7 @@ function isAppRoute(pathname: string): boolean {
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com', 'enaiblr@gmail.com'];
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 export default auth(async function middleware(request: NextRequest) {
   // Skip auth middleware for publications API
