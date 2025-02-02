@@ -5,19 +5,15 @@ import { sql } from 'drizzle-orm'
 
 export const dynamic = 'force-dynamic'
 
-type RouteSegmentProps = {
-  params: { slug: string }
-}
-
 export async function GET(
-  request: Request,
-  props: RouteSegmentProps
+  req: Request,
+  context: { params: { slug: string } }
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(sql`${publications.slug} = ${props.params.slug}`)
+      .where(sql`${publications.slug} = ${context.params.slug}`)
       .limit(1)
 
     if (!publication.length) {
