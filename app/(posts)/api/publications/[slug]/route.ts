@@ -1,19 +1,20 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { sql } from 'drizzle-orm'
 
+export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
 export async function GET(
-  request: Request,
-  { params }: { params: { slug: string } }
+  _req: NextRequest,
+  context: { params: { slug: string } }
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(sql`${publications.slug} = ${params.slug}`)
+      .where(sql`${publications.slug} = ${context.params.slug}`)
       .limit(1)
 
     if (!publication.length) {
