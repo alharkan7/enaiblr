@@ -1,20 +1,23 @@
-import { NextRequest, NextResponse } from 'next/server'
+import { NextResponse } from 'next/server'
 import { db } from '@/lib/db'
 import { publications } from '@/lib/db/schema'
 import { sql } from 'drizzle-orm'
 
-export const runtime = 'edge'
 export const dynamic = 'force-dynamic'
 
+type RouteSegmentProps = {
+  params: { slug: string }
+}
+
 export async function GET(
-  _req: NextRequest,
-  context: { params: { slug: string } }
+  request: Request,
+  props: RouteSegmentProps
 ) {
   try {
     const publication = await db
       .select()
       .from(publications)
-      .where(sql`${publications.slug} = ${context.params.slug}`)
+      .where(sql`${publications.slug} = ${props.params.slug}`)
       .limit(1)
 
     if (!publication.length) {
