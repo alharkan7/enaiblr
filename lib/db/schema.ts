@@ -203,7 +203,7 @@ export const publications = pgTable('Publications', {
   createdAt: timestamp('createdAt').notNull().defaultNow(),
   title: varchar('title', { length: 255 }).notNull(),
   excerpt: text('excerpt'),
-  author: varchar('author', { length: 100 }).notNull(),
+  author: varchar('author', { length: 100 }),
   category: varchar('category', { length: 50 }),
   content: text('content').notNull(),
   cover: varchar('cover', { length: 500 }),

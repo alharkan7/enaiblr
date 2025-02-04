@@ -5,6 +5,10 @@ import { auth } from "@/app/(auth)/auth"
 import { Button } from "@/components/ui/button"
 import BlogHeader from "../components/header"
 import Image from "next/image"
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import remarkMath from 'remark-math';
+import rehypeKatex from 'rehype-katex';
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
@@ -44,6 +48,8 @@ export default async function Publication({ params }: PageProps) {
   }
 
   const post: Publication = await response.json()
+  console.log('Publication data from API:', post);
+  console.log('Author value:', post.author);
 
   if (!post) {
     notFound()
@@ -95,7 +101,7 @@ export default async function Publication({ params }: PageProps) {
               </div>
               <div className="flex items-center gap-2">
                 <UserIcon className="w-4 h-4" />
-                <span>{post.author}</span>
+                <span>{post.author || 'Enaiblr'}</span>
               </div>
               {post.category && (
                 <div className="flex items-center gap-2">
@@ -109,8 +115,13 @@ export default async function Publication({ params }: PageProps) {
               )}
             </div>
 
-            <div className="mt-8">
-              <div dangerouslySetInnerHTML={{ __html: post.content }} />
+            <div className="mt-8 prose dark:prose-invert max-w-none">
+              <ReactMarkdown 
+                remarkPlugins={[remarkGfm, remarkMath]}
+                rehypePlugins={[rehypeKatex]}
+              >
+                {post.content}
+              </ReactMarkdown>
             </div>
 
             <div className="not-prose mt-16 border-t pt-8">

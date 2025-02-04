@@ -59,27 +59,53 @@ export async function createUser(email: string, password: string) {
 }
 
 export async function createGoogleUser(email: string, avatar?: string) {
+  console.log('Starting Google user creation:', { email, hasAvatar: !!avatar });
+  
   try {
     return await db.transaction(async (tx) => {
+      console.log('Beginning database transaction...');
+      
+      // First check if user already exists
+      const existing = await tx.select().from(user).where(eq(user.email, email));
+      if (existing.length > 0) {
+        console.log('User already exists:', existing[0]);
+        return existing;
+      }
+      
+      // Create the user
       const result = await tx.insert(user).values({ 
         email, 
         avatar,
         createdAt: new Date()
       }).returning();
       
+      console.log('User inserted:', result[0]);
+      
+      if (!result || result.length === 0) {
+        throw new Error('Failed to insert user');
+      }
+      
       const userId = result[0].id;
       
+      // Create subscription
+      console.log('Creating subscription for user:', userId);
       await tx.insert(subscription).values({ 
         userId,
         createdAt: new Date()
       });
-
+      
+      // Create onboarding
+      console.log('Creating onboarding for user:', userId);
       await createUserOnboarding(userId, tx);
-
+      
       return result;
     });
   } catch (error) {
-    console.error('Failed to create Google user in database');
+    console.error('Failed to create Google user in database:', {
+      error,
+      email,
+      avatar: avatar ? 'present' : 'not provided'
+    });
     throw error;
   }
 }

@@ -109,14 +109,19 @@ function PublishPage() {
     try {
       setLoading(true);
 
+      const authorValue = formData.get('author') || session?.user?.name || session?.user?.email?.split('@')[0] || 'Enaiblr';
+
       const data = {
         title: formData.get('title'),
         excerpt: formData.get('excerpt'),
         content: formData.get('content'),
-        author: formData.get('author'),
+        author: authorValue,
         category: formData.get('category'),
         cover: coverUrl,
+        slug: formData.get('slug')?.toString() || undefined,
       };
+
+      console.log('Submitting data:', data);
 
       const endpoint = slug
         ? `/api/publish/${slug}`
@@ -170,7 +175,7 @@ function PublishPage() {
               />
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
               {/* Author */}
               <div className="space-y-2">
@@ -181,7 +186,7 @@ function PublishPage() {
                   id="author"
                   name="author"
                   readOnly
-                  value={session?.user?.name || ''}
+                  value={session?.user?.name || session?.user?.email?.split('@')[0] || 'Enaiblr'}
                   className="h-12 bg-muted cursor-not-allowed"
                 />
               </div>
@@ -207,6 +212,20 @@ function PublishPage() {
                     })}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* Slug */}
+              <div className="space-y-2">
+                <label htmlFor="slug" className="text-sm font-medium text-muted-foreground">
+                  Slug
+                </label>
+                <Input
+                  id="slug"
+                  name="slug"
+                  placeholder="Enter custom slug"
+                  className="h-12"
+                  defaultValue={publication?.slug || ''}
+                />
               </div>
             </div>
 
