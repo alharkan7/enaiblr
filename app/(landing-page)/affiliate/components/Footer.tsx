@@ -80,7 +80,7 @@ const Footer = () => {
           <div>
             <h3 className="font-semibold mb-4">Kontak</h3>
             <div className="flex space-x-4">
-              <Link href="mailto:enaiblr@gmail.com" className="text-muted-foreground hover:text-foreground">
+              <Link href="mailto:mail@enaiblr.org" className="text-muted-foreground hover:text-foreground">
                 <Mail className="size-5" />
               </Link>
               <Link href="https://wa.me/+6281280077690" className="text-muted-foreground hover:text-foreground" target="_blank" rel="noopener noreferrer">

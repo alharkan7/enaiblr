@@ -8,7 +8,7 @@ const AppsFooter = () => {
                 {" "}
                 All rights reserved.
                 {/* {" | "}
-                <a href="mailto:enaiblr@gmail.com" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/90">&nbsp;Report a Bug</a> */}
+                <a href="mailto:mail@enaiblr.org" target="_blank" rel="noopener noreferrer" className="text-primary hover:text-primary/90">&nbsp;Report a Bug</a> */}
             </p>
         </footer>
     )
