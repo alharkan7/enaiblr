@@ -38,9 +38,18 @@ export default async function PublicationsPage() {
     return (
       <div className="text-center py-10">
         <h1 className="text-5xl font-bold bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
-          Publications
+          Enaiblr <span className="font-extralight">Publications</span>
         </h1>
         <p className="text-xl text-muted-foreground mt-4">No publications found.</p>
+
+        <div className="not-prose mt-16 pt-8">
+          <Link
+            href="/"
+            className="text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-2"
+          >
+            ← Back to homepage
+          </Link>
+        </div>
       </div>
     );
   }

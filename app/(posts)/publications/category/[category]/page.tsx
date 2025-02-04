@@ -50,6 +50,15 @@ export default async function CategoryPage({ params }: PageProps) {
           {category}
         </h1>
         <p className="text-xl text-muted-foreground mt-4">No publications found in this category.</p>
+
+        <div className="not-prose mt-16 pt-8">
+          <Link
+            href="/publications"
+            className="text-primary hover:text-primary/80 transition-colors inline-flex items-center gap-2"
+          >
+            ← Back to all posts
+          </Link>
+        </div>
       </div>
     );
   }
