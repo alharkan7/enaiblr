@@ -62,7 +62,7 @@ export default async function CategoryPage({ params }: PageProps) {
           {category}
         </h1>
         <p className="text-xl text-muted-foreground mt-4 max-w-2xl mx-auto">
-          Explore our publications in the {category} category
+          Explore Our Updates in the {category.charAt(0).toUpperCase() + category.slice(1)} Category
         </p>
       </header>
 

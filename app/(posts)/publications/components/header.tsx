@@ -23,7 +23,7 @@ export default function BlogHeader() {
           {/* Logo and Navigation */}
           <div className="flex items-center justify-between w-full">
             <Link href="/publications" className="text-xl font-bold text-primary">
-              Publications
+              <span className="font-extralight">Enaiblr</span> Publications
             </Link>
             <nav className="hidden md:flex items-center gap-6">
               {navigation.map((item) => (
