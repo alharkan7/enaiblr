@@ -160,7 +160,7 @@ export default function UserProfile() {
               className="flex items-center outline outline-1 outline-primary/80"
               onClick={() => router.push('/account/affiliate')}
             >
-              Affiliate
+              Affiliate <b>25%</b>
             </Button>
           </div>
         </CardHeader>

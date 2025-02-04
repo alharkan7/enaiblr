@@ -78,7 +78,7 @@ export const models: Array<Model> = [
   },
   {
     id: 'deepseek-ai/deepseek-llm-67b-chat',
-    label: 'DeepSeek',
+    label: 'DeepSeek 67b',
     apiIdentifier: 'deepseek-ai/deepseek-llm-67b-chat',
     description: 'Text',
     // description: 'Google',
