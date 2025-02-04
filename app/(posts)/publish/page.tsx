@@ -110,11 +110,18 @@ function PublishPage() {
       setLoading(true);
 
       const authorValue = formData.get('author') || session?.user?.name || session?.user?.email?.split('@')[0] || 'Enaiblr';
+      const content = formData.get('content')?.toString() || '';
+      
+      // Ensure content has proper markdown line breaks
+      const formattedContent = content
+        .split('\n')
+        .map(line => line.trim())
+        .join('\n\n');
 
       const data = {
         title: formData.get('title'),
         excerpt: formData.get('excerpt'),
-        content: formData.get('content'),
+        content: formattedContent,
         author: authorValue,
         category: formData.get('category'),
         cover: coverUrl,

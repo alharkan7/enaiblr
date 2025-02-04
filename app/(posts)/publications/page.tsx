@@ -4,8 +4,7 @@ import CategoriesList from "./components/categories-list";
 import { db } from "@/lib/db";
 import { publications } from "@/lib/db/schema";
 import { desc } from "drizzle-orm";
-import { CalendarIcon, UserIcon, FolderIcon } from "lucide-react"
-import CategoryButton from './components/CategoryButton';
+import { CalendarIcon } from "lucide-react"
 import { getRandomGradient } from "./components/GradientCover";
 
 interface Publication {

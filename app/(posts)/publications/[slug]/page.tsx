@@ -119,6 +119,11 @@ export default async function Publication({ params }: PageProps) {
               <ReactMarkdown 
                 remarkPlugins={[remarkGfm, remarkMath]}
                 rehypePlugins={[rehypeKatex]}
+                className="whitespace-pre-line"
+                components={{
+                  p: ({ children }) => <p className="mb-6 whitespace-pre-line">{children}</p>,
+                  a: ({ node, ...props }) => <a {...props} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer" />
+                }}
               >
                 {post.content}
               </ReactMarkdown>
