@@ -91,6 +91,21 @@ export const models: Array<Model> = [
     },
     tools: false,
   },
+    {
+    id: 'Qwen/Qwen2.5-72B-Instruct-Turbo',
+    label: 'Qwen 2.5',
+    apiIdentifier: 'Qwen/Qwen2.5-72B-Instruct-Turbo',
+    description: 'Text',
+    // description: 'Alibaba',
+    overview: ['Ask Questions'],
+    provider: 'togetherai',
+    type: 'free',
+    capabilities: {
+      images: false,
+      files: false,
+    },
+    tools: false,
+  },
   {
     id: 'mixtral-8x7b-32768',
     label: 'Mixtral 8x',
