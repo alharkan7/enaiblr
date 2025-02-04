@@ -31,11 +31,17 @@ export default async function CategoryPage({ params }: PageProps) {
   // Await the params before using them
   const { category } = await params;
 
-  const posts: Publication[] = await db
+  const rawPosts = await db
     .select()
     .from(publications)
     .where(eq(publications.category, category))
     .orderBy(desc(publications.createdAt));
+
+  const posts: Publication[] = rawPosts.map(post => ({
+    ...post,
+    author: post.author ?? 'Enaiblr',
+    slug: post.slug ?? '',
+  }));
 
   if (!posts || posts.length === 0) {
     return (

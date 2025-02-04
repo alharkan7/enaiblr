@@ -14,9 +14,9 @@ const footerLinks = {
   publications: {
     title: "Publications",
     links: [
-      { label: "Blog", href: "" },
-      { label: "Research", href: "" },
-      { label: "Data", href: "" },
+      { label: "Blog", href: "/publications" },
+      { label: "Research", href: "/publications" },
+      { label: "Data", href: "/publications" },
     ],
   },
   product: {
