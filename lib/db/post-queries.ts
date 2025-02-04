@@ -1,7 +1,7 @@
 import 'server-only';
 import { eq } from 'drizzle-orm';
 import { db } from './';
-import { publications, type Publication } from './schema';
+import { publicationsSub, publications, type Publication } from './schema';
 import { randomUUID } from 'crypto';
 
 function generateSlug(title: string): string {
@@ -94,6 +94,21 @@ export async function getUserPublications(userId: string): Promise<Publication[]
     return userPublications;
   } catch (error) {
     console.error('Database error:', error);
+    throw error;
+  }
+}
+
+export async function createPublicationsSub(email: string) {
+  try {
+    return await db.insert(publicationsSub)
+      .values({
+        id: randomUUID(),
+        createdAt: new Date(),
+        email,
+      })
+      .returning();
+  } catch (error) {
+    console.error('Failed to create publication subscription');
     throw error;
   }
 }

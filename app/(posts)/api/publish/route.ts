@@ -13,10 +13,10 @@ function generateSlug(title: string): string {
 export async function POST(request: Request) {
   try {
     const session = await auth();
-    console.log('Session:', session);
+    // console.log('Session:', session);
     
     if (!session?.user?.id) {
-      console.log('No session or user ID');
+      // console.log('No session or user ID');
       return NextResponse.json(
         { error: 'Unauthorized' },
         { status: 401 }
@@ -24,7 +24,7 @@ export async function POST(request: Request) {
     }
 
     const body = await request.json();
-    console.log('Received data:', body);
+    // console.log('Received data:', body);
 
     // Generate slug from title if not provided
     const slug = body.slug?.trim() || generateSlug(body.title);

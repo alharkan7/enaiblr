@@ -48,8 +48,8 @@ export default async function Publication({ params }: PageProps) {
   }
 
   const post: Publication = await response.json()
-  console.log('Publication data from API:', post);
-  console.log('Author value:', post.author);
+  // console.log('Publication data from API:', post);
+  // console.log('Author value:', post.author);
 
   if (!post) {
     notFound()
@@ -115,13 +115,13 @@ export default async function Publication({ params }: PageProps) {
               )}
             </div>
 
-            <div className="mt-8 prose dark:prose-invert max-w-none">
+            <div className="mt-8 prose dark:prose-invert max-w-none [&>*]:!my-0 [&_p]:!my-0">
               <ReactMarkdown 
-                remarkPlugins={[remarkGfm, remarkMath]}
+                remarkPlugins={[[remarkGfm, { breaks: true }], remarkMath]}
                 rehypePlugins={[rehypeKatex]}
-                className="whitespace-pre-line"
+                className="whitespace-pre-line space-y-4"
                 components={{
-                  p: ({ children }) => <p className="mb-6 whitespace-pre-line">{children}</p>,
+                  p: ({ children }) => <p className="whitespace-pre-wrap">{children}</p>,
                   a: ({ node, ...props }) => <a {...props} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer" />
                 }}
               >

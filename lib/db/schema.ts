@@ -215,3 +215,11 @@ export const publications = pgTable('Publications', {
 });
 
 export type Publication = InferSelectModel<typeof publications>;
+
+export const publicationsSub = pgTable('Publications Sub', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  email: varchar('email', { length: 254 }).notNull()
+});
+
+export type PublicationsSub = InferSelectModel<typeof publicationsSub>;

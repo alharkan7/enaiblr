@@ -13,7 +13,7 @@ export async function GET(
   const { params } = context as { params: { slug: string } }
 
   try {
-    console.log('Fetching publication with slug:', params.slug);
+    // console.log('Fetching publication with slug:', params.slug);
     const publication = await db
       .select({
         id: publications.id,
@@ -32,13 +32,13 @@ export async function GET(
       .where(sql`${publications.slug} = ${params.slug}`)
       .limit(1);
 
-    console.log('Raw database result:', publication);
+    // console.log('Raw database result:', publication);
 
     if (!publication.length) {
       return NextResponse.json({ error: 'Publication not found' }, { status: 404 })
     }
 
-    console.log('Found publication:', publication[0]);
+    // console.log('Found publication:', publication[0]);
     return NextResponse.json(publication[0])
   } catch (error) {
     console.error('Failed to fetch publication:', error)

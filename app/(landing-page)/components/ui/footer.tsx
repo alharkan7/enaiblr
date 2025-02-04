@@ -11,20 +11,20 @@ const footerLinks = {
       { label: "Careers", href: "mailto:mail@enaiblr.org" },
     ],
   },
-  publications: {
-    title: "Publications",
-    links: [
-      { label: "Blog", href: "/publications" },
-      { label: "Research", href: "/publications" },
-      { label: "Data", href: "/publications" },
-    ],
-  },
   product: {
     title: "AI Products",
     links: [
       { label: "Software Solutions", href: "#workflows" },
       { label: "Apps Platform", href: "/apps" },
       { label: "Skills Training", href: "#workflows" },
+    ],
+  },
+  publications: {
+    title: "Publications",
+    links: [
+      { label: "Blog", href: "/publications" },
+      { label: "Research", href: "/publications" },
+      { label: "Data", href: "/publications" },
     ],
   },
 };

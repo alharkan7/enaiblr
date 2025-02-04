@@ -120,7 +120,7 @@ export default function EditPublicationPage() {
         slug: formData.get('slug')?.toString() || undefined,
       };
 
-      console.log('Submitting data:', data);
+      // console.log('Submitting data:', data);
 
       const endpoint = slug
         ? `/api/publish/${slug}`
