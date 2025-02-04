@@ -76,8 +76,8 @@ export function ModelSelector({
                   await saveModelId(model.id);
                   setOpen(false);
 
-                  if (pathname !== '/') {
-                    router.push('/');
+                  if (pathname !== '/chat') {
+                    router.push('/chat');
                     router.refresh();
                   }
                 });

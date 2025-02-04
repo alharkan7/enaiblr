@@ -12,7 +12,7 @@ export const apps: AppConfig[] = [
   {
     name: 'Unlimited AI',
     icon: InfinityIcon,
-    slug: '',
+    slug: 'chat',
     description: 'Unlimited AI Access & File Upload. Saved History & Foldering',
     type: 'pro'
   },

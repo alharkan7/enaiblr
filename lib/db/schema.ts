@@ -197,3 +197,29 @@ export const affiliate = pgTable('Affiliate', {
 });
 
 export type Affiliate = InferSelectModel<typeof affiliate>;
+
+export const publications = pgTable('Publications', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  title: varchar('title', { length: 255 }).notNull(),
+  excerpt: text('excerpt'),
+  author: varchar('author', { length: 100 }),
+  category: varchar('category', { length: 50 }),
+  content: text('content').notNull(),
+  cover: varchar('cover', { length: 500 }),
+  updatedAt: timestamp('updatedAt'),
+  slug: varchar('slug', { length: 255 }).unique(),
+  userId: uuid('userId')
+    .notNull()
+    .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' })
+});
+
+export type Publication = InferSelectModel<typeof publications>;
+
+export const publicationsSub = pgTable('Publications Sub', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+  email: varchar('email', { length: 254 }).notNull()
+});
+
+export type PublicationsSub = InferSelectModel<typeof publicationsSub>;

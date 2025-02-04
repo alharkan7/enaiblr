@@ -1,23 +1,54 @@
+import "./(landing-page)/css/style.css";
+import "./globals.css";
 import type { Metadata } from 'next';
+
+import { Inter } from "next/font/google";
+import localFont from "next/font/local";
 import { Toaster } from 'sonner';
-import { Inter } from 'next/font/google';
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from '@vercel/speed-insights/next';
+import { ThemeProvider } from '@/components/theme-provider';
+import { TooltipProvider } from '@/components/ui/tooltip';
+import { cn } from '@/lib/utils';
+
 import { SessionProvider } from 'next-auth/react';
 import { auth } from './(auth)/auth';
 import { headers } from 'next/headers';
-
-import { ThemeProvider } from '@/components/theme-provider';
-import { cn } from '@/lib/utils';
-import { TooltipProvider } from '@/components/ui/tooltip';
 import { SubscriptionProvider } from '@/contexts/subscription-context';
 
-import { Analytics } from "@vercel/analytics/react";
-import { SpeedInsights } from '@vercel/speed-insights/next';
+// Configure Inter font
+const inter = Inter({
+  subsets: ["latin"],
+  display: "swap",
+  variable: "--font-inter",
+});
 
-import './globals.css';
-
-const inter = Inter({ 
-  subsets: ['latin'],
-  variable: '--font-inter',
+// Configure Nacelle font
+const nacelle = localFont({
+  src: [
+    {
+      path: "../public/fonts/nacelle-regular.woff2",
+      weight: "400",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/nacelle-italic.woff2",
+      weight: "400",
+      style: "italic",
+    },
+    {
+      path: "../public/fonts/nacelle-semibold.woff2",
+      weight: "600",
+      style: "normal",
+    },
+    {
+      path: "../public/fonts/nacelle-semibolditalic.woff2",
+      weight: "600",
+      style: "italic",
+    },
+  ],
+  display: "swap",
+  variable: "--font-nacelle",
 });
 
 // Add service worker registration script
@@ -100,7 +131,9 @@ export const viewport = {
   themeColor: '#000000',
   width: 'device-width',
   initialScale: 1,
-  maximumScale: 1,
+  minimumScale: 1,
+  userScalable: true,
+  viewportFit: 'cover',
 };
 
 const LIGHT_THEME_COLOR = 'hsl(0 0% 100%)';
@@ -155,7 +188,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="light"
+            defaultTheme="dark"
             enableSystem={false}
             disableTransitionOnChange
           >

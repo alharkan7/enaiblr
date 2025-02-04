@@ -84,12 +84,35 @@ export const config = {
     async signIn({ user, account }) {
       if (account?.type === 'oauth' && account.provider === 'google') {
         try {
+          console.log('Google sign-in attempt:', { 
+            email: user.email,
+            name: user.name,
+            image: user.image 
+          });
+          
           const existingUser = await getUser(user.email || '');
+          console.log('Existing user check:', { 
+            exists: existingUser && existingUser.length > 0,
+            user: existingUser?.[0] 
+          });
+          
           if (!existingUser || existingUser.length === 0) {
-            await createGoogleUser(user.email || '', user.image || undefined);
+            console.log('Creating new Google user...');
+            const newUser = await createGoogleUser(user.email || '', user.image || undefined);
+            console.log('New user creation result:', { 
+              success: newUser && newUser.length > 0,
+              user: newUser?.[0] 
+            });
+            
+            if (!newUser || newUser.length === 0) {
+              console.error('Failed to create Google user');
+              return false;
+            }
           } else if (user.image && existingUser[0].avatar !== user.image) {
+            console.log('Updating user avatar...');
             await updateUserAvatar(existingUser[0].id, user.image);
           }
+          return true;
         } catch (error) {
           console.error('Error in signIn callback:', error);
           return false;

@@ -6,7 +6,7 @@ import { apps } from './config/apps';
 // Helper function to check if a route is public
 function isPublicRoute(pathname: string): boolean {
   const publicRoutes = [
-    '/about',     // About page
+    '/ai-platform',     // About page
     '/affiliate',
     '/apps',      // Apps page
     '/login',     // Auth pages
@@ -14,9 +14,25 @@ function isPublicRoute(pathname: string): boolean {
     '/api/subscription', // Subscription status endpoint
     '/forgot-password', // Forgot password page
     '/reset-password', // Reset password page
+    '/',
+    '/publications', // Public publications list
+    '/api/publications', // Public publications API
+    '/icons', // Static icons
+    '/favicon.ico', // Favicon
   ];
-  
-  return publicRoutes.some(route => pathname.startsWith(route));
+
+  // Check if the path starts with any of these prefixes
+  const publicPrefixes = [
+    '/icons/',
+    '/images/',
+    '/_next/static/',
+    '/_next/image/',
+    '/publications/', // Allow access to all publication routes
+    '/api/publications/', // Allow access to all publication API routes
+  ];
+
+  return publicRoutes.includes(pathname) ||
+    publicPrefixes.some(prefix => pathname.startsWith(prefix));
 }
 
 // Helper function to check if a route is auth-related
@@ -53,9 +69,9 @@ function getPageType(pathname: string): 'free' | 'pro' | null {
 // Helper function to check if a path is an app route
 function isAppRoute(pathname: string): boolean {
   if (pathname === '/apps') return true;
-  
+
   // Get slug either from direct path or /apps/ path
-  const slug = pathname.startsWith('/apps/') 
+  const slug = pathname.startsWith('/apps/')
     ? pathname.replace('/apps/', '').split('/')[0]
     : pathname.slice(1);
 
@@ -64,9 +80,14 @@ function isAppRoute(pathname: string): boolean {
 
 const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https://enaiblr.org';
 
-const ADMIN_EMAILS = ['raihankalla@gmail.com', 'alharkan7@gmail.com'];
+const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 export default auth(async function middleware(request: NextRequest) {
+  // Skip auth middleware for publications API
+  if (request.nextUrl.pathname.startsWith('/api/publications')) {
+    return NextResponse.next();
+  }
+
   const session = await auth();
   const isLoggedIn = !!session?.user;
   const pathname = request.nextUrl.pathname;
@@ -77,22 +98,20 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next();
   }
 
-  // Protect dashboard route
-  if (pathname.startsWith('/dashboard')) {
+  // Protect /publish and /dashboard routes with an admin check.
+  if (pathname.startsWith('/dashboard') || pathname.startsWith('/publish')) {
     if (!isLoggedIn) {
       return NextResponse.redirect(new URL('/login', request.url));
     }
-    
-    // Check if user is admin
-    const userEmail = session?.user?.email;
+    const userEmail = session?.user?.email?.toLowerCase();
     if (!userEmail || !ADMIN_EMAILS.includes(userEmail)) {
       return NextResponse.redirect(new URL('/apps', request.url));
     }
   }
 
-  // Redirect root path to /apps if not logged in
+  // Handle root path access
   if (pathname === '/') {
-    if (!isLoggedIn) {
+    if (isLoggedIn) {
       const appsUrl = new URL('/apps', request.url)
       // Preserve ref code if present
       const refCode = request.nextUrl.searchParams.get('ref')
@@ -101,7 +120,7 @@ export default auth(async function middleware(request: NextRequest) {
       }
       return NextResponse.redirect(appsUrl)
     }
-    // If logged in, allow access to root
+    // If not logged in, allow access to root
     return NextResponse.next()
   }
 
@@ -119,15 +138,6 @@ export default auth(async function middleware(request: NextRequest) {
     return NextResponse.next()
   }
 
-  // Redirect root path to /apps if not logged in
-  // if (pathname === '/') {
-  //   if (!isLoggedIn) {
-  //     return NextResponse.redirect(new URL('/apps', request.url));
-  //   }
-  //   // If logged in, allow access to root
-  //   return NextResponse.next();
-  // }
-
   // Handle preview URLs
   if (request.nextUrl.searchParams.get('preview')) {
     return NextResponse.next();
@@ -144,7 +154,7 @@ export default auth(async function middleware(request: NextRequest) {
         return NextResponse.redirect(appsUrl)
       }
     }
-    
+
     const loginUrl = new URL('/login', request.url)
     loginUrl.searchParams.set('callbackUrl', pathname)
     return NextResponse.redirect(loginUrl)
@@ -179,5 +189,8 @@ export default auth(async function middleware(request: NextRequest) {
 });
 
 export const config = {
-  matcher: ['/((?!api/ws|_next/static|_next/image|favicon.ico).*)'],
+  matcher: [
+    // Protected routes
+    '/((?!_next/static|_next/image|favicon.ico|icons|images|api/publications).*)',
+  ],
 };
