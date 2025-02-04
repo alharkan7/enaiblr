@@ -24,10 +24,16 @@ interface Publication {
 
 export default async function PublicationsPage() {
   // Query the database directly
-  const posts: Publication[] = await db
+  const rawPosts = await db
     .select()
     .from(publications)
     .orderBy(desc(publications.createdAt));
+
+  const posts: Publication[] = rawPosts.map(post => ({
+    ...post,
+    author: post.author ?? 'Enaiblr',
+    slug: post.slug ?? '',
+  }));
 
   if (!posts || posts.length === 0) {
     return (
