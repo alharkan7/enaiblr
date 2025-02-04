@@ -125,7 +125,7 @@ export default function PostFooter() {
 
         <div className="flex flex-col w-full md:w-auto md:flex-col items-center md:items-end gap-2">
           <div className="flex flex-col items-center md:items-end gap-2">
-            <div className="flex items-end hidden md:flex">
+            <div className="items-end hidden md:flex">
               <Logo />
             </div>
             <p className="text-sm text-muted-foreground text-right hidden md:block">
