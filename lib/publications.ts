@@ -15,7 +15,7 @@ function calculateReadingTime(content: string): string {
 }
 
 export interface Publication {
-  slug: string | null
+  slug: string
   title: string
   excerpt: string | null
   createdAt: string
@@ -39,6 +39,7 @@ export async function getPublications(): Promise<Publication[]> {
     .filter((post): post is typeof post & { slug: string } => post.slug !== null)
     .map(post => ({
       ...post,
+      author: post.author ?? 'Enaiblr',
       readingTime: calculateReadingTime(post.content),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt?.toISOString() || null
@@ -54,20 +55,16 @@ export async function getPublication(slug: string): Promise<Publication | null> 
 
     if (!post || !post.slug) return null
 
-    const processedContent = await remark()
-      .use(html)
-      .use(remarkGfm)
-      .process(post.content)
-
     return {
       ...post,
-      content: processedContent.toString(),
+      author: post.author ?? 'Enaiblr',
+      slug: post.slug,
       readingTime: calculateReadingTime(post.content),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt?.toISOString() || null
     }
   } catch (error) {
-    console.error("Error reading publication:", { slug, error })
+    console.error('Error getting publication:', error)
     return null
   }
 }
@@ -96,6 +93,7 @@ export async function getPostsByCategory(category: string): Promise<Publication[
     .filter((post): post is typeof post & { slug: string } => post.slug !== null)
     .map(post => ({
       ...post,
+      author: post.author ?? 'Enaiblr',
       readingTime: calculateReadingTime(post.content),
       createdAt: post.createdAt.toISOString(),
       updatedAt: post.updatedAt?.toISOString() || null
