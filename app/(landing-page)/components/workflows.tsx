@@ -9,7 +9,7 @@ export default function Workflows() {
       url: ""
     },
     {
-      title: "AI Skills Training",
+      title: "Corporate Training",
       description: "Empower your team with practical AI skills. Our approach is hands-on, real-world problem-solving use cases.",
       url: ""
     },
