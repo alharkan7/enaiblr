@@ -3,7 +3,6 @@
 import { startTransition, useMemo, useOptimistic, useState } from 'react';
 import { useRouter, usePathname } from 'next/navigation';
 import { useSubscription } from '@/contexts/subscription-context';
-import { mutate } from 'swr';
 import { InfinityIcon } from 'lucide-react';
 
 import { saveModelId } from '@/app/(chat)/actions';
@@ -66,11 +65,6 @@ export function ModelSelector({
             <DropdownMenuItem
               key={model.id}
               onClick={async () => {
-                if (model.type === 'pro' && plan === 'free') {
-                  setShowUpgradeDialog(true);
-                  setOpen(false);
-                  return;
-                }
                 startTransition(async () => {
                   setOptimisticModelId(model.id);
                   await saveModelId(model.id);
@@ -84,8 +78,7 @@ export function ModelSelector({
               }}
               className={cn(
                 'flex items-center justify-between relative',
-                model.id === optimisticModelId && 'bg-accent',
-                model.type === 'pro' && plan === 'free' && 'cursor-pointer'
+                model.id === optimisticModelId && 'bg-accent'
               )}
             >
               <div className="flex flex-col gap-1 items-start">
@@ -96,11 +89,7 @@ export function ModelSelector({
                   </div>
                 )}
               </div>
-              {model.type === 'pro' && plan === 'free' && (
-                <span className="ml-2 sm:ml-3 absolute top-2 right-1 text-[5px] font-medium text-primary bg-primary/10 rounded-lg px-0.5 py-0.5">
-                  <InfinityIcon />
-                </span>
-              )}
+              
               {model.id === optimisticModelId && (
                 <div className="text-foreground dark:text-foreground">
                   <CheckCircleFillIcon />

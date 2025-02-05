@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { useRouter } from 'next/navigation';
-import { webFree_CharactersLimit } from '@/config/freeLimits';
+import { searchFree_CharactersLimit } from '@/config/freeLimits';
 
 type CustomSearchInputProps = Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> & {
   value: string;
@@ -44,7 +44,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newValue = e.target.value;
-    if (plan === 'free' && newValue.length > webFree_CharactersLimit) {
+    if (plan === 'free' && newValue.length > searchFree_CharactersLimit) {
       setShowUpgradeDialog(true);
       return;
     }
@@ -93,7 +93,7 @@ const CustomSearchInput = React.forwardRef<HTMLInputElement, CustomSearchInputPr
           <AlertDialogHeader>
             <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
             <AlertDialogDescription>
-              Free users can only search with {webFree_CharactersLimit} characters keywords. Upgrade to Pro to unlock custom search capabilities.
+              Free users can only search with {searchFree_CharactersLimit} characters keywords. Upgrade to Pro to unlock custom search capabilities.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

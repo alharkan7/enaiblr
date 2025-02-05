@@ -37,7 +37,7 @@ export async function getUser(email: string) {
       .from(user)
       .where(eq(user.email, email));
     
-    console.log('getUser DB result:', result);
+    // console.log('getUser DB result:', result);
     return result;
   } catch (error) {
     console.error('Error in getUser:', error);
