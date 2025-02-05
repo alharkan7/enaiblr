@@ -34,6 +34,7 @@ interface ExtendedSession extends Session {
 export const config = {
   trustHost: true,
   secret: process.env.NEXTAUTH_SECRET,
+  // debug: true, // Enable debug messages
   session: {
     strategy: 'jwt',
     maxAge: 24 * 60 * 60, // 24 hours
@@ -67,6 +68,22 @@ export const config = {
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID!,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+      authorization: {
+        params: {
+          prompt: "select_account",
+          access_type: "offline",
+          response_type: "code"
+        }
+      },
+      async profile(profile) {
+        // console.log('Google profile callback:', profile);
+        return {
+          id: profile.sub,
+          email: profile.email,
+          name: profile.name,
+          image: profile.picture,
+        }
+      }
     }),
     Credentials({
       async authorize({ email, password }: any) {
@@ -81,68 +98,86 @@ export const config = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account }) {
-      if (account?.type === 'oauth' && account.provider === 'google') {
+    async signIn({ user, account, profile, email, credentials }) {
+      // console.log('SignIn callback triggered with:', { 
+      //   userEmail: user?.email,
+      //   accountType: account?.type,
+      //   provider: account?.provider,
+      //   hasProfile: !!profile,
+      //   hasCredentials: !!credentials
+      // });
+
+      // Handle Google OAuth sign-in
+      if (account?.provider === 'google') {
         try {
-          console.log('Google sign-in attempt:', { 
-            email: user.email,
-            name: user.name,
-            image: user.image 
-          });
-          
-          const existingUser = await getUser(user.email || '');
-          console.log('Existing user check:', { 
-            exists: existingUser && existingUser.length > 0,
-            user: existingUser?.[0] 
-          });
-          
+          if (!user.email) {
+            console.error('No email provided from Google');
+            return false;
+          }
+
+          // Check if user exists
+          // console.log('Checking if user exists:', user.email);
+          const existingUser = await getUser(user.email);
+          // console.log('DB check result:', existingUser);
+
           if (!existingUser || existingUser.length === 0) {
-            console.log('Creating new Google user...');
-            const newUser = await createGoogleUser(user.email || '', user.image || undefined);
-            console.log('New user creation result:', { 
-              success: newUser && newUser.length > 0,
-              user: newUser?.[0] 
-            });
-            
-            if (!newUser || newUser.length === 0) {
-              console.error('Failed to create Google user');
+            // Create new user
+            // console.log('Creating new Google user...');
+            try {
+              const newUser = await createGoogleUser(user.email, user.image || undefined);
+              // console.log('New user created:', newUser);
+              
+              if (!newUser || newUser.length === 0) {
+                console.error('Failed to create new Google user');
+                return false;
+              }
+            } catch (error) {
+              console.error('Error creating Google user:', error);
               return false;
             }
-          } else if (user.image && existingUser[0].avatar !== user.image) {
-            console.log('Updating user avatar...');
-            await updateUserAvatar(existingUser[0].id, user.image);
+          } else {
+            // console.log('Existing user found:', existingUser[0]);
           }
           return true;
         } catch (error) {
-          console.error('Error in signIn callback:', error);
+          console.error('Error in Google sign-in flow:', error);
           return false;
         }
       }
+
+      // Allow credential sign-in to proceed
       return true;
     },
-    async jwt({ token, user }): Promise<ExtendedToken> {
+    async jwt({ token, user, account, profile }) {
+      // console.log('JWT callback:', { 
+      //   hasUser: !!user, 
+      //   hasAccount: !!account,
+      //   tokenEmail: token?.email,
+      //   userEmail: user?.email
+      // });
+      
       if (user) {
-        const dbUser = user as User;
-        // Ensure token has required properties
-        return {
-          ...token,
-          id: dbUser.id || token.id,
-          email: dbUser.email || token.email || '',
-          name: dbUser.name || token.name,
-          picture: dbUser.image || dbUser.avatar || token.picture
-        } as ExtendedToken;
+        token.id = user.id;
+        token.email = user.email || '';
+        token.name = user.name || null;
+        token.picture = user.image || null;
       }
-      // Ensure existing token has id property
-      return token as ExtendedToken;
+      return token;
     },
-    async session({ session, token }): Promise<ExtendedSession> {
-      if (session.user && token) {
-        session.user.id = (token as ExtendedToken).id;
-        session.user.email = (token as ExtendedToken).email;
-        session.user.name = (token as ExtendedToken).name || null;
-        session.user.image = (token as ExtendedToken).picture || null;
+    async session({ session, token }) {
+      // console.log('Session callback:', { 
+      //   hasToken: !!token,
+      //   tokenEmail: token?.email,
+      //   sessionEmail: session?.user?.email
+      // });
+      
+      if (token && session.user) {
+        session.user.id = token.id as string;
+        session.user.email = token.email || '';
+        session.user.name = token.name || null;
+        session.user.image = token.picture || null;
       }
-      return session as ExtendedSession;
+      return session;
     },
     async authorized({ auth, request: { nextUrl } }) {
       const isLoggedIn = !!auth?.user;

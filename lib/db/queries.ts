@@ -23,11 +23,24 @@ import { subscriptionPackages } from '@/config/subscriptionPackages';
 // use the Drizzle adapter for Auth.js / NextAuth
 // https://authjs.dev/reference/adapter/drizzle
 
-export async function getUser(email: string): Promise<Array<User>> {
+export async function getUser(email: string) {
+  console.log('getUser called with email:', email);
+  
+  if (!email) {
+    console.error('getUser: No email provided');
+    return [];
+  }
+
   try {
-    return await db.select().from(user).where(eq(user.email, email));
+    const result = await db
+      .select()
+      .from(user)
+      .where(eq(user.email, email));
+    
+    console.log('getUser DB result:', result);
+    return result;
   } catch (error) {
-    console.error('Failed to get user from database');
+    console.error('Error in getUser:', error);
     throw error;
   }
 }
@@ -59,53 +72,38 @@ export async function createUser(email: string, password: string) {
 }
 
 export async function createGoogleUser(email: string, avatar?: string) {
-  console.log('Starting Google user creation:', { email, hasAvatar: !!avatar });
-  
+  if (!email) {
+    throw new Error('Email is required');
+  }
+
   try {
     return await db.transaction(async (tx) => {
-      console.log('Beginning database transaction...');
-      
-      // First check if user already exists
-      const existing = await tx.select().from(user).where(eq(user.email, email));
-      if (existing.length > 0) {
-        console.log('User already exists:', existing[0]);
-        return existing;
-      }
-      
       // Create the user
       const result = await tx.insert(user).values({ 
         email, 
         avatar,
         createdAt: new Date()
       }).returning();
-      
-      console.log('User inserted:', result[0]);
-      
+
       if (!result || result.length === 0) {
-        throw new Error('Failed to insert user');
+        throw new Error('Failed to create user');
       }
-      
+
       const userId = result[0].id;
-      
+
       // Create subscription
-      console.log('Creating subscription for user:', userId);
       await tx.insert(subscription).values({ 
         userId,
         createdAt: new Date()
       });
-      
+
       // Create onboarding
-      console.log('Creating onboarding for user:', userId);
       await createUserOnboarding(userId, tx);
-      
+
       return result;
     });
   } catch (error) {
-    console.error('Failed to create Google user in database:', {
-      error,
-      email,
-      avatar: avatar ? 'present' : 'not provided'
-    });
+    console.error('Failed to create user:', error);
     throw error;
   }
 }
