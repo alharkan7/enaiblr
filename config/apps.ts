@@ -10,7 +10,7 @@ export interface AppConfig {
 
 export const apps: AppConfig[] = [
   {
-    name: 'Unlimited AI',
+    name: 'Unlimited AI Chat',
     icon: InfinityIcon,
     slug: 'chat',
     description: 'Unlimited AI Access & File Upload. Saved History & Foldering',
