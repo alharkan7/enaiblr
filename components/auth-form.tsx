@@ -127,7 +127,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
         </p>
       </div>
 
-      {/* <Button
+      <Button
         className="w-full border-2 border-primary"
         disabled={loading}
         onClick={handleGoogleSignIn}
@@ -135,7 +135,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
       >
         <LogoGoogle size={14} />
         Google
-      </Button> */}
+      </Button>
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
