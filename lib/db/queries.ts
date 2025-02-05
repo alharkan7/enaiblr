@@ -492,33 +492,44 @@ type SubscriptionPlan = 'free' | 'pro';
 type SubscriptionStatus = {
   plan: SubscriptionPlan;
   validUntil: Date | null;
+  subscriptionId: string | null;
 };
 
 // For Edge Runtime compatibility, we'll skip caching
 export async function getUserSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
   try {
+    const now = new Date();
+    
+    // Get all valid subscriptions for the user
     const subs = await db
       .select()
       .from(subscription)
-      .where(eq(subscription.userId, userId));
+      .where(
+        and(
+          eq(subscription.userId, userId),
+          gt(subscription.validUntil, now)  // Only get active subscriptions (validUntil > now)
+        )
+      )
+      .orderBy(desc(subscription.validUntil));  // Get the latest subscription first
 
-    let status: SubscriptionStatus = { plan: 'free', validUntil: null };
+    let status: SubscriptionStatus = { plan: 'free', validUntil: null, subscriptionId: null };
 
+    // Use the latest valid pro subscription if available
     if (subs && subs.length > 0) {
-      const sub = subs[0];
+      const sub = subs[0]; // Get the latest subscription
       if (sub.plan === 'pro' && sub.validUntil) {
-        const now = new Date();
-        if (now < sub.validUntil) {
-          status = { plan: 'pro', validUntil: sub.validUntil };
-        }
+        status = { 
+          plan: 'pro', 
+          validUntil: sub.validUntil,
+          subscriptionId: sub.id
+        };
       }
     }
 
     return status;
   } catch (error) {
     console.error('Failed to get user subscription status:', error);
-    // Default to free on error for security
-    return { plan: 'free', validUntil: null };
+    throw error;
   }
 }
 

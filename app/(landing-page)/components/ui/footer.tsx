@@ -1,5 +1,6 @@
 import Logo from "./logo";
 import Image from "next/image";
+import Link from "next/link";
 import FooterIllustration from "@/public/images/footer-illustration.svg";
 import { Github, Linkedin, Mail } from "lucide-react";
 
@@ -54,12 +55,23 @@ export default function Footer() {
               <ul className="space-y-2 text-sm">
                 {section.links.map((link) => (
                   <li key={link.label}>
-                    <a
-                      className="text-indigo-200/65 transition hover:text-indigo-500"
-                      href={link.href}
-                    >
-                      {link.label}
-                    </a>
+                    {link.href.startsWith('mailto:') || link.href.startsWith('http') ? (
+                      <a
+                        className="text-indigo-200/65 transition hover:text-indigo-500"
+                        href={link.href}
+                        target={link.href.startsWith('http') ? "_blank" : undefined}
+                        rel={link.href.startsWith('http') ? "noopener noreferrer" : undefined}
+                      >
+                        {link.label}
+                      </a>
+                    ) : (
+                      <Link
+                        className="text-indigo-200/65 transition hover:text-indigo-500"
+                        href={link.href}
+                      >
+                        {link.label}
+                      </Link>
+                    )}
                   </li>
                 ))}
               </ul>

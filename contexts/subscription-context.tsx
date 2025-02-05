@@ -17,6 +17,7 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
   const { data: session } = useSession();
   const [plan, setPlan] = useState<SubscriptionPlan>('free');
   const [isLoading, setIsLoading] = useState(true);
+  const [lastSuccessfulPlan, setLastSuccessfulPlan] = useState<SubscriptionPlan | null>(null);
 
   const fetchSubscription = async () => {
     if (!session?.user?.id) {
@@ -27,11 +28,29 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
     try {
       const response = await fetch('/api/subscription');
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
       const data = await response.json();
+      
+      // Update both current and last successful plan
       setPlan(data.plan);
+      setLastSuccessfulPlan(data.plan);
     } catch (error) {
       console.error('Failed to fetch subscription:', error);
-      setPlan('free'); // Default to free on error
+      
+      // Only default to free if we've never successfully fetched a plan
+      // Otherwise keep the last known good plan
+      if (lastSuccessfulPlan) {
+        setPlan(lastSuccessfulPlan);
+      } else {
+        setPlan('free');
+      }
+      
+      // Retry after 30 seconds on error
+      setTimeout(() => {
+        fetchSubscription();
+      }, 30000);
     } finally {
       setIsLoading(false);
     }
@@ -39,6 +58,13 @@ export function SubscriptionProvider({ children }: { children: React.ReactNode }
 
   useEffect(() => {
     fetchSubscription();
+    
+    // Set up periodic refresh every 5 minutes
+    const intervalId = setInterval(() => {
+      fetchSubscription();
+    }, 5 * 60 * 1000);
+
+    return () => clearInterval(intervalId);
   }, [session?.user?.id]);
 
   useEffect(() => {
