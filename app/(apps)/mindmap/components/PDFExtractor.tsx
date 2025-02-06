@@ -23,7 +23,7 @@ export default function PDFExtractor({ onExtractComplete, onPartialContent }: PD
     object: extractedContent,
     isLoading
   } = experimental_useObject<PDFExtract>({
-    api: "/api/generate-quiz",
+    api: "/api/mindmap",
     schema: pdfExtractSchema,
     initialValue: undefined,
     onError: (error) => {
