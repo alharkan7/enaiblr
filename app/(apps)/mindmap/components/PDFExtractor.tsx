@@ -100,7 +100,7 @@ export default function PDFExtractor({ onExtractComplete, onPartialContent }: PD
         <form onSubmit={handleSubmitWithFiles} className="space-y-4 flex-shrink-0">
           <div className="relative flex flex-col items-center justify-center 
             border border-dashed border-muted-foreground/25 
-            bg-[#FCFCFC] hover:bg-[#F5F5F5] transition duration-500 hover:duration-200
+            bg-[#FCFCFC] hover:bg-[#F5F5F5] duration-500 hover:duration-200
             rounded-lg px-8 py-6 transition-colors">
             <input
               type="file"
