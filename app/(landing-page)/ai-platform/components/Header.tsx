@@ -18,11 +18,11 @@ const Header = () => {
   }, []);
 
   const navigation = [
-    { name: "Fitur", href: "#features" },
+    { name: "Features", href: "#features" },
     // { name: "Testimoni", href: "#testimonials" },
-    { name: "Harga", href: "#pricing" },
+    { name: "Pricing", href: "#pricing" },
     { name: "FAQ", href: "#faq" },
-    { name: "Affiliate", href: "/affiliate" },
+    { name: "Affiliate 25%", href: "/affiliate" },
   ];
 
   const menuRef = useRef<HTMLDivElement>(null);
@@ -62,13 +62,13 @@ const Header = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  className="text-muted-foreground hover:text-foreground transition-colors"
+                  className="text-black/80 hover:font-extrabold transition-all"
                 >
                   {item.name}
                 </Link>
               ))}
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                <Link href="/apps">Mulai</Link>
+                <Link href="/apps">Get Started</Link>
               </Button>
             </div>
           </div>
@@ -78,7 +78,7 @@ const Header = () => {
             <Button
               className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
             >
-              <Link href="/apps">Mulai</Link>
+              <Link href="/apps">Get Started</Link>
             </Button>
             <Button
               ref={buttonRef}

@@ -55,10 +55,10 @@ const Statistics = () => {
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <motion.div variants={item} className="space-y-2 mb-8">
             <h2 className="text-3xl font-bold !text-black tracking-tighter sm:text-3xl md:text-4xl">
-              Asisten {' '}
               <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Kreatif dan Produktif
+              Creative and Productive
               </span>
+              {' '} AI Assistant
             </h2>
           </motion.div>
           <motion.div variants={item} className="grid grid-cols-2 md:grid-cols-4 gap-8 w-full max-w-4xl">
@@ -66,25 +66,25 @@ const Statistics = () => {
               <span className="text-4xl md:text-5xl font-bold !text-black">
                 {formatNumber(stats.chats)}
               </span>
-              <span className="text-sm text-black/90">Chats<br></br>Dibuat</span>
+              <span className="text-sm text-black/90">Chats<br></br>Created</span>
             </div>
             <div className="flex flex-col items-center space-y-2">
               <span className="text-4xl md:text-5xl font-bold !text-black">
                 {formatNumber(stats.messages)}
               </span>
-              <span className="text-sm text-black/90">Pesan<br></br>Terjawab</span>
+              <span className="text-sm text-black/90">Messages<br></br>Answered</span>
             </div>
             <div className="flex flex-col items-center space-y-2">
               <span className="text-4xl md:text-5xl font-bold !text-black">
                 {formatNumber(stats.documents)}
               </span>
-              <span className="text-sm text-black/90">Dikumen<br></br>Dianalisis</span>
+              <span className="text-sm text-black/90">Documents<br></br>Analyzed</span>
             </div>
             <div className="flex flex-col items-center space-y-2">
               <span className="text-4xl md:text-5xl font-bold !text-black">
                 {formatNumber(stats.files)}
               </span>
-              <span className="text-sm text-black/90">File<br></br>Diproses</span>
+              <span className="text-sm text-black/90">Files<br></br>Processed</span>
             </div>
           </motion.div>
         </div>

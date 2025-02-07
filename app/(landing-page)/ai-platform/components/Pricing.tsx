@@ -1,7 +1,6 @@
 "use client"
 
 import { Check, ChevronDown, ChevronUp } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -12,26 +11,26 @@ import {
 } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
-import { price, originalPrice, discountValue, PRO_FEATURES, FREE_FEATURES } from "@/lib/constants";
+import { priceUS, originalPriceUS, discountValueUS, PRO_FEATURES, FREE_FEATURES } from "@/lib/constants";
 import React from 'react';
 import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const formatPrice = (amount: number) => {
-  return `Rp${amount.toLocaleString('id-ID')}`;
+  return `$${amount.toLocaleString('en-US')}`;
 };
 
 const plans = [
   {
-    name: "Gratis",
+    name: "Free",
     price: 0,
-    description: "Cocok untuk Pengguna Baru",
+    description: "Best for New Users",
     features: FREE_FEATURES,
   },
   {
     name: "Unlimited Access",
-    price: price,
-    description: "Akses Semua Fitur AI Tanpa Batas",
+    price: priceUS,
+    description: "Access All Unlimited AI Features",
     features: PRO_FEATURES,
     popular: true,
   },
@@ -71,14 +70,14 @@ const Pricing = () => {
           className="max-w-2xl mx-auto text-center mb-16"
         >
           <h2 className="text-3xl font-bold mb-4">
-            Harga Tunggal dan
+            Single &
             {" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Terjangkau
+              Affordable Pricing
             </span> {" "}
           </h2>
-          <p className="text-muted-foreground">
-            Fitur AI terlengkap dan tanpa batas dengan harga paling murah.
+          <p>
+            Complete and Unlimitted AI Features with <b>the Most Affordable Price.</b>
           </p>
         </motion.div>
         <motion.div 
@@ -133,7 +132,7 @@ const Pricing = () => {
                     >
                       <span className="text-xl text-muted-foreground relative">
                         <span className="relative">
-                          {formatPrice(originalPrice)}
+                          {formatPrice(originalPriceUS)}
                           <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
                         </span>
                         <motion.span 
@@ -142,7 +141,7 @@ const Pricing = () => {
                           transition={{ delay: 0.5 }}
                           className="ml-2 text-xs bg-blue-400/90 text-white px-2 py-1 rounded-full"
                         >
-                          Disc. {discountValue}%
+                          {discountValueUS}% Off
                         </motion.span>
                       </span>
                     </motion.div>
@@ -154,7 +153,7 @@ const Pricing = () => {
                     className="mb-4 text-center"
                   >
                     <span className="text-4xl !text-black font-bold">{formatPrice(plan.price)}</span>
-                    <span className="text-muted-foreground">{plan.price === 0 ? "" : "/bulan"}</span>
+                    <span className="text-muted-foreground">{plan.price === 0 ? "" : "/month"}</span>
                   </motion.div>
                   <div className="relative">
                     <AnimatePresence mode="wait">
@@ -211,12 +210,12 @@ const Pricing = () => {
                           {expandedPlan === index ? (
                             <>
                               <ChevronUp className="size-4" />
-                              <span>Ringkas</span>
+                              <span>Show Less</span>
                             </>
                           ) : (
                             <>
                               <ChevronDown className="size-5" />
-                              <span>Tampilkan Seluruhnya</span>
+                              <span>Show All Features</span>
                             </>
                           )}
                         </motion.button>
@@ -236,7 +235,7 @@ const Pricing = () => {
                           : "border border-gray-200 bg-white text-black rounded-full hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white hover:border-transparent",
                       )}
                     >
-                      Mulai Sekarang
+                      Get Started
                     </motion.button>
                   </Link>
                 </CardFooter>

@@ -16,19 +16,19 @@ const Hero = () => {
             // transition={{ duration: 0.5 }}
             className="text-4xl font-bold tracking-tight sm:text-6xl mb-6"
           >
-            Akses Seluruh {" "}
+            Access {" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              AI Tanpa Batas
+              Unlimited AI
             </span>{" "}
-            dalam Satu Platform
+            in One Platform
           </h1>
           <p 
             // initial={{ opacity: 0 }}
             // animate={{ opacity: 1 }}
             // transition={{ duration: 0.5, delay: 0.2 }}
-            className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto"
+            className="text-xl mb-8 max-w-3xl mx-auto"
           >
-            Tingkatkan produktivitasmu dengan akses ke beragam jenis AI dalam satu akun. Harga terjangkau, tak perlu lagi membayar langganan satu per satu.
+            <b>ChatGPT, Claude, DeepSeek</b> + a Dozen of AI Features: All in One Place. <b>Unlimited Use, Affordable Price</b>, No Need to Pay for Each AI Separately.
           </p>
           <div 
             // initial={{ opacity: 0, y: 20 }}
@@ -38,7 +38,7 @@ const Hero = () => {
           >
             <Link href="#highlights">
               <Button size="lg" className="gap-2 w-full sm:w-auto bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                Mulai <ArrowRight className="size-4" />
+                Get Started <ArrowRight className="size-4" />
               </Button>
             </Link>
             {/* <Link href="#features">

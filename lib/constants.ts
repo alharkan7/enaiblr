@@ -2,6 +2,10 @@ export const price = 39000
 export const originalPrice = 99000
 export const discountValue = Math.round(((originalPrice - price) / originalPrice) * 100);
 
+export const priceUS = 3
+export const originalPriceUS = 10
+export const discountValueUS = Math.round(((originalPriceUS - priceUS) / originalPriceUS) * 100);
+
 export const PRO_FEATURES = [
   'Unlimited Access to All AI Models:',
   'GPT-4o, Claude, Gemini, Llama, etc.',
@@ -20,9 +24,9 @@ export const PRO_FEATURES = [
 ] as const
 
 export const FREE_FEATURES = [
-  'Chatbot AI tanpa History',
-  'Image Generator Non-HD',
-  'Document Chat tanpa History',
+  'AI Chat Assistant without History',
+  'Non-HD Image Generator',
+  'Document Chat without History',
   'Science Paper Flashcards',
-  'Tanpa Support WhatsApp',
+  'No Direct Support',
 ] as const

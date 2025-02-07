@@ -23,7 +23,7 @@ const CTA = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-3xl font-bold mb-4"
           >
-            Siap Jadikan
+            Ready to
             {" "}
             <motion.span 
               initial={{ backgroundPosition: "200% 0" }}
@@ -31,7 +31,7 @@ const CTA = () => {
               transition={{ duration: 1, delay: 0.2 }}
               className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-[length:200%_100%] bg-clip-text text-transparent"
             >
-              Produktivitas Meroket?
+              Boost Your Productivity?
             </motion.span> {" "}
           </motion.h2>
           <motion.p 
@@ -41,7 +41,7 @@ const CTA = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-muted-foreground mb-8"
           >
-            Gabung sekarang untuk membuka akses ke seluruh fitur AI tanpa batas.
+            Join Now to Access All AI Features without Limits.
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -53,7 +53,7 @@ const CTA = () => {
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full group" asChild>
                 <Link href="/apps">
-                  Akses Sekarang 
+                  Access Now 
                   <motion.span
                     initial={{ x: 0 }}
                     whileHover={{ x: 3 }}
@@ -66,7 +66,7 @@ const CTA = () => {
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button size="lg" variant="outline" className="rounded-full text-black hover:bg-gradient-to-r hover:from-blue-600 hover:to-cyan-500 hover:text-white hover:border-transparent" asChild>
-                <a href="https://wa.me/+6281280077690" target="_blank" rel="noopener noreferrer">Hubungi Admin</a>
+                <a href="mailto:mail@enaiblr.org" target="_blank" rel="noopener noreferrer">Contact Us</a>
               </Button>
             </motion.div>
           </motion.div>

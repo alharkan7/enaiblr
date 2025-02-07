@@ -7,47 +7,45 @@ import { useState, useEffect } from "react";
 
 const testimonials = [
   {
-    name: "Anindya",
-    role: "Mahasiswa Pascasarjana",
-    content: "Platform ini sangat membantu saya ngerjain tugas. Bisa coding, beri rekomendasi solusi, bahkan belajar konsep baru. Nilai matkul saya naik drastis sejak pakai enaiblr.",
+    name: "Andrew",
+    role: "Graduate Student",
+    content: "This platform has been a game-changer for my assignments. It helps with coding, suggests solutions, and even teaches new concepts. My grades have improved since I started using enaiblr.",
     image: "app/favicon.ico",
   },
   {
     name: "Sarah",
     role: "Digital Marketer",
-    content:
-      "Website ini sangat membantu saya dalam menghasilkan ide konten, visual, dan copy dalam hitungan menit. Fitur AI-nya lengkap dan sangat membantu creative process saya.",
+    content: "This website helps me generate content ideas, visuals, and copy in minutes. The AI features are comprehensive and really enhance my creative process.",
     image: "app/favicon.ico",
   },
   {
-    name: "Wijaya",
-    role: "Dosen & Peneliti",
-    content:
-      "Saya terkesan dengan kemudahan akses ke berbagai tools AI dalam satu platform ini. Sangat membantu untuk riset akademis dan membuat materi presentasi.",
+    name: "William",
+    role: "College Teacher & Researcher",
+    content: "I'm impressed by how easily I can access various AI tools in one platform. It's incredibly helpful for academic research and creating presentation materials.",
     image: "app/favicon.ico",
   },
   {
-    name: "Riza",
+    name: "Rachel",
     role: "Content Creator",
-    content: "AI Apps untuk kreatif yang ada di platform ini menghemat waktu saya. Sekarang bisa bikin konten visual dan audio dubbing dalam hitungan menit. Game changer!",
+    content: "The creative AI apps on this platform save me so much time. Now I can create visual content and audio dubbing in minutes. Absolute game changer!",
     image: "app/favicon.ico",
   },
   {
-    name: "Budi",
-    role: "Jurnalis",
-    content: "Fitur transcriber membantu saya mentranskrip wawancara dengan cepat dan akurat. Web Chat juga berguna untuk fact-checking dan riset real-time data.",
+    name: "Brian",
+    role: "Journalist",
+    content: "The transcriber feature helps me transcribe interviews quickly and accurately. The Web Chat is also great for fact-checking and real-time data research.",
     image: "app/favicon.ico",
   },
   {
-    name: "Diana",
-    role: "Mahasiswa",
-    content: "Fitur Flashcard membantu saya memahami paper ilmiah dengan lebih mudah. Fitur private chat juga membuat saya tidak khawatir tulisan saya terlihat di internet.",
+    name: "Lana",
+    role: "Student",
+    content: "The Flashcard feature helps me understand scientific papers more easily. The private chat feature also ensures my writing stays off the internet, which I really appreciate.",
     image: "app/favicon.ico",
   },
   {
-    name: "Hendra",
-    role: "Penulis & Coach",
-    content: "Saya sudah coba pakai semua fiturnya. Karena tiap AI ada kelebihannya, punya semua aksesnya di 1 platform ini bikin saya bisa menulis dan mengorganisir ide tanpa mengganggu flow.",
+    name: "Henry",
+    role: "Writer & Coach",
+    content: "I've tried all the features. Since each AI has its strengths, having access to all of them in one platform helps me write and organize ideas without breaking my flow.",
     image: "app/favicon.ico",
   }
 ];
@@ -102,14 +100,14 @@ const Testimonials = () => {
             transition={{ duration: 0.5 }}
             className="max-w-2xl mx-auto text-center mb-16"
           >
-            <h2 className="text-3xl font-bold mb-4">
-              Cerita {" "} 
+            <h2 className="text-4xl font-bold mb-4">
+              Our {" "} 
               <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-                Pengalaman Pengguna
+                User Stories
               </span>
             </h2>
-            <p className="text-muted-foreground">
-              Platform kami mendukung pengguna dari berbagai profesi dan industri.
+            <p>
+              Our Platform Supports Users <b>from Various Professions and Industries.</b>
             </p>
           </motion.div>
         </div>

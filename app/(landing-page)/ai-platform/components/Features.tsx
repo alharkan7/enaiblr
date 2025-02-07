@@ -82,14 +82,14 @@ const Features = () => {
           className="max-w-2xl mx-auto text-center mb-16"
         >
           <h2 className="text-3xl font-bold mb-4">
-            {" "}
+            Try {" "}
             <span className="bg-gradient-to-r from-blue-600 to-cyan-500 bg-clip-text text-transparent">
-              Coba Unlimited AI
+            All These AI Apps
             </span> {" "}
-            yang Kamu Butuhkan
+            Right Now
           </h2>
-          <p className="text-muted-foreground">
-            Mulai dari produktivitas hingga kreativitas, platform kami punya semua tools dan fitur AI yang kamu butuhkan.
+          <p >
+            From Productivity to Creativity, <b>We Have All the AI Tools and Features You Need.</b>
           </p>
         </motion.div>
         <motion.div 

@@ -26,64 +26,64 @@ const item = {
 };
 
 const faqItems = [{
-  question: "Apa saja model AI yang ada di Enaiblr Platform?",
-  answer: "GPT-4o (OpenAI), Claude 3.5 Sonnet (Anthropic), Gemini 1.5 (Google), Llama 3 (Meta), Mixtral 8x (Mistral), dan Gemma 2 (Google).",
+  question: "What AI models are available on the Enaiblr Platform?",
+  answer: "GPT-4o (OpenAI), Claude 3.5 Sonnet (Anthropic), Gemini 1.5 (Google), Llama 3 (Meta), DeepSeek, Qwen 2.5 (Alibaba), Mixtral 8x (Mistral), and Gemma 2 (Google).",
 },
 {
-  question: "Apakah ini sharing account?",
-  answer: "Tidak. User bisa <a href='/login' class='text-blue-600 hover:text-blue-800 underline'>login</a> menggunakan akun Google masing-masing untuk menghindari sharing account.",
+  question: "Is this a shared account system?",
+  answer: "No. Users can <a href='/login' class='text-blue-600 hover:text-blue-800 underline'>login</a> using their individual Google accounts to avoid account sharing.",
 },
 {
-  question: "Bagaimana paket AI di Enaiblr bisa lebih murah dibandingkan dengan harga asalnya?",
-  answer: "Kami menggunakan sistem API (Application Program Interfaces) dari masing-masing provider AI yang mana harganya lebih murah secara on-demand dibandingkan dengan harga subscription bulanan.",
+  question: "How can Enaiblr's AI packages be cheaper than their original prices?",
+  answer: "We use API (Application Program Interfaces) systems from each AI provider, which are more cost-effective on-demand compared to monthly subscription prices.",
 },
 {
-  question: "Apakah benar-benar unlimited?",
-  answer: "Ya. Tidak ada batasan jumlah file, dokumen, dan gambar yang dapat di-upload di Enaiblr. Batasan hanya pada ukuran satuan file tergantung pada aplikasi yang digunakan dan keterbatasan provider AI masing-masing.",
+  question: "Is it really unlimited?",
+  answer: "Yes. There are no limits on the number of files, documents, and images you can upload to Enaiblr. The only restrictions are on individual file sizes, which depend on the application being used and the limitations of each AI provider.",
 },
 {
-  question: "Apa saja aplikasi AI yang ada di Enaiblr?",
-  answer: "Unlimited AI Chat, Image Generator HD, Private Document Chat, Incognito Chat, Web Search, AI Tools Search Engine, Audio Transcriber, AI Natural Voice, dll. Kamu dapat mencoba semuanya di <a href='/apps' class='text-blue-600 hover:text-blue-800 underline'>halaman Apps</a>. Kami juga akan terus menambah jumlah aplikasi AI di platform kami tanpa tambahan biaya.",
+  question: "What AI applications are available on Enaiblr?",
+  answer: "Unlimited AI Chat, HD Image Generator, Private Document Chat, Incognito Chat, Web Search, AI Tools Search Engine, Audio Transcriber, AI Natural Voice, and more. You can try them all on our <a href='/apps' class='text-blue-600 hover:text-blue-800 underline'>Apps page</a>. We'll continue adding more AI applications to our platform at no additional cost.",
 },
 {
-  question: "Apa saja yang bisa dilakukan oleh AI Chat di Enaiblr?",
-  answer: "Semua kapabilitas AI pada ChatGPT, Claude, dan Gemini dapat dilakukan di platform Enaiblr, seperti menulis, coding, penerjemahan, review, brainstorming, dll. Selain itu, Enaiblr AI juga memiliki fitur organisasi chat dengan Folder dan Pin, serta fitur pembuatan dokumen dan running Python code seperti Canvas pada ChatGPT atau Artifact pada Claude.",
+  question: "What can Enaiblr's AI Chat do?",
+  answer: "All the capabilities of ChatGPT, Claude, and Gemini are available on the Enaiblr platform, including writing, coding, translation, reviews, brainstorming, and more. Additionally, Enaiblr AI features chat organization with Folders and Pins, as well as document creation and Python code execution capabilities similar to ChatGPT's Canvas or Claude's Artifacts.",
 },
 {
-  question: "Apa kelebihan Enaiblr dibandingkan dengan platform lain?",
-  answer: "Enaiblr adalah AI platform paling terjangkau yang menawarkan seluruh kapabilitas AI tanpa batas. Enaiblr juga memiliki fitur Document Creator & Editor seperti Canvas pada ChatGPT dan Artifact pada Claude. Enaiblr juga memiliki fitur untuk menjalankan Python code di dalam chat. Bahkan, fitur organisasi chat dengan Folder dan Pin saat ini masih belum dimiliki oleh AI seperti ChatGPT, Claude, dan Gemini.",
+  question: "What advantages does Enaiblr have over other platforms?",
+  answer: "Enaiblr is the most affordable AI platform offering unlimited AI capabilities. It includes Document Creator & Editor features similar to ChatGPT's Canvas and Claude's Artifacts. Enaiblr also allows Python code execution within chats. Moreover, our chat organization features with Folders and Pins are currently not available on platforms like ChatGPT, Claude, and Gemini.",
 },
 {
-  question: "Berapa limit penggunaan akun gratis?",
-  answer: "Untuk AI Chat, akun gratis bisa menggunakan 4 dari 6 AI model yang tersedia selain GPT-4o dan Claude, serta menggunakan fitur organisir chat seperti Folder dan Pin. Untuk aplikasi lain selain Chat, akun gratis dapat mencoba semua fiturnya dengan beberapa batasan.",
+  question: "What are the usage limits for free accounts?",
+  answer: "For AI Chat, free accounts can access 4 out of 6 AI models (excluding GPT-4o and Claude) and use chat organization features like Folders and Pins. For other applications besides Chat, free accounts can try all features with some limitations.",
 },
 {
-  question: "Apakah ada program affiliate?",
-  answer: "Ada. Silakan membuka laman <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> atau menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> untuk mendaftar di program Enaiblr Affiliate. Kami menawarkan komisi <b>25%</b> hingga <b>Rp25.000</b> per transaksi yang berhasil.",
+  question: "Is there an affiliate program?",
+  answer: "Yes. Please visit our <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> page or contact us via WhatsApp at <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> to register for the Enaiblr Affiliate program. We offer a <b>25%</b> commission up to <b>Rp25,000</b> per successful transaction.",
 },
 {
-  question: "Apakah data saya aman?",
-  answer: "Tentu saja. Beberapa fitur keamanan yang kami implementasikan antara lain: Enskripsi SSL/TLS, Secure Password Enforcement, Login with Google, serta dukungan layanan keamanan networking dari provider server dan database kami.",
+  question: "Is my data secure?",
+  answer: "Absolutely. Our security features include SSL/TLS encryption, Secure Password Enforcement, Login with Google, and networking security services from our server and database providers.",
 },
 {
-  question: "Apa saja format file yang didukung di Enaiblr?",
-  answer: "Kami mendukung file gambar umum seperti JPEG, PNG, serta jenis dokumen umum seperti PDF, DOC. Pada aplikasi Doc Chat khusus, AI kami juga dapat membaca file TXT, MD, CSS, hingga HTML.",
+  question: "What file formats are supported on Enaiblr?",
+  answer: "We support common image formats like JPEG, PNG, and common document types like PDF, DOC. In our specialized Doc Chat application, our AI can also read TXT, MD, CSS, and HTML files.",
 },
 {
-  question: "Metode pembayaran apa saja yang tersedia di Enaiblr?",
-  answer: "Kami mendukung pembayaran menggunakan QRIS, e-Wallet (ShopeePay, DANA, dll.), Bank Transfer (Mandiri, BNI, BRI, dll.), serta via Retail Mart (Indomaret, Alfamart).",
+  question: "What payment methods are available on Enaiblr?",
+  answer: "We support payments through QRIS, e-Wallets (ShopeePay, DANA, etc.), Bank Transfer (Mandiri, BNI, BRI, etc.), and Retail Marts (Indomaret, Alfamart).",
 },
 {
-  question: "Bagaimana jika paket langganan saya telah habis?",
-  answer: "Apabila langganan Enaiblr Pro kamu sudah habis setelah satu periode, kamu dapat <a href='/account/profile' class='text-blue-600 hover:text-blue-800 underline'>memperpanjang</a> subscription untuk periode berikutnya. Tenang, data kamu tetap tersimpan meskipun kamu belum sempat untuk memperpanjang subscription.",
+  question: "What happens when my subscription package expires?",
+  answer: "When your Enaiblr Pro subscription ends after one period, you can <a href='/account/profile' class='text-blue-600 hover:text-blue-800 underline'>renew</a> it for the next period. Don't worry, your data remains stored even if you haven't renewed your subscription yet.",
 },
 {
-  question: "Saya mengalami kendala aktivasi akun Enaiblr Pro setelah melakukan pembayaran, apa yang harus saya lakukan?",
-  answer: "Apabila ada kendala aktivasi Enaiblr Pro, kamu bisa menghubungi WhatsApp kami di <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a>. Kami akan segera melakukan aktivasi dan membantu menyelesaikan kendala terkait.",
+  question: "I'm having issues activating my Enaiblr Pro account after payment, what should I do?",
+  answer: "If you're experiencing issues with Enaiblr Pro activation, you can contact us via WhatsApp at <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a>. We'll promptly handle the activation and help resolve any related issues.",
 },
 {
-  question: "Apakah ada aplikasinya di smartphone?",
-  answer: "Kamu bisa menginstall Enaiblr sebagai Web App dengan cara membuka enaiblr.org di Google Chrome, kemudian dari menu browser, pilih 'Add to Home Screen' ('Tambahkan ke Layar Utama'). Setelah itu, kamu bisa menggunakan semua Enaiblr Apps seperti aplikasi Android pada umumnya.",
+  question: "Is there a smartphone app?",
+  answer: "You can install Enaiblr as a Web App by opening enaiblr.org in Google Chrome, then from the browser menu, select 'Add to Home Screen'. After that, you can use all Enaiblr Apps just like a regular Android application.",
 }
 ]
 
@@ -135,7 +135,7 @@ const FAQ = () => {
                 className="mt-6 px-6 py-2 text-lg font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 mx-auto relative z-10"
               >
                 <ChevronDown className={`size-5 transition-transform ${showAll ? 'rotate-180' : ''}`} />
-                <span>{showAll ? 'Tampilkan Ringkas' : 'Tampilkan Seluruhnya'}</span>
+                <span>{showAll ? 'Show Less' : 'Show All'}</span>
               </button>
             )}
           </motion.div>

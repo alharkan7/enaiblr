@@ -10,23 +10,23 @@ import hl5 from "../assets/hl-5.webp";
 
 const features = [
   {
-    title: "Semua Model AI Tersedia",
+    title: "Access Any AI Models",
     image: hl1
   },
   {
-    title: "Kelola Chat dengan Folder & Pin",
+    title: "Organize Chats in Folders & Pins",
     image: hl2
   },
   {
-    title: "Incognito Mode & Private Google Login",
+    title: "Private Google Login & Incognito Mode",
     image: hl3
   },
   {
-    title: "Canvas/Artifact untuk Dokumen & Coding",
+    title: "Canvas/Artifacts for Documents & Coding",
     image: hl4
   },
   {
-    title: "Bonus Beragam AI Apps",
+    title: "Bonus: Free AI Apps",
     image: hl5
   },
 ];
