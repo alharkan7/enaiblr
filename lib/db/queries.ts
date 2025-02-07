@@ -24,7 +24,7 @@ import { subscriptionPackages } from '@/config/subscriptionPackages';
 // https://authjs.dev/reference/adapter/drizzle
 
 export async function getUser(email: string) {
-  console.log('getUser called with email:', email);
+  // console.log('getUser called with email:', email);
   
   if (!email) {
     console.error('getUser: No email provided');
