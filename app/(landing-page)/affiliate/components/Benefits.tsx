@@ -6,23 +6,23 @@ import { Zap, Wallet, DollarSign, Sparkles } from "lucide-react";
 const benefits = [
   {
     icon: Sparkles,
-    title: "Produk Populer & Mudah Dijual",
-    description: "Produk software AI sedang sangat ramai pengguna, dan Enaiblr adalah yang paling murah dengan fitur paling lengkap, sehingga akan mudah dijual."
+    title: "Popular & Easy-to-Sell",
+    description: "AI software products are in high demand, and Enaiblr is the most affordable with the most comprehensive features, making it easy to sell."
   },
   {
     icon: DollarSign,
-    title: "Nilai Komisi Tinggi",
-    description: "Nilai komisi kami tinggi sebesar 25% hingga Rp25.000 per transaksi adalah di atas rata-rata komisi program affiliate pada umumnya."
+    title: "High Commission Rate",
+    description: "Our commission rate of 25% per transaction is above the average commission rate for typical affiliate programs."
   },
   {
     icon: Zap,
-    title: "Pemasukan Instan",
-    description: "Tak seperti produk fisik yang menunggu pengiriman, penghasilan Enaiblr Affiliate akan seketika masuk di setiap transaksi yang berhasil."
+    title: "Instant Income",
+    description: "Unlike physical products that require shipping, Enaiblr Affiliate earnings are instantly credited for every successful transaction."
   },
   {
     icon: Wallet,
-    title: "Pencairan Dana Kapanpun & Berapapun",
-    description: "Berbeda dengan affiliate lain yang memiliki minimum target atau periode tertentu, pencairan dana Enaiblr Affiliate bisa kapan saja."
+    title: "Withdraw Anytime & Any Amount",
+    description: "Unlike other affiliate programs with minimum targets or specific periods, Enaiblr Affiliate funds can be withdrawn at any time."
   }
 ];
 
@@ -38,13 +38,13 @@ export default function Benefits() {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-            Apa Saja {" "}
+            What are the {" "}
             <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-              Keuntungannya?
+              Benefits?
             </span>
           </h2>
           <p className="text-gray-500 mx-auto text-lg max-w-3xl">
-            Berbeda dengan program program referral lain, <b>Enaiblr Affiliate</b> memiliki nilai komisi tinggi, fleksibel, instan, dan tanpa batas.
+            Unlike other affiliate programs, <b>Enaiblr Affiliate</b> has a high commission rate and without limits of transactions.
           </p>
         </motion.div>
 

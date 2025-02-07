@@ -50,7 +50,7 @@ const Header = () => {
             <Button
               className="bg-gradient-to-r from-yellow-500 to-orange-600 text-white hover:opacity-90 rounded-full"
             >
-              <Link href="/account/affiliate">Mulai</Link>
+              <Link href="/account/affiliate">Get Started</Link>
             </Button>
           </div>
         </div>

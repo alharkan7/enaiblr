@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Mail, Globe, Phone } from "lucide-react";
+import { Mail, Globe } from "lucide-react";
 import { apps } from "@/config/apps";
 
 const Footer = () => {

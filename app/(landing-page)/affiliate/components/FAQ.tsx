@@ -31,38 +31,38 @@ const createMarkup = (content: string) => {
 
 const faqItems = [
   {
-    question: "Berapa lama masa berlaku kode Affiliate saya?",
-    answer: "Kode Affiliate kamu tidak memiliki batasan masa berlaku, jadi kamu bisa menjadikannya sebagai <b>passive income</b>. Kamu dapat terus mendapatkan komisi selama ada pengguna yang menggunakan kode referral-mu untuk berlangganan."
+    question: "How long is my Affiliate code valid?",
+    answer: "Your Affiliate code has no expiration date, so you can use it as a <b>passive income</b>. You'll continue earning commissions as long as users subscribe using your referral code."
   },
   {
-    question: "Apakah saya bisa mendapatkan komisi dari perpanjangan berlangganan?",
-    answer: "Ya, kamu akan mendapatkan komisi <b>25% setiap kali kode referral-mu digunakan</b> dalam transaksi berlangganan Enaiblr Pro, termasuk perpanjangan. Jadi apabila seorang pengguna memperpanjang subscription di bulan kedua dst., kamu akan mendapatkan komisi 25% dari transaksi mereka <b>terus-menerus</b>."
+    question: "Can I earn commission from subscription renewals?",
+    answer: "Yes, you'll receive a <b>25% commission every time your referral code is used</b> for an Enaiblr Pro subscription transaction, including renewals. So if a user renews their subscription in the second month and beyond, you'll <b>continuously</b> earn 25% commission from their transactions."
   },
   {
-    question: "Bagaimana cara mencairkan dana komisi?",
-    answer: "Kamu dapat mencairkan dana komisi kapan saja melalui <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>dashboard Affiliate</a> dengan mengklik tombol '<b>Withdraw Earnings</b>'. Dari sana, kamu akan diarahkan ke Admin, kemudian sampaikan Bank dan nomor rekening tujuan untuk pencairan danamu. Setelah itu, tinggal tunggu danamu masuk setelah segera diproses."
+    question: "How do I withdraw my commission funds?",
+    answer: "You can withdraw your commission funds anytime through the <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate dashboard</a> by clicking the '<b>Withdraw Earnings</b>' button. From there, you'll be directed to Admin where you can provide your bank details and account number for the withdrawal. After that, just wait for your funds to arrive after processing."
   },
   {
-    question: "Apakah ada batasan jumlah referral yang bisa saya dapatkan?",
-    answer: "Tidak ada. Semakin banyak pengguna yang melakukan transaksi menggunakan kode referral-mu, semakin besar pula penghasilan dari komisi yang akan kamu terima."
+    question: "Is there a limit to how many referrals I can get?",
+    answer: "No, there isn't. The more users who make transactions using your referral code, the more commission earnings you'll receive."
   },
   {
-    question: "Metode pembayaran apa saja yang tersedia untuk pencairan komisi?",
-    answer: "Kami mendukung berbagai metode pembayaran umum seperti transfer bank, e-wallet, dan metode pembayaran digital lainnya. Jika ada pertanyaan, bisa ditanyakan ke Admin di halaman <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate</a>."
+    question: "What payment methods are available for commission withdrawals?",
+    answer: "We support various common payment methods including bank transfers, e-wallets, and other digital payment methods. If you have any questions, you can ask Admin on the <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate</a> page."
   },
   {
-    question: "Berapa lama proses pencairan dana komisi?",
-    answer: "Proses pencairan dana biasanya selesai dalam waktu 1 hari kerja sejak kamu mengajukan penarikan dana melalui dashboard Affiliate. Kami dapat mencairkan secara cepat selama setiap transaksi yang sukses telah terverifikasi."
+    question: "How long does the commission withdrawal process take?",
+    answer: "The withdrawal process usually completes within 1 business day after you submit your withdrawal request through the Affiliate dashboard. We can process quickly as long as all successful transactions have been verified."
   },
   {
-    question: "Apakah saya bisa melihat riwayat komisi saya?",
-    answer: "Ya, kamu dapat melihat seluruh riwayat transaksi, komisi, dan status pembayaran melalui <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>dashboard Affiliate</a>."
+    question: "Can I view my commission history?",
+    answer: "Yes, you can view all your transaction history, commissions, and payment status through the <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate dashboard</a>."
   },
   {
-    question: "Bagaimana cara meng-kustomisasi kode referral?",
-    answer: "Di <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>halaman Affiliate</a>, kamu akan menemukan opsi untuk mengedit kode referral secara custom sesuai keinginanmu. Pastikan kode yang kamu pilih unik dan mudah dibagikan."
+    question: "How do I customize my referral code?",
+    answer: "On the <a href='/account/affiliate' class='text-yellow-500 hover:text-yellow-700 underline'>Affiliate page</a>, you'll find an option to customize your referral code according to your preference. Make sure the code you choose is unique and easy to share."
   }
-];
+ ];
 
 const FAQ = () => {
   const [showAll, setShowAll] = useState(false);
@@ -108,7 +108,7 @@ const FAQ = () => {
                 className="mt-6 px-6 py-2 text-base font-medium text-gray-500 hover:text-gray-900 transition-colors flex items-center gap-2 mx-auto relative z-10"
               >
                 <ChevronDown className={`size-5 transition-transform ${showAll ? 'rotate-180' : ''}`} />
-                <span>{showAll ? 'Tampilkan Ringkas' : 'Tampilkan Seluruhnya'}</span>
+                <span>{showAll ? 'Show Less' : 'Show More'}</span>
               </button>
             )}
           </motion.div>

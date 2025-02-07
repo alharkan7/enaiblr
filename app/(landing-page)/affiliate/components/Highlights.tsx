@@ -9,26 +9,26 @@ import hl4 from "../assets/hl-4.webp";
 
 const features = [
   {
-    title: "Login dan Buka Halaman Affiliate",
-    subtitle: "Masuk ke laman <a href=/account/affiliate style='color: #f59e0b; text-decoration: underline; hover:text-decoration: none;'> Affiliate</a> untuk mengakses kode referral kamu atau register terlebih dulu jika belum memiliki akun.",
+    title: "Login and Open the Affiliate Page",
+    subtitle: "Go to the <a href=/account/affiliate style='color: #f59e0b; text-decoration: underline; hover:text-decoration: none;'>Affiliate</a> page to access your referral code or register if you don't have an account yet.",
     image: hl1
   },
   {
-    title: "Bagikan Link & Kode Affiliate-mu",
-    subtitle: "Copy dan bagikan kode referral-mu ke followers, teman-teman, atau koneksi yang kamu punya. Kamu juga bisa meng-customize kode referral-mu sesuai yang kamu mau.",
+    title: "Share Your Affiliate Link & Code",
+    subtitle: "Copy and share your referral code with your followers, friends, or connections. You can customize your referral code to better suit your brand.",
     image: hl2
   },
   {
-    title: "Pantau Pendapatanmu di Dashboard",
-    subtitle: "Setiap mereka berhasil melakukan subscription <b>Enaiblr Pro Akses 4 Bulan</b> dengan kode referral-mu, maka kamu otomatis akan mendapatkan komisi <b>25%</b> hingga <b>Rp25.000</b>. Tanpa limit jumlah transaksi.",
+    title: "Track Your Earnings on Dashboard", 
+    subtitle: "Every time someone successfully subscribes to <b>Enaiblr Pro Access</b> using your referral code, you'll automatically earn a <b>25%</b> commission. No limit on number of transactions.",
     image: hl3
   },
   {
-    title: "Tarik Dana Kapan Saja",
-    subtitle: "Kamu bisa menarik danamu kapan saja, tanpa minimum nilai. Tinggal klik tombol 'Withdraw Earnings', maka Admin kami akan segera memproses pencairan danamu.",
+    title: "Withdraw Funds Anytime",
+    subtitle: "You can withdraw your funds anytime, with no minimum amount. Just click the 'Withdraw Earnings' button, and our Admin will process your withdrawal right away.",
     image: hl4
   },
-];
+ ];
 
 const Highlights = () => {
   return (
@@ -41,13 +41,13 @@ const Highlights = () => {
           className="text-center mb-16"
         >
           <h2 className="text-4xl font-bold mb-4 bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-            Bagaimana{" "}
+            How{" "}
             <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-              Caranya?
+              It Works
             </span>
           </h2>
           <p className="text-gray-500 mx-auto max-w-3xl text-lg">
-            Ikuti 4 langkah mudah berikut untuk langsung bergabung di <b>Enaiblr Affiliate</b>.
+            Follow these 4 easy steps to join <b>Enaiblr Affiliate</b> right now.
           </p>
         </motion.div>
         <div className="space-y-24">

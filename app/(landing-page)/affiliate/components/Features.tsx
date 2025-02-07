@@ -84,12 +84,12 @@ const Features = () => {
           <h2 className="text-4xl font-bold mb-4">
             {" "}
             <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
-              Bikin Konten
+              Create Social Media Content
             </span> {" "}
-            dari Semua Fiturnya. Gratis.
+            from Any of Our Features. For Free.
           </h2>
           <p className="text-lg text-muted-foreground">
-            Kamu bisa mencoba semua fitur yang ada di Enaiblr Platform, kemudian bagikan kontennya untuk membuat <b className="text-black/80">referral-mu semakin menarik</b>.
+            Try all features on our platform, then share the content to <b>make your referrals even more attractive.</b>
           </p>
         </motion.div>
         <motion.div 

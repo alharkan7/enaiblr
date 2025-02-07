@@ -23,12 +23,12 @@ const CTA = () => {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl font-bold mb-4"
           >
-            Gabung
+            Join
             {" "}
             <span 
               className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-[length:200%_100%] bg-clip-text text-transparent"
             >
-              Sekarang
+              Right Now
             </span> {" "}
           </motion.h2>
           <motion.p 
@@ -38,7 +38,7 @@ const CTA = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-xl text-muted-foreground mb-8"
           >
-            Cuma butuh waktu <b className="text-black/80">1 menit</b> untuk Login dan membagikan kode referral-mu.
+            It only takes <b className="text-black/80">1 minute</b> to Login and share your referral link.
           </motion.p>
           <motion.div 
             initial={{ opacity: 0, y: 20 }}
@@ -63,7 +63,7 @@ const CTA = () => {
             </motion.div>
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button size="lg" variant="outline" className="rounded-full text-black hover:bg-gradient-to-r hover:from-yellow-500 hover:to-orange-600 hover:text-white hover:border-transparent" asChild>
-                <a href="https://wa.me/+6281280077690" target="_blank" rel="noopener noreferrer">Hubungi Kami</a>
+                <a href="mailto:mail@enaiblr.org" target="_blank" rel="noopener noreferrer">Contact Us</a>
               </Button>
             </motion.div>
           </motion.div>

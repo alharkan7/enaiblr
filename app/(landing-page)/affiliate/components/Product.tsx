@@ -18,27 +18,27 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useMediaQuery } from "@/hooks/use-media-query";
 
 const formatPrice = (amount: number) => {
-  return `Rp${amount.toLocaleString('id-ID')}`;
+  return `$${amount.toLocaleString('en-US')}`;
 };
 
 const discountValue = 25;
 
 const plans = [
   {
-    name: "Akses 4 Bulan",
-    description: "Akses Semua Fitur AI Tanpa Batas",
+    name: "4 Months Access",
+    description: "Access All AI Features without Limits",
     features: PRO_FEATURES,
-    price: 100000,
+    price: 9,
     commission: 25,
-    commissionValue: Math.ceil((100000 * 0.25) / 1000) * 1000
+    commissionValue: Math.ceil(9 * 0.25)
   },
   {
-    name: "Akses 1 Bulan",
-    description: "Cocok untuk Pengguna Baru",
+    name: "1 Month Access",
+    description: "Best for New Users",
     features: PRO_FEATURES,
-    price: 39000,
+    price: 3,
     commission: 25,
-    commissionValue: Math.ceil((39000 * 0.25) / 1000) * 1000
+    commissionValue: Math.ceil(3 * 0.25) 
   },
 ];
 
@@ -76,14 +76,14 @@ const Product = () => {
           className="max-w-2xl mx-auto text-center mb-16"
         >
           <h2 className="text-4xl font-bold mb-4">
-            Produknya:
+            The Product:
             {" "}
             <span className="bg-gradient-to-r from-yellow-500 to-orange-600 bg-clip-text text-transparent">
               Enaiblr Pro
             </span> {" "}
           </h2>
           <p className="text-lg">
-            Fitur AI terlengkap dan tanpa batas dengan harga paling terjangkau.
+            The Complete and Unlimited AI Platform with the Most Affordable Price.
           </p>
         </motion.div>
         <motion.div
@@ -133,7 +133,7 @@ const Product = () => {
                         transition={{ delay: 0.5 }}
                         className="ml-2 text-xs bg-yellow-400/90 text-black px-2 py-1 rounded-full"
                       >
-                        Komisi {plan.commission}% = <b>{formatPrice(plan.commissionValue)}</b>
+                        Commission ≈ <b>{formatPrice(plan.commissionValue)}</b>
                       </motion.span>
                     </span>
                   </motion.div>
@@ -193,12 +193,12 @@ const Product = () => {
                           {expandedPlan === index ? (
                             <>
                               <ChevronUp className="size-4" />
-                              <span>Ringkas</span>
+                              <span>Show Less</span>
                             </>
                           ) : (
                             <>
                               <ChevronDown className="size-5" />
-                              <span>Tampilkan Seluruhnya</span>
+                              <span>Show All</span>
                             </>
                           )}
                         </motion.button>
