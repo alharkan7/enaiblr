@@ -2,14 +2,14 @@
 
 import { useEffect, useState } from 'react'
 import { Button } from '@/components/ui/button'
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card'
 import { Check, Loader2 } from 'lucide-react'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { useSession } from 'next-auth/react'
 import { PRO_FEATURES } from '@/lib/constants'
 import { AppsHeader } from '@/components/apps-header'
-import { subscriptionPackages } from '@/config/subscriptionPackages'
+import { subscriptionPackagesUS } from '@/config/subscriptionPackages'
 
 export default function PaymentPage() {
   const { data: session } = useSession()
@@ -66,7 +66,7 @@ export default function PaymentPage() {
     }
   }, [window?.location?.search]) // This effect runs when URL changes
 
-  const handlePayment = async (pkg: typeof subscriptionPackages[0], index: number) => {
+  const handlePayment = async (pkg: typeof subscriptionPackagesUS[0], index: number) => {
     if (!session?.user?.email || !name || !mobile) {
       alert('Please fill in your name and phone number')
       return
@@ -143,7 +143,7 @@ export default function PaymentPage() {
 
           <div className="mx-auto mt-6 max-w-4xl px-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {subscriptionPackages.map((pkg, index) => (
+              {subscriptionPackagesUS.map((pkg, index) => (
                 <Card key={index}>
                   <CardHeader className="text-center">
                     <CardTitle className="mb-2">{pkg.title}</CardTitle>
@@ -151,18 +151,18 @@ export default function PaymentPage() {
                       <div className="mb-3">
                         <span className="text-xl text-muted-foreground relative">
                           <span className="relative">
-                            Rp{pkg.priceOriginal.toLocaleString('id-ID')}
+                            ${pkg.priceOriginal.toLocaleString('en-US')}
                             <span className="absolute left-0 right-0 top-1/2 border-t-2 border-current transform -rotate-12" />
                           </span>
-                          <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-1 rounded-full">Disc. {pkg.discount}%</span>
+                          <span className="ml-2 text-sm bg-primary text-primary-foreground px-2 py-1 rounded-full">{pkg.discount}% Off</span>
                         </span>
                       </div>
                       <div className="flex flex-col gap-2 items-center">
                         <div className="flex items-center">
-                          <span className="text-4xl !text-primary font-bold">Rp{pkg.price.toLocaleString('id-ID')}</span>
-                          <span className="text-muted-foreground">/bulan</span>
+                          <span className="text-4xl !text-primary font-bold">${pkg.price.toLocaleString('en-US')}</span>
+                          <span className="text-muted-foreground">/month</span>
                         </div>
-                        <div className="inline-block text-sm bg-secondary text-muted-foreground rounded-full py-1 px-2">Total Rp{pkg.priceTotal.toLocaleString('id-ID')}</div>
+                        <div className="inline-block text-sm bg-secondary text-muted-foreground rounded-full py-1 px-2">${pkg.priceTotal.toLocaleString('en-US')} Total</div>
                       </div>
                     </div>
                   </CardHeader>
@@ -221,7 +221,7 @@ export default function PaymentPage() {
                             required
                           />
                         </div>
-                        {activePackageIndex !== null && subscriptionPackages[activePackageIndex].name === '4 Months' && (
+                        {activePackageIndex !== null && subscriptionPackagesUS[activePackageIndex].name === '4 Months' && (
                           <div className="space-y-2">
                             <Label htmlFor="referralCode">Referral Code</Label>
                             <Input

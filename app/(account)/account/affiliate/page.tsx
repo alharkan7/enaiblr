@@ -169,11 +169,11 @@ Coba di sini: ${getReferralUrl()}`
   }
 
   const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('id-ID', {
+    return new Intl.NumberFormat('en-US', {
       style: 'currency',
-      currency: 'IDR',
+      currency: 'USD',
       minimumFractionDigits: 0,
-      maximumFractionDigits: 0
+      maximumFractionDigits: 2
     }).format(amount)
   }
 
@@ -182,24 +182,24 @@ Coba di sini: ${getReferralUrl()}`
   }
 
   const handleWithdraw = () => {
-    if (getTotalEarnings() < 25000) {
-      toast.error("Minimum withdrawal is Rp25.000");
+    if (getTotalEarnings() < 3) {
+      toast.error("Minimum withdrawal is $3.00 or 1 Success Transaction");
       return;
     }
 
-    const message = encodeURIComponent(`Halo Enaiblr Admin,
+    const subject = encodeURIComponent("Affiliate Earnings Withdrawal Request");
+    const body = encodeURIComponent(`Hello Enaiblr Admin,
 
-Saya ingin menarik earnings dari affiliate saya. Berikut datanya:
+I would like to withdraw earnings from my affiliate account. Here's the details:
 
 Email: ${session?.user?.email}
-Bank/e-Wallet Tujuan: 
-Nomor/Rekening: 
-Jumlah: ${formatCurrency(getTotalEarnings())}
+Bank/Wallet Account Name: 
+Account Number: 
+Amount: ${formatCurrency(getTotalEarnings())}
 
-Terima kasih,
-Mohon segera diproses ya`)
+Thank you,`);
 
-    window.open(`https://wa.me/+6281280077690?text=${message}`, '_blank')
+    window.open(`mailto:mail@enaiblr.org?subject=${subject}&body=${body}`, '_blank');
   }
 
   return (

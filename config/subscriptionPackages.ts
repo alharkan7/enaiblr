@@ -18,3 +18,24 @@ export const subscriptionPackages = [
         activeDays: 30 * 4
       }
   ]
+
+  export const subscriptionPackagesUS = [
+    {
+      name: '1 Month',
+      title: '1 Month Access',
+      price: 3,
+      priceTotal: 3 * 1,
+      priceOriginal: 10 * 1,
+      discount: Math.round((((10 * 1) - (3 * 1)) / (10 * 1)) * 100),
+      activeDays: 30 * 1
+    },
+    {
+        name: '4 Months',
+        title: '4 Months Access',
+        price: 2.25,
+        priceTotal: 2.25 * 4,
+        priceOriginal: 10 * 4,
+        discount: Math.round((((10 * 4) - (2.25 * 4)) / (10 * 4)) * 100),
+        activeDays: 30 * 4
+      }
+  ]

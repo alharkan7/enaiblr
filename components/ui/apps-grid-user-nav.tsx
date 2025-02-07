@@ -6,6 +6,7 @@ import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
 import Link from 'next/link';
 import { WhatsAppIcon } from '../icons';
+import { MessageSquare } from 'lucide-react';
 
 import {
   DropdownMenu,
@@ -87,13 +88,13 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <a
-              href="https://wa.me/+6281280077690"
+              href="mailto:mail@enaiblr.org"
               target="_blank"
               rel="noopener noreferrer"
               className="relative w-full cursor-pointer flex items-center gap-2"
             >
-              <WhatsAppIcon size={16} />
-              WhatsApp Help
+              <MessageSquare size={16} />
+              Contact Help
             </a>
           </DropdownMenuItem>
 

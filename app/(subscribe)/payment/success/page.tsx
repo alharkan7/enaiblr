@@ -104,10 +104,10 @@ export default function PaymentSuccessPage() {
                 {error}
               </p>
               <Link
-                href="https://wa.me/+6281280077690"
+                href="mailto:mail@enaiblr.org"
                 className="inline-flex items-center justify-center rounded-md bg-primary px-8 py-3 text-sm font-medium text-primary-foreground hover:bg-primary/90"
               >
-                WhatsApp Help
+                Email Help
               </Link>
             </CardContent>
           </Card>
