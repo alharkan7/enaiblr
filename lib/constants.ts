@@ -2,8 +2,8 @@ export const price = 39000
 export const originalPrice = 99000
 export const discountValue = Math.round(((originalPrice - price) / originalPrice) * 100);
 
-export const priceUS = 3
-export const originalPriceUS = 10
+export const priceUS = 4.99
+export const originalPriceUS = 19.99
 export const discountValueUS = Math.round(((originalPriceUS - priceUS) / originalPriceUS) * 100);
 
 export const PRO_FEATURES = [

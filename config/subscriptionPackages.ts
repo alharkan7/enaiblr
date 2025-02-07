@@ -23,19 +23,19 @@ export const subscriptionPackages = [
     {
       name: '1 Month',
       title: '1 Month Access',
-      price: 3,
-      priceTotal: 3 * 1,
-      priceOriginal: 10 * 1,
-      discount: Math.round((((10 * 1) - (3 * 1)) / (10 * 1)) * 100),
+      price: 4.99,
+      priceTotal: 4.99 * 1,
+      priceOriginal: 19.99 * 1,
+      discount: Math.round((((19.99 * 1) - (4.99 * 1)) / (19.99 * 1)) * 100),
       activeDays: 30 * 1
     },
     {
         name: '4 Months',
         title: '4 Months Access',
-        price: 2.25,
-        priceTotal: 2.25 * 4,
-        priceOriginal: 10 * 4,
-        discount: Math.round((((10 * 4) - (2.25 * 4)) / (10 * 4)) * 100),
+        price: 2.99,
+        priceTotal: 2.99 * 4,
+        priceOriginal: 19.99 * 4,
+        discount: Math.round((((19.99 * 4) - (2.99 * 4)) / (19.99 * 4)) * 100),
         activeDays: 30 * 4
       }
   ]
