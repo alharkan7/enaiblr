@@ -7,10 +7,10 @@ import { transactions } from '@/lib/db/schema'
 import { sql } from 'drizzle-orm'
 
 export async function POST(request: Request) {
-  const apiKey = process.env.MAYAR_API_KEY
-  const apiUrl = process.env.MAYAR_API_URL
-  
-  if (!apiKey) {
+  const apiKey = process.env.LEMON_SQUEEZY_API_KEY
+  const storeId = process.env.LEMON_SQUEEZY_STORE_ID
+
+  if (!apiKey || !storeId) {
     return NextResponse.json(
       { error: 'Payment system is not properly configured' },
       { status: 500 }
@@ -19,18 +19,30 @@ export async function POST(request: Request) {
 
   try {
     const body = await request.json()
-    const { email, name, mobile, amount, userId, packageName } = body
+    const { email, name, userId, packageName, amount } = body
 
-    if (!email || !name || !mobile || !amount || !userId || !packageName) {
+    if (!email || !name || !userId || !packageName) {
       return NextResponse.json(
-        { error: 'Email, name, mobile, amount, userId and packageName are required' },
+        { error: 'Email, name, userId and packageName are required' },
+        { status: 400 }
+      )
+    }
+
+    // Get the correct variant ID based on package name
+    const variantId = packageName === '1 Month'
+      ? process.env.LEMON_SQUEEZY_VARIANT_ID_1MONTH
+      : process.env.LEMON_SQUEEZY_VARIANT_ID_4MONTH
+
+    if (!variantId) {
+      return NextResponse.json(
+        { error: 'Invalid package type' },
         { status: 400 }
       )
     }
 
     // Generate payment verification token
     const [paymentToken] = await createPaymentToken(userId, packageName)
-    
+
     // Get affiliator ID if referral code is provided
     let affiliatorId = null
     if (body.referralCode) {
@@ -45,46 +57,77 @@ export async function POST(request: Request) {
       userId,
       name: packageName,
       amount: sql`${amount}::numeric`,
-      commission: sql`CEIL((${amount} * 0.25) / 1000) * 1000::numeric`,
+      commission: sql`CEIL(${amount} * 0.25)::numeric`,
       status: 'pending',
       affiliate_code: body.referralCode || null,
       affiliator: affiliatorId,
       createdAt: new Date(),
     })
 
-    // Calculate expiry date 24 hours from now
-    const expiry = new Date()
-    expiry.setHours(expiry.getHours() + 24)
-
-    const payload = {
-      name: name,
-      email: email,
-      amount:amount,
-      mobile: mobile.replace(/\D/g, ''),
-      redirectUrl: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
-      description: `Enaiblr Pro ${packageName} Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
-      expired_at: expiry.toISOString(),
-      success_url: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
-      failure_url: `${process.env.APP_URL}/payment`,
-    }
-
-    const response = await fetch('https://api.mayar.id/hl/v1/payment/create', {
+    // Create checkout with Lemon Squeezy
+    const response = await fetch('https://api.lemonsqueezy.com/v1/checkouts', {
       method: 'POST',
       headers: {
+        'Accept': 'application/json',
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify({
+        data: {
+          type: 'checkouts',
+          relationships: {
+            store: {
+              data: {
+                type: 'stores',
+                id: storeId
+              }
+            },
+            variant: {
+              data: {
+                type: 'variants',
+                id: variantId
+              }
+            }
+          },
+          attributes: {
+            custom_price: Math.round(amount * 100), // Convert to cents
+            checkout_data: {
+              email,
+              name,
+              custom: {
+                user_id: userId,
+                payment_token: paymentToken.token,
+              }
+            },
+            product_options: {
+              name: `Enaiblr Pro ${packageName}`,
+              description: `Enaiblr Pro ${packageName} Unlimited Access:\n${PRO_FEATURES.map(feature => `- ${feature}`).join('\n')}`,
+              redirect_url: `${process.env.APP_URL}/payment/success?token=${paymentToken.token}`,
+              receipt_button_text: "Access Your Account",
+              receipt_link_url: `${process.env.APP_URL}/dashboard`,
+              receipt_thank_you_note: "Thank you for subscribing to Enaiblr Pro!"
+            },
+            checkout_options: {
+              embed: false,
+              media: true,
+              logo: true,
+              desc: true,
+              discount: true,
+              button_color: "#0066FF"
+            }
+          }
+        }
+      })
     })
 
     const data = await response.json()
-    
-    if (data?.statusCode === 200 && data?.data?.link) {
-      return NextResponse.json({ url: data.data.link })
+
+    if (data?.data?.attributes?.url) {
+      return NextResponse.json({ url: data.data.attributes.url })
     } else {
-      console.error('Mayar API error:', data)
+      console.error('Lemon Squeezy API error:', data)
       return NextResponse.json(
-        { error: data?.messages || 'Failed to create payment link' },
+        { error: 'Failed to create payment link' },
         { status: 400 }
       )
     }
