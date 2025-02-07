@@ -28,17 +28,17 @@ const plans = [
     name: "4 Months Access",
     description: "Access All AI Features without Limits",
     features: PRO_FEATURES,
-    price: 9,
+    price: 11.96,
     commission: 25,
-    commissionValue: Math.ceil(9 * 0.25)
+    commissionValue: Number(parseFloat((11.96 * 0.25).toFixed(2)))
   },
   {
     name: "1 Month Access",
     description: "Best for New Users",
     features: PRO_FEATURES,
-    price: 3,
+    price: 4.99,
     commission: 25,
-    commissionValue: Math.ceil(3 * 0.25) 
+    commissionValue: Number(parseFloat((4.99 * 0.25).toFixed(2)))
   },
 ];
 
@@ -133,7 +133,7 @@ const Product = () => {
                         transition={{ delay: 0.5 }}
                         className="ml-2 text-xs bg-yellow-400/90 text-black px-2 py-1 rounded-full"
                       >
-                        Commission ≈ <b>{formatPrice(plan.commissionValue)}</b>
+                        25% Commission ≈ <b>{formatPrice(plan.commissionValue)}</b>
                       </motion.span>
                     </span>
                   </motion.div>

@@ -68,7 +68,7 @@ const Header = () => {
                 </Link>
               ))}
               <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full">
-                <Link href="/apps">Get Started</Link>
+                <Link href="/payment">Get Started</Link>
               </Button>
             </div>
           </div>
@@ -78,7 +78,7 @@ const Header = () => {
             <Button
               className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full"
             >
-              <Link href="/apps">Get Started</Link>
+              <Link href="/payment">Get Started</Link>
             </Button>
             <Button
               ref={buttonRef}

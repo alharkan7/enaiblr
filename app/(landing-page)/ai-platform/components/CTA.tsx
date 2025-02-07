@@ -52,8 +52,8 @@ const CTA = () => {
           >
             <motion.div whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.98 }}>
               <Button size="lg" className="gap-2 bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:opacity-90 rounded-full group" asChild>
-                <Link href="/apps">
-                  Access Now 
+                <Link href="/payment">
+                  Join Now 
                   <motion.span
                     initial={{ x: 0 }}
                     whileHover={{ x: 3 }}

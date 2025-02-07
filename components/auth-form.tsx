@@ -268,7 +268,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
             {' '} | Contact{' '}
             <Link
               className='font-medium underline'
-              href='https://wa.me/+6281280077690'
+              href='mailto:mail@enaiblr.org'
               target='_blank'>
               <b className='text-primary'>Help</b>
             </Link>
@@ -285,7 +285,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
             <br></br>Contact{' '}
             <Link
               className='font-medium underline'
-              href='https://wa.me/+6281280077690'
+              href='mailto:mail@enaiblr.org'
               target='_blank'>
               <b className='text-primary'>Help</b>
             </Link>

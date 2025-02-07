@@ -9,15 +9,7 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Get the affiliate code from query params
-    const { searchParams } = new URL(req.url);
-    const code = searchParams.get('code');
-
-    if (!code) {
-      return NextResponse.json({ error: "Affiliate code is required" }, { status: 400 });
-    }
-
-    // Pass the user ID directly instead of looking it up through affiliate code
+    // Pass the user ID directly to get their transactions
     const transactions = await getAffiliateTransactions(session.user.id);
     return NextResponse.json({ transactions });
   } catch (error) {

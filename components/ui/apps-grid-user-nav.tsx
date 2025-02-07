@@ -1,12 +1,10 @@
 'use client';
-import { ChevronDown, ArrowRight, CircleUserRound, CircleHelp, Sun, Moon } from 'lucide-react';
+import { ChevronDown, ArrowRight, CircleUserRound, Sun, Moon, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
 import { useTheme } from 'next-themes';
 import { useSubscription } from '@/contexts/subscription-context';
 import Link from 'next/link';
-import { WhatsAppIcon } from '../icons';
-import { MessageSquare } from 'lucide-react';
 
 import {
   DropdownMenu,

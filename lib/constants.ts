@@ -19,7 +19,7 @@ export const PRO_FEATURES = [
   'Private AI Web Chat',
   'Unlimited AI Transcription',
   'Unlimited AI Natural Voice Creator',
-  'Direct WhatsApp Support',
+  'Direct Email Support',
   'Unlimited Free Apps',
 ] as const
 

@@ -16,6 +16,7 @@ interface AffiliateTransaction {
   date: string;
   amount: number;
   status: string;
+  affiliate_code: string;
 }
 
 export default function AffiliatePage() {
@@ -38,7 +39,7 @@ export default function AffiliatePage() {
           setAffiliateCode(data.code);
           setTempCode(data.code);
           // After getting the affiliate code, fetch transactions
-          fetchTransactions(data.code);
+          fetchTransactions();
         } else {
           toast.error(data.error || 'Failed to fetch affiliate code');
         }
@@ -50,9 +51,9 @@ export default function AffiliatePage() {
       }
     };
 
-    const fetchTransactions = async (code: string) => {
+    const fetchTransactions = async () => {
       try {
-        const response = await fetch(`/api/user/affiliate/transactions?code=${code}`);
+        const response = await fetch(`/api/user/affiliate/transactions`);
         const data = await response.json();
         if (response.ok) {
           setTransactions(data.transactions);
@@ -67,7 +68,7 @@ export default function AffiliatePage() {
       }
     };
 
-    if (session?.user) {
+    if (session?.user?.id) {
       fetchAffiliateCode();
     }
   }, [session]);
@@ -182,8 +183,8 @@ Coba di sini: ${getReferralUrl()}`
   }
 
   const handleWithdraw = () => {
-    if (getTotalEarnings() < 3) {
-      toast.error("Minimum withdrawal is $3.00 or 1 Success Transaction");
+    if (getTotalEarnings() < 1.25) {
+      toast.error("Minimum withdrawal is $1.25 or 1 Success Transaction");
       return;
     }
 
@@ -311,6 +312,7 @@ Thank you,`);
               <TableRow>
                 <TableHead className="text-center w-16">#</TableHead>
                 <TableHead className="text-center">Email</TableHead>
+                <TableHead className="text-center">Referral Code</TableHead>
                 <TableHead className="text-center">Date</TableHead>
                 <TableHead className="text-center">Amount</TableHead>
                 <TableHead className="text-center">Status</TableHead>
@@ -319,13 +321,13 @@ Thank you,`);
             <TableBody>
               {isTransactionsLoading ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     Loading...
                   </TableCell>
                 </TableRow>
               ) : transactions?.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={5} className="h-24 text-center">
+                  <TableCell colSpan={6} className="h-24 text-center">
                     No transactions found.
                   </TableCell>
                 </TableRow>
@@ -334,6 +336,7 @@ Thank you,`);
                   <TableRow key={transaction.email + transaction.date}>
                     <TableCell className="text-center">{transactions ? index + 1 : null}</TableCell>
                     <TableCell className="sm:pl-8">{censorEmail(transaction.email)}</TableCell>
+                    <TableCell className="text-center">{transaction.affiliate_code}</TableCell>
                     <TableCell className="text-center">{format(new Date(transaction.date), 'd MMM yyyy')}</TableCell>
                     <TableCell className="text-right sm:pr-8">{formatCurrency(transaction.amount)}</TableCell>
                     <TableCell className="text-center">{transaction.status.charAt(0).toUpperCase() + transaction.status.slice(1)}</TableCell>
@@ -346,7 +349,7 @@ Thank you,`);
       </Card>
 
       <div className="mt-8 flex justify-center">
-        <Button size="lg" className="rounded-full" onClick={handleWithdraw} disabled={getTotalEarnings() < 25000}>
+        <Button size="lg" className="rounded-full" onClick={handleWithdraw} disabled={getTotalEarnings() < 1.25}>
           Withdraw Earnings
         </Button>
       </div>

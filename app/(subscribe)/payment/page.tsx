@@ -221,7 +221,7 @@ export default function PaymentPage() {
                             required
                           />
                         </div>
-                        {activePackageIndex !== null && subscriptionPackagesUS[activePackageIndex].name === '4 Months' && (
+                        {activePackageIndex !== null && (
                           <div className="space-y-2">
                             <Label htmlFor="referralCode">Referral Code</Label>
                             <Input

@@ -111,6 +111,7 @@ export type AffiliateTransaction = {
   date: Date;
   amount: number;
   status: string;
+  affiliate_code: string | null;
 }
 
 export async function getAffiliateTransactions(userId: string): Promise<AffiliateTransaction[]> {
@@ -121,6 +122,7 @@ export async function getAffiliateTransactions(userId: string): Promise<Affiliat
         date: transactions.createdAt,
         amount: transactions.commission,
         status: transactions.status,
+        affiliate_code: transactions.affiliate_code,
       })
       .from(transactions)
       .innerJoin(user, eq(transactions.userId, user.id))

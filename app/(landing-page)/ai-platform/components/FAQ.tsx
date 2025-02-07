@@ -59,7 +59,7 @@ const faqItems = [{
 },
 {
   question: "Is there an affiliate program?",
-  answer: "Yes. Please visit our <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> page or contact us via WhatsApp at <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> to register for the Enaiblr Affiliate program. We offer a <b>25%</b> commission up to <b>Rp25,000</b> per successful transaction.",
+  answer: "Yes. Please visit our <a href='/affiliate' class='text-blue-600 hover:text-blue-800 underline'>Affiliate</a> page or contact us via Email at <a href='mailto:mail@enaiblr.org' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a> to register for the Enaiblr Affiliate program. We offer a <b>25%</b> commission up to <b>Rp25,000</b> per successful transaction.",
 },
 {
   question: "Is my data secure?",
@@ -79,7 +79,7 @@ const faqItems = [{
 },
 {
   question: "I'm having issues activating my Enaiblr Pro account after payment, what should I do?",
-  answer: "If you're experiencing issues with Enaiblr Pro activation, you can contact us via WhatsApp at <a href='https://wa.me/6281280077690' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>+62-812-8007-7690</a>. We'll promptly handle the activation and help resolve any related issues.",
+  answer: "If you're experiencing issues with Enaiblr Pro activation, you can contact us via Email at <a href='mailto:mail@enaiblr.org' target='_blank' rel='noopener noreferrer' class='text-blue-600 hover:text-blue-800 underline'>mail@enaiblr.org</a>. We'll promptly handle the activation and help resolve any related issues.",
 },
 {
   question: "Is there a smartphone app?",

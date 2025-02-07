@@ -1,10 +1,9 @@
 'use client';
-import { ChevronDown, CircleUserRound, Sun, Moon } from 'lucide-react';
+import { ChevronDown, CircleUserRound, Sun, Moon, MessageSquare } from 'lucide-react';
 import Image from 'next/image';
 import type { User } from 'next-auth';
 import { useTheme } from 'next-themes';
 import Link from 'next/link';
-import { WhatsAppIcon } from '../icons';
 
 import {
   DropdownMenu,
@@ -67,13 +66,13 @@ export function DashboardSidebarUserNav({ user, collapsed }: { user: User; colla
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <a
-              href="https://wa.me/+6281280077690"
+              href="mailto:mail@enaiblr.org"
               target="_blank"
               rel="noopener noreferrer"
               className="relative w-full cursor-pointer flex items-center gap-2"
             >
-              <WhatsAppIcon size={16} />
-              WhatsApp Help
+              <MessageSquare size={16} />
+              Contact Help
             </a>
           </DropdownMenuItem>
 
