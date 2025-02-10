@@ -77,9 +77,9 @@ export const models: Array<Model> = [
     tools: true,
   },
   {
-    id: 'deepseek-ai/deepseek-llm-67b-chat',
-    label: 'DeepSeek 67b',
-    apiIdentifier: 'deepseek-ai/deepseek-llm-67b-chat',
+    id: 'deepseek-ai/DeepSeek-V3',
+    label: 'DeepSeek V3',
+    apiIdentifier: 'deepseek-ai/DeepSeek-V3',
     description: 'Text',
     // description: 'High-Flyer',
     overview: ['Ask Questions'],
