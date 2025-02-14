@@ -87,6 +87,10 @@ export default function Features() {
       src: '19-logo-im.svg',
       alt: 'Indonesia Mengajar Logo'
     },
+    {
+      src: '20-logo-polinema.svg',
+      alt: 'Polinema Logo'
+    },
   ]
 
   return (
