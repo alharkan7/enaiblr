@@ -17,7 +17,7 @@ const footerLinks = {
     links: [
       { label: "Software Solutions", href: "#workflows" },
       { label: "Apps Platform", href: "/apps" },
-      { label: "Skills Training", href: "#workflows" },
+      { label: "Agent Automation", href: "#workflows" },
     ],
   },
   publications: {
