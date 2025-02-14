@@ -18,7 +18,7 @@ export default async function Home() {
   const session = await auth();
   
   return (
-    <div className={cn("font-['var(--font-nacelle)',var(--font-inter)] relative overflow-x-hidden")}>
+    <div className={cn("font-['var(--font-nacelle)',var(--font-inter)] relative overflow-x-hidden bg-[#09090b]")}>
       <Header />
       <PageIllustration />
       <Hero />
