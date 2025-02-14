@@ -3,7 +3,7 @@ import { anthropic } from '@ai-sdk/anthropic';
 import { google } from '@ai-sdk/google';
 import { groq } from '@ai-sdk/groq';
 import { togetherai } from '@ai-sdk/togetherai';
-import { experimental_wrapLanguageModel as wrapLanguageModel } from 'ai';
+import { experimental_wrapLanguageModel as wrapLanguageModel, type LanguageModelV1 } from 'ai';
 
 import { customMiddleware } from './custom-middleware';
 import { models } from './models';
@@ -43,7 +43,7 @@ export const customModel = (apiIdentifier: string) => {
   }
 
   return wrapLanguageModel({
-    model: provider,
+    model: provider as unknown as LanguageModelV1,
     middleware: customMiddleware,
   });
 };

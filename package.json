@@ -28,7 +28,7 @@
     "@ai-sdk/mistral": "^1.0.8",
     "@ai-sdk/openai": "1.0.6",
     "@ai-sdk/openai-compatible": "^0.0.16",
-    "@ai-sdk/provider": "^1.0.4",
+    "@ai-sdk/provider": "^1.0.7",
     "@ai-sdk/provider-utils": "^2.0.7",
     "@ai-sdk/togetherai": "^0.1.9",
     "@aws-sdk/client-bedrock-runtime": "^3.726.1",
