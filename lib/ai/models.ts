@@ -17,9 +17,9 @@ export interface Model {
 
 export const models: Array<Model> = [
   {
-    id: 'gemini-1.5-flash-gpt',
+    id: 'gemini-2.0-flash-gpt',
     label: 'ChatGPT-4o',
-    apiIdentifier: 'gemini-1.5-flash',
+    apiIdentifier: 'gemini-2.0-flash',
     description: 'Text, Image, Document',
     // description: 'OpenAI',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
@@ -32,9 +32,9 @@ export const models: Array<Model> = [
     tools: false,
   },
   {
-    id: 'gemini-1.5-flash-claude',
+    id: 'gemini-2.0-flash-claude',
     label: 'Claude 3.5',
-    apiIdentifier: 'gemini-1.5-flash',
+    apiIdentifier: 'gemini-2.0-flash',
     description: 'Text, Image, Document',
     // description: 'Anthropic',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
@@ -47,9 +47,9 @@ export const models: Array<Model> = [
     tools: false,
   },
   {
-    id: 'gemini-1.5-flash',
-    label: 'Gemini 1.5',
-    apiIdentifier: 'gemini-1.5-flash',
+    id: 'gemini-2.0-flash',
+    label: 'Gemini 2.0',
+    apiIdentifier: 'gemini-2.0-flash',
     description: 'Text, Image, Document',
     // description: 'Google',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],

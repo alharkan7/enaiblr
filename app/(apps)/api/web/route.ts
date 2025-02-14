@@ -3,7 +3,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
 
 const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const generationConfig = {
   temperature: 0.7,
@@ -13,7 +13,7 @@ const generationConfig = {
 };
 
 async function paraphraseWithContext(messages: any[]) {
-  const contextModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const contextModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const history = messages.slice(0, -1)
     .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content[0].text}`)
     .join('\n');
@@ -27,7 +27,7 @@ async function paraphraseWithContext(messages: any[]) {
 }
 
 async function detectLanguage(text: string) {
-  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
 
 "${text}"`;
