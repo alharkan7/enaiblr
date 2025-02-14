@@ -27,8 +27,8 @@ importers:
         specifier: ^2.0.16
         version: 2.0.16(zod@3.23.8)
       '@ai-sdk/groq':
-        specifier: ^1.0.9
-        version: 1.0.9(zod@3.23.8)
+        specifier: ^1.1.9
+        version: 1.1.9(zod@3.23.8)
       '@ai-sdk/mistral':
         specifier: ^1.0.8
         version: 1.0.8(zod@3.23.8)
@@ -45,8 +45,8 @@ importers:
         specifier: ^2.0.7
         version: 2.0.7(zod@3.23.8)
       '@ai-sdk/togetherai':
-        specifier: ^0.1.9
-        version: 0.1.9(zod@3.23.8)
+        specifier: ^0.1.11
+        version: 0.1.11(zod@3.23.8)
       '@aws-sdk/client-bedrock-runtime':
         specifier: ^3.726.1
         version: 3.726.1
@@ -516,8 +516,8 @@ packages:
     peerDependencies:
       zod: ^3.0.0
 
-  '@ai-sdk/groq@1.0.9':
-    resolution: {integrity: sha512-FmvurMYRC6cCtQEZYUiqoMyLumOFzV6mYqj/iEkInVH2D7SQMXQZwsaLVU/JbVWA/Vf7nLvRnP+TPbrC7Jh7Fw==}
+  '@ai-sdk/groq@1.1.9':
+    resolution: {integrity: sha512-TOE+n/WpAfR+q3pJEL7kI9TqNYbnMK63MyxJmRvIbUfadaouFhmz/k1uwjDFu6DG4Mv6noT9uKIbfBbLqfwuLA==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -534,8 +534,8 @@ packages:
     peerDependencies:
       zod: ^3.0.0
 
-  '@ai-sdk/openai-compatible@0.1.8':
-    resolution: {integrity: sha512-o2WeZmkOgaaEHAIZfAdlAASotNemhWBzupUp7ql/vBKIrPDctbQS4K7XOvG7EZ1dshn0TxB+Ur7Q8HoWSeWPmA==}
+  '@ai-sdk/openai-compatible@0.1.10':
+    resolution: {integrity: sha512-AR5Acly7U64wDgVdVs9AqaMHgVps/35TMUMDS4akSZjsB4TdAhKnWdMXmACzCxmbCySHMoMnKY41XgvCyFN1pQ==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -588,8 +588,8 @@ packages:
       zod:
         optional: true
 
-  '@ai-sdk/provider-utils@2.1.6':
-    resolution: {integrity: sha512-Pfyaj0QZS22qyVn5Iz7IXcJ8nKIKlu2MeSAdKJzTwkAks7zdLaKVB+396Rqcp1bfQnxl7vaduQVMQiXUrgK8Gw==}
+  '@ai-sdk/provider-utils@2.1.8':
+    resolution: {integrity: sha512-1j9niMUAFlCBdYRYJr1yoB5kwZcRFBVuBiL1hhrf0ONFNrDiJYA6F+gROOuP16NHhezMfTo60+GeeV1xprHFjg==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -629,8 +629,8 @@ packages:
       zod:
         optional: true
 
-  '@ai-sdk/togetherai@0.1.9':
-    resolution: {integrity: sha512-JG/UV/cjkrWMcRtqrTsu5v6a7Xi95hKn0K+G3pFrEY4l0RXCwtgC6Nw4lLy6afyI118/YAoHW2wNx9gnxWVPKw==}
+  '@ai-sdk/togetherai@0.1.11':
+    resolution: {integrity: sha512-gXzBcOeU6PwczmVsYG7lkCTPuFRj4DFn7ELMXLQ9aWMOeotqfr/YtNmIeVspLgleAjOvEZsX3xa34N0IDrbFJw==}
     engines: {node: '>=18'}
     peerDependencies:
       zod: ^3.0.0
@@ -6384,10 +6384,10 @@ snapshots:
       '@ai-sdk/provider-utils': 2.0.7(zod@3.23.8)
       zod: 3.23.8
 
-  '@ai-sdk/groq@1.0.9(zod@3.23.8)':
+  '@ai-sdk/groq@1.1.9(zod@3.23.8)':
     dependencies:
-      '@ai-sdk/provider': 1.0.3
-      '@ai-sdk/provider-utils': 2.0.5(zod@3.23.8)
+      '@ai-sdk/provider': 1.0.7
+      '@ai-sdk/provider-utils': 2.1.8(zod@3.23.8)
       zod: 3.23.8
 
   '@ai-sdk/mistral@1.0.8(zod@3.23.8)':
@@ -6402,10 +6402,10 @@ snapshots:
       '@ai-sdk/provider-utils': 2.0.7(zod@3.23.8)
       zod: 3.23.8
 
-  '@ai-sdk/openai-compatible@0.1.8(zod@3.23.8)':
+  '@ai-sdk/openai-compatible@0.1.10(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider': 1.0.7
-      '@ai-sdk/provider-utils': 2.1.6(zod@3.23.8)
+      '@ai-sdk/provider-utils': 2.1.8(zod@3.23.8)
       zod: 3.23.8
 
   '@ai-sdk/openai@1.0.18(zod@3.23.8)':
@@ -6456,7 +6456,7 @@ snapshots:
     optionalDependencies:
       zod: 3.23.8
 
-  '@ai-sdk/provider-utils@2.1.6(zod@3.23.8)':
+  '@ai-sdk/provider-utils@2.1.8(zod@3.23.8)':
     dependencies:
       '@ai-sdk/provider': 1.0.7
       eventsource-parser: 3.0.0
@@ -6495,11 +6495,11 @@ snapshots:
       react: 18.3.1
       zod: 3.23.8
 
-  '@ai-sdk/togetherai@0.1.9(zod@3.23.8)':
+  '@ai-sdk/togetherai@0.1.11(zod@3.23.8)':
     dependencies:
-      '@ai-sdk/openai-compatible': 0.1.8(zod@3.23.8)
+      '@ai-sdk/openai-compatible': 0.1.10(zod@3.23.8)
       '@ai-sdk/provider': 1.0.7
-      '@ai-sdk/provider-utils': 2.1.6(zod@3.23.8)
+      '@ai-sdk/provider-utils': 2.1.8(zod@3.23.8)
       zod: 3.23.8
 
   '@ai-sdk/ui-utils@1.0.5(zod@3.23.8)':
