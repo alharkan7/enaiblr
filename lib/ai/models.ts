@@ -20,7 +20,7 @@ export const models: Array<Model> = [
     id: 'gemini-2.0-flash-gpt',
     label: 'ChatGPT-4o',
     apiIdentifier: 'gemini-2.0-flash',
-    description: 'Text, Image, Document',
+    description: 'Text, Image, PDF',
     // description: 'OpenAI',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
     provider: 'google',
@@ -35,7 +35,7 @@ export const models: Array<Model> = [
     id: 'gemini-2.0-flash-claude',
     label: 'Claude 3.5',
     apiIdentifier: 'gemini-2.0-flash',
-    description: 'Text, Image, Document',
+    description: 'Text, Image, PDF',
     // description: 'Anthropic',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
     provider: 'google',
@@ -50,7 +50,7 @@ export const models: Array<Model> = [
     id: 'gemini-2.0-flash',
     label: 'Gemini 2.0',
     apiIdentifier: 'gemini-2.0-flash',
-    description: 'Text, Image, Document',
+    description: 'Text, Image, PDF',
     // description: 'Google',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
     provider: 'google',
@@ -65,7 +65,7 @@ export const models: Array<Model> = [
     id: 'llama3-70b-8192',
     label: 'Llama 3',
     apiIdentifier: 'llama3-70b-8192',
-    description: 'Text, Canvas/Artifact',
+    description: 'Text, Artifact',
     // description: 'Meta',
     overview: ['Ask Questions', 'Create Documents', 'Document Editor'],
     provider: 'groq',
@@ -110,7 +110,7 @@ export const models: Array<Model> = [
     id: 'mixtral-8x7b-32768',
     label: 'Mixtral 8x',
     apiIdentifier: 'mixtral-8x7b-32768',
-    description: 'Text, Canvas/Artifact',
+    description: 'Text, Artifact',
     // description: 'Mistral',
     overview: ['Ask Questions', 'Create Documents', 'Document Editor'],
     provider: 'groq',
@@ -125,7 +125,7 @@ export const models: Array<Model> = [
     id: 'gemma2-9b-it',
     label: 'Gemma 2',
     apiIdentifier: 'gemma2-9b-it',
-    description: 'Text, Canvas/Artifact',
+    description: 'Text, Artifact',
     // description: 'Google',
     overview: ['Ask Questions', 'Create Documents', 'Document Editor'],
     provider: 'groq',
@@ -138,5 +138,5 @@ export const models: Array<Model> = [
   },
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'gemini-1.5-flash';
+export const DEFAULT_MODEL_NAME: string = 'gemini-2.0-flash';
 
