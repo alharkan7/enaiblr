@@ -11,17 +11,18 @@ import {
     AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { Button } from '@/components/ui/button'
+import { FilePreview } from './FilePreview'
 
 interface ChatInputProps {
     input: string;
     setInput: (input: string) => void;
     isLoading: boolean;
     fileInputRef: React.RefObject<HTMLInputElement>;
-    onImageSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
     autoFocus?: boolean;
-    imageBase64: string | null;
-    clearImages: () => void;
-    sendMessage: (text: string, imageBase64: string | null) => Promise<void>;
+    file: { name: string; type: string; url: string } | null;
+    clearFile: () => void;
+    sendMessage: (text: string, file: { name: string; type: string; url: string } | null) => Promise<void>;
     onFocusChange?: (focused: boolean) => void;
 }
 
@@ -30,10 +31,10 @@ export function ChatInput({
     setInput, 
     isLoading, 
     fileInputRef, 
-    onImageSelect, 
+    onFileSelect, 
     autoFocus,
-    imageBase64,
-    clearImages,
+    file,
+    clearFile,
     sendMessage,
     onFocusChange
 }: ChatInputProps) {
@@ -48,92 +49,92 @@ export function ChatInput({
         // Blur input immediately to hide keyboard
         inputRef.current?.blur();
         
-        const currentImageBase64 = imageBase64;
-        
-        // Clear form state
-        clearImages();
-        setInput('');
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
+        const currentFile = file;
+        if (input.trim() || currentFile) {
+            await sendMessage(input, currentFile);
+            setInput('');
+            clearFile();
         }
+    };
 
-        // Send message
-        await sendMessage(input, currentImageBase64);
+    const handleFileClick = () => {
+        if (plan === 'free') {
+            setShowUpgradeDialog(true);
+            return;
+        }
+        fileInputRef.current?.click();
     };
 
     return (
-        <form onSubmit={handleSubmit} className="p-4">
-            <div className="flex items-center h-12 bg-background rounded-full shadow-md max-w-4xl mx-auto border border-border focus-within:ring-2 focus-within:ring-primary focus-within:border-primary">
-                <div className="shrink-0 pl-2">
+        <>
+            <div className="relative">
+                {file && (
+                    <div className="absolute bottom-full mb-2 w-full">
+                        <FilePreview
+                            file={file}
+                            isUploading={isLoading}
+                            onRemove={clearFile}
+                        />
+                    </div>
+                )}
+                <form onSubmit={handleSubmit} className="relative flex items-center gap-1.5">
+                    <input
+                        type="file"
+                        ref={fileInputRef}
+                        className="hidden"
+                        onChange={onFileSelect}
+                        accept="*/*"
+                    />
                     <button
                         type="button"
-                        className="p-2 rounded-full hover:bg-muted transition-colors relative"
-                        onClick={() => {
-                            // if (plan === 'free') {
-                            //     setShowUpgradeDialog(true);
-                            //     return;
-                            // }
-                            fileInputRef.current?.click();
-                        }}
+                        onClick={handleFileClick}
+                        className="shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                        disabled={isLoading}
+                        aria-label="Attach file"
                     >
-                        <Image className="size-6" aria-label="Upload image" />
-                        {/* {plan === 'free' && (
-                            <span className="absolute -top-1 -right-1 text-[7px] font-medium text-primary bg-primary/10 rounded-lg px-1">
-                                PRO
-                            </span>
-                        )} */}
+                        <Image className="size-5" />
                     </button>
                     <input
-                        ref={fileInputRef}
-                        type="file"
-                        accept="image/*"
-                        onChange={onImageSelect}
-                        className="hidden"
+                        ref={inputRef}
+                        type="text"
+                        value={input}
+                        onChange={(e) => setInput(e.target.value)}
+                        placeholder="Send a message..."
+                        className="flex-1 bg-transparent focus:outline-none disabled:opacity-50"
+                        disabled={isLoading}
+                        autoFocus={autoFocus}
+                        onFocus={() => onFocusChange?.(true)}
+                        onBlur={() => onFocusChange?.(false)}
                     />
-                </div>
-                <input
-                    ref={inputRef}
-                    type="text"
-                    value={input}
-                    onChange={(e) => setInput(e.target.value)}
-                    onFocus={() => onFocusChange?.(true)}
-                    onBlur={() => onFocusChange?.(false)}
-                    placeholder="Send a message..."
-                    className="flex-1 px-4 py-2 bg-transparent focus:outline-none text-foreground placeholder:text-muted-foreground min-w-0"
-                    disabled={isLoading}
-                    autoFocus={autoFocus}
-                />
-                <div className="shrink-0 pr-2">
                     <button
                         type="submit"
-                        disabled={!input.trim() && !imageBase64}
-                        className="p-2 rounded-full hover:bg-muted transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="shrink-0 p-2 text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+                        disabled={isLoading || (!input.trim() && !file)}
+                        aria-label="Send message"
                     >
-                        <Send className="size-6" />
+                        <Send className="size-5" />
                     </button>
-                </div>
+                </form>
             </div>
+
             <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Upgrade to Pro</AlertDialogTitle>
+                        <AlertDialogTitle>Upgrade Required</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Image upload is only available to Pro users. Upgrade now to unlock all pro features.
+                            File attachments are only available for paid users. Upgrade your plan to unlock this feature.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
                         <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>
                             Cancel
                         </Button>
-                        <Button onClick={() => {
-                            router.push('/payment');
-                            setShowUpgradeDialog(false);
-                        }}>
-                            Upgrade to Pro
+                        <Button onClick={() => router.push('/account')}>
+                            Upgrade Now
                         </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
-        </form>
+        </>
     );
 }

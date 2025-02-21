@@ -6,10 +6,16 @@ export type MessageContent = string | Array<{
     image_url: {
         url: string;
     };
+} | {
+    type: 'file_url';
+    file_url: {
+        url: string;
+        name: string;
+        type: string;
+    };
 }>;
 
 export interface Message {
     role: 'user' | 'assistant' | 'system';
     content: MessageContent;
-    image?: string; // Optional image URL for uploaded images
 }

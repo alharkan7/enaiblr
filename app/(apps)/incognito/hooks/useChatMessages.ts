@@ -5,6 +5,7 @@ export function useChatMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
+    
     const clearMessages = () => {
         setMessages([]);
         setIsLoading(false);
@@ -16,19 +17,32 @@ export function useChatMessages() {
         content: msg.content
     });
 
-    const sendMessage = async (input: string, imageUrl: string | null) => {
-        if ((!input.trim() && !imageUrl) || isLoading) return;
+    const sendMessage = async (input: string, file: { name: string; type: string; url: string } | null) => {
+        if ((!input.trim() && !file) || isLoading) return;
 
         const userMessage: Message = {
             role: 'user',
-            content: imageUrl ? [
-                { type: 'image_url' as const, image_url: { url: imageUrl } },
-                { type: 'text' as const, text: input.trim() }
-            ] : [{ type: 'text' as const, text: input.trim() }]
+            content: file ? [
+                file.type.startsWith('image/') 
+                    ? { 
+                        type: 'image_url',
+                        image_url: { url: file.url }
+                    }
+                    : {
+                        type: 'file_url',
+                        file_url: {
+                            url: file.url,
+                            name: file.name,
+                            type: file.type
+                        }
+                    },
+                { type: 'text', text: input.trim() || `Analyzing ${file.name}...` }
+            ] : [{ type: 'text', text: input.trim() }]
         };
 
         setMessages(prev => [...prev, userMessage]);
         setIsLoading(true);
+        setIsStreaming(false);
 
         try {
             const response = await fetch('/api/incognito', {
@@ -38,7 +52,7 @@ export function useChatMessages() {
                 },
                 body: JSON.stringify({
                     messages: [...messages.map(toTogetherMessage), toTogetherMessage(userMessage)],
-                    imageUrl
+                    file
                 })
             });
 
@@ -49,14 +63,18 @@ export function useChatMessages() {
 
             let assistantMessage = '';
             const userMessages = [...messages, userMessage];
-            setMessages(userMessages);
-            setIsLoading(false);
-            setIsStreaming(true);
+            let firstChunkReceived = false;
 
             const textDecoder = new TextDecoder();
             while (true) {
                 const { done, value } = await reader.read();
                 if (done) break;
+
+                if (!firstChunkReceived) {
+                    setIsLoading(false);
+                    setIsStreaming(true);
+                    firstChunkReceived = true;
+                }
 
                 const chunk = textDecoder.decode(value);
                 const lines = chunk.split('\n');
@@ -83,8 +101,8 @@ export function useChatMessages() {
             }
         } catch (error) {
             console.error('Error:', error);
-        } finally {
             setIsLoading(false);
+        } finally {
             setIsStreaming(false);
         }
     };
