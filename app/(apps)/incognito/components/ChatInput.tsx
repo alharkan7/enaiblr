@@ -1,4 +1,4 @@
-import { Send, Image } from 'lucide-react'
+import { Send, Paperclip } from 'lucide-react'
 import { useRef, useState } from 'react'
 import { useSubscription } from '@/contexts/subscription-context'
 import { useRouter } from 'next/navigation'
@@ -18,20 +18,20 @@ interface ChatInputProps {
     setInput: (input: string) => void;
     isLoading: boolean;
     fileInputRef: React.RefObject<HTMLInputElement>;
-    onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
     autoFocus?: boolean;
-    file: { name: string; type: string; url: string } | null;
     clearFile: () => void;
     sendMessage: (text: string, file: { name: string; type: string; url: string } | null) => Promise<void>;
     onFocusChange?: (focused: boolean) => void;
+    file: { name: string; type: string; url: string; uploaded?: boolean } | null;  // Add uploaded flag
+    onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => Promise<void>;  // Make async
 }
 
-export function ChatInput({ 
-    input, 
-    setInput, 
-    isLoading, 
-    fileInputRef, 
-    onFileSelect, 
+export function ChatInput({
+    input,
+    setInput,
+    isLoading,
+    fileInputRef,
+    onFileSelect,
     autoFocus,
     file,
     clearFile,
@@ -45,39 +45,37 @@ export function ChatInput({
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
-        // Blur input immediately to hide keyboard
         inputRef.current?.blur();
-        
-        const currentFile = file;
-        if (input.trim() || currentFile) {
-            await sendMessage(input, currentFile);
+
+        // Only proceed if we have input text or an uploaded file
+        if (input.trim() || (file && file.uploaded)) {
+            await sendMessage(input, file);
             setInput('');
             clearFile();
         }
     };
 
     const handleFileClick = () => {
-        if (plan === 'free') {
-            setShowUpgradeDialog(true);
-            return;
-        }
+        // if (plan === 'free') {
+        //     setShowUpgradeDialog(true);
+        //     return;
+        // }
         fileInputRef.current?.click();
     };
 
     return (
         <>
-            <div className="relative">
-                {file && (
-                    <div className="absolute bottom-full mb-2 w-full">
+            <div className="relative flex flex-col gap-2">
+                {file && !isLoading && (
+                    <div className="w-full">
                         <FilePreview
                             file={file}
-                            isUploading={isLoading}
+                            isUploading={true}
                             onRemove={clearFile}
                         />
                     </div>
                 )}
-                <form onSubmit={handleSubmit} className="relative flex items-center gap-1.5">
+                <form onSubmit={handleSubmit} className="relative flex items-center gap-1.5 rounded-full border bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 p-1 focus-within:ring-2 focus-within:ring-primary focus-within:border-primary transition-all">
                     <input
                         type="file"
                         ref={fileInputRef}
@@ -92,7 +90,7 @@ export function ChatInput({
                         disabled={isLoading}
                         aria-label="Attach file"
                     >
-                        <Image className="size-5" />
+                        <Paperclip className="size-5" />
                     </button>
                     <input
                         ref={inputRef}

@@ -8,6 +8,7 @@ import { useChatMessages } from './hooks/useChatMessages'
 import AppsFooter from '@/components/apps-footer'
 import { AppsHeader } from '@/components/apps-header'
 import { motion } from 'framer-motion'
+import { useFileUpload } from './hooks/useFileUpload';
 
 export default function MinimalistChatbot() {
     const { messages, isLoading, isStreaming, sendMessage, clearMessages } = useChatMessages();
@@ -16,8 +17,7 @@ export default function MinimalistChatbot() {
     const [input, setInput] = useState('');
     const [hasUserSentMessage, setHasUserSentMessage] = useState(false);
     const [isInputFocused, setIsInputFocused] = useState(false);
-    const [file, setFile] = useState<{ name: string; type: string; url: string } | null>(null);
-    const [isUploading, setIsUploading] = useState(false);
+    const { file, isUploading, handleFileSelect, clearFile } = useFileUpload();
 
     const scrollToBottom = () => {
         if (messagesEndRef.current) {
@@ -30,41 +30,6 @@ export default function MinimalistChatbot() {
             } else {
                 messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
             }
-        }
-    };
-
-    const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
-        const selectedFile = e.target.files?.[0];
-        if (!selectedFile) return;
-
-        setIsUploading(true);
-        try {
-            // Convert file to base64
-            const reader = new FileReader();
-            reader.onloadend = () => {
-                const base64String = reader.result as string;
-                setFile({
-                    name: selectedFile.name,
-                    type: selectedFile.type || 'application/octet-stream',
-                    url: base64String
-                });
-                setIsUploading(false);
-            };
-            reader.readAsDataURL(selectedFile);
-        } catch (error) {
-            console.error('Error reading file:', error);
-            setIsUploading(false);
-        }
-    };
-
-    const handleSendMessage = async (text: string) => {
-        if (!hasUserSentMessage) {
-            setHasUserSentMessage(true);
-        }
-        await sendMessage(text, file);
-        setFile(null);
-        if (fileInputRef.current) {
-            fileInputRef.current.value = '';
         }
     };
 
@@ -83,47 +48,85 @@ export default function MinimalistChatbot() {
         scrollToBottom();
     }, []);
 
+    // Update file selection handler
+    const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const selectedFile = e.target.files?.[0];
+        if (selectedFile) {
+            await handleFileSelect(selectedFile);
+        }
+    };
+
+    const handleSendMessage = async (text: string) => {
+        if (!hasUserSentMessage) {
+            setHasUserSentMessage(true);
+        }
+        setInput(''); // Clear input immediately after sending
+
+        // Only send if file is uploaded or there's text
+        if (text.trim() || (file && file.uploaded)) {
+            await sendMessage(text, file);
+            clearFile();
+            if (fileInputRef.current) {
+                fileInputRef.current.value = '';
+            }
+        }
+    };
+
+    // Update handleClearChat to use new clearFile
+    const handleClearChat = () => {
+        clearMessages();
+        setHasUserSentMessage(false);
+        setInput('');
+        clearFile();
+        if (fileInputRef.current) {
+            fileInputRef.current.value = '';
+        }
+    };
+
     return (
         <div className="flex flex-col h-[100dvh] bg-background">
-            <div className="flex-none">
-                <AppsHeader />
-            </div>
-            <div className="flex-1 overflow-hidden flex flex-col">
+            {!hasUserSentMessage && (
                 <div className="flex-none">
-                    <ChatTitle clearMessages={clearMessages} />
+                    <AppsHeader />
                 </div>
-                <div className="flex-1 overflow-y-auto">
-                    <MessageList
-                        messages={messages}
-                        messagesEndRef={messagesEndRef}
-                        onUpdate={scrollToBottom}
-                        isLoading={isLoading}
-                        isStreaming={isStreaming}
+            )}
+            <div className="flex-1 overflow-hidden flex flex-col justify-center max-w-4xl mx-auto w-full px-4 md:px-8">
+                <div className="flex-none">
+                    <ChatTitle
+                        clearMessages={handleClearChat}
+                        hasUserSentMessage={hasUserSentMessage}
                     />
                 </div>
+                {hasUserSentMessage && (
+                    <div className="flex-1 overflow-y-auto">
+                        <MessageList
+                            messages={messages}
+                            messagesEndRef={messagesEndRef}
+                            onUpdate={scrollToBottom}
+                            isLoading={isLoading}
+                            isStreaming={isStreaming}
+                        />
+                    </div>)}
                 <div className="flex-none p-4">
                     <ChatInput
                         input={input}
                         setInput={setInput}
-                        isLoading={isLoading}
+                        isLoading={isLoading || isStreaming}
                         fileInputRef={fileInputRef}
-                        onFileSelect={handleFileSelect}
+                        onFileSelect={handleFileChange}
                         autoFocus={true}
                         file={file}
-                        clearFile={() => {
-                            setFile(null);
-                            if (fileInputRef.current) {
-                                fileInputRef.current.value = '';
-                            }
-                        }}
+                        clearFile={clearFile}
                         sendMessage={handleSendMessage}
                         onFocusChange={setIsInputFocused}
                     />
                 </div>
             </div>
-            <div className="flex-none">
-                <AppsFooter />
-            </div>
+            {!hasUserSentMessage && (
+                <div className="flex-none">
+                    <AppsFooter />
+                </div>
+            )}
         </div>
     );
 }

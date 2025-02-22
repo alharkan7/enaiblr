@@ -26,32 +26,74 @@ const model = genAI.getGenerativeModel({
 // Helper function to get file extension from mime type
 function getFileExtension(mimeType: string): string {
     const mimeToExt: { [key: string]: string } = {
+        // Images
         'image/jpeg': 'jpg',
         'image/png': 'png',
         'image/gif': 'gif',
+
+        // Code files
+        'text/x-c': 'c',
+        'text/x-cpp': 'cpp',
+        'text/x-python': 'py',
+        'text/x-java': 'java',
+        'text/x-php': 'php',
+        'text/x-sql': 'sql',
+
+        // Documents
         'application/pdf': 'pdf',
         'application/msword': 'doc',
         'application/vnd.openxmlformats-officedocument.wordprocessingml.document': 'docx',
+        'application/rtf': 'rtf',
+        'application/vnd.ms-word.template.macroenabled.12': 'dot',
+        'application/vnd.openxmlformats-officedocument.wordprocessingtemplate': 'dotx',
+        'application/x-hwp': 'hwp',
+        'application/x-hwpx': 'hwpx',
+
+        // Google Workspace
+        'application/vnd.google-apps.document': 'gdoc',
+        'application/vnd.google-apps.presentation': 'gslides',
+        'application/vnd.google-apps.spreadsheet': 'gsheet',
+
+        // Presentations
+        'application/vnd.openxmlformats-officedocument.presentationml.presentation': 'pptx',
+
+        // Spreadsheets
+        'application/vnd.ms-excel': 'xls',
+        'text/csv': 'csv',
+
+        // Plain text
         'text/plain': 'txt',
-        'text/markdown': 'md',
+        'text/markdown': 'md'
     };
     return mimeToExt[mimeType] || 'bin';
 }
 
 // Helper function to convert base64 to buffer and upload to Gemini
-async function uploadBase64ToGemini(base64String: string, mimeType: string, fileName: string) {
+type FileUploadResult = {
+    mimeType: string;
+    data?: string;
+    fileUri?: string;
+};
+
+async function uploadBase64ToGemini(base64String: string, mimeType: string, fileName: string): Promise<FileUploadResult> {
     try {
         // Remove data URL prefix if present
         const base64Data = base64String.replace(/^data:.*;base64,/, '');
         
-        // Convert base64 to buffer
-        const buffer = Buffer.from(base64Data, 'base64');
+        // For images, we can return the data directly since Gemini accepts base64
+        if (mimeType.startsWith('image/')) {
+            return {
+                mimeType,
+                data: base64Data
+            };
+        }
 
-        // Create temporary file
+        // For other files, we need to use the file manager
+        const buffer = Buffer.from(base64Data, 'base64');
         const tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'gemini-'));
         const extension = getFileExtension(mimeType);
         const tempFilePath = path.join(tempDir, `${crypto.randomUUID()}.${extension}`);
-        
+
         // Write buffer to temporary file
         await fs.writeFile(tempFilePath, buffer);
 
@@ -65,7 +107,10 @@ async function uploadBase64ToGemini(base64String: string, mimeType: string, file
         await fs.unlink(tempFilePath);
         await fs.rmdir(tempDir);
 
-        return uploadResult.file;
+        return {
+            mimeType: uploadResult.file.mimeType,
+            fileUri: uploadResult.file.uri
+        };
     } catch (error) {
         console.error('Error uploading file:', error);
         throw error;
@@ -85,41 +130,50 @@ export async function POST(req: NextRequest) {
         }
 
         const chat = model.startChat();
-        
+
         // Process each message in the history
         for (const msg of messages) {
             if (msg.role === 'user') {
                 const parts: any[] = [];
-                
+
                 // Handle file content if present
                 if (Array.isArray(msg.content)) {
                     for (const part of msg.content) {
                         if (part.type === 'image_url' && part.image_url?.url) {
                             // Upload image to Gemini
-                            const file = await uploadBase64ToGemini(
+                            const fileData = await uploadBase64ToGemini(
                                 part.image_url.url,
                                 'image/jpeg',
                                 'uploaded_image.jpg'
                             );
                             parts.push({
                                 inlineData: {
-                                    mimeType: file.mimeType,
-                                    data: part.image_url.url.split(',')[1] // Get base64 data without prefix
+                                    mimeType: fileData.mimeType,
+                                    data: fileData.data!
                                 }
                             });
                         } else if (part.type === 'file_url' && part.file_url?.url) {
                             // Upload file to Gemini
-                            const file = await uploadBase64ToGemini(
+                            const fileData = await uploadBase64ToGemini(
                                 part.file_url.url,
                                 part.file_url.type,
                                 part.file_url.name
                             );
-                            parts.push({
-                                fileData: {
-                                    mimeType: file.mimeType,
-                                    fileUri: file.uri,
-                                }
-                            });
+                            if (fileData.fileUri) {
+                                parts.push({
+                                    fileData: {
+                                        mimeType: fileData.mimeType,
+                                        fileUri: fileData.fileUri,
+                                    }
+                                });
+                            } else if (fileData.data) {
+                                parts.push({
+                                    inlineData: {
+                                        mimeType: fileData.mimeType,
+                                        data: fileData.data
+                                    }
+                                });
+                            }
                         } else if (part.type === 'text') {
                             parts.push({ text: part.text });
                         }
@@ -127,20 +181,34 @@ export async function POST(req: NextRequest) {
                 } else {
                     parts.push({ text: msg.content });
                 }
-                
+
                 await chat.sendMessage(parts);
             }
         }
 
-        // Get response from the model
-        const result = await chat.sendMessage("Please analyze the content and provide a helpful response.");
+        // Get response from the model using the last message parts
+        const lastMessage = messages[messages.length - 1];
+        const lastParts: any[] = [];
+
+        if (Array.isArray(lastMessage.content)) {
+            for (const part of lastMessage.content) {
+                if (part.type === 'text') {
+                    lastParts.push({ text: part.text });
+                }
+            }
+        } else {
+            lastParts.push({ text: lastMessage.content });
+        }
+
+        const result = await chat.sendMessage(lastParts);
 
         // Create a readable stream for the response
         const stream = new ReadableStream({
+
             async start(controller) {
                 const response = result.response;
                 const text = await response.text();
-                
+
                 // Send the text in chunks
                 const chunks = text.split(' ');
                 for (const chunk of chunks) {

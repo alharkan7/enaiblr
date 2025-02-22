@@ -5,12 +5,17 @@ import { AppsHeader } from '@/components/apps-header';
 interface ChatTitleProps {
     compact?: boolean;
     clearMessages: () => void;
+    hasUserSentMessage?: boolean;
+    onClear?: () => void;  // New prop for handling UI reset
 }
 
-export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
+export function ChatTitle({ compact, clearMessages, hasUserSentMessage, onClear }: ChatTitleProps) {
     const refreshButton = (
         <Button 
-            onClick={clearMessages}
+            onClick={() => {
+                clearMessages();
+                onClear?.();  // Call onClear to reset the UI state
+            }}
             className="p-2 hover:bg-muted rounded-lg transition-colors"
             title="Clear chat history"
             variant="outline"
@@ -19,7 +24,7 @@ export function ChatTitle({ compact, clearMessages }: ChatTitleProps) {
         </Button>
     );
 
-    return compact ? (
+    return hasUserSentMessage ? (
         <AppsHeader
             title={<><span className="text-primary">Incognito</span> Chat</>}
             leftButton={refreshButton}
