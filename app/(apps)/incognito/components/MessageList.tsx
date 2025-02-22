@@ -4,6 +4,7 @@ import { FilePreview } from './FilePreview';
 import { motion, AnimatePresence } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
 import { TypingIndicator } from './TypingIndicator';
+
 interface MessageListProps {
     messages: Message[];
     messagesEndRef: React.RefObject<HTMLDivElement>;
@@ -47,15 +48,18 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading, isS
                     return <ReactMarkdown key={idx}>{item.text}</ReactMarkdown>;
                 case 'image_url':
                     return (
-                        <div key={idx} className="relative flex justify-center">
-                            <div className="relative">
-                                <img
-                                    src={item.image_url.url}
-                                    alt="Uploaded"
-                                    className="max-h-[300px] rounded-lg object-contain"
-                                />
-                            </div>
-                        </div>
+                        <FilePreview
+                            key={idx}
+                            file={{
+                                name: 'image.jpg',
+                                type: 'image/jpeg', 
+                                url: item.image_url.url
+                            }}
+                            isUploading={false}
+                            onRemove={() => { }}
+                            isSent={true}
+                            inMessage={true}
+                        />
                     );
                 case 'file_url':
                     return (
@@ -98,11 +102,15 @@ export function MessageList({ messages, messagesEndRef, onUpdate, isLoading, isS
                                 ? 'bg-primary text-primary-foreground rounded-br-none'
                                 : 'bg-accent text-accent-foreground rounded-bl-none'
                                 }`}
+                            style={{ pointerEvents: 'auto' }}
                         >
-                            <div className={`prose prose-sm max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${message.role === 'user'
-                                ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground [&_li]:text-primary-foreground [&_ul]:text-primary-foreground [&_ol]:text-primary-foreground'
-                                : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground [&_li]:text-accent-foreground [&_ul]:text-accent-foreground [&_ol]:text-accent-foreground'
-                                }`}>
+                            <div 
+                                className={`prose prose-sm max-w-none [&_*]:text-current [&_p]:mb-0 [&_ul]:mt-0 [&_ol]:mt-0 [&_li]:text-current [&_li]:my-0 ${message.role === 'user'
+                                    ? '[&_p]:text-primary-foreground [&_a]:text-primary-foreground [&_li]:text-primary-foreground [&_ul]:text-primary-foreground [&_ol]:text-primary-foreground'
+                                    : '[&_p]:text-accent-foreground [&_a]:text-accent-foreground [&_li]:text-accent-foreground [&_ul]:text-accent-foreground [&_ol]:text-accent-foreground'
+                                    }`}
+                                style={{ pointerEvents: 'auto' }}
+                            >
                                 {renderMessageContent(message.content)}
                             </div>
                         </motion.div>

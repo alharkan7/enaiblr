@@ -1,6 +1,5 @@
 import { Send, Paperclip } from 'lucide-react'
 import { useRef, useState } from 'react'
-import { useSubscription } from '@/contexts/subscription-context'
 import { useRouter } from 'next/navigation'
 import {
     AlertDialog,
@@ -39,7 +38,6 @@ export function ChatInput({
     onFocusChange
 }: ChatInputProps) {
     const inputRef = useRef<HTMLInputElement>(null);
-    const { plan } = useSubscription();
     const router = useRouter();
     const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
@@ -115,7 +113,7 @@ export function ChatInput({
                 </form>
             </div>
 
-            <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
+            {/* <AlertDialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
                         <AlertDialogTitle>Upgrade Required</AlertDialogTitle>
@@ -132,7 +130,7 @@ export function ChatInput({
                         </Button>
                     </AlertDialogFooter>
                 </AlertDialogContent>
-            </AlertDialog>
+            </AlertDialog> */}
         </>
     );
 }
