@@ -16,8 +16,8 @@ const fileManager = new GoogleAIFileManager(process.env.GOOGLE_GENERATIVE_AI_API
 const model = genAI.getGenerativeModel({
     model: "gemini-2.0-flash",
     generationConfig: {
-        temperature: 1,
-        topP: 0.95,
+        temperature: 0.7,
+        topP: 0.8,
         topK: 40,
         maxOutputTokens: 8192,
     },
