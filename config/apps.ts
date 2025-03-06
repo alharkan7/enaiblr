@@ -1,4 +1,4 @@
-import { FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
+import { Hammer, FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
 
 export interface AppConfig {
   name: string
@@ -72,4 +72,11 @@ export const apps: AppConfig[] = [
     description: 'Turn any Science Paper into Flashcard for Easy Reading',
     type: 'free'
   },
+  {
+    name: 'More Apps',
+    icon: Hammer,
+    slug: 'tools'
+    description: 'Explore More Free Apps to Play or Be Productive',
+    type: 'free'
+  }
 ]
