@@ -19,6 +19,7 @@ function isPublicRoute(pathname: string): boolean {
     '/api/publications', // Public publications API
     '/icons', // Static icons
     '/favicon.ico', // Favicon
+    '/tools',
   ];
 
   // Check if the path starts with any of these prefixes
@@ -83,6 +84,19 @@ const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
 export default auth(async function middleware(request: NextRequest) {
+  const pathname = request.nextUrl.pathname;
+
+  // Custom redirection for /tools to tools subdomain (no login required)
+  if (pathname === '/tools') {
+    const baseDomain = BASE_URL.replace('https://', ''); // e.g., 'dev.enaiblr.org' or 'enaiblr.org'
+    const toolsUrl = new URL(`https://tools.${baseDomain}`);
+    // Preserve query parameters if any
+    request.nextUrl.searchParams.forEach((value, key) => {
+      toolsUrl.searchParams.set(key, value);
+    });
+    return NextResponse.redirect(toolsUrl);
+  }
+
   // Skip auth middleware for publications API
   if (request.nextUrl.pathname.startsWith('/api/publications')) {
     return NextResponse.next();
@@ -90,7 +104,6 @@ export default auth(async function middleware(request: NextRequest) {
 
   const session = await auth();
   const isLoggedIn = !!session?.user;
-  const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith('/login') || pathname.startsWith('/register');
 
   // Allow API auth routes to pass through
