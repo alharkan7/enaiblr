@@ -75,7 +75,7 @@ export const apps: AppConfig[] = [
   {
     name: 'More Apps',
     icon: Hammer,
-    slug: 'tools'
+    slug: 'tools',
     description: 'Explore More Free Apps to Play or Be Productive',
     type: 'free'
   }
