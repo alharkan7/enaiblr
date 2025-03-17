@@ -1,6 +1,6 @@
 export const metadata = {
-  title: "Enaiblr - AI & Media Research Lab",
-  description: "Page description",
+  title: "Enaiblr - AI Software House",
+  description: "AI Software Solutions, Agents & Automation",
 };
 
 import PageIllustration from "./components/page-illustration";
