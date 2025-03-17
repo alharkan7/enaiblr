@@ -31,9 +31,19 @@ export default function Page() {
   };
 
   const handleAppClick = (appType: 'free' | 'pro', appSlug: string) => {
+    // Special handling for tools
+    if (appSlug === 'tools') {
+      // Get the base domain from the current URL
+      const currentDomain = window.location.hostname;
+      const baseDomain = currentDomain.split('.').slice(-2).join('.');
+      const toolsUrl = `https://tools.${baseDomain}${window.location.search}`;
+      window.location.href = toolsUrl;
+      return;
+    }
+
     // Get ref code from URL if it exists
     const refCode = searchParams.get('ref');
-    
+
     if (status !== 'authenticated') {
       const callbackUrl = `/${appSlug}`;
       const encodedCallback = encodeURIComponent(callbackUrl);
@@ -59,7 +69,7 @@ export default function Page() {
   return (
     <div className="min-h-screen flex flex-col bg-background overflow-auto">
       {status === 'authenticated' ? (
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
@@ -67,7 +77,7 @@ export default function Page() {
           <AppsHeader />
         </motion.div>
       ) : (
-        <motion.header 
+        <motion.header
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.2 }}
@@ -84,34 +94,34 @@ export default function Page() {
 
       <main className="flex-1 container mx-auto px-4 py-12 flex items-center justify-center">
         <div className="w-full">
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
             className="text-center mb-16"
           >
-            <h1 className="text-5xl font-bold tracking-tighter mb-2 text-foreground relative inline-block select-none">
+            <h1 className="text-5xl font-bold tracking-tighter text-foreground relative inline-block select-none">
               enaiblr
-              {!isLoading && <motion.span 
+              {/* {!isLoading && <motion.span 
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ duration: 0.2 }}
                 className={`absolute top-0 right-[-40] text-xs font-medium ${plan === 'pro' ? 'text-primary-foreground bg-primary' : 'text-foreground bg-muted outline-1 outline outline-primary'} rounded-lg px-1 leading-normal tracking-normal`}
               >
                 {plan === 'pro' ? 'PRO' : 'FREE'}
-              </motion.span>}
+              </motion.span>} */}
             </h1>
-            <motion.p 
+            <motion.p
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
               className="text-muted-foreground"
             >
-              Unlimited AI Platform
+              Free AI Softwares
             </motion.p>
           </motion.div>
 
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.3 }}
