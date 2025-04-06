@@ -117,7 +117,7 @@ export default function Page() {
               transition={{ duration: 0.2 }}
               className="text-muted-foreground"
             >
-              Free AI Softwares
+              Free AI Software
             </motion.p>
           </motion.div>
 
