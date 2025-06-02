@@ -36,7 +36,7 @@ export default function Page() {
       // Get the base domain from the current URL
       const currentDomain = window.location.hostname;
       const baseDomain = currentDomain.split('.').slice(-2).join('.');
-      const toolsUrl = `https://tools.${baseDomain}${window.location.search}`;
+      const toolsUrl = `https://apps.raihankalla.id`;
       window.location.href = toolsUrl;
       return;
     }

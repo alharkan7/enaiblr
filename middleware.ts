@@ -89,7 +89,7 @@ export default auth(async function middleware(request: NextRequest) {
   // Custom redirection for /tools to tools subdomain (no login required)
   if (pathname === '/tools') {
     const baseDomain = BASE_URL.replace('https://', ''); // e.g., 'dev.enaiblr.org' or 'enaiblr.org'
-    const toolsUrl = new URL(`https://tools.${baseDomain}`);
+    const toolsUrl = new URL(`https://apps.raihankalla.id`);
     // Preserve query parameters if any
     request.nextUrl.searchParams.forEach((value, key) => {
       toolsUrl.searchParams.set(key, value);
