@@ -122,20 +122,16 @@ export default auth(async function middleware(request: NextRequest) {
     }
   }
 
-  // Handle root path access
-  if (pathname === '/') {
-    if (isLoggedIn) {
-      const appsUrl = new URL('/apps', request.url)
-      // Preserve ref code if present
-      const refCode = request.nextUrl.searchParams.get('ref')
-      if (refCode) {
-        appsUrl.searchParams.set('ref', refCode)
-      }
-      return NextResponse.redirect(appsUrl)
-    }
-    // If not logged in, allow access to root
-    return NextResponse.next()
+// Handle root path access: Always redirect to /apps
+if (pathname === '/') {
+  const appsUrl = new URL('/apps', request.url);
+  // Preserve ref code if present
+  const refCode = request.nextUrl.searchParams.get('ref');
+  if (refCode) {
+    appsUrl.searchParams.set('ref', refCode);
   }
+  return NextResponse.redirect(appsUrl);
+}
 
   // Allow public routes without login
   if (isPublicRoute(pathname)) {
