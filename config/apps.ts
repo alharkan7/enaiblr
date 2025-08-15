@@ -9,13 +9,13 @@ export interface AppConfig {
 }
 
 export const apps: AppConfig[] = [
-  {
-    name: 'Unlimited AI Chat',
-    icon: InfinityIcon,
-    slug: 'chat',
-    description: 'Unlimited AI Access & File Upload. Saved History & Foldering',
-    type: 'pro'
-  },
+  // {
+  //   name: 'Unlimited AI Chat',
+  //   icon: InfinityIcon,
+  //   slug: 'chat',
+  //   description: 'Unlimited AI Access & File Upload. Saved History & Foldering',
+  //   type: 'pro'
+  // },
   {
     name: 'Image Creator',
     icon: WandSparkles,
