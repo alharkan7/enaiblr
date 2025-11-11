@@ -16,13 +16,13 @@ export const apps: AppConfig[] = [
   //   description: 'Unlimited AI Access & File Upload. Saved History & Foldering',
   //   type: 'pro'
   // },
-  {
-    name: 'Image Creator',
-    icon: WandSparkles,
-    slug: 'imagen',
-    description: 'Create Unlimited Image in HD Quality & Limitless Styles',
-    type: 'free'
-  },
+  // {
+  //   name: 'Image Creator',
+  //   icon: WandSparkles,
+  //   slug: 'imagen',
+  //   description: 'Create Unlimited Image in HD Quality & Limitless Styles',
+  //   type: 'free'
+  // },
   {
     name: 'AI Tools Search',
     icon: Search,

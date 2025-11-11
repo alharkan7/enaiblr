@@ -137,7 +137,14 @@ export default function Home() {
                     onClick={() => {
                       setDefaultPrompt(examplePrompt);
                       handleGenerateStart();
-                      const dimensions = { width: 768, height: 768 }; // default to standard square
+                      const getDimensions = (aspectRatio: 'wide' | 'square' | 'portrait') => {
+                        switch (aspectRatio) {
+                          case 'square': return { width: 768, height: 768 };
+                          case 'wide': return { width: 1024, height: 576 };
+                          case 'portrait': return { width: 576, height: 1024 };
+                        }
+                      };
+                      const dimensions = getDimensions(selectedAspectRatio);
                       fetch('/api/imagen', {
                         method: 'POST',
                         headers: {
