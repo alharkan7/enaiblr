@@ -24,7 +24,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
 
   return (
     <div>
-      {plan === 'free' && (
+      {/* {plan === 'free' && (
         <>
           <Button
             variant="ghost"
@@ -43,7 +43,7 @@ export function AppsGridUserNav({ user, isPro = false }: { user: User; isPro?: b
           </Button>
           <DropdownMenuSeparator className="mb-1 mt-2" />
         </>
-      )}
+      )} */}
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" className="h-10 w-full justify-start gap-2">

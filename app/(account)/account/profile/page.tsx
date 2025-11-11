@@ -155,13 +155,13 @@ export default function UserProfile() {
               <ChevronLeft className="" />
               Back
             </Button>
-            <Button
+            {/* <Button
               variant="outline"
               className="flex items-center outline outline-1 outline-primary/80"
               onClick={() => router.push('/account/affiliate')}
             >
               Affiliate <b>25%</b>
-            </Button>
+            </Button> */}
           </div>
         </CardHeader>
 
@@ -293,12 +293,12 @@ export default function UserProfile() {
               <p className="text-center">:</p>
               <p className="flex items-start justify-between gap-4">
                 {user.plan.charAt(0).toUpperCase() + user.plan.slice(1)}
-                <button
+                {/* <button
                   onClick={() => router.push('/payment')}
                   className="text-xs font-semibold text-primary-foreground bg-primary hover:bg-primary/80 rounded-full px-2 py-0.5 transition-colors"
                 >
                   {user.plan === 'pro' ? 'Extend Enaiblr Pro ↗' : 'Get Enaiblr Pro ↗'}
-                </button>
+                </button> */}
               </p>
               {user.plan === 'pro' && user.validUntil && (
                 <>
