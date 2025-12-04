@@ -166,7 +166,7 @@ export default function UserProfile() {
         </CardHeader>
 
         <CardTitle className="text-2xl font-bold text-center mb-4">Account Settings</CardTitle>
-        
+
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
             <div className="flex flex-col items-center space-y-4">
@@ -175,7 +175,7 @@ export default function UserProfile() {
                   <AvatarImage src={user.avatar} alt={user.name} />
                   <AvatarFallback>{user.name?.charAt(0)}</AvatarFallback>
                 </Avatar>
-                <Input
+                {/* <Input
                   type="file"
                   accept="image/*"
                   onChange={handleAvatarChange}
@@ -188,7 +188,7 @@ export default function UserProfile() {
                   className={`absolute bottom-0 right-0 bg-muted hover:bg-primary bg-opacity-20 text-muted-foreground hover:text-primary-foreground rounded-full p-2 cursor-pointer ${isAvatarLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
                 >
                   {isAvatarLoading ? 'Uploading...' : 'Edit'}
-                </Label>
+                </Label> */}
               </div>
             </div>
 

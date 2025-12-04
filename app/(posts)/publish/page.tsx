@@ -111,7 +111,7 @@ function PublishPage() {
 
       const authorValue = formData.get('author') || session?.user?.name || session?.user?.email?.split('@')[0] || 'Enaiblr';
       const content = formData.get('content')?.toString() || '';
-      
+
       // Ensure content has proper markdown line breaks
       const formattedContent = content
         .split('\n')
@@ -253,6 +253,7 @@ function PublishPage() {
             </div>
 
             {/* Cover Image - Moved up for better visual hierarchy */}
+            {/*
             <div className="space-y-2">
               <label htmlFor="cover" className="text-sm font-medium text-muted-foreground">
                 Cover Image
@@ -275,6 +276,7 @@ function PublishPage() {
                 />
               </div>
             </div>
+            */}
 
             {/* Excerpt */}
             <div className="space-y-2">

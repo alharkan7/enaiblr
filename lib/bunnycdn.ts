@@ -14,12 +14,12 @@ const validateConfig = () => {
   if (!CDN_HOSTNAME) throw new Error('BUNNYCDN_CDN_HOST is required');
 };
 
-export async function uploadToBunny(filename: string, buffer: ArrayBuffer) {
+export async function uploadToBunny(filename: string, buffer: Buffer | ArrayBuffer) {
   // Only validate when actually uploading
   validateConfig();
-  
+
   const url = `https://${STORAGE_HOSTNAME}/${STORAGE_ZONE_NAME}/${filename}`;
-  
+
   try {
     const response = await fetch(url, {
       method: 'PUT',
@@ -27,7 +27,7 @@ export async function uploadToBunny(filename: string, buffer: ArrayBuffer) {
         'AccessKey': STORAGE_PASSWORD,
         'Content-Type': 'application/octet-stream',
       },
-      body: Buffer.from(buffer),
+      body: (Buffer.isBuffer(buffer) ? buffer : Buffer.from(buffer)) as any,
     });
 
     if (!response.ok) {
@@ -45,9 +45,9 @@ export async function uploadToBunny(filename: string, buffer: ArrayBuffer) {
 export async function deleteFromBunny(filename: string) {
   // Only validate when actually deleting
   validateConfig();
-  
+
   const url = `https://${STORAGE_HOSTNAME}/${STORAGE_ZONE_NAME}/${filename}`;
-  
+
   try {
     const response = await fetch(url, {
       method: 'DELETE',
