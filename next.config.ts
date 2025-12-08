@@ -66,11 +66,20 @@ const nextConfig: NextConfig = {
   // Exclude unnecessary files from being traced into serverless functions
   outputFileTracingExcludes: {
     '*': [
+      // Exclude pnpm store
+      '.pnpm-store/**',
+      'node_modules/.pnpm/**',
+      'node_modules/.modules.yaml',
+      // Exclude build tools
       'node_modules/@swc/core-linux-x64-gnu',
       'node_modules/@swc/core-linux-x64-musl',
       'node_modules/@esbuild/linux-x64',
       'node_modules/@next/swc-linux-x64-gnu',
       'node_modules/@next/swc-linux-x64-musl',
+      // Exclude public assets
+      'public/images/**',
+      'public/pdf.worker.min.js',
+      'public/pdf.worker.min.mjs',
     ],
   }
 };

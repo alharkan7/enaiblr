@@ -2,46 +2,40 @@
   "functions": {
     "app/(apps)/api/incognito/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/incognito/**"
+      "memory": 1024
     },
     "app/(apps)/api/voice/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/voice/**"
+      "memory": 1024
     },
     "app/(apps)/api/transcribe/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/transcribe/**"
+      "memory": 1024
     },
     "app/(apps)/api/paper-flashcards/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/paper-flashcards/**"
+      "memory": 1024
     },
     "app/(apps)/api/filechat/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/filechat/**"
+      "memory": 1024
     },
     "app/(apps)/api/imagen/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/imagen/**"
+      "memory": 1024
     },
     "app/(apps)/api/search/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/search/**"
+      "memory": 1024
     },
     "app/(apps)/api/web/route.ts": {
       "maxDuration": 60,
-      "memory": 1024,
-      "includeFiles": "app/(apps)/api/web/**"
+      "memory": 1024
     }
   },
-  "installCommand": "pnpm install --frozen-lockfile",
+  "installCommand": "pnpm install --shamefully-hoist --frozen-lockfile",
   "buildCommand": "pnpm build",
-  "outputDirectory": ".next"
+  "outputDirectory": ".next",
+  "cleanUrls": true,
+  "trailingSlash": false
 }
