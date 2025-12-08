@@ -4,6 +4,18 @@ const nextConfig: NextConfig = {
   pageExtensions: ['js', 'jsx', 'mdx', 'ts', 'tsx'],
   /* config options here */
   // cacheComponents: true, // Disabled for compatibility with existing route configs
+  
+  // Externalize heavy packages to prevent bundling into serverless functions
+  serverExternalPackages: [
+    '@google/generative-ai',
+    '@google/genai',
+    'microsoft-cognitiveservices-speech-sdk',
+    'groq-sdk',
+    '@extractus/article-extractor',
+    'canvas',
+    'sharp',
+  ],
+  
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: 'attachment',
@@ -49,7 +61,18 @@ const nextConfig: NextConfig = {
   },
   // Set a reasonable timeout for static generation
   staticPageGenerationTimeout: 120,
-  generateEtags: false
+  generateEtags: false,
+  
+  // Exclude unnecessary files from being traced into serverless functions
+  outputFileTracingExcludes: {
+    '*': [
+      'node_modules/@swc/core-linux-x64-gnu',
+      'node_modules/@swc/core-linux-x64-musl',
+      'node_modules/@esbuild/linux-x64',
+      'node_modules/@next/swc-linux-x64-gnu',
+      'node_modules/@next/swc-linux-x64-musl',
+    ],
+  }
 };
 
 export default nextConfig;
