@@ -5,7 +5,7 @@ import { z } from 'zod';
 
 import { createUser, getUser } from '@/lib/db/queries';
 
-import { signIn, signOut } from './auth';
+import { signIn, signOut } from 'next-auth/react';
 
 const authFormSchema = z.object({
   email: z.string().email(),
@@ -83,5 +83,5 @@ export async function authenticate(formData: FormData) {
 export async function signOutAction() {
   'use server';
   
-  await signOut({ redirectTo: '/' });
+  await signOut({ redirect: true, callbackUrl: '/' });
 }

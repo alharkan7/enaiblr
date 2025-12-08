@@ -1,7 +1,6 @@
 import { compare } from 'bcrypt-ts';
 import NextAuth from 'next-auth';
-import type { NextAuthConfig } from 'next-auth';
-import type { User as NextAuthUser } from '@auth/core/types';
+import type { User as NextAuthUser } from 'next-auth';
 import Credentials from 'next-auth/providers/credentials';
 import GoogleProvider from 'next-auth/providers/google';
 
@@ -36,7 +35,7 @@ export const config = {
   secret: process.env.NEXTAUTH_SECRET,
   // debug: true, // Enable debug messages
   session: {
-    strategy: 'jwt',
+    strategy: 'jwt' as const,
     maxAge: 24 * 60 * 60, // 24 hours
   },
   cookies: {
@@ -44,7 +43,7 @@ export const config = {
       name: process.env.NODE_ENV === 'production' ? '__Secure-next-auth.session-token' : 'next-auth.session-token',
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'lax' as const,
         path: '/',
         secure: process.env.NODE_ENV === 'production',
         maxAge: 24 * 60 * 60 // 24 hours
@@ -54,7 +53,7 @@ export const config = {
       name: process.env.NODE_ENV === 'production' ? '__Host-next-auth.csrf-token' : 'next-auth.csrf-token',
       options: {
         httpOnly: true,
-        sameSite: 'lax',
+        sameSite: 'lax' as const,
         path: '/',
         secure: process.env.NODE_ENV === 'production'
       }
@@ -86,6 +85,10 @@ export const config = {
       }
     }),
     Credentials({
+      credentials: {
+        email: {},
+        password: {},
+      },
       async authorize({ email, password }: any) {
         const users = await getUser(email);
         if (users.length === 0) return null;
@@ -98,7 +101,7 @@ export const config = {
     }),
   ],
   callbacks: {
-    async signIn({ user, account, profile, email, credentials }) {
+    async signIn({ user, account, profile, email, credentials }: any) {
       // console.log('SignIn callback triggered with:', { 
       //   userEmail: user?.email,
       //   accountType: account?.type,
@@ -148,7 +151,7 @@ export const config = {
       // Allow credential sign-in to proceed
       return true;
     },
-    async jwt({ token, user, account, profile }) {
+    async jwt({ token, user, account, profile }: any) {
       // console.log('JWT callback:', { 
       //   hasUser: !!user, 
       //   hasAccount: !!account,
@@ -164,7 +167,7 @@ export const config = {
       }
       return token;
     },
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       // console.log('Session callback:', { 
       //   hasToken: !!token,
       //   tokenEmail: token?.email,
@@ -179,7 +182,7 @@ export const config = {
       }
       return session;
     },
-    async authorized({ auth, request: { nextUrl } }) {
+    async authorized({ auth, request: { nextUrl } }: any) {
       const isLoggedIn = !!auth?.user;
       const isAuthPage = nextUrl.pathname.startsWith('/login') || 
                         nextUrl.pathname.startsWith('/register');
@@ -202,14 +205,13 @@ export const config = {
       return isLoggedIn;
     },
   },
-} satisfies NextAuthConfig;
+};
 
-const handler = NextAuth(config);
-
-export const { auth, signIn, signOut } = handler;
-export const handlers = handler.handlers;
+export const {
+  handlers: { GET, POST },
+  auth,
+  signIn,
+  signOut,
+} = NextAuth(config);
 
 export type { Session } from 'next-auth';
-
-// Export handlers for API route
-export const { GET, POST } = handlers;

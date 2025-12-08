@@ -1,6 +1,6 @@
 import Form from 'next/form';
 
-import { signOut } from '@/app/(auth)/auth';
+import { signOut } from 'next-auth/react';
 
 export const SignOutForm = () => {
   return (
@@ -10,7 +10,8 @@ export const SignOutForm = () => {
         'use server';
 
         await signOut({
-          redirectTo: '/',
+          redirect: true,
+          callbackUrl: '/',
         });
       }}
     >
