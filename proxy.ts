@@ -83,7 +83,7 @@ const BASE_URL = process.env.NEXTAUTH_URL || 'https://dev.enaiblr.org' || 'https
 
 const ADMIN_EMAILS = process.env.ADMIN_EMAILS?.split(',') ?? [];
 
-export default auth(async function middleware(request: NextRequest) {
+export default auth(async function proxy(request: NextRequest) {
   const pathname = request.nextUrl.pathname;
 
   // Custom redirection for /tools to tools subdomain (no login required)
@@ -203,3 +203,4 @@ export const config = {
     '/((?!_next/static|_next/image|favicon.ico|icons|images|api/publications).*)',
   ],
 };
+

@@ -1,6 +1,11 @@
 import { GoogleGenAI, PersonGeneration } from '@google/genai';
 import { NextResponse } from "next/server";
 
+// Configure route segment for Vercel deployment
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
 function getAspectRatio(width: number, height: number): string {
   const ratio = width / height;
   if (Math.abs(ratio - 1) < 0.1) return '1:1';

@@ -6,6 +6,11 @@ import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
 
+// Configure route segment for Vercel deployment
+export const runtime = 'nodejs';
+export const dynamic = 'force-dynamic';
+export const maxDuration = 60;
+
 if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
     throw new Error('Missing GOOGLE_GENERATIVE_AI_API_KEY environment variable');
 }

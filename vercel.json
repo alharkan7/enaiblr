@@ -1,1 +1,37 @@
-{}
+{
+  "functions": {
+    "app/(apps)/api/incognito/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/voice/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/transcribe/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/paper-flashcards/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/filechat/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/imagen/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/search/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    },
+    "app/(apps)/api/web/route.ts": {
+      "maxDuration": 60,
+      "memory": 1024
+    }
+  },
+  "outputDirectory": ".next"
+}

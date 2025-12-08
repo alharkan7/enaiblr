@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 
+// Configure route segment for Vercel deployment
+export const runtime = 'nodejs';
 export const dynamic = "force-dynamic";
+export const maxDuration = 60;
 
 interface SearchParams {
     query: string;
