@@ -44,7 +44,3 @@ tsconfig.tsbuildinfo
 # Development dependencies (already handled by package.json)
 node_modules/.cache/
 
-# Public assets that shouldn't be in functions
-public/pdf.worker.min.js
-public/pdf.worker.min.mjs
-

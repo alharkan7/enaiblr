@@ -75,10 +75,6 @@ const nextConfig: NextConfig = {
       'node_modules/@esbuild/linux-x64',
       'node_modules/@next/swc-linux-x64-gnu',
       'node_modules/@next/swc-linux-x64-musl',
-      // Exclude public assets
-      'public/images/**',
-      'public/pdf.worker.min.js',
-      'public/pdf.worker.min.mjs',
     ],
   }
 };
