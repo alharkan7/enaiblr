@@ -12,7 +12,6 @@ const nextConfig: NextConfig = {
     'microsoft-cognitiveservices-speech-sdk',
     'groq-sdk',
     '@extractus/article-extractor',
-    'canvas',
     'sharp',
   ],
   
