@@ -42,7 +42,7 @@ Enaiblr is a growing AI tools platform currently featuring a search engine, disp
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/alharkan7/enaiblr.git
+git clone https://github.com/enaiblr/enaiblr.git
 cd enaiblr
 ```
 
