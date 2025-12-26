@@ -11,7 +11,7 @@ import Logo from "./logo";
 const socialLinks = [
   {
     name: "GitHub",
-    href: "https://github.com/enaiblr",
+    href: "https://github.com/enaiblrorg",
     icon: Github,
   },
   {
