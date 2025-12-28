@@ -8,7 +8,7 @@ export async function POST(request: Request) {
   try {
     const { audioData } = await request.json();
     const id = Math.random().toString(36).substring(7);
-    audioStore.set(id, Buffer.from(audioData));
+    audioStore.set(id, Buffer.from(audioData).buffer);
     
     return NextResponse.json({ id });
   } catch (error) {
