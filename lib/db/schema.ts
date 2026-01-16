@@ -21,6 +21,7 @@ export const user = pgTable('User', {
   phone: varchar('phone', { length: 20 }),
   createdAt: timestamp('createdAt').defaultNow(),
   avatar: varchar('avatar', { length: 255 }),
+  geminiApiKey: varchar('geminiApiKey', { length: 255 }),
 });
 
 export type User = InferSelectModel<typeof user>;
@@ -182,7 +183,7 @@ export const transactions = pgTable('Transactions', {
   status: varchar('status', { length: 20 }).notNull(),
   affiliate_code: varchar('affiliate_code', { length: 12 }),
   affiliator: uuid('affiliator')
-  .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
+    .references(() => user.id, { onUpdate: 'no action', onDelete: 'no action' }),
 });
 
 export type Transaction = InferSelectModel<typeof transactions>;

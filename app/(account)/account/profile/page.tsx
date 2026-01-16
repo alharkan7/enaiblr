@@ -24,7 +24,8 @@ export default function UserProfile() {
     avatar: '',
     createdAt: null as string | null,
     plan: 'free' as 'free' | 'pro',
-    validUntil: null as string | null
+    validUntil: null as string | null,
+    geminiApiKey: ''
   })
   const [newPassword, setNewPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
@@ -32,6 +33,7 @@ export default function UserProfile() {
   const [isSaving, setIsSaving] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showGeminiApiKey, setShowGeminiApiKey] = useState(false);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -49,7 +51,8 @@ export default function UserProfile() {
             avatar: userInfo.avatar || '',
             createdAt: userInfo.createdAt,
             plan: userInfo.plan || 'free',
-            validUntil: userInfo.validUntil || null
+            validUntil: userInfo.validUntil || null,
+            geminiApiKey: userInfo.geminiApiKey || ''
           })
         } catch (error) {
           console.error('Error fetching user data:', error)
@@ -118,6 +121,7 @@ export default function UserProfile() {
           name: user.name,
           phone: user.phone,
           password: newPassword || undefined,
+          geminiApiKey: user.geminiApiKey || undefined,
         }),
       });
 
@@ -216,6 +220,35 @@ export default function UserProfile() {
                   value={user.phone}
                   onChange={(e) => setUser({ ...user, phone: e.target.value })}
                 />
+              </div>
+              <div className="space-y-2">
+                <div className="flex items-center justify-between">
+                  <Label htmlFor="geminiApiKey">Gemini API Key</Label>
+                  <a
+                    href="https://aistudio.google.com/apikey"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-xs text-primary hover:underline"
+                  >
+                    Get yours
+                  </a>
+                </div>
+                <div className="relative">
+                  <Input
+                    id="geminiApiKey"
+                    type={showGeminiApiKey ? "text" : "password"}
+                    value={user.geminiApiKey}
+                    onChange={(e) => setUser({ ...user, geminiApiKey: e.target.value })}
+                    placeholder="Enter your Gemini API Key"
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowGeminiApiKey(!showGeminiApiKey)}
+                    className="absolute right-2 top-1/2 -translate-y-1/2"
+                  >
+                    {showGeminiApiKey ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
+                  </button>
+                </div>
               </div>
             </div>
 

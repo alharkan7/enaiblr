@@ -43,6 +43,13 @@
       "when": 1735892442377,
       "tag": "0005_serious_loki",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1768546741970,
+      "tag": "0006_outstanding_ben_urich",
+      "breakpoints": true
     }
   ]
 }

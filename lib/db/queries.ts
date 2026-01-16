@@ -25,7 +25,7 @@ import { subscriptionPackages } from '@/config/subscriptionPackages';
 
 export async function getUser(email: string) {
   // console.log('getUser called with email:', email);
-  
+
   if (!email) {
     console.error('getUser: No email provided');
     return [];
@@ -36,7 +36,7 @@ export async function getUser(email: string) {
       .select()
       .from(user)
       .where(eq(user.email, email));
-    
+
     // console.log('getUser DB result:', result);
     return result;
   } catch (error) {
@@ -48,15 +48,15 @@ export async function getUser(email: string) {
 export async function createUser(email: string, password: string) {
   try {
     return await db.transaction(async (tx) => {
-      const result = await tx.insert(user).values({ 
-        email, 
+      const result = await tx.insert(user).values({
+        email,
         password,
         createdAt: new Date()
       }).returning();
 
       const userId = result[0].id;
-      
-      await tx.insert(subscription).values({ 
+
+      await tx.insert(subscription).values({
         userId,
         createdAt: new Date()
       });
@@ -79,8 +79,8 @@ export async function createGoogleUser(email: string, avatar?: string) {
   try {
     return await db.transaction(async (tx) => {
       // Create the user
-      const result = await tx.insert(user).values({ 
-        email, 
+      const result = await tx.insert(user).values({
+        email,
         avatar,
         createdAt: new Date()
       }).returning();
@@ -92,7 +92,7 @@ export async function createGoogleUser(email: string, avatar?: string) {
       const userId = result[0].id;
 
       // Create subscription
-      await tx.insert(subscription).values({ 
+      await tx.insert(subscription).values({
         userId,
         createdAt: new Date()
       });
@@ -132,11 +132,11 @@ async function createUserOnboarding(userId: string, tx: any) {
     content: [{
       type: "text",
       text: "👋 Welcome to Enaiblr!\n\n" +
-            "I'm your AI assistant, ready to help you with anything you need. I've created three folders to help you organize your chats:\n\n" +
-            "📁 Personal - For your personal conversations and tasks\n\n" +
-            "💼 Work - For work-related discussions and projects\n\n" +
-            "📚 Study - For learning and educational content\n\n" +
-            "Feel free to create more folders or reorganize your chats however you like. How can I assist you today?"
+        "I'm your AI assistant, ready to help you with anything you need. I've created three folders to help you organize your chats:\n\n" +
+        "📁 Personal - For your personal conversations and tasks\n\n" +
+        "💼 Work - For work-related discussions and projects\n\n" +
+        "📚 Study - For learning and educational content\n\n" +
+        "Feel free to create more folders or reorganize your chats however you like. How can I assist you today?"
     }],
     createdAt: new Date()
   });
@@ -499,7 +499,7 @@ type SubscriptionStatus = {
 export async function getUserSubscriptionStatus(userId: string): Promise<SubscriptionStatus> {
   try {
     const now = new Date();
-    
+
     // Get all valid subscriptions for the user
     const subs = await db
       .select()
@@ -518,8 +518,8 @@ export async function getUserSubscriptionStatus(userId: string): Promise<Subscri
     if (subs && subs.length > 0) {
       const sub = subs[0]; // Get the latest subscription
       if (sub.plan === 'pro' && sub.validUntil) {
-        status = { 
-          plan: 'pro', 
+        status = {
+          plan: 'pro',
           validUntil: sub.validUntil,
           subscriptionId: sub.id
         };
@@ -541,10 +541,10 @@ export async function isProUser(userId: string): Promise<boolean> {
 export async function updateSubscriptionToPro(userId: string, packageName: string) {
   try {
     const now = new Date();
-    
+
     // Find the selected package
     const selectedPackage = subscriptionPackages.find(pkg => pkg.name === packageName) || subscriptionPackages[0];
-    
+
     // Get current subscription
     const currentSub = await db
       .select()
@@ -635,7 +635,7 @@ export async function updateFolder(id: string, data: { name: string }) {
     .set(data)
     .where(eq(folder.id, id))
     .returning();
-  
+
   const chats = await db
     .select()
     .from(chat)
@@ -656,11 +656,12 @@ export async function deleteFolder(id: string) {
 }
 
 export async function updateUserProfile(
-  email: string, 
-  data: { 
-    name?: string; 
+  email: string,
+  data: {
+    name?: string;
     phone?: string;
     password?: string;
+    geminiApiKey?: string;
   }
 ) {
   try {
@@ -668,6 +669,7 @@ export async function updateUserProfile(
     if (data.name !== undefined) updates.name = data.name;
     if (data.phone !== undefined) updates.phone = data.phone;
     if (data.password !== undefined) updates.password = data.password;
+    if (data.geminiApiKey !== undefined) updates.geminiApiKey = data.geminiApiKey;
 
     return await db
       .update(user)
@@ -699,7 +701,7 @@ async function generateToken(): Promise<string> {
   // Set version (4) and variant (2) bits
   array[6] = (array[6] & 0x0f) | 0x40;
   array[8] = (array[8] & 0x3f) | 0x80;
-  
+
   // Convert to UUID string format
   const hex = Array.from(array, byte => byte.toString(16).padStart(2, '0'));
   return [

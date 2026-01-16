@@ -11,7 +11,7 @@ export async function PUT(request: Request) {
     }
 
     const data = await request.json();
-    const { name, phone, password } = data;
+    const { name, phone, password, geminiApiKey } = data;
 
     // If password is provided, hash it
     let hashedPassword;
@@ -24,6 +24,7 @@ export async function PUT(request: Request) {
       name,
       phone,
       password: hashedPassword,
+      geminiApiKey,
     });
 
     return NextResponse.json({ success: true });
