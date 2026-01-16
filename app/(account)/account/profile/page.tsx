@@ -15,7 +15,7 @@ import { toast } from "sonner"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
 
 export default function UserProfile() {
-  const { data: session } = useSession()
+  const { data: session, update } = useSession()
   const router = useRouter()
   const [user, setUser] = useState({
     name: '',
@@ -121,7 +121,7 @@ export default function UserProfile() {
           name: user.name,
           phone: user.phone,
           password: newPassword || undefined,
-          geminiApiKey: user.geminiApiKey || undefined,
+          geminiApiKey: user.geminiApiKey,
         }),
       });
 
@@ -132,6 +132,10 @@ export default function UserProfile() {
       // Clear password fields after successful update
       setNewPassword('');
       setConfirmPassword('');
+
+      // Trigger session update to refresh the JWT token with new geminiApiKey
+      // This uses next-auth's update() to refresh the session without requiring re-login
+      await update();
 
       toast.success('Profile updated', {
         description: 'Your profile has been updated successfully.'

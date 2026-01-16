@@ -1,13 +1,12 @@
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 import { FlashCardContent } from '../../paper-flashcard/types';
+import { getGeminiApiKey } from '@/lib/ai/gemini';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY || '');
 
 // Validate if the object has all required fields with non-empty strings
 function isValidFlashCardContent(obj: any): obj is FlashCardContent {
@@ -15,8 +14,8 @@ function isValidFlashCardContent(obj: any): obj is FlashCardContent {
   return (
     obj &&
     typeof obj === 'object' &&
-    requiredFields.every(field => 
-      typeof obj[field] === 'string' && 
+    requiredFields.every(field =>
+      typeof obj[field] === 'string' &&
       obj[field].trim().length > 0
     )
   );
@@ -37,6 +36,10 @@ function cleanFlashCardContent(content: FlashCardContent): FlashCardContent {
 
 export async function POST(req: Request) {
   try {
+    // Get the API key (user's own or fallback to .env)
+    const apiKey = await getGeminiApiKey();
+    const genAI = new GoogleGenerativeAI(apiKey);
+
     const { content, language = 'en' } = await req.json();
 
     if (!content || typeof content !== 'string' || content.trim().length === 0) {
@@ -84,7 +87,7 @@ ${content}
     const result = await model.generateContent(prompt);
     const response = await result.response;
     const text = response.text();
-    
+
     // Try to extract JSON from the response
     const jsonMatch = text.match(/\{[\s\S]*\}/);
     if (!jsonMatch) {

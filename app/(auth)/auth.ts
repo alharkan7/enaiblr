@@ -12,6 +12,7 @@ import type { Session } from 'next-auth';
 // Extend NextAuth's User type with our database fields
 interface User extends NextAuthUser {
   avatar?: string | null;
+  geminiApiKey?: string | null;
 }
 
 interface ExtendedToken extends JWT {
@@ -19,6 +20,7 @@ interface ExtendedToken extends JWT {
   email: string;
   name?: string | null;
   picture?: string | null;
+  geminiApiKey?: string | null;
 }
 
 interface ExtendedSession extends Session {
@@ -27,6 +29,7 @@ interface ExtendedSession extends Session {
     email: string;
     name?: string | null;
     image?: string | null;
+    geminiApiKey?: string | null;
   };
 }
 
@@ -129,7 +132,7 @@ export const config = {
             try {
               const newUser = await createGoogleUser(user.email, user.image || undefined);
               // console.log('New user created:', newUser);
-              
+
               if (!newUser || newUser.length === 0) {
                 console.error('Failed to create new Google user');
                 return false;
@@ -151,20 +154,33 @@ export const config = {
       // Allow credential sign-in to proceed
       return true;
     },
-    async jwt({ token, user, account, profile }: any) {
+    async jwt({ token, user, account, profile, trigger }: any) {
       // console.log('JWT callback:', { 
       //   hasUser: !!user, 
       //   hasAccount: !!account,
       //   tokenEmail: token?.email,
       //   userEmail: user?.email
       // });
-      
+
       if (user) {
         token.id = user.id;
         token.email = user.email || '';
         token.name = user.name || null;
         token.picture = user.image || null;
       }
+
+      // Fetch geminiApiKey from database on initial sign-in or when session is updated
+      if (token.email && (user || trigger === 'update')) {
+        try {
+          const dbUser = await getUser(token.email);
+          if (dbUser && dbUser.length > 0) {
+            token.geminiApiKey = dbUser[0].geminiApiKey || null;
+          }
+        } catch (error) {
+          console.error('Error fetching geminiApiKey:', error);
+        }
+      }
+
       return token;
     },
     async session({ session, token }: any) {
@@ -173,19 +189,20 @@ export const config = {
       //   tokenEmail: token?.email,
       //   sessionEmail: session?.user?.email
       // });
-      
+
       if (token && session.user) {
         session.user.id = token.id as string;
         session.user.email = token.email || '';
         session.user.name = token.name || null;
         session.user.image = token.picture || null;
+        session.user.geminiApiKey = token.geminiApiKey || null;
       }
       return session;
     },
     async authorized({ auth, request: { nextUrl } }: any) {
       const isLoggedIn = !!auth?.user;
-      const isAuthPage = nextUrl.pathname.startsWith('/login') || 
-                        nextUrl.pathname.startsWith('/register');
+      const isAuthPage = nextUrl.pathname.startsWith('/login') ||
+        nextUrl.pathname.startsWith('/register');
 
       if (isAuthPage) {
         if (isLoggedIn) {

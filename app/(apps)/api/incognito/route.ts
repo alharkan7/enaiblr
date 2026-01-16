@@ -5,28 +5,19 @@ import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
+import { getGeminiApiKey } from '@/lib/ai/gemini';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
-if (!process.env.GOOGLE_GENERATIVE_AI_API_KEY) {
-    throw new Error('Missing GOOGLE_GENERATIVE_AI_API_KEY environment variable');
-}
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
-const fileManager = new GoogleAIFileManager(process.env.GOOGLE_GENERATIVE_AI_API_KEY);
-
-const model = genAI.getGenerativeModel({
-    model: "gemini-2.0-flash",
-    generationConfig: {
-        temperature: 0.7,
-        topP: 0.8,
-        topK: 40,
-        maxOutputTokens: 8192,
-    },
-});
+const generationConfig = {
+    temperature: 0.7,
+    topP: 0.8,
+    topK: 40,
+    maxOutputTokens: 8192,
+};
 
 // Helper function to get file extension from mime type
 function getFileExtension(mimeType: string): string {
@@ -80,11 +71,16 @@ type FileUploadResult = {
     fileUri?: string;
 };
 
-async function uploadBase64ToGemini(base64String: string, mimeType: string, fileName: string): Promise<FileUploadResult> {
+async function uploadBase64ToGemini(
+    base64String: string,
+    mimeType: string,
+    fileName: string,
+    fileManager: GoogleAIFileManager
+): Promise<FileUploadResult> {
     try {
         // Remove data URL prefix if present
         const base64Data = base64String.replace(/^data:.*;base64,/, '');
-        
+
         // For images, we can return the data directly since Gemini accepts base64
         if (mimeType.startsWith('image/')) {
             return {
@@ -124,6 +120,17 @@ async function uploadBase64ToGemini(base64String: string, mimeType: string, file
 
 export async function POST(req: NextRequest) {
     try {
+        // Get the API key (user's own or fallback to .env)
+        const apiKey = await getGeminiApiKey();
+
+        // Initialize Gemini clients with the appropriate API key
+        const genAI = new GoogleGenerativeAI(apiKey);
+        const fileManager = new GoogleAIFileManager(apiKey);
+        const model = genAI.getGenerativeModel({
+            model: "gemini-2.0-flash",
+            generationConfig,
+        });
+
         const body = await req.json();
         const { messages } = body;
 
@@ -149,7 +156,8 @@ export async function POST(req: NextRequest) {
                             const fileData = await uploadBase64ToGemini(
                                 part.image_url.url,
                                 'image/jpeg',
-                                'uploaded_image.jpg'
+                                'uploaded_image.jpg',
+                                fileManager
                             );
                             parts.push({
                                 inlineData: {
@@ -162,7 +170,8 @@ export async function POST(req: NextRequest) {
                             const fileData = await uploadBase64ToGemini(
                                 part.file_url.url,
                                 part.file_url.type,
-                                part.file_url.name
+                                part.file_url.name,
+                                fileManager
                             );
                             if (fileData.fileUri) {
                                 parts.push({

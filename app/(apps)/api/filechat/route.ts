@@ -1,14 +1,11 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getGeminiApiKey } from '@/lib/ai/gemini';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
-const contextModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const generationConfig = {
   temperature: 0.7,
@@ -22,17 +19,14 @@ Use this document to provide accurate and relevant responses throughout our conv
 Even if the user doesn't explicitly mention the document in their follow-up questions, consider the document's content in your responses.
 Always respond in the same language that the user is using to ask their questions.`;
 
-async function detectLanguage(text: string) {
-  const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
-
-"${text}"`;
-  
-  const result = await contextModel.generateContent(prompt);
-  return result.response.text().trim();
-}
-
 export async function POST(request: Request) {
   try {
+    // Get the API key (user's own or fallback to .env)
+    const apiKey = await getGeminiApiKey();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const contextModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
     const body = await request.json();
     const { messages } = body;
 
@@ -49,7 +43,11 @@ export async function POST(request: Request) {
       : lastMessage.content.map((c: any) => c.text).join('\n');
 
     // Detect user's language
-    const detectedLang = await detectLanguage(latestPrompt);
+    const detectLanguagePrompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
+
+"${latestPrompt}"`;
+    const langResult = await contextModel.generateContent(detectLanguagePrompt);
+    const detectedLang = langResult.response.text().trim();
 
     // Combine system prompt, document context, and user messages with language instruction
     const fullPrompt = messages.length === 1

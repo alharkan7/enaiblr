@@ -1,14 +1,12 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
+import { getGeminiApiKey } from '@/lib/ai/gemini';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
-
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_GENERATIVE_AI_API_KEY!);
-const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
 
 const generationConfig = {
   temperature: 0.7,
@@ -17,7 +15,7 @@ const generationConfig = {
   maxOutputTokens: 8192,
 };
 
-async function paraphraseWithContext(messages: any[]) {
+async function paraphraseWithContext(messages: any[], genAI: GoogleGenerativeAI) {
   const contextModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const history = messages.slice(0, -1)
     .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content[0].text}`)
@@ -31,18 +29,23 @@ async function paraphraseWithContext(messages: any[]) {
   return paraphrasedQuery;
 }
 
-async function detectLanguage(text: string) {
+async function detectLanguage(text: string, genAI: GoogleGenerativeAI) {
   const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
   const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
 
 "${text}"`;
-  
+
   const result = await model.generateContent(prompt);
   return result.response.text().trim();
 }
 
 export async function POST(request: Request) {
   try {
+    // Get the API key (user's own or fallback to .env)
+    const apiKey = await getGeminiApiKey();
+    const genAI = new GoogleGenerativeAI(apiKey);
+    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+
     const body = await request.json();
     const { messages, chatMode } = body;
 
@@ -56,15 +59,15 @@ export async function POST(request: Request) {
     }
 
     const userInput = lastMessage.content[0].text;
-    
+
     // Detect language from user input
-    const detectedLang = await detectLanguage(userInput);
+    const detectedLang = await detectLanguage(userInput, genAI);
 
     // Use Gemini for article processing and follow-up questions
     if (chatMode === 'gemini') {
       try {
         let contents;
-        
+
         // If it's the first message, extract article content
         if (messages.length === 1) {
           const article = await extract(userInput);
@@ -82,10 +85,10 @@ export async function POST(request: Request) {
           // For follow-up questions, include chat history
           contents = messages.map(msg => ({
             role: msg.role === 'user' ? 'user' : 'model',
-            parts: [{ 
-              text: Array.isArray(msg.content) 
-                ? msg.content[0].text 
-                : msg.content 
+            parts: [{
+              text: Array.isArray(msg.content)
+                ? msg.content[0].text
+                : msg.content
             }]
           }));
         }
@@ -148,12 +151,12 @@ export async function POST(request: Request) {
       // Use Brave Search API for web search
       try {
         // Paraphrase the query if it's a follow-up question
-        const searchQuery = messages.length > 1 
-          ? await paraphraseWithContext(messages)
+        const searchQuery = messages.length > 1
+          ? await paraphraseWithContext(messages, genAI)
           : userInput;
 
         const searchResponse = await fetch(
-          `https://api.search.brave.com/res/v1/web/search?` + 
+          `https://api.search.brave.com/res/v1/web/search?` +
           new URLSearchParams({
             q: searchQuery,
             // country: 'US',
@@ -221,7 +224,7 @@ Please synthesize this information into a clear and helpful response in the user
                 title: result.title,
                 snippet: result.description
               }));
-              
+
               const metaData = {
                 type: 'sources',
                 sources
@@ -261,7 +264,7 @@ Please synthesize this information into a clear and helpful response in the user
   } catch (error) {
     console.error('API route error:', error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : 'Error processing chat request' }, 
+      { error: error instanceof Error ? error.message : 'Error processing chat request' },
       { status: 500 }
     );
   }

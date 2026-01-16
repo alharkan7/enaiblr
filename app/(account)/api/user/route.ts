@@ -23,7 +23,7 @@ export async function GET() {
 
     const user = users[0]
     const subscription = await getUserSubscriptionStatus(user.id)
-    
+
     return NextResponse.json({
       name: user.name,
       email: user.email,
@@ -31,7 +31,8 @@ export async function GET() {
       avatar: user.avatar,
       createdAt: user.createdAt,
       plan: subscription.plan,
-      validUntil: subscription.validUntil
+      validUntil: subscription.validUntil,
+      geminiApiKey: user.geminiApiKey
     })
   } catch (error) {
     console.error('Failed to fetch user data:', error)
@@ -54,7 +55,7 @@ export async function PATCH(request: Request) {
 
   try {
     const { name, phone } = await request.json()
-    
+
     if (!name || !phone) {
       return NextResponse.json(
         { error: 'Name and phone are required' },
