@@ -1,4 +1,4 @@
-import { DatabaseService } from './database';
+import { DatabaseService } from '@/lib/db/ft-queries';
 
 interface UserSheet {
   userId: string;

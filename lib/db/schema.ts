@@ -11,6 +11,9 @@ import {
   foreignKey,
   boolean,
   numeric,
+  serial,
+  integer,
+  date,
 } from 'drizzle-orm/pg-core';
 
 export const user = pgTable('User', {
@@ -224,3 +227,73 @@ export const publicationsSub = pgTable('Publications Sub', {
 });
 
 export type PublicationsSub = InferSelectModel<typeof publicationsSub>;
+
+// --- Finance Tracker Tables ---
+
+export const ftMain = pgTable('ft_main', {
+  id: serial('id').primaryKey().notNull(),
+  email: varchar('email', { length: 255 }).notNull().unique(),
+  avatar: varchar('avatar', { length: 255 }),
+  sheetId: varchar('sheet_id', { length: 255 }),
+  expenseCategories: json('expense_categories').default('[]'),
+  incomeCategories: json('income_categories').default('[]'),
+  monthlyBudget: numeric('monthly_budget', { precision: 15, scale: 2 }).default('0'),
+  preferences: json('preferences').default('{}'),
+  isActive: boolean('is_active').default(true),
+  lastLogin: timestamp('last_login'),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type FtMain = InferSelectModel<typeof ftMain>;
+
+export const ftExpenses = pgTable('ft_expenses', {
+  id: serial('id').primaryKey().notNull(),
+  userId: integer('user_id').notNull().references(() => ftMain.id),
+  timestamp: timestamp('timestamp'),
+  date: date('date').notNull(),
+  amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
+  category: varchar('category', { length: 255 }).notNull(),
+  description: text('description'),
+  source: varchar('source', { length: 255 }).default('manual'),
+  externalId: varchar('external_id', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type FtExpense = InferSelectModel<typeof ftExpenses>;
+
+export const ftIncomes = pgTable('ft_incomes', {
+  id: serial('id').primaryKey().notNull(),
+  userId: integer('user_id').notNull().references(() => ftMain.id),
+  timestamp: timestamp('timestamp'),
+  date: date('date').notNull(),
+  amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
+  category: varchar('category', { length: 255 }).notNull(),
+  description: text('description'),
+  source: varchar('source', { length: 255 }).default('manual'),
+  externalId: varchar('external_id', { length: 255 }),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type FtIncome = InferSelectModel<typeof ftIncomes>;
+
+export const ftBudgets = pgTable('ft_budgets', {
+  id: serial('id').primaryKey().notNull(),
+  userId: integer('user_id').notNull().references(() => ftMain.id),
+  timestamp: timestamp('timestamp'),
+  date: date('date').notNull(),
+  amount: numeric('amount', { precision: 15, scale: 2 }).notNull(),
+  notes: text('notes'),
+  budgetType: varchar('budget_type', { length: 100 }).default('monthly'),
+  periodStart: date('period_start'),
+  periodEnd: date('period_end'),
+  source: varchar('source', { length: 255 }).default('manual'),
+  externalId: varchar('external_id', { length: 255 }),
+  isActive: boolean('is_active').default(true),
+  createdAt: timestamp('created_at').defaultNow().notNull(),
+  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+});
+
+export type FtBudget = InferSelectModel<typeof ftBudgets>;

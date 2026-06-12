@@ -5,7 +5,7 @@ import postgres from 'postgres';
 const connectionString = process.env.DATABASE_URL!;
 
 // Create postgres connection
-const client = postgres(connectionString);
+export const client = postgres(connectionString);
 
 // Create drizzle database instance
 export const db = drizzle(client);

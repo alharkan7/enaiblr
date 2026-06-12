@@ -88,7 +88,7 @@ export function ExpenseForm({ onSubmit, loading, onCategorySwitch, isDemoMode = 
   // Set default categories
   const setDefaultCategories = async () => {
     try {
-      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/app/(apps)/finance-tracker/schema/schema')
+      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/types/finance-tracker')
       const expenseCats = convertDatabaseCategoriesToForm(DEFAULT_EXPENSE_CATEGORIES)
       const incomeCats = convertDatabaseCategoriesToForm(DEFAULT_INCOME_CATEGORIES)
       setExpenseCategories(expenseCats)

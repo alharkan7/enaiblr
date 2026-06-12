@@ -4,7 +4,7 @@ import { useState, useEffect } from 'react'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { CheckCircle, Save, X, Smile, Check, Pencil, Download } from 'lucide-react'
-import { Category } from '@/app/(apps)/finance-tracker/schema/schema'
+import { Category } from '@/types/finance-tracker'
 import { toast } from "sonner"
 import ExcelJS from 'exceljs'
 

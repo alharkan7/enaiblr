@@ -1,4 +1,4 @@
-import { db } from './neon-db'
+import { client } from './index';
 import {
   FinanceTrackerUser,
   CreateFinanceTrackerUser,
@@ -9,7 +9,24 @@ import {
   SchemaHelpers,
   DEFAULT_EXPENSE_CATEGORIES,
   DEFAULT_INCOME_CATEGORIES
-} from '../schema/schema'
+} from '@/types/finance-tracker';
+
+const db = {
+  async query(text: string, params: any[] = []): Promise<{rows: any[], rowCount: number}> {
+    // Sanitize parameters to match pg library behavior with postgres.js
+    const sanitizedParams = params.map(p => {
+      if (p === null || p === undefined) return null;
+      if (typeof p === 'number') return p.toString(); // postgres.js throws on numbers for bigint columns
+      if (typeof p === 'object' && !(p instanceof Date)) return JSON.stringify(p);
+      return p;
+    });
+    const rows = await client.unsafe(text, sanitizedParams);
+    return {
+      rows: rows as unknown as any[],
+      rowCount: rows.count
+    };
+  }
+};
 
 // Interfaces for the new finance data tables
 export interface ExpenseRecord {
@@ -64,7 +81,7 @@ export class DatabaseService {
   static async findUserByEmail(email: string): Promise<FinanceTrackerUser | null> {
     try {
       const result = await db.query(
-        'SELECT * FROM finance_tracker WHERE email = $1',
+        'SELECT * FROM ft_main WHERE email = $1',
         [email]
       )
 
@@ -85,7 +102,7 @@ export class DatabaseService {
   static async findUserById(id: number): Promise<FinanceTrackerUser | null> {
     try {
       const result = await db.query(
-        'SELECT * FROM finance_tracker WHERE id = $1',
+        'SELECT * FROM ft_main WHERE id = $1',
         [id]
       )
 
@@ -116,7 +133,7 @@ export class DatabaseService {
       }
 
       const result = await db.query(
-        `INSERT INTO finance_tracker 
+        `INSERT INTO ft_main 
          (email, avatar, sheet_id, expense_categories, income_categories, monthly_budget, preferences, is_active)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
@@ -153,7 +170,7 @@ export class DatabaseService {
       values.push(id) // for WHERE clause
 
       const result = await db.query(
-        `UPDATE finance_tracker SET ${setClause}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
+        `UPDATE ft_main SET ${setClause}, updated_at = NOW() WHERE id = $${values.length} RETURNING *`,
         values
       )
 
@@ -174,7 +191,7 @@ export class DatabaseService {
   static async updateLastLogin(email: string): Promise<void> {
     try {
       await db.query(
-        'UPDATE finance_tracker SET last_login = NOW(), updated_at = NOW() WHERE email = $1',
+        'UPDATE ft_main SET last_login = NOW(), updated_at = NOW() WHERE email = $1',
         [email]
       )
     } catch (error) {
@@ -189,7 +206,7 @@ export class DatabaseService {
   static async setUserSheetId(email: string, sheetId: string): Promise<FinanceTrackerUser> {
     try {
       const result = await db.query(
-        'UPDATE finance_tracker SET sheet_id = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+        'UPDATE ft_main SET sheet_id = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
         [sheetId, email]
       )
 
@@ -224,7 +241,7 @@ export class DatabaseService {
   static async removeUserSheetId(email: string): Promise<FinanceTrackerUser> {
     try {
       const result = await db.query(
-        'UPDATE finance_tracker SET sheet_id = NULL, updated_at = NOW() WHERE email = $1 RETURNING *',
+        'UPDATE ft_main SET sheet_id = NULL, updated_at = NOW() WHERE email = $1 RETURNING *',
         [email]
       )
 
@@ -253,7 +270,7 @@ export class DatabaseService {
 
         if (avatar && avatar !== user.avatar) {
           const result = await db.query(
-            'UPDATE finance_tracker SET avatar = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+            'UPDATE ft_main SET avatar = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
             [avatar, email]
           )
           user = result.rows[0] as FinanceTrackerUser
@@ -316,11 +333,11 @@ export class DatabaseService {
       queryParams.push(limit, offset)
 
       // Get data
-      const dataQuery = `SELECT * FROM finance_tracker ${whereClause} ${orderClause} ${limitClause}`
+      const dataQuery = `SELECT * FROM ft_main ${whereClause} ${orderClause} ${limitClause}`
       const dataResult = await db.query(dataQuery, queryParams)
 
       // Get count
-      const countQuery = `SELECT COUNT(*) FROM finance_tracker ${whereClause}`
+      const countQuery = `SELECT COUNT(*) FROM ft_main ${whereClause}`
       const countResult = await db.query(countQuery, queryParams.slice(0, -2)) // Remove limit and offset for count
       const totalCount = parseInt(countResult.rows[0].count)
 
@@ -346,7 +363,7 @@ export class DatabaseService {
     incomeCategories?: any[]
   ): Promise<FinanceTrackerUser> {
     try {
-      let query = 'UPDATE finance_tracker SET updated_at = NOW()'
+      let query = 'UPDATE ft_main SET updated_at = NOW()'
       const params: any[] = []
       let paramIndex = 1
 
@@ -383,7 +400,7 @@ export class DatabaseService {
   static async updateUserBudget(email: string, monthlyBudget: number): Promise<FinanceTrackerUser> {
     try {
       const result = await db.query(
-        'UPDATE finance_tracker SET monthly_budget = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+        'UPDATE ft_main SET monthly_budget = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
         [monthlyBudget, email]
       )
 
@@ -407,7 +424,7 @@ export class DatabaseService {
   ): Promise<FinanceTrackerUser> {
     try {
       const result = await db.query(
-        'UPDATE finance_tracker SET preferences = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
+        'UPDATE ft_main SET preferences = $1, updated_at = NOW() WHERE email = $2 RETURNING *',
         [JSON.stringify(preferences), email]
       )
 
@@ -428,7 +445,7 @@ export class DatabaseService {
   static async deactivateUser(email: string): Promise<FinanceTrackerUser> {
     try {
       const result = await db.query(
-        'UPDATE finance_tracker SET is_active = false, updated_at = NOW() WHERE email = $1 RETURNING *',
+        'UPDATE ft_main SET is_active = false, updated_at = NOW() WHERE email = $1 RETURNING *',
         [email]
       )
 
@@ -453,7 +470,7 @@ export class DatabaseService {
   static async createExpense(expense: Omit<ExpenseRecord, 'id' | 'created_at' | 'updated_at'>): Promise<ExpenseRecord> {
     try {
       const result = await db.query(
-        `INSERT INTO expenses 
+        `INSERT INTO ft_expenses 
          (user_id, timestamp, date, amount, category, description, source, external_id)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
@@ -485,7 +502,7 @@ export class DatabaseService {
     endDate?: string
   ): Promise<ExpenseRecord[]> {
     try {
-      let query = 'SELECT * FROM expenses WHERE user_id = $1'
+      let query = 'SELECT * FROM ft_expenses WHERE user_id = $1'
       const params: any[] = [userId]
       let paramIndex = 2
 
@@ -522,7 +539,7 @@ export class DatabaseService {
       values.push(id, userId) // id and userId for WHERE clause
 
       const result = await db.query(
-        `UPDATE expenses SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
+        `UPDATE ft_expenses SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
         values
       )
 
@@ -542,7 +559,7 @@ export class DatabaseService {
    */
   static async deleteExpense(id: number, userId: number): Promise<void> {
     try {
-      const result = await db.query('DELETE FROM expenses WHERE id = $1 AND user_id = $2', [id, userId])
+      const result = await db.query('DELETE FROM ft_expenses WHERE id = $1 AND user_id = $2', [id, userId])
 
       if (result.rowCount === 0) {
         throw new Error(`Expense not found with id: ${id} for this user`)
@@ -563,7 +580,7 @@ export class DatabaseService {
   static async createIncome(income: Omit<IncomeRecord, 'id' | 'created_at' | 'updated_at'>): Promise<IncomeRecord> {
     try {
       const result = await db.query(
-        `INSERT INTO incomes 
+        `INSERT INTO ft_incomes 
          (user_id, timestamp, date, amount, category, description, source, external_id)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
          RETURNING *`,
@@ -595,7 +612,7 @@ export class DatabaseService {
     endDate?: string
   ): Promise<IncomeRecord[]> {
     try {
-      let query = 'SELECT * FROM incomes WHERE user_id = $1'
+      let query = 'SELECT * FROM ft_incomes WHERE user_id = $1'
       const params: any[] = [userId]
       let paramIndex = 2
 
@@ -632,7 +649,7 @@ export class DatabaseService {
       values.push(id, userId) // id and userId for WHERE clause
 
       const result = await db.query(
-        `UPDATE incomes SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
+        `UPDATE ft_incomes SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
         values
       )
 
@@ -652,7 +669,7 @@ export class DatabaseService {
    */
   static async deleteIncome(id: number, userId: number): Promise<void> {
     try {
-      const result = await db.query('DELETE FROM incomes WHERE id = $1 AND user_id = $2', [id, userId])
+      const result = await db.query('DELETE FROM ft_incomes WHERE id = $1 AND user_id = $2', [id, userId])
 
       if (result.rowCount === 0) {
         throw new Error(`Income not found with id: ${id} for this user`)
@@ -673,7 +690,7 @@ export class DatabaseService {
   static async createBudget(budget: Omit<BudgetRecord, 'id' | 'created_at' | 'updated_at'>): Promise<BudgetRecord> {
     try {
       const result = await db.query(
-        `INSERT INTO budgets 
+        `INSERT INTO ft_budgets 
          (user_id, timestamp, date, amount, notes, budget_type, period_start, period_end, source, external_id, is_active)
          VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)
          RETURNING *`,
@@ -708,7 +725,7 @@ export class DatabaseService {
     endDate?: string
   ): Promise<BudgetRecord[]> {
     try {
-      let query = 'SELECT * FROM budgets WHERE user_id = $1'
+      let query = 'SELECT * FROM ft_budgets WHERE user_id = $1'
       const params: any[] = [userId]
       let paramIndex = 2
 
@@ -745,7 +762,7 @@ export class DatabaseService {
       values.push(id, userId) // id and userId for WHERE clause
 
       const result = await db.query(
-        `UPDATE budgets SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
+        `UPDATE ft_budgets SET ${setClause}, updated_at = NOW() WHERE id = $${values.length - 1} AND user_id = $${values.length} RETURNING *`,
         values
       )
 
@@ -765,7 +782,7 @@ export class DatabaseService {
    */
   static async deleteBudget(id: number, userId: number): Promise<void> {
     try {
-      const result = await db.query('DELETE FROM budgets WHERE id = $1 AND user_id = $2', [id, userId])
+      const result = await db.query('DELETE FROM ft_budgets WHERE id = $1 AND user_id = $2', [id, userId])
 
       if (result.rowCount === 0) {
         throw new Error(`Budget not found with id: ${id} for this user`)
@@ -787,7 +804,7 @@ export class DatabaseService {
       const month = budgetDate.getMonth() + 1 // getMonth() returns 0-11, we need 1-12
 
       const existingResult = await db.query(
-        `SELECT * FROM budgets 
+        `SELECT * FROM ft_budgets 
          WHERE user_id = $1 
          AND EXTRACT(YEAR FROM date) = $2 
          AND EXTRACT(MONTH FROM date) = $3 

@@ -30,7 +30,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { Category } from './schema/schema'
+import { Category } from '@/types/finance-tracker'
 
 // Types for our data (updated for PostgreSQL database structure)
 interface ExpenseData {
@@ -491,14 +491,14 @@ export default function MobileFinanceTracker() {
       } else {
         console.error('Failed to fetch categories')
         // Set default categories from schema
-        const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('./schema/schema')
+        const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/types/finance-tracker')
         setExpenseCategories(DEFAULT_EXPENSE_CATEGORIES)
         setIncomeCategories(DEFAULT_INCOME_CATEGORIES)
       }
     } catch (error) {
       console.error('Error fetching user categories:', error)
       // Set default categories on error
-      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('./schema/schema')
+      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/types/finance-tracker')
       setExpenseCategories(DEFAULT_EXPENSE_CATEGORIES)
       setIncomeCategories(DEFAULT_INCOME_CATEGORIES)
     } finally {
@@ -525,7 +525,7 @@ export default function MobileFinanceTracker() {
       }
 
       // Load default categories
-      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('./schema/schema')
+      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/types/finance-tracker')
       setExpenseCategories(DEFAULT_EXPENSE_CATEGORIES)
       setIncomeCategories(DEFAULT_INCOME_CATEGORIES)
       setCategoriesLoading(false)
