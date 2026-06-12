@@ -14,7 +14,6 @@ import { TransactionTable } from './components/transaction-table'
 import { Settings } from './components/sheet-settings'
 import { BudgetDrawer } from './components/budget-drawer'
 import { LoadingSkeleton } from './components/loading-skeleton'
-import { LoginScreen } from './components/login-screen'
 import {
   Drawer,
   DrawerContent,
@@ -140,82 +139,9 @@ const clearCache = () => {
   }
 }
 
-// CSV parsing utilities for demo mode
-const parseCSV = (csvText: string): string[][] => {
-  const lines = csvText.split('\n').filter(line => line.trim())
-  return lines.map(line => {
-    const result: string[] = []
-    let current = ''
-    let inQuotes = false
-
-    for (let i = 0; i < line.length; i++) {
-      const char = line[i]
-      if (char === '"') {
-        inQuotes = !inQuotes
-      } else if (char === ',' && !inQuotes) {
-        result.push(current.trim())
-        current = ''
-      } else {
-        current += char
-      }
-    }
-    result.push(current.trim())
-    return result
-  })
-}
-
-const loadDemoData = async () => {
-  try {
-    const [expensesResponse, incomesResponse, budgetsResponse] = await Promise.all([
-      fetch('/dummy_exp.csv'),
-      fetch('/dummy_inc.csv'),
-      fetch('/dummy_bud.csv')
-    ])
-
-    const [expensesCSV, incomesCSV, budgetsCSV] = await Promise.all([
-      expensesResponse.text(),
-      incomesResponse.text(),
-      budgetsResponse.text()
-    ])
-
-    // Parse expenses
-    const expensesLines = parseCSV(expensesCSV)
-    const expensesData: ExpenseData[] = expensesLines.slice(1).map(line => ({
-      date: line[0],
-      amount: parseFloat(line[1]),
-      category: line[2],
-      description: line[3] || undefined
-    })).filter(item => !isNaN(item.amount))
-
-    // Parse incomes
-    const incomesLines = parseCSV(incomesCSV)
-    const incomesData: IncomeData[] = incomesLines.slice(1).map(line => ({
-      date: line[0],
-      amount: parseFloat(line[1]),
-      category: line[2],
-      description: line[3] || undefined
-    })).filter(item => !isNaN(item.amount))
-
-    // Parse budgets
-    const budgetsLines = parseCSV(budgetsCSV)
-    const budgetsData = budgetsLines.slice(1).map(line => ({
-      timestamp: line[0],
-      date: line[1],
-      amount: parseFloat(line[2])
-    })).filter(item => !isNaN(item.amount))
-
-    return { expenses: expensesData, incomes: incomesData, budgets: budgetsData }
-  } catch (error) {
-    console.error('Error loading demo data:', error)
-    throw error
-  }
-}
-
 export default function MobileFinanceTracker() {
   const { data: session, status } = useSession()
 
-  // Demo mode state
-  const [isDemoMode, setIsDemoMode] = useState(false)
 
   // Data state
   const [expenses, setExpenses] = useState<ExpenseData[]>([])
@@ -506,66 +432,9 @@ export default function MobileFinanceTracker() {
     }
   }
 
-  // Initialize demo mode
-  const initializeDemo = async () => {
-    try {
-      setLoading(true)
-      setIsDemoMode(true)
-
-      // Load demo data
-      const demoData = await loadDemoData()
-
-      // Set demo data
-      setExpenses(demoData.expenses)
-      setIncomes(demoData.incomes)
-
-      // Process budget data from demo
-      if (demoData.budgets.length > 0) {
-        processBudgetData(demoData.budgets)
-      }
-
-      // Load default categories
-      const { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } = await import('@/types/finance-tracker')
-      setExpenseCategories(DEFAULT_EXPENSE_CATEGORIES)
-      setIncomeCategories(DEFAULT_INCOME_CATEGORIES)
-      setCategoriesLoading(false)
-
-      // Update chart data
-      const filteredExpenses = filterDataByMonth(demoData.expenses)
-      const filteredIncomes = filterDataByMonth(demoData.incomes)
-      const dataToUse = chartMode === 'expense' ? filteredExpenses : filteredIncomes
-      const categoryTotals: { [key: string]: number } = {}
-      dataToUse.forEach(item => {
-        if (item && item.category) {
-          const amount = typeof item.amount === 'number' ? item.amount : parseFloat(item.amount || '0')
-          if (!isNaN(amount)) {
-            categoryTotals[item.category] = (categoryTotals[item.category] || 0) + amount
-          }
-        }
-      })
-      const colors = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8', '#82ca9d', '#ffc658']
-      const newChartData = Object.entries(categoryTotals).map(([name, value], index) => ({
-        name,
-        value,
-        color: colors[index % colors.length]
-      }))
-      setChartData(newChartData.length > 0 ? newChartData : mockChartData)
-
-    } catch (error) {
-      console.error('Error initializing demo:', error)
-      setError({
-        message: 'Failed to load demo data',
-        errorType: 'DEMO_ERROR',
-        error: 'Unable to load demo data. Please try again.'
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
   // Fetch data from PostgreSQL database with caching
   const fetchData = async (forceRefresh = false) => {
-    if (!session && !isDemoMode) {
+    if (!session) {
       setLoading(false)
       return
     }
@@ -719,32 +588,26 @@ export default function MobileFinanceTracker() {
     setChartType(type)
   }
 
-  // Initialize user data when authenticated or in demo mode
+  // Initialize user data when authenticated
   useEffect(() => {
-    if (status === 'authenticated' || isDemoMode) {
-      if (!isDemoMode) {
-        // Fetch user categories and data for authenticated users
-        fetchUserCategories().then(() => {
-          // Load data (will use cache if valid, otherwise fetch fresh)
-          fetchData()
-        })
-      }
-      // Demo mode initialization is handled separately
-    } else if (status === 'unauthenticated' && !isDemoMode) {
+    if (status === 'authenticated') {
+      // Fetch user categories and data for authenticated users
+      fetchUserCategories().then(() => {
+        // Load data (will use cache if valid, otherwise fetch fresh)
+        fetchData()
+      })
+    } else if (status === 'unauthenticated') {
       setLoading(false)
       setCategoriesLoading(false)
     }
-  }, [session, status, isDemoMode])
+  }, [session, status])
 
   // Fetch all budgets when user is authenticated or in demo mode
   useEffect(() => {
-    if ((status === 'authenticated' || isDemoMode) && !loading && !budgetsLoaded) {
-      if (!isDemoMode) {
-        fetchAllBudgets()
-      }
-      // Budgets are loaded in demo mode via initializeDemo
+    if (status === 'authenticated' && !loading && !budgetsLoaded) {
+      fetchAllBudgets()
     }
-  }, [status, loading, budgetsLoaded, isDemoMode])
+  }, [status, loading, budgetsLoaded])
 
   // Update current month's budget when month changes (from cache)
   useEffect(() => {
@@ -912,26 +775,15 @@ export default function MobileFinanceTracker() {
     }
   }
 
-  // Show loading skeleton when authentication status is loading and not in demo mode
-  if (status === 'loading' && !isDemoMode) {
+  // Show loading skeleton when authentication status is loading
+  if (status === 'loading') {
     return <LoadingSkeleton />
   }
 
-  // Show login screen when not authenticated and not in demo mode
-  if (status === 'unauthenticated' && !isDemoMode) {
-    return (
-      <div className="flex flex-col min-h-screen bg-background">
-        <div className="z-50">
-          <AppsHeader />
-        </div>
-        <div className="flex-1 flex flex-col justify-center items-center max-w-6xl mx-auto w-full">
-          <LoginScreen onDemoClick={initializeDemo} />
-        </div>
-        <div className="flex-none mb-1">
-          <AppsFooter />
-        </div>
-      </div>
-    )
+  // If unauthenticated, redirect or return nothing while redirecting
+  // Middleware should catch this, but just in case
+  if (status === 'unauthenticated') {
+    return <LoadingSkeleton />
   }
 
   return (
@@ -1039,7 +891,6 @@ export default function MobileFinanceTracker() {
                   onSubmit={handleFormSubmit}
                   loading={formLoading}
                   onCategorySwitch={handleCategorySwitch}
-                  isDemoMode={isDemoMode}
                 />
               </div>
             </div>

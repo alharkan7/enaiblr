@@ -232,6 +232,7 @@ export type PublicationsSub = InferSelectModel<typeof publicationsSub>;
 
 export const ftMain = pgTable('ft_main', {
   id: serial('id').primaryKey().notNull(),
+  userId: uuid('user_id').references(() => user.id).unique(),
   email: varchar('email', { length: 255 }).notNull().unique(),
   avatar: varchar('avatar', { length: 255 }),
   sheetId: varchar('sheet_id', { length: 255 }),

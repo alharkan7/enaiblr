@@ -11,6 +11,7 @@ export interface Category {
 // Main database table interface
 export interface FinanceTrackerUser {
   id: number;
+  user_id?: string | null; // UUID from main User table
   created_at: string; // ISO timestamp
   updated_at: string; // ISO timestamp
   
@@ -38,6 +39,7 @@ export interface FinanceTrackerUser {
 
 // Input type for creating a new user (omits auto-generated fields)
 export interface CreateFinanceTrackerUser {
+  user_id?: string;
   email: string;
   avatar?: string;
   sheet_id?: string;

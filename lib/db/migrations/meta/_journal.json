@@ -57,6 +57,13 @@
       "when": 1781303240610,
       "tag": "0007_heavy_kat_farrell",
       "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1781304775292,
+      "tag": "0008_stiff_strong_guy",
+      "breakpoints": true
     }
   ]
 }

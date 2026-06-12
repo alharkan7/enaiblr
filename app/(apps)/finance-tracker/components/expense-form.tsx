@@ -29,7 +29,6 @@ interface ExpenseFormProps {
   onSubmit: (data: FormData) => Promise<void>;
   loading: boolean;
   onCategorySwitch?: (category: 'income' | 'expense') => void;
-  isDemoMode?: boolean;
 }
 
 interface FormData {
@@ -40,7 +39,7 @@ interface FormData {
   type: 'expense' | 'income';
 }
 
-export function ExpenseForm({ onSubmit, loading, onCategorySwitch, isDemoMode = false }: ExpenseFormProps) {
+export function ExpenseForm({ onSubmit, loading, onCategorySwitch }: ExpenseFormProps) {
   const [activeCategory, setActiveCategory] = useState<'expense' | 'income'>('expense')
   const [amount, setAmount] = useState('')
   const [selectedCategory, setSelectedCategory] = useState('')
@@ -57,12 +56,6 @@ export function ExpenseForm({ onSubmit, loading, onCategorySwitch, isDemoMode = 
 
   // Fetch user categories
   const fetchUserCategories = async () => {
-    // In demo mode, load default categories directly
-    if (isDemoMode) {
-      await setDefaultCategories()
-      return
-    }
-
     try {
       const response = await fetch('/api/finance-tracker/user-categories')
       if (response.ok) {

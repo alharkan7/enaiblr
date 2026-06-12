@@ -86,7 +86,22 @@ export class DatabaseService {
       )
 
       if (result.rows.length === 0) {
-        return null
+        // Not found in ft_main, let's see if they exist in main User table
+        const mainUser = await db.query('SELECT id, email, avatar FROM "User" WHERE email = $1', [email]);
+        
+        if (mainUser.rows.length === 0) {
+          // User doesn't even exist in main app
+          return null;
+        }
+
+        const mUser = mainUser.rows[0];
+        
+        // Auto-create ft_main for this user
+        return await this.createUser({
+          email: mUser.email,
+          avatar: mUser.avatar,
+          user_id: mUser.id,
+        });
       }
 
       return result.rows[0] as FinanceTrackerUser
@@ -134,10 +149,11 @@ export class DatabaseService {
 
       const result = await db.query(
         `INSERT INTO ft_main 
-         (email, avatar, sheet_id, expense_categories, income_categories, monthly_budget, preferences, is_active)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8)
+         (user_id, email, avatar, sheet_id, expense_categories, income_categories, monthly_budget, preferences, is_active)
+         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
          RETURNING *`,
         [
+          userData.user_id || null,
           userWithDefaults.email,
           userWithDefaults.avatar || null,
           userWithDefaults.sheet_id || null,
