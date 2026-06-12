@@ -32,7 +32,7 @@ export default function Testimonials() {
               Try Our AI Apps
             </h2>
             <p className="text-lg text-indigo-200/65">
-              We created Enaiblr AI Platform, a collection of AI apps that offer unlimited access to AI for everyone for free.
+              We created Enaiblr Apps, a collection of AI apps that offer unlimited access to AI for everyone for free.
             </p>
           </div>
 

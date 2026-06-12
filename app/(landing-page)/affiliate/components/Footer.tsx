@@ -14,7 +14,7 @@ const Footer = () => {
               en<span className="text-yellow-500 font-ibm-plex-mono-regular">ai</span>blr
             </Link>
             <p className="text-muted-foreground">
-              Unlimited AI Platform
+              Mini AI Apps
               <br></br>
               <a href="mailto:mail@enaiblr.org" className="underline">
                 mail@enaiblr.org

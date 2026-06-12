@@ -6,7 +6,7 @@ import { cn } from '@/lib/utils';
 const inter = Inter({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
-  title: 'Enaiblr AI Platform - Affiliate Program',
+  title: 'Enaiblr Apps - Affiliate Program',
   description: 'Dapatkan Komisi 25% per Transaksi dan Potensi Penghasilan Tanpa Batas'
 };
 

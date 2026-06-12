@@ -118,7 +118,7 @@ export default function AffiliatePage() {
   const getReferralUrl = () => `enaiblr.org?ref=${affiliateCode}`
 
   const getShareText = () => {
-    return `Ayo Coba Enaiblr AI Platform
+    return `Ayo Coba Enaiblr AI Apps
 
 Unlimited ChatGPT, Claude, Gemini, dll. bundling mulai dari Rp25.000 per bulan!
 

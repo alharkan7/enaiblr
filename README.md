@@ -50,7 +50,7 @@ cd enaiblr
 2. Install dependencies:
 
 ```bash
-npm install
+pnpm install
 ```
 
 3. Set up environment variables:
@@ -63,7 +63,7 @@ EXASEARCH_API_KEY=your_exa_api_key
 4. Run the development server:
 
 ```bash
-npm run dev
+pnpm dev
 ```
 
 5. Open [http://localhost:3000](http://localhost:3000) in your browser.

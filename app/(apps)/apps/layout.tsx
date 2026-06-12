@@ -17,9 +17,9 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://enaiblr.org'),
   title: {
     template: '%s',
-    default: 'Unlimited AI Platform',
+    default: 'Mini AI Apps',
   },
-  description: 'Unlimited AI Platform',
+  description: 'Mini AI Apps',
 
 };
 

@@ -1,4 +1,4 @@
-import { Hammer, FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
+import { Languages, Hammer, FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
 
 export interface AppConfig {
   name: string
@@ -64,6 +64,13 @@ export const apps: AppConfig[] = [
     slug: 'voice',
     description: 'Turn Any Text into Audio in Natural, Human-like Voice',
     type: 'pro'
+  },
+  {
+    name: 'Japanese Flashcards',
+    icon: Languages,
+    slug: 'japanese-flashcards',
+    description: 'Simple Japanese Letters Flashcards',
+    type: 'free'
   },
   {
     name: 'Paper Flashcard',

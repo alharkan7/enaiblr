@@ -1,7 +1,7 @@
 {
-  "name": "Enaiblr AI Platform",
+  "name": "Enaiblr Apps",
   "short_name": "Enaiblr",
-  "description": "Unlimited AI Platform",
+  "description": "Collection of Mini AI Apps",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

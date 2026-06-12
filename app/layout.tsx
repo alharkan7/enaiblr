@@ -73,9 +73,9 @@ const registerServiceWorker = `
 export const metadata: Metadata = {
   title: {
     template: '%s | enaiblr',
-    default: 'enaiblr AI Platform',
+    default: 'enaiblr Apps',
   },
-  description: 'Unlimited AI Platform',
+  description: 'Mini AI Apps',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
@@ -93,10 +93,10 @@ export const metadata: Metadata = {
   },
   metadataBase: new URL('https://enaiblr.org'),
   openGraph: {
-    title: 'enaiblr AI Platform',
+    title: 'enaiblr Apps',
     description: 'Unlimited Access to AI Tools and Resources',
     url: 'https://enaiblr.org',
-    siteName: 'enaiblr AI Platform',
+    siteName: 'enaiblr Apps',
     locale: 'en_ID, en_US',
     alternateLocale: 'en_ID, en_US',
     type: 'website',
@@ -105,7 +105,7 @@ export const metadata: Metadata = {
   // Twitter metadata
   twitter: {
     card: 'summary_large_image',
-    title: 'enaiblr AI Platform',
+    title: 'enaiblr Apps',
     description: 'Unlimited Access to AI Tools and Resources',
   },
 
@@ -169,6 +169,7 @@ export default async function RootLayout({
     <html
       lang="en_US, en_ID"
       data-page-type={pageType}
+      data-scroll-behavior="smooth"
       suppressHydrationWarning
       className="scroll-smooth"
     >

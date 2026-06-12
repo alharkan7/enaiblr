@@ -19,7 +19,7 @@ export default function Workflows() {
       url: ""
     },
     {
-      title: "Unlimited AI Platform",
+      title: "Mini AI Apps",
       description: "Access our collection of free AI apps to enhance your workflow. From creativity to productivity tools, we have it all.",
       url: "/apps"
     },

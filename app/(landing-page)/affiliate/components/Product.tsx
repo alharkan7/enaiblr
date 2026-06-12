@@ -83,7 +83,7 @@ const Product = () => {
             </span> {" "}
           </h2>
           <p className="text-lg">
-            The Complete and Unlimited AI Platform with the Most Affordable Price.
+            Full Feature & Unlimited Usage
           </p>
         </motion.div>
         <motion.div
