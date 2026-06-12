@@ -1,4 +1,4 @@
-import { Languages, Hammer, FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
+import { Wallet, Languages, Hammer, FileAudio, FileText, Globe, InfinityIcon, MessageSquareDashed, Search, Speech, WandSparkles, Zap, LucideIcon } from 'lucide-react'
 
 export interface AppConfig {
   name: string
@@ -77,6 +77,13 @@ export const apps: AppConfig[] = [
     icon: Zap,
     slug: 'paper-flashcard',
     description: 'Turn any Science Paper into Flashcard for Easy Reading',
+    type: 'free'
+  },
+  {
+    name: 'Finance Tracker',
+    icon: Wallet,
+    slug: 'finance-tracker',
+    description: 'Expense, Income, Budget & Excel Export',
     type: 'free'
   },
   {

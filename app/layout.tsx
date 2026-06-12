@@ -193,7 +193,6 @@ export default async function RootLayout({
             enableSystem={false}
             disableTransitionOnChange
           >
-            <Toaster position="top-center" />
             <TooltipProvider delayDuration={700}>
               <SubscriptionProvider>
                 {children}
@@ -201,6 +200,7 @@ export default async function RootLayout({
             </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
+        <Toaster position="top-center" richColors />
         <Analytics />
         <SpeedInsights />
       </body>
