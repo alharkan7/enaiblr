@@ -47,9 +47,6 @@ export function ChatTitle({ compact, clearMessages, fileName }: ChatTitleProps) 
                     <span className="text-primary">PDFs and Docs</span>
                 )}
             </h1>
-            {/* <p className="text-sm text-gray-500">
-                <b>Private. Secured. Not Recorded.</b>
-            </p> */}
         </div>
     );
 }

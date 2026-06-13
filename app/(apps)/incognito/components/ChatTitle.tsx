@@ -32,11 +32,10 @@ export function ChatTitle({ compact, clearMessages, hasUserSentMessage, onClear 
     ) : (
         <div className="text-center py-8">
             <h1 className="text-4xl font-extrabold mb-2">
-                <span className="text-primary whitespace-nowrap">Incognito</span>{' '}
+                <span className="text-primary whitespace-nowrap">Simple</span>{' '}
                 <span className="whitespace-nowrap">AI Chat</span>
             </h1>
             <p className="text-sm text-muted-foreground">
-                <b>No Limits. Not Recorded.</b>
             </p>
         </div>
     );

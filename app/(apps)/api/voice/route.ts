@@ -1,5 +1,6 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { NextResponse } from "next/server";
+import { getBucket } from '@/lib/gcs';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -47,6 +48,18 @@ export async function POST(request: Request) {
 
     // Log audio data size for debugging
     // console.log('Audio data size:', audioData.byteLength);
+
+    // Upload to GCS
+    try {
+      const bucket = getBucket();
+      const fileName = `voice-${Date.now()}.wav`;
+      const filepath = `enaiblr/voice/${fileName}`;
+      await bucket.file(filepath).save(Buffer.from(audioData), {
+        contentType: 'audio/wav',
+      });
+    } catch (gcsError) {
+      console.error('Failed to upload to GCS:', gcsError);
+    }
 
     return new NextResponse(audioData, {
       headers: {

@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { Groq } from 'groq-sdk';
+import { getBucket } from '@/lib/gcs';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -21,6 +22,18 @@ export async function POST(request: NextRequest) {
 
     // Convert File to ArrayBuffer
     const arrayBuffer = await file.arrayBuffer();
+
+    // Upload to GCS
+    try {
+      const bucket = getBucket();
+      const fileName = `audio-${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+      const filepath = `enaiblr/transcribe/${fileName}`;
+      await bucket.file(filepath).save(Buffer.from(arrayBuffer), {
+        contentType: file.type || 'audio/mpeg',
+      });
+    } catch (gcsError) {
+      console.error('Failed to upload to GCS:', gcsError);
+    }
 
     // Initialize Groq client
     const groq = new Groq({

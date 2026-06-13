@@ -16,7 +16,7 @@ const generationConfig = {
 };
 
 async function paraphraseWithContext(messages: any[], genAI: GoogleGenerativeAI) {
-  const contextModel = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const contextModel = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
   const history = messages.slice(0, -1)
     .map(msg => `${msg.role === 'user' ? 'Human' : 'Assistant'}: ${msg.content[0].text}`)
     .join('\n');
@@ -30,7 +30,7 @@ async function paraphraseWithContext(messages: any[], genAI: GoogleGenerativeAI)
 }
 
 async function detectLanguage(text: string, genAI: GoogleGenerativeAI) {
-  const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+  const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
   const prompt = `Analyze this text and return ONLY the ISO language code (e.g., 'en', 'id', 'es'). Just return the code, nothing else:
 
 "${text}"`;
@@ -44,7 +44,7 @@ export async function POST(request: Request) {
     // Get the API key (user's own or fallback to .env)
     const apiKey = await getGeminiApiKey();
     const genAI = new GoogleGenerativeAI(apiKey);
-    const model = genAI.getGenerativeModel({ model: "gemini-2.0-flash" });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
 
     const body = await request.json();
     const { messages, chatMode } = body;

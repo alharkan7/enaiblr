@@ -196,7 +196,7 @@ export default function Filechat() {
                             animate={{ opacity: 1 }}
                             transition={{ duration: 0.3 }}
                         >
-                            No Files are Saved to the Server
+                            Simple Chat App with Files
                         </motion.p>
                         <AnimatePresence mode="wait">
                             {fileInfo && (

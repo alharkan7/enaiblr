@@ -31,17 +31,17 @@ export const apps: AppConfig[] = [
     type: 'pro'
   },
   {
-    name: 'Private PDF Chat',
+    name: 'File Chat',
     icon: FileText,
     slug: 'filechat',
-    description: 'Private Chat with Documents. No File Copy is Saved',
+    description: 'Chat with Documents',
     type: 'free'
   },
   {
-    name: 'Incognito Chat',
+    name: 'Disposable Chat',
     icon: MessageSquareDashed,
     slug: 'incognito',
-    description: 'Private Chat with AI; No Text is Saved',
+    description: 'Chat with AI; Unlimited',
     type: 'free'
   },
   {

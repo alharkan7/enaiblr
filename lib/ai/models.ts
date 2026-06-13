@@ -47,9 +47,9 @@ export const models: Array<Model> = [
     tools: true,
   },
   {
-    id: 'gemini-2.0-flash',
-    label: 'Gemini 2.0',
-    apiIdentifier: 'gemini-2.0-flash',
+    id: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
+    label: 'Gemini 2.5',
+    apiIdentifier: process.env.GEMINI_MODEL || 'gemini-2.5-flash',
     description: 'Text, Image, PDF',
     // description: 'Google',
     overview: ['Ask Questions', 'Attach Images', 'Chat with Documents'],
@@ -138,5 +138,5 @@ export const models: Array<Model> = [
   },
 ] as const;
 
-export const DEFAULT_MODEL_NAME: string = 'gemini-2.0-flash';
+export const DEFAULT_MODEL_NAME: string = process.env.GEMINI_MODEL || 'gemini-2.5-flash';
 

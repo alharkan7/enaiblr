@@ -109,6 +109,18 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
         }
       );
 
+      // Background upload to GCS for persistence
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        fetch('/api/transcribe/upload', {
+          method: 'POST',
+          body: formData
+        }).catch(err => console.error('Failed to upload file to GCS background', err));
+      } catch (err) {
+        console.error('Error initiating upload to GCS', err);
+      }
+
       // Simulate upload progress
       let uploadProgress = 0;
       const uploadInterval = setInterval(() => {

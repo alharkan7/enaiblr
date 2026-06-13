@@ -6,6 +6,7 @@ import * as path from 'path';
 import * as os from 'os';
 import * as crypto from 'crypto';
 import { getGeminiApiKey } from '@/lib/ai/gemini';
+import { getBucket } from '@/lib/gcs';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -83,6 +84,18 @@ async function uploadBase64ToGemini(
 
         // For images, we can return the data directly since Gemini accepts base64
         if (mimeType.startsWith('image/')) {
+            const buffer = Buffer.from(base64Data, 'base64');
+            try {
+                const bucket = getBucket();
+                const gcsFilename = `incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+                const gcsFilepath = `enaiblr/incognito/${gcsFilename}`;
+                await bucket.file(gcsFilepath).save(buffer, {
+                    contentType: mimeType,
+                });
+            } catch (gcsError) {
+                console.error('Failed to upload to GCS:', gcsError);
+            }
+
             return {
                 mimeType,
                 data: base64Data
@@ -97,6 +110,18 @@ async function uploadBase64ToGemini(
 
         // Write buffer to temporary file
         await fs.writeFile(tempFilePath, buffer);
+
+        // Upload to GCS
+        try {
+            const bucket = getBucket();
+            const gcsFilename = `incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+            const gcsFilepath = `enaiblr/incognito/${gcsFilename}`;
+            await bucket.file(gcsFilepath).save(buffer, {
+                contentType: mimeType,
+            });
+        } catch (gcsError) {
+            console.error('Failed to upload to GCS:', gcsError);
+        }
 
         // Upload to Gemini with metadata
         const uploadResult = await fileManager.uploadFile(tempFilePath, {
@@ -127,7 +152,7 @@ export async function POST(req: NextRequest) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const fileManager = new GoogleAIFileManager(apiKey);
         const model = genAI.getGenerativeModel({
-            model: "gemini-2.0-flash",
+            model: process.env.GEMINI_MODEL || "gemini-2.5-flash",
             generationConfig,
         });
 

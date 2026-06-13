@@ -49,7 +49,7 @@ export async function POST(req: Request) {
       );
     }
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' });
+    const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || 'gemini-2.5-flash' });
 
     const prompt = `Analyze the following scientific paper and create a series of engaging, easy-to-understand text chunks for flashcards. Return the output ONLY as a JSON object with the following structure:
 
