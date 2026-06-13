@@ -2,6 +2,9 @@ import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { extract } from '@extractus/article-extractor';
 import { getGeminiApiKey } from '@/lib/ai/gemini';
+import { db } from '@/lib/db';
+import { appWeb } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -40,6 +43,9 @@ async function detectLanguage(text: string, genAI: GoogleGenerativeAI) {
 }
 
 export async function POST(request: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   try {
     // Get the API key (user's own or fallback to .env)
     const apiKey = await getGeminiApiKey();
@@ -118,13 +124,29 @@ export async function POST(request: Request) {
               }
 
               // Stream Gemini response
+              let fullResponse = '';
               for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
                 if (chunkText) {
+                  fullResponse += chunkText;
                   const data = { type: 'content', content: chunkText };
                   controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data)}\n\n`));
                 }
               }
+
+              if (userId) {
+                try {
+                  await db.insert(appWeb).values({
+                    userId,
+                    inputUrl: messages.length === 1 ? userInput : null,
+                    inputPrompt: messages.length > 1 ? userInput : null,
+                    response: fullResponse,
+                  });
+                } catch (dbError) {
+                  console.error("DB Insert Error (Web/Gemini):", dbError);
+                }
+              }
+
               controller.close();
             } catch (error) {
               controller.error(error);
@@ -232,13 +254,28 @@ Please synthesize this information into a clear and helpful response in the user
               controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(metaData)}\n\n`));
 
               // Stream Gemini response
+              let fullResponse = '';
               for await (const chunk of result.stream) {
                 const chunkText = chunk.text();
                 if (chunkText) {
+                  fullResponse += chunkText;
                   const data = { type: 'content', content: chunkText };
                   controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(data)}\n\n`));
                 }
               }
+
+              if (userId) {
+                try {
+                  await db.insert(appWeb).values({
+                    userId,
+                    inputPrompt: searchQuery,
+                    response: fullResponse,
+                  });
+                } catch (dbError) {
+                  console.error("DB Insert Error (Web/Search):", dbError);
+                }
+              }
+
               controller.close();
             } catch (error) {
               controller.error(error);

@@ -298,3 +298,80 @@ export const ftBudgets = pgTable('ft_budgets', {
 });
 
 export type FtBudget = InferSelectModel<typeof ftBudgets>;
+
+// --- App Specific Tables ---
+
+export const appSearch = pgTable('AppSearch', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  query: text('query'),
+  response: json('response'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppSearch = InferSelectModel<typeof appSearch>;
+
+export const appFilechat = pgTable('AppFilechat', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  inputPrompt: text('inputPrompt'),
+  response: text('response'),
+  gcsFilename: varchar('gcsFilename', { length: 255 }),
+  gcsPath: varchar('gcsPath', { length: 500 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppFilechat = InferSelectModel<typeof appFilechat>;
+
+export const appIncognito = pgTable('AppIncognito', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  inputPrompt: text('inputPrompt'),
+  response: text('response'),
+  gcsFilename: varchar('gcsFilename', { length: 255 }),
+  gcsPath: varchar('gcsPath', { length: 500 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppIncognito = InferSelectModel<typeof appIncognito>;
+
+export const appWeb = pgTable('AppWeb', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  inputUrl: text('inputUrl'),
+  inputPrompt: text('inputPrompt'),
+  response: text('response'),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppWeb = InferSelectModel<typeof appWeb>;
+
+export const appTranscribe = pgTable('AppTranscribe', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  language: varchar('language', { length: 10 }),
+  transcription: json('transcription'),
+  gcsFilename: varchar('gcsFilename', { length: 255 }),
+  gcsPath: varchar('gcsPath', { length: 500 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppTranscribe = InferSelectModel<typeof appTranscribe>;
+
+export const appVoice = pgTable('AppVoice', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  inputText: text('inputText'),
+  voiceId: varchar('voiceId', { length: 100 }),
+  gcsFilename: varchar('gcsFilename', { length: 255 }),
+  gcsPath: varchar('gcsPath', { length: 500 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppVoice = InferSelectModel<typeof appVoice>;
+
+export const appPaperFlashcards = pgTable('AppPaperFlashcards', {
+  id: uuid('id').primaryKey().notNull().defaultRandom(),
+  userId: uuid('userId').notNull().references(() => user.id),
+  extractedText: text('extractedText'),
+  flashcards: json('flashcards'),
+  hashtags: json('hashtags'),
+  gcsFilename: varchar('gcsFilename', { length: 255 }),
+  gcsPath: varchar('gcsPath', { length: 500 }),
+  createdAt: timestamp('createdAt').notNull().defaultNow(),
+});
+export type AppPaperFlashcards = InferSelectModel<typeof appPaperFlashcards>;

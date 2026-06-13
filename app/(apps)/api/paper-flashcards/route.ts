@@ -2,6 +2,9 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { NextResponse } from 'next/server';
 import { FlashCardContent } from '../../paper-flashcard/types';
 import { getGeminiApiKey } from '@/lib/ai/gemini';
+import { db } from '@/lib/db';
+import { appPaperFlashcards } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -35,6 +38,9 @@ function cleanFlashCardContent(content: FlashCardContent): FlashCardContent {
 }
 
 export async function POST(req: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   try {
     // Get the API key (user's own or fallback to .env)
     const apiKey = await getGeminiApiKey();
@@ -128,6 +134,19 @@ ${content.substring(0, 1000)}`;  // Use first 1000 chars for hashtag generation
     const hashtags = hashtagResult.response.text()
       .split(' ')
       .filter(tag => tag.startsWith('#'));
+
+    if (userId) {
+      try {
+        await db.insert(appPaperFlashcards).values({
+          userId,
+          extractedText: content,
+          flashcards: cleanedContent,
+          hashtags: hashtags,
+        });
+      } catch (dbError) {
+        console.error("DB Insert Error (Paper Flashcards):", dbError);
+      }
+    }
 
     return NextResponse.json({
       flashcards: [cleanedContent], // Wrap in array to maintain compatibility

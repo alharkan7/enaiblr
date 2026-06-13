@@ -7,6 +7,9 @@ import * as os from 'os';
 import * as crypto from 'crypto';
 import { getGeminiApiKey } from '@/lib/ai/gemini';
 import { getBucket } from '@/lib/gcs';
+import { db } from '@/lib/db';
+import { appIncognito } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -70,6 +73,8 @@ type FileUploadResult = {
     mimeType: string;
     data?: string;
     fileUri?: string;
+    gcsFilename?: string;
+    gcsPath?: string;
 };
 
 async function uploadBase64ToGemini(
@@ -98,7 +103,9 @@ async function uploadBase64ToGemini(
 
             return {
                 mimeType,
-                data: base64Data
+                data: base64Data,
+                gcsFilename: `incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`,
+                gcsPath: `enaiblr/incognito/incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}` // Note: just approximate for return
             };
         }
 
@@ -112,11 +119,13 @@ async function uploadBase64ToGemini(
         await fs.writeFile(tempFilePath, buffer);
 
         // Upload to GCS
+        let finalGcsFilename = '';
+        let finalGcsPath = '';
         try {
             const bucket = getBucket();
-            const gcsFilename = `incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-            const gcsFilepath = `enaiblr/incognito/${gcsFilename}`;
-            await bucket.file(gcsFilepath).save(buffer, {
+            finalGcsFilename = `incognito-${Date.now()}-${fileName.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
+            finalGcsPath = `enaiblr/incognito/${finalGcsFilename}`;
+            await bucket.file(finalGcsPath).save(buffer, {
                 contentType: mimeType,
             });
         } catch (gcsError) {
@@ -135,7 +144,9 @@ async function uploadBase64ToGemini(
 
         return {
             mimeType: uploadResult.file.mimeType,
-            fileUri: uploadResult.file.uri
+            fileUri: uploadResult.file.uri,
+            gcsFilename: finalGcsFilename,
+            gcsPath: finalGcsPath
         };
     } catch (error) {
         console.error('Error uploading file:', error);
@@ -144,6 +155,9 @@ async function uploadBase64ToGemini(
 }
 
 export async function POST(req: NextRequest) {
+    const session = await auth();
+    const userId = session?.user?.id;
+
     try {
         // Get the API key (user's own or fallback to .env)
         const apiKey = await getGeminiApiKey();
@@ -167,6 +181,8 @@ export async function POST(req: NextRequest) {
         }
 
         const chat = model.startChat();
+        let lastGcsFilename: string | undefined;
+        let lastGcsPath: string | undefined;
 
         // Process each message in the history
         for (const msg of messages) {
@@ -190,6 +206,8 @@ export async function POST(req: NextRequest) {
                                     data: fileData.data!
                                 }
                             });
+                            if (fileData.gcsFilename) lastGcsFilename = fileData.gcsFilename;
+                            if (fileData.gcsPath) lastGcsPath = fileData.gcsPath;
                         } else if (part.type === 'file_url' && part.file_url?.url) {
                             // Upload file to Gemini
                             const fileData = await uploadBase64ToGemini(
@@ -213,6 +231,8 @@ export async function POST(req: NextRequest) {
                                     }
                                 });
                             }
+                            if (fileData.gcsFilename) lastGcsFilename = fileData.gcsFilename;
+                            if (fileData.gcsPath) lastGcsPath = fileData.gcsPath;
                         } else if (part.type === 'text') {
                             parts.push({ text: part.text });
                         }
@@ -247,6 +267,21 @@ export async function POST(req: NextRequest) {
             async start(controller) {
                 const response = result.response;
                 const text = await response.text();
+
+                if (userId) {
+                    try {
+                        const inputPromptText = lastParts.map((p: any) => p.text).join('\n');
+                        await db.insert(appIncognito).values({
+                            userId,
+                            inputPrompt: inputPromptText,
+                            response: text,
+                            gcsFilename: lastGcsFilename,
+                            gcsPath: lastGcsPath,
+                        });
+                    } catch (dbError) {
+                        console.error('DB Insert Error (Incognito):', dbError);
+                    }
+                }
 
                 // Send the text in chunks
                 const chunks = text.split(' ');

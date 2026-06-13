@@ -1,4 +1,7 @@
 import { NextResponse } from 'next/server';
+import { db } from '@/lib/db';
+import { appSearch } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -32,6 +35,8 @@ const addHiddenKeywords = (query: string) => {
 };
 
 export async function POST(request: Request) {
+    const session = await auth();
+    const userId = session?.user?.id;
     const { query, numResults, offset = 0, text_decorations = false } = await request.json() as SearchParams;
 
     try {
@@ -109,6 +114,18 @@ export async function POST(request: Request) {
             })),
             more_results_available: data.query?.more_results_available ?? false
         };
+
+        if (userId) {
+            try {
+                await db.insert(appSearch).values({
+                    userId,
+                    query: enhancedQuery,
+                    response: transformedResults,
+                });
+            } catch (dbError) {
+                console.error("DB Insert Error (Search):", dbError);
+            }
+        }
 
         return NextResponse.json(transformedResults);
     } catch (error) {

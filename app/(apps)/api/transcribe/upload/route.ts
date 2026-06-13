@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { getBucket } from '@/lib/gcs';
+import { db } from '@/lib/db';
+import { appTranscribe } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   try {
     const formData = await request.formData();
     const file = formData.get('file') as File;
@@ -25,6 +31,18 @@ export async function POST(request: Request) {
         contentType: file.type || 'audio/mpeg',
       });
       
+      if (userId) {
+        try {
+          await db.insert(appTranscribe).values({
+            userId,
+            gcsFilename: fileName,
+            gcsPath: filepath,
+          });
+        } catch (dbError) {
+          console.error("DB Insert Error (Transcribe Upload):", dbError);
+        }
+      }
+
       return NextResponse.json({ success: true, filepath });
     } catch (gcsError) {
       console.error('Failed to upload to GCS:', gcsError);

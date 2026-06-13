@@ -174,6 +174,16 @@ export function UploadForm({ onTranscriptionComplete }: UploadFormProps) {
       clearInterval(processingInterval);
       setProcessingProgress(100);
 
+      // Save transcription to database in the background
+      fetch('/api/transcribe/save', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          language: selectedLanguage,
+          transcription: processedResult
+        })
+      }).catch(err => console.error('Failed to save transcription to DB', err));
+
       setTimeout(() => {
         setIsUploading(false);
         onTranscriptionComplete(processedResult);

@@ -1,6 +1,9 @@
 import { NextResponse } from 'next/server';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { getGeminiApiKey } from '@/lib/ai/gemini';
+import { db } from '@/lib/db';
+import { appFilechat } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -20,6 +23,9 @@ Even if the user doesn't explicitly mention the document in their follow-up ques
 Always respond in the same language that the user is using to ask their questions.`;
 
 export async function POST(request: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   try {
     // Get the API key (user's own or fallback to .env)
     const apiKey = await getGeminiApiKey();
@@ -62,14 +68,29 @@ export async function POST(request: Request) {
 
     const stream = new ReadableStream({
       async start(controller) {
+        let fullResponse = '';
         try {
           for await (const chunk of result.stream) {
             const chunkText = chunk.text();
             if (chunkText) {
+              fullResponse += chunkText;
               const data = `data: ${JSON.stringify({ content: chunkText })}\n\n`;
               controller.enqueue(new TextEncoder().encode(data));
             }
           }
+          
+          if (userId) {
+            try {
+              await db.insert(appFilechat).values({
+                userId,
+                inputPrompt: latestPrompt,
+                response: fullResponse,
+              });
+            } catch (dbError) {
+              console.error("DB Insert Error (Filechat):", dbError);
+            }
+          }
+          
           controller.close();
         } catch (error) {
           controller.error(error);

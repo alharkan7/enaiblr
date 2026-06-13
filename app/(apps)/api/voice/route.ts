@@ -1,6 +1,9 @@
 import * as sdk from "microsoft-cognitiveservices-speech-sdk";
 import { NextResponse } from "next/server";
 import { getBucket } from '@/lib/gcs';
+import { db } from '@/lib/db';
+import { appVoice } from '@/lib/db/schema';
+import { auth } from '@/app/(auth)/auth';
 
 // Configure route segment for Vercel deployment
 export const runtime = 'nodejs';
@@ -8,6 +11,9 @@ export const dynamic = 'force-dynamic';
 export const maxDuration = 60;
 
 export async function POST(request: Request) {
+  const session = await auth();
+  const userId = session?.user?.id;
+
   try {
     const { text, voice } = await request.json();
 
@@ -57,6 +63,20 @@ export async function POST(request: Request) {
       await bucket.file(filepath).save(Buffer.from(audioData), {
         contentType: 'audio/wav',
       });
+      
+      if (userId) {
+        try {
+          await db.insert(appVoice).values({
+            userId,
+            inputText: text,
+            voiceId: voice,
+            gcsFilename: fileName,
+            gcsPath: filepath,
+          });
+        } catch (dbError) {
+          console.error("DB Insert Error (Voice):", dbError);
+        }
+      }
     } catch (gcsError) {
       console.error('Failed to upload to GCS:', gcsError);
     }
