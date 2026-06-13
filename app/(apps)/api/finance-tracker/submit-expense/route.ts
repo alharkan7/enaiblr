@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from "@/app/(auth)/auth";
 import GoogleProvider from "next-auth/providers/google";
-import { DatabaseService } from '@/lib/db/ft-queries';
+import { getOrCreateFtUser, getFtUserByUserId, createFtExpense, updateFtExpense, deleteFtExpense, createFtIncome, updateFtIncome, deleteFtIncome, createFtBudget, upsertFtBudget, deleteFtBudget, updateUserCategories, updateUserBudget } from '@/lib/db/queries';
 
 const authOptions = {
   providers: [
@@ -46,7 +46,7 @@ export async function POST(req: Request) {
     }
 
     // Get user from database
-    const user = await DatabaseService.findUserByEmail(session.user.email!);
+    const user = await getOrCreateFtUser(session.user.id!, session.user.email!);
     if (!user) {
       return NextResponse.json({
         message: 'User not found',
@@ -73,8 +73,7 @@ export async function POST(req: Request) {
     }
 
     // Create expense record in database
-    const expense = await DatabaseService.createExpense({
-      user_id: user.id,
+    const expense = await createFtExpense(user.userId!, {
       timestamp: timestamp || null,
       date,
       amount,

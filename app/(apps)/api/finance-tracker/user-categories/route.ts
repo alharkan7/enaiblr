@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from "@/app/(auth)/auth";
 import GoogleProvider from "next-auth/providers/google";
-import { DatabaseService } from '@/lib/db/ft-queries';
+import { getOrCreateFtUser, getFtUserByUserId, createFtExpense, updateFtExpense, deleteFtExpense, createFtIncome, updateFtIncome, deleteFtIncome, createFtBudget, upsertFtBudget, deleteFtBudget, updateUserCategories, updateUserBudget } from '@/lib/db/queries';
 
 const authOptions = {
   providers: [
@@ -38,7 +38,7 @@ export async function GET(req: Request) {
       }, { status: 401 });
     }
 
-    const user = await DatabaseService.findUserByEmail(session.user.email);
+    const user = await getOrCreateFtUser(session.user.id!, session.user.email!);
 
     if (!user) {
       return NextResponse.json({
@@ -48,13 +48,13 @@ export async function GET(req: Request) {
     }
 
     // Parse categories from database (stored as JSON strings)
-    const expenseCategories = user.expense_categories || [];
-    const incomeCategories = user.income_categories || [];
+    const expenseCategories = user.expenseCategories || [];
+    const incomeCategories = user.incomeCategories || [];
 
     return NextResponse.json({
       message: 'Categories retrieved successfully',
-      expense_categories: expenseCategories,
-      income_categories: incomeCategories
+      expenseCategories: expenseCategories,
+      incomeCategories: incomeCategories
     }, { status: 200 });
 
   } catch (error) {
@@ -79,6 +79,14 @@ export async function PUT(req: Request) {
       }, { status: 401 });
     }
 
+    const user = await getOrCreateFtUser(session.user.id!, session.user.email);
+    if (!user) {
+      return NextResponse.json({
+        message: 'User not found',
+        error: 'User account not found'
+      }, { status: 404 });
+    }
+
     const body = await req.json();
     const { expenseCategories, incomeCategories } = body;
 
@@ -91,16 +99,15 @@ export async function PUT(req: Request) {
     }
 
     // Update user categories in database
-    const updatedUser = await DatabaseService.updateUserCategories(
-      session.user.email,
+    const updatedUser = await updateUserCategories(user.userId!,
       expenseCategories,
       incomeCategories
     );
 
     return NextResponse.json({
       message: 'Categories updated successfully',
-      expense_categories: updatedUser.expense_categories,
-      income_categories: updatedUser.income_categories
+      expenseCategories: updatedUser.expenseCategories,
+      incomeCategories: updatedUser.incomeCategories
     }, { status: 200 });
 
   } catch (error) {

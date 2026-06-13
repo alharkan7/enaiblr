@@ -1,7 +1,10 @@
 import { NextResponse } from 'next/server';
 import { auth } from "@/app/(auth)/auth";
 import GoogleProvider from "next-auth/providers/google";
-import { DatabaseService } from '@/lib/db/ft-queries';
+import { db } from '@/lib/db';
+import { ftExpenses, ftIncomes, ftBudgets } from '@/lib/db/schema';
+import { eq } from 'drizzle-orm';
+import { getOrCreateFtUser, getFtUserByUserId, createFtExpense, updateFtExpense, deleteFtExpense, createFtIncome, updateFtIncome, deleteFtIncome, createFtBudget, upsertFtBudget, deleteFtBudget, updateUserCategories, updateUserBudget } from '@/lib/db/queries';
 
 const authOptions = {
   providers: [
@@ -46,7 +49,7 @@ export async function GET(req: Request) {
     }
 
     // Get user from database
-    const user = await DatabaseService.findUserByEmail(session.user.email!);
+    const user = await getOrCreateFtUser(session.user.id!, session.user.email!);
     if (!user) {
       return NextResponse.json({
         message: 'User not found',
@@ -59,11 +62,7 @@ export async function GET(req: Request) {
     const endDate = searchParams.get('endDate');
 
     // Fetch budgets from database
-    const budgets = await DatabaseService.getBudgets(
-      user.id,
-      startDate || undefined,
-      endDate || undefined
-    );
+    const budgets = await getFtUserByUserId(user.userId!).then(u => db.select().from(ftBudgets).where(eq(ftBudgets.userId, u.id)));
 
     return NextResponse.json({
       budgets,

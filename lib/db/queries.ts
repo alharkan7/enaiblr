@@ -15,6 +15,10 @@ import {
   suggestion,
   subscription,
   token,
+  ftMain,
+  ftExpenses,
+  ftIncomes,
+  ftBudgets,
 } from './schema';
 import type { BlockKind } from '@/components/block';
 import { subscriptionPackages } from '@/config/subscriptionPackages';
@@ -749,4 +753,202 @@ export async function markTokenAsUsed(tokenValue: string) {
     console.error('Failed to mark token as used');
     throw error;
   }
+}
+
+
+
+import { DEFAULT_EXPENSE_CATEGORIES, DEFAULT_INCOME_CATEGORIES } from '@/types/finance-tracker';
+
+// Finance Tracker Queries
+export async function getOrCreateFtUser(userId: string, email: string) {
+  // First, verify the user actually exists in the main User table to prevent FK violations from stale JWTs
+  const mainUser = await db.select().from(user).where(eq(user.email, email));
+  if (!mainUser || mainUser.length === 0) {
+    throw new Error('User not found in main User table');
+  }
+  
+  // Use the verified UUID from the database
+  const verifiedUserId = mainUser[0].id;
+
+  // Try finding by verifiedUserId first
+  let existing = await db.select().from(ftMain).where(eq(ftMain.userId, verifiedUserId));
+  if (existing.length > 0) return existing[0];
+  
+  // Try finding by email (in case userId was not set during migration)
+  existing = await db.select().from(ftMain).where(eq(ftMain.email, email));
+  if (existing.length > 0) {
+    // Update the userId to the verified one
+    const [updatedUser] = await db.update(ftMain)
+      .set({ userId: verifiedUserId, updatedAt: new Date() })
+      .where(eq(ftMain.id, existing[0].id))
+      .returning();
+    return updatedUser;
+  }
+  
+  const [newUser] = await db.insert(ftMain).values({
+    userId: verifiedUserId,
+    email,
+    expenseCategories: DEFAULT_EXPENSE_CATEGORIES,
+    incomeCategories: DEFAULT_INCOME_CATEGORIES,
+    monthlyBudget: '0',
+    preferences: {},
+    isActive: true
+  }).returning();
+  
+  return newUser;
+}
+
+export async function getFtUserByUserId(userId: string) {
+  const result = await db.select().from(ftMain).where(eq(ftMain.userId, userId));
+  return result[0] || null;
+}
+
+export async function updateUserCategories(userId: string, expenseCategories: any[], incomeCategories: any[]) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+  
+  const [updated] = await db.update(ftMain)
+    .set({
+      expenseCategories,
+      incomeCategories,
+      updatedAt: new Date()
+    })
+    .where(eq(ftMain.id, ftUser.id))
+    .returning();
+  
+  return updated;
+}
+
+export async function updateUserBudget(userId: string, monthlyBudget: number) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+  
+  const [updated] = await db.update(ftMain)
+    .set({ monthlyBudget: monthlyBudget.toString(), updatedAt: new Date() })
+    .where(eq(ftMain.id, ftUser.id))
+    .returning();
+  return updated;
+}
+
+// Data Fetching
+export async function getAllFinanceData(userId: string, startDate?: string, endDate?: string) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  let expensesQuery = db.select().from(ftExpenses).where(eq(ftExpenses.userId, ftUser.id));
+  let incomesQuery = db.select().from(ftIncomes).where(eq(ftIncomes.userId, ftUser.id));
+  let budgetsQuery = db.select().from(ftBudgets).where(eq(ftBudgets.userId, ftUser.id));
+
+  const [expenses, incomes, budgets] = await Promise.all([
+    expensesQuery,
+    incomesQuery,
+    budgetsQuery
+  ]);
+
+  return { expenses, incomes, budgets };
+}
+
+// Expenses
+export async function createFtExpense(userId: string, expense: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  const [newExpense] = await db.insert(ftExpenses).values({
+    ...expense,
+    userId: ftUser.id,
+    date: expense.date,
+    amount: expense.amount.toString()
+  }).returning();
+  return newExpense;
+}
+
+export async function updateFtExpense(id: number, userId: string, updates: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  if (updates.amount !== undefined) updates.amount = updates.amount.toString();
+
+  const [updated] = await db.update(ftExpenses)
+    .set({ ...updates, updatedAt: new Date() })
+    .where(and(eq(ftExpenses.id, id), eq(ftExpenses.userId, ftUser.id)))
+    .returning();
+  return updated;
+}
+
+export async function deleteFtExpense(id: number, userId: string) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  await db.delete(ftExpenses).where(and(eq(ftExpenses.id, id), eq(ftExpenses.userId, ftUser.id)));
+}
+
+// Incomes
+export async function createFtIncome(userId: string, income: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  const [newIncome] = await db.insert(ftIncomes).values({
+    ...income,
+    userId: ftUser.id,
+    date: income.date,
+    amount: income.amount.toString()
+  }).returning();
+  return newIncome;
+}
+
+export async function updateFtIncome(id: number, userId: string, updates: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  if (updates.amount !== undefined) updates.amount = updates.amount.toString();
+
+  const [updated] = await db.update(ftIncomes)
+    .set({ ...updates, updatedAt: new Date() })
+    .where(and(eq(ftIncomes.id, id), eq(ftIncomes.userId, ftUser.id)))
+    .returning();
+  return updated;
+}
+
+export async function deleteFtIncome(id: number, userId: string) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  await db.delete(ftIncomes).where(and(eq(ftIncomes.id, id), eq(ftIncomes.userId, ftUser.id)));
+}
+
+// Budgets
+export async function createFtBudget(userId: string, budget: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  const [newBudget] = await db.insert(ftBudgets).values({
+    ...budget,
+    userId: ftUser.id,
+    date: budget.date,
+    amount: budget.amount.toString()
+  }).returning();
+  return newBudget;
+}
+
+export async function upsertFtBudget(userId: string, budget: any) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  // Assuming we match by date and userId
+  const existing = await db.select().from(ftBudgets).where(and(eq(ftBudgets.userId, ftUser.id), eq(ftBudgets.date, budget.date)));
+  if (existing.length > 0) {
+    const [updated] = await db.update(ftBudgets)
+      .set({ amount: budget.amount.toString(), updatedAt: new Date() })
+      .where(eq(ftBudgets.id, existing[0].id))
+      .returning();
+    return updated;
+  }
+  return createFtBudget(userId, budget);
+}
+
+export async function deleteFtBudget(id: number, userId: string) {
+  const ftUser = await getFtUserByUserId(userId);
+  if (!ftUser) throw new Error('User not found');
+
+  await db.delete(ftBudgets).where(and(eq(ftBudgets.id, id), eq(ftBudgets.userId, ftUser.id)));
 }

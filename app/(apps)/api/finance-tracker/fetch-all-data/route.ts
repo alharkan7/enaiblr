@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { auth } from "@/app/(auth)/auth";
 import GoogleProvider from "next-auth/providers/google";
-import { DatabaseService } from '@/lib/db/ft-queries';
+import { getOrCreateFtUser, getAllFinanceData } from '@/lib/db/queries';
 
 const authOptions = {
   providers: [
@@ -46,7 +46,7 @@ export async function GET(req: Request) {
     }
 
     // Get user from database
-    const user = await DatabaseService.findUserByEmail(session.user.email!);
+    const user = await getOrCreateFtUser(session.user.id!, session.user.email!);
     if (!user) {
       return NextResponse.json({
         message: 'User not found',
@@ -60,8 +60,8 @@ export async function GET(req: Request) {
     const endDate = searchParams.get('endDate');
 
     // Fetch all finance data from database
-    const financeData = await DatabaseService.getAllFinanceData(
-      user.id,
+    const financeData = await getAllFinanceData(
+      user.userId!,
       startDate || undefined,
       endDate || undefined
     );

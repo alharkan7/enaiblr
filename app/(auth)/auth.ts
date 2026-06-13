@@ -174,6 +174,7 @@ export const config = {
         try {
           const dbUser = await getUser(token.email);
           if (dbUser && dbUser.length > 0) {
+            token.id = dbUser[0].id;
             token.geminiApiKey = dbUser[0].geminiApiKey || null;
           }
         } catch (error) {

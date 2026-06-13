@@ -1,5 +1,4 @@
 import type { Metadata } from 'next'
-import { Providers } from "@/components/providers";
 
 export const metadata: Metadata = {
   title: 'Finance Tracker',
@@ -13,11 +12,9 @@ export default function FinanceTrackerLayout({
 }) {
   return (
     <div className="h-screen w-full bg-background">
-      <Providers>
-        <main className="w-full h-full">
-          {children}
-        </main>
-      </Providers>
+      <main className="w-full h-full">
+        {children}
+      </main>
     </div>
   )
 }
