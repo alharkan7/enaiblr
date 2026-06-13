@@ -5,7 +5,8 @@ import postgres from 'postgres';
 const connectionString = process.env.DATABASE_URL!;
 
 // Create postgres connection
-export const client = postgres(connectionString);
+// prepare: false is CRITICAL for Vercel Serverless environments connecting to Neon/PgBouncer pooler
+export const client = postgres(connectionString, { prepare: false });
 
 // Create drizzle database instance
 export const db = drizzle(client);
