@@ -39,3 +39,7 @@ yarn-error.log*
 .vscode
 .env*.local
 node_modules
+
+app-key.json
+# Added by ggshield
+.cache_ggshield

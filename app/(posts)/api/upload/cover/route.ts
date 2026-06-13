@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
-import { uploadToBunny } from '@/lib/bunnycdn';
+import { getBucket } from '@/lib/gcs';
 import sharp from 'sharp';
 
 const MAX_WIDTH = 1920; // Maximum width for cover image
@@ -32,9 +32,14 @@ export async function POST(request: Request) {
       .toFormat('webp', { quality: 80 })
       .toBuffer();
 
-    // Upload to BunnyCDN
-    const fileName = `publications/cover-${Date.now()}.webp`;
-    const url = await uploadToBunny(fileName, processedBuffer);
+    // Upload to GCS
+    const fileName = `cover-${Date.now()}.webp`;
+    const filepath = `enaiblr/covers/${fileName}`;
+    const bucket = getBucket();
+    await bucket.file(filepath).save(processedBuffer, {
+      contentType: 'image/webp',
+    });
+    const url = `https://storage.googleapis.com/${bucket.name}/${filepath}`;
 
     return NextResponse.json({ url });
   } catch (error) {

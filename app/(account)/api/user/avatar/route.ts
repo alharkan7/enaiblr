@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/app/(auth)/auth';
-import { uploadToBunny } from '@/lib/bunnycdn';
+import { getBucket } from '@/lib/gcs';
 import { updateUserAvatar } from '@/lib/db/queries';
 import sharp from 'sharp';
 
@@ -32,9 +32,14 @@ export async function POST(request: Request) {
       .toFormat('webp', { quality: 80 })
       .toBuffer();
 
-    // Upload to BunnyCDN
+    // Upload to GCS
     const fileName = `avatar-${Date.now()}.webp`;
-    const url = await uploadToBunny(fileName, processedBuffer);
+    const filepath = `enaiblr/avatars/${fileName}`;
+    const bucket = getBucket();
+    await bucket.file(filepath).save(processedBuffer, {
+      contentType: 'image/webp',
+    });
+    const url = `https://storage.googleapis.com/${bucket.name}/${filepath}`;
 
     // Update user avatar in database
     await updateUserAvatar(session.user.email, url);

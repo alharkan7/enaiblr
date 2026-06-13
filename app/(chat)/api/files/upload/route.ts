@@ -3,7 +3,7 @@ import { z } from 'zod';
 import { models } from '@/lib/ai/models';
 
 import { auth } from '@/app/(auth)/auth';
-import { uploadToBunny } from '@/lib/bunnycdn';
+import { getBucket } from '@/lib/gcs';
 import { optimizeFile } from '@/lib/optimize';
 
 // Common document types
@@ -92,15 +92,25 @@ export async function POST(request: Request) {
       : originalFilename;
 
     try {
-      const data = await uploadToBunny(filename, optimizedBuffer);
+      const bucket = getBucket();
+      const uniqueFilename = `${Date.now()}-${filename}`;
+      const filepath = `enaiblr/chat/${uniqueFilename}`;
+      const fileRef = bucket.file(filepath);
+
+      await fileRef.save(optimizedBuffer, {
+        contentType: optimizedType,
+      });
+
+      const publicUrl = `https://storage.googleapis.com/${bucket.name}/${filepath}`;
 
       return NextResponse.json({
-        url: data,
-        pathname: filename,
+        url: publicUrl,
+        pathname: filepath,
         contentType: optimizedType,
         originalName: originalFilename
       });
     } catch (error) {
+      console.error('GCS Upload Error:', error);
       return NextResponse.json({ error: 'Upload failed' }, { status: 500 });
     }
   } catch (error) {

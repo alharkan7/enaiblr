@@ -38,6 +38,7 @@
     "@codemirror/theme-one-dark": "^6.1.2",
     "@codemirror/view": "^6.35.3",
     "@extractus/article-extractor": "^8.0.16",
+    "@google-cloud/storage": "^7.21.0",
     "@google/genai": "^1.29.0",
     "@google/generative-ai": "^0.21.0",
     "@headlessui/react": "^2.2.0",
