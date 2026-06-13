@@ -5,7 +5,7 @@ import { useRouter } from 'next/navigation'
 import { Session } from 'next-auth'
 import { useSession } from 'next-auth/react'
 import { Button } from "@/components/ui/button"
-import { Bell, Settings as SettingsIcon, Zap, AlertTriangle, RefreshCw, ChevronLeft, LayoutGrid } from 'lucide-react'
+import { Bell, Settings as SettingsIcon, Zap, AlertTriangle, RefreshCw, ChevronLeft, LayoutGrid, Database, Loader2 } from 'lucide-react'
 import { toast } from 'sonner'
 import { AppsGrid } from '@/components/ui/apps-grid'
 import { AppsHeader } from '@/components/apps-header'
@@ -160,6 +160,7 @@ export default function FinanceTrackerClient({ initialSession }: { initialSessio
   const status = authStatus === 'loading' ? 'loading' : 'authenticated';
 
   const [isMounted, setIsMounted] = useState(false);
+  const [isDemoLoading, setIsDemoLoading] = useState(false);
   useEffect(() => {
     setIsMounted(true);
   }, []);
@@ -617,6 +618,37 @@ export default function FinanceTrackerClient({ initialSession }: { initialSessio
     setChartType(type)
   }
 
+  // Handle Load Demo
+  const handleLoadDemo = async () => {
+    try {
+      setIsDemoLoading(true)
+      const res = await fetch('/api/finance-tracker/load-demo', {
+        method: 'POST',
+      })
+      
+      if (!res.ok) {
+        throw new Error('Failed to load demo data')
+      }
+      
+      toast.success('Demo data loaded successfully!')
+      
+      // Clear cache to force fresh fetch
+      localStorage.removeItem('expense_tracker_expenses_pg')
+      localStorage.removeItem('expense_tracker_incomes_pg')
+      localStorage.removeItem('expense_tracker_budgets_pg')
+      
+      await Promise.all([
+        fetchData(true),
+        fetchAllBudgets()
+      ])
+    } catch (error) {
+      console.error('Error loading demo data:', error)
+      toast.error('Failed to load demo data')
+    } finally {
+      setIsDemoLoading(false)
+    }
+  }
+
   // Initialize user data when authenticated
   useEffect(() => {
     // Fetch user categories and data
@@ -853,6 +885,15 @@ export default function FinanceTrackerClient({ initialSession }: { initialSessio
                 }
               }}
             />
+            <Button
+              variant="secondary"
+              className="h-8 text-xs font-semibold px-3 bg-white/20 hover:bg-white/30 text-white border-0"
+              onClick={handleLoadDemo}
+              disabled={isDemoLoading}
+            >
+              {isDemoLoading ? <Loader2 className="w-3 h-3 animate-spin mr-1" /> : <Database className="w-3 h-3 mr-1" />}
+              Demo
+            </Button>
           </div>
           <div className="flex items-center">
             <AppsGrid
