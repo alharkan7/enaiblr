@@ -73,7 +73,7 @@ function SearchPageContent({ initialQuery }: SearchPageProps) {
     }, [query, searchResults]);
 
     const handleBackToHome = () => {
-        router.replace("/", { scroll: false });
+        router.replace("/search", { scroll: false });
         setQuery("");
         setIsHomePage(true);
         setExpandedResultIndex(null);

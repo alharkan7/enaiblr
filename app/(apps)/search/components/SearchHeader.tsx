@@ -22,7 +22,6 @@ export const SearchHeader = ({
 
     const handleHomeClick = () => {
         handleBackToHome(); 
-        router.push('/search');
     };
 
     return (

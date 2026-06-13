@@ -2,14 +2,26 @@ import { Storage } from '@google-cloud/storage';
 import 'server-only';
 
 // Initialize the Google Cloud Storage client
-// It automatically picks up GOOGLE_APPLICATION_CREDENTIALS and GOOGLE_CLOUD_PROJECT
-// from the environment variables, but we can be explicit here as well.
+// It supports either GOOGLE_CREDENTIALS_JSON (preferred for Vercel) or GOOGLE_APPLICATION_CREDENTIALS (file path)
 const projectId = process.env.GOOGLE_CLOUD_PROJECT;
 const keyFilename = process.env.GOOGLE_APPLICATION_CREDENTIALS;
+const credentialsJson = process.env.GOOGLE_CREDENTIALS_JSON;
 
-if (!projectId || !keyFilename) {
+let storageOptions: any = { projectId };
+
+if (credentialsJson) {
+  try {
+    storageOptions.credentials = JSON.parse(credentialsJson);
+  } catch (error) {
+    console.error('Failed to parse GOOGLE_CREDENTIALS_JSON environment variable.', error);
+  }
+} else if (keyFilename) {
+  storageOptions.keyFilename = keyFilename;
+}
+
+if (!projectId || (!keyFilename && !credentialsJson)) {
   console.warn(
-    'Missing GCS environment variables. Please check GOOGLE_CLOUD_PROJECT and GOOGLE_APPLICATION_CREDENTIALS.'
+    'Missing GCS environment variables. Please check GOOGLE_CLOUD_PROJECT and either GOOGLE_CREDENTIALS_JSON or GOOGLE_APPLICATION_CREDENTIALS.'
   );
 }
 
@@ -19,10 +31,7 @@ const globalForGCS = global as unknown as { storage: Storage | undefined };
 
 export const storage =
   globalForGCS.storage ??
-  new Storage({
-    projectId,
-    keyFilename,
-  });
+  new Storage(storageOptions);
 
 if (process.env.NODE_ENV !== 'production') {
   globalForGCS.storage = storage;
