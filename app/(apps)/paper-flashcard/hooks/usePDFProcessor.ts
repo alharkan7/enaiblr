@@ -69,6 +69,18 @@ export const usePDFProcessor = () => {
       if (file) {
         const arrayBuffer = await file.arrayBuffer();
         pdfText = await extractTextFromPDF(arrayBuffer);
+        
+        // Background upload to GCS for persistence
+        try {
+          const formData = new FormData();
+          formData.append('file', file);
+          fetch('/api/paper-flashcards/upload', {
+            method: 'POST',
+            body: formData
+          }).catch(err => console.error('Failed to upload file to GCS background', err));
+        } catch (err) {
+          console.error('Error initiating upload to GCS', err);
+        }
       } else if (pdfLink && isValidUrl(pdfLink)) {
         try {
           // Always use the proxy for URL-based PDFs
