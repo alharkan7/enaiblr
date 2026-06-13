@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Message } from '../components/types';
 
 export function useChatMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const sessionIdRef = useRef<string>(crypto.randomUUID());
     
     const clearMessages = () => {
         setMessages([]);
         setIsLoading(false);
+        sessionIdRef.current = crypto.randomUUID();
     };
 
     const formatMessage = (msg: Message): any => ({
@@ -39,6 +41,7 @@ export function useChatMessages() {
                 },
                 body: JSON.stringify({
                     messages: [...messages.map(formatMessage), formatMessage(userMessage)],
+                    sessionId: sessionIdRef.current,
                 })
             });
 

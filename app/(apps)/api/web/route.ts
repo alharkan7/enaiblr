@@ -53,7 +53,7 @@ export async function POST(request: Request) {
     const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
 
     const body = await request.json();
-    const { messages, chatMode } = body;
+    const { messages, chatMode, sessionId } = body;
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
       throw new Error('Invalid or empty messages array');
@@ -109,16 +109,18 @@ export async function POST(request: Request) {
         const stream = new ReadableStream({
           async start(controller) {
             try {
+              let finalSources: any = null;
               // Send URL metadata only for the first message
               if (messages.length === 1) {
                 const article = await extract(userInput);
-                const metaData = {
-                  type: 'sources',
-                  sources: [{
+                finalSources = [{
                     url: userInput,
                     title: article?.title || 'Article',
                     snippet: article?.description || '',
-                  }]
+                }];
+                const metaData = {
+                  type: 'sources',
+                  sources: finalSources
                 };
                 controller.enqueue(new TextEncoder().encode(`data: ${JSON.stringify(metaData)}\n\n`));
               }
@@ -138,9 +140,11 @@ export async function POST(request: Request) {
                 try {
                   await db.insert(appWeb).values({
                     userId,
+                    sessionId,
                     inputUrl: messages.length === 1 ? userInput : null,
                     inputPrompt: messages.length > 1 ? userInput : null,
                     response: fullResponse,
+                    sources: finalSources,
                   });
                 } catch (dbError) {
                   console.error("DB Insert Error (Web/Gemini):", dbError);
@@ -268,8 +272,10 @@ Please synthesize this information into a clear and helpful response in the user
                 try {
                   await db.insert(appWeb).values({
                     userId,
+                    sessionId,
                     inputPrompt: searchQuery,
                     response: fullResponse,
+                    sources: sources,
                   });
                 } catch (dbError) {
                   console.error("DB Insert Error (Web/Search):", dbError);

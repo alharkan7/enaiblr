@@ -1,13 +1,15 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Message } from '../components/types';
 
 export function useChatMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
+    const sessionIdRef = useRef<string>(crypto.randomUUID());
 
     const clearMessages = () => {
         setMessages([]);
         setIsLoading(false);
+        sessionIdRef.current = crypto.randomUUID();
     };
 
     const sendMessage = async (input: string, linkMode: boolean = false) => {
@@ -36,20 +38,21 @@ export function useChatMessages() {
                 },
                 body: JSON.stringify({
                     messages: [...messages, userMessage],
-                    chatMode: currentChatMode
+                    chatMode: currentChatMode,
+                    sessionId: sessionIdRef.current
                 })
             });
 
             if (!response.ok) {
                 const errorData = await response.json();
                 setMessages(prev => prev.slice(0, -1));
-                throw new Error(errorData.error || 'Failed to send message');
+                throw errorData.error || 'Failed to send message';
             }
 
             const reader = response.body?.getReader();
             if (!reader) {
                 setMessages(prev => prev.slice(0, -1));
-                throw new Error('No reader available');
+                throw 'No reader available';
             }
 
             const textDecoder = new TextDecoder();
@@ -147,7 +150,6 @@ export function useChatMessages() {
                 });
             }
         } catch (error) {
-            console.error('Error:', error);
             setMessages(prev => {
                 const lastMessage = prev[prev.length - 1];
                 if (lastMessage?.role === 'assistant' && Array.isArray(lastMessage.content)) {
@@ -168,6 +170,7 @@ export function useChatMessages() {
                 }
                 return prev.slice(0, -1); // Remove the user message if no response started
             });
+            throw error;
         } finally {
             setIsLoading(false);
         }

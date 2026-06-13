@@ -1,15 +1,17 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Message } from '../components/types';
 
 export function useChatMessages() {
     const [messages, setMessages] = useState<Message[]>([]);
     const [isLoading, setIsLoading] = useState(false);
     const [isStreaming, setIsStreaming] = useState(false);
+    const sessionIdRef = useRef<string>(crypto.randomUUID());
     
     const clearMessages = () => {
         setMessages([]);
         setIsLoading(false);
         setIsStreaming(false);
+        sessionIdRef.current = crypto.randomUUID();
     };
 
     const toTogetherMessage = (msg: Message): any => ({
@@ -52,7 +54,8 @@ export function useChatMessages() {
                 },
                 body: JSON.stringify({
                     messages: [...messages.map(toTogetherMessage), toTogetherMessage(userMessage)],
-                    file
+                    file,
+                    sessionId: sessionIdRef.current
                 })
             });
 

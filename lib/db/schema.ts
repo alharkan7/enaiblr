@@ -313,6 +313,7 @@ export type AppSearch = InferSelectModel<typeof appSearch>;
 export const appFilechat = pgTable('AppFilechat', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   userId: uuid('userId').notNull().references(() => user.id),
+  sessionId: varchar('sessionId', { length: 255 }),
   inputPrompt: text('inputPrompt'),
   response: text('response'),
   gcsFilename: varchar('gcsFilename', { length: 255 }),
@@ -324,6 +325,7 @@ export type AppFilechat = InferSelectModel<typeof appFilechat>;
 export const appIncognito = pgTable('AppIncognito', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   userId: uuid('userId').notNull().references(() => user.id),
+  sessionId: varchar('sessionId', { length: 255 }),
   inputPrompt: text('inputPrompt'),
   response: text('response'),
   gcsFilename: varchar('gcsFilename', { length: 255 }),
@@ -335,9 +337,11 @@ export type AppIncognito = InferSelectModel<typeof appIncognito>;
 export const appWeb = pgTable('AppWeb', {
   id: uuid('id').primaryKey().notNull().defaultRandom(),
   userId: uuid('userId').notNull().references(() => user.id),
+  sessionId: varchar('sessionId', { length: 255 }),
   inputUrl: text('inputUrl'),
   inputPrompt: text('inputPrompt'),
   response: text('response'),
+  sources: json('sources'),
   createdAt: timestamp('createdAt').notNull().defaultNow(),
 });
 export type AppWeb = InferSelectModel<typeof appWeb>;

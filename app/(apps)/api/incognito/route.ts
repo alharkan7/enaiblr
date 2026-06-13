@@ -171,7 +171,7 @@ export async function POST(req: NextRequest) {
         });
 
         const body = await req.json();
-        const { messages } = body;
+        const { messages, sessionId } = body;
 
         if (!messages || !Array.isArray(messages)) {
             return new Response(JSON.stringify({ error: 'Messages array is required' }), {
@@ -273,6 +273,7 @@ export async function POST(req: NextRequest) {
                         const inputPromptText = lastParts.map((p: any) => p.text).join('\n');
                         await db.insert(appIncognito).values({
                             userId,
+                            sessionId,
                             inputPrompt: inputPromptText,
                             response: text,
                             gcsFilename: lastGcsFilename,

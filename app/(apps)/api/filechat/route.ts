@@ -34,7 +34,7 @@ export async function POST(request: Request) {
     const contextModel = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.5-flash" });
 
     const body = await request.json();
-    const { messages } = body;
+    const { messages, sessionId } = body;
 
     // Find the document content from the first message (if it exists)
     const firstMessage = messages[0];
@@ -83,6 +83,7 @@ export async function POST(request: Request) {
             try {
               await db.insert(appFilechat).values({
                 userId,
+                sessionId,
                 inputPrompt: latestPrompt,
                 response: fullResponse,
               });
