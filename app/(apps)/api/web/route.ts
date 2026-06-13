@@ -76,7 +76,17 @@ export async function POST(request: Request) {
 
         // If it's the first message, extract article content
         if (messages.length === 1) {
-          const article = await extract(userInput);
+          let article;
+          try {
+            article = await extract(userInput);
+          } catch (extractError) {
+            console.warn(`Extraction failed for ${userInput}:`, extractError instanceof Error ? extractError.message : String(extractError));
+            return NextResponse.json(
+              { error: 'Could not extract content from this URL. The page might be protected, too large, or not accessible.' },
+              { status: 400 }
+            );
+          }
+
           if (!article?.content) {
             return NextResponse.json(
               { error: 'Could not extract content from this URL. The page might be too large or not accessible.' },
@@ -112,7 +122,13 @@ export async function POST(request: Request) {
               let finalSources: any = null;
               // Send URL metadata only for the first message
               if (messages.length === 1) {
-                const article = await extract(userInput);
+                let article;
+                try {
+                  article = await extract(userInput);
+                } catch (e) {
+                  // We already handled the hard failure above, this is just for metadata fallback
+                }
+                
                 finalSources = [{
                     url: userInput,
                     title: article?.title || 'Article',
