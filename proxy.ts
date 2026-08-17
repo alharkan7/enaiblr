@@ -122,17 +122,6 @@ export default auth(async function proxy(request: NextRequest) {
     }
   }
 
-// Handle root path access: Always redirect to /apps
-if (pathname === '/') {
-  const appsUrl = new URL('/apps', request.url);
-  // Preserve ref code if present
-  const refCode = request.nextUrl.searchParams.get('ref');
-  if (refCode) {
-    appsUrl.searchParams.set('ref', refCode);
-  }
-  return NextResponse.redirect(appsUrl);
-}
-
   // Allow public routes without login
   if (isPublicRoute(pathname)) {
     // For /apps route, preserve ref code from other routes

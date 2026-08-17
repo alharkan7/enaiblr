@@ -1,0 +1,11 @@
+.landing-page {
+  --c-untitled: #c1842f;
+  --c-beeblio: #3a8fa0;
+  --c-mograph: #bf5d3b;
+}
+
+.dark .landing-page {
+  --c-untitled: #e4b45d;
+  --c-beeblio: #5cb8c4;
+  --c-mograph: #ea855c;
+}

@@ -202,8 +202,9 @@ export const config = {
     },
     async authorized({ auth, request: { nextUrl } }: any) {
       const isLoggedIn = !!auth?.user;
-      const isAuthPage = nextUrl.pathname.startsWith('/login') ||
-        nextUrl.pathname.startsWith('/register');
+      const pathname = nextUrl.pathname;
+      const isAuthPage = pathname.startsWith('/login') ||
+        pathname.startsWith('/register');
 
       if (isAuthPage) {
         if (isLoggedIn) {
@@ -217,6 +218,30 @@ export const config = {
           }
           return Response.redirect(new URL(callbackUrl || '/apps', nextUrl.origin));
         }
+        return true;
+      }
+
+      const publicRoutes = [
+        '/',
+        '/apps',
+        '/ai-platform',
+        '/affiliate',
+        '/publications',
+        '/forgot-password',
+        '/reset-password',
+        '/tools',
+      ];
+      const publicPrefixes = [
+        '/publications/',
+        '/api/publications/',
+        '/api/auth/',
+        '/icons/',
+        '/images/',
+      ];
+      if (
+        publicRoutes.includes(pathname) ||
+        publicPrefixes.some((prefix) => pathname.startsWith(prefix))
+      ) {
         return true;
       }
 

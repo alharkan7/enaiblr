@@ -1,9 +1,7 @@
-import "./(landing-page)/css/style.css";
 import "./globals.css";
 import type { Metadata } from 'next';
 
 import { Inter } from "next/font/google";
-import localFont from "next/font/local";
 import { Toaster } from 'sonner';
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from '@vercel/speed-insights/next';
@@ -21,34 +19,6 @@ const inter = Inter({
   subsets: ["latin"],
   display: "swap",
   variable: "--font-inter",
-});
-
-// Configure Nacelle font
-const nacelle = localFont({
-  src: [
-    {
-      path: "../public/fonts/nacelle-regular.woff2",
-      weight: "400",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/nacelle-italic.woff2",
-      weight: "400",
-      style: "italic",
-    },
-    {
-      path: "../public/fonts/nacelle-semibold.woff2",
-      weight: "600",
-      style: "normal",
-    },
-    {
-      path: "../public/fonts/nacelle-semibolditalic.woff2",
-      weight: "600",
-      style: "italic",
-    },
-  ],
-  display: "swap",
-  variable: "--font-nacelle",
 });
 
 // Add service worker registration script
@@ -189,7 +159,7 @@ export default async function RootLayout({
         <SessionProvider session={session}>
           <ThemeProvider
             attribute="class"
-            defaultTheme="dark"
+            defaultTheme="light"
             enableSystem={false}
             disableTransitionOnChange
           >

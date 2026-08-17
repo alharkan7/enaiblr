@@ -1,32 +1,15 @@
-export const metadata = {
-  title: "Enaiblr - AI Software House",
-  description: "AI Software Solutions, Agents & Automation",
-};
+import './landing.css';
 
-import PageIllustration from "./components/page-illustration";
-import Hero from "./components/hero-home";
-import Workflows from "./components/workflows";
-import Features from "./components/features";
-import Testimonials from "./components/testimonials";
-import Cta from "./components/cta";
-import Header from "./components/ui/header";
-import Footer from "./components/ui/footer";
-import { auth } from "../(auth)/auth";
-import { cn } from "@/lib/utils";
+import { LandingFooter } from './components/footer';
+import { LandingView } from './components/landing-view';
 
-export default async function Home() {
-  const session = await auth();
-  
+export default function LandingPage() {
   return (
-    <div className={cn("font-['var(--font-nacelle)',var(--font-inter)] relative overflow-x-hidden bg-[#09090b]")}>
-      <Header />
-      <PageIllustration />
-      <Hero />
-      <Workflows />
-      <Features />
-      <Testimonials />
-      <Cta />
-      <Footer />
+    <div className="landing-page flex h-dvh flex-col overflow-hidden bg-background text-foreground">
+      <main className="relative z-10 mx-auto flex min-h-0 w-full max-w-5xl flex-1 flex-col justify-center px-5 py-4 sm:px-8 md:py-8">
+        <LandingView />
+      </main>
+      <LandingFooter />
     </div>
   );
 }
