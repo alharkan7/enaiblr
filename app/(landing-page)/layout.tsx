@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
   title: {
-    absolute: 'enaiblr',
+    absolute: 'enaiblr - Learning, Research, and Creative Tools Maker',
   },
   description: 'We make learning, research, and creative tools.',
 };

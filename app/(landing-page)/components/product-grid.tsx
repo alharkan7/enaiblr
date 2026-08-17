@@ -62,8 +62,8 @@ export function ProductGrid({
               ref={product.id === 'mograph' ? mographRef : undefined}
               data-product-card=""
               className={cn(
-                'min-w-0 transition-[flex] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:min-h-[240px]',
-                isActive && 'md:flex-[2.1]',
+                'min-w-0 transition-all duration-500 ease-[cubic-bezier(0.22,1,0.36,1)] md:min-h-[240px]',
+                isActive && 'aspect-square md:aspect-auto md:flex-[2.1]',
                 !isActive && activeId && 'md:flex-[0.75]',
                 !activeId && 'md:flex-1',
               )}
@@ -82,13 +82,16 @@ export function ProductGrid({
             >
               <div
                 className={cn(
-                  'relative flex h-full w-full cursor-pointer flex-col rounded-md border border-border bg-background p-3.5 text-left outline-none transition-colors duration-500 md:p-6 md:pt-16',
-                  isActive && 'text-white',
+                  'relative flex h-full w-full cursor-pointer flex-col rounded-3xl border-2 border-border bg-background p-5 text-left outline-none transition-all duration-500 md:rounded-2xl md:p-6 md:pt-16',
+                  isActive && 'text-white border-transparent',
                 )}
                 style={isActive ? { backgroundColor: `var(--c-${product.id})` } : undefined}
                 onPointerUp={(event) => {
-                  if (event.pointerType === 'mouse') return;
                   if (event.target instanceof Element && event.target.closest('[data-arrow]')) {
+                    return;
+                  }
+                  if (event.pointerType === 'mouse') {
+                    openProduct(product);
                     return;
                   }
                   onActiveIdChange(isActive ? null : product.id);
@@ -97,7 +100,7 @@ export function ProductGrid({
                 {!product.href && (
                   <span
                     className={cn(
-                      'absolute left-3.5 top-3.5 flex h-8 items-center text-xs tracking-wide transition-colors duration-500 md:left-4 md:top-4 md:h-10',
+                      'absolute left-5 top-5 flex h-8 items-center text-xs tracking-wide transition-colors duration-500 md:left-6 md:top-6 md:h-10',
                       isActive ? 'text-white/65' : 'text-muted-foreground',
                     )}
                   >
@@ -111,7 +114,7 @@ export function ProductGrid({
                     product.href ? `Open ${product.name}` : `Notify me about ${product.name}`
                   }
                   className={cn(
-                    'absolute right-3.5 top-3.5 flex size-8 items-center justify-center rounded-full border border-current transition-transform duration-500 md:right-4 md:top-4 md:size-10',
+                    'absolute right-5 top-5 flex size-8 items-center justify-center rounded-full border-2 border-current transition-transform duration-500 md:right-6 md:top-6 md:size-10',
                     isActive && 'translate-x-0.5 -translate-y-0.5',
                   )}
                   onClick={(event) => {
@@ -121,7 +124,7 @@ export function ProductGrid({
                 >
                   <ArrowUpRight className="size-4 md:size-5" strokeWidth={1.75} />
                 </button>
-                <div className="mt-11 md:mt-auto">
+                <div className="mt-auto pt-11 md:pt-0">
                   <div
                     className={cn(
                       'grid transition-[grid-template-rows] duration-500 ease-[cubic-bezier(0.22,1,0.36,1)]',
@@ -129,7 +132,7 @@ export function ProductGrid({
                     )}
                   >
                     <div className="overflow-hidden">
-                      <h2 className="pb-[0.18em] pr-12 text-2xl font-medium leading-none tracking-tight sm:text-4xl md:pr-2 md:text-5xl">
+                      <h2 className="pb-[0.18em] pr-12 text-3xl font-medium leading-none tracking-tight sm:text-4xl md:pr-2 md:text-5xl">
                         {product.name}
                       </h2>
                     </div>
@@ -141,7 +144,7 @@ export function ProductGrid({
                     )}
                   >
                     <div className="overflow-hidden">
-                      <p className="pb-[0.12em] text-lg font-medium leading-snug tracking-tight sm:text-2xl md:text-3xl">
+                      <p className="pb-[0.12em] text-2xl font-medium leading-snug tracking-tight sm:text-3xl md:text-3xl">
                         {product.description}
                       </p>
                     </div>

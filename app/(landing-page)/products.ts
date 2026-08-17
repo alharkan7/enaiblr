@@ -17,7 +17,7 @@ export const products: Product[] = [
   {
     id: 'mograph',
     name: 'Mograph',
-    description: 'Create motion graphics in seconds',
+    description: 'Create motion graphics in seconds.',
     href: 'https://mograph.enaiblr.org',
     word: 'creative',
     icon: Clapperboard,
@@ -27,7 +27,7 @@ export const products: Product[] = [
   {
     id: 'beeblio',
     name: 'Beeblio',
-    description: 'Democratizing research automation',
+    description: 'Democratizing research automation.',
     href: null,
     word: 'research',
     icon: FlaskConical,
@@ -36,8 +36,8 @@ export const products: Product[] = [
   },
   {
     id: 'untitled',
-    name: '{Untitled}',
-    description: 'The best home-schooling learning suite',
+    name: 'Bibie',
+    description: 'The home-schooling tools & games.',
     href: null,
     word: 'learning',
     icon: GraduationCap,

@@ -170,7 +170,18 @@ export default async function RootLayout({
             </TooltipProvider>
           </ThemeProvider>
         </SessionProvider>
-        <Toaster position="top-center" richColors />
+        <Toaster
+          position="top-center"
+          toastOptions={{
+            classNames: {
+              toast: 'rounded-2xl border-2 border-border bg-background shadow-sm p-4 gap-3',
+              title: 'text-sm font-medium text-foreground',
+              description: 'text-sm text-muted-foreground',
+              actionButton: 'bg-foreground text-background rounded-xl px-4 py-2 font-medium',
+              cancelButton: 'bg-muted text-muted-foreground rounded-xl px-4 py-2 font-medium',
+            },
+          }}
+        />
         <Analytics />
         <SpeedInsights />
       </body>

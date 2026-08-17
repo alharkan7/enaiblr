@@ -15,14 +15,31 @@ export function LandingView() {
 
   useEffect(() => {
     if (status !== 'authenticated') return;
+
+    // 1. Check URL parameters (most robust after OAuth/auth redirects)
+    const params = new URLSearchParams(window.location.search);
+    const waitlistParam = params.get('waitlist');
+    
+    if (waitlistParam) {
+      setTimeout(() => {
+        registeredToast(waitlistParam);
+      }, 300);
+      // Clean up the URL parameter cleanly without a page reload
+      window.history.replaceState({}, '', window.location.pathname);
+      return;
+    }
+
+    // 2. Fallback to sessionStorage for local transitions
     const name = sessionStorage.getItem(LAUNCH_NOTIFY_KEY);
     if (!name) return;
     sessionStorage.removeItem(LAUNCH_NOTIFY_KEY);
-    registeredToast(name);
+    setTimeout(() => {
+      registeredToast(name);
+    }, 300);
   }, [status]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-1 min-h-0 flex-col justify-center md:flex-none md:min-h-fit md:justify-start">
       <HeroLine activeId={activeId} />
       <ProductGrid
         activeId={activeId}

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { type FormEvent, useState } from 'react';
 import { toast } from 'sonner';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ChevronDown, ChevronUp } from 'lucide-react';
 
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -25,6 +25,7 @@ export default function AuthForm({ type, action }: AuthFormProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [passwordsMatch, setPasswordsMatch] = useState(true);
+  const [showEmailForm, setShowEmailForm] = useState(false);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -115,20 +116,20 @@ export default function AuthForm({ type, action }: AuthFormProps) {
   }
 
   return (
-    <div className="w-full max-w-md space-y-8 rounded-lg border bg-card p-8 text-card-foreground shadow">
+    <div className="w-full max-w-md space-y-8 rounded-3xl md:rounded-2xl border-2 border-border bg-background p-6 md:p-10 text-card-foreground shadow-sm">
       <div className="space-y-2 text-center">
         <h1 className="text-2xl font-semibold tracking-tight">
           {type === 'login' ? 'Welcome Back' : 'Create an Account'}
         </h1>
-        <p className="text-sm text-muted-foreground">
+        {/* <p className="text-sm text-muted-foreground">
           {type === 'login'
             ? 'Sign in to access unlimited AI features'
             : 'Register to access unlimited AI features'}
-        </p>
+        </p> */}
       </div>
 
       <Button
-        className="w-full border-2 border-primary"
+        className="w-full h-12 rounded-xl border-2 border-primary"
         disabled={loading}
         onClick={handleGoogleSignIn}
         variant="outline"
@@ -139,113 +140,117 @@ export default function AuthForm({ type, action }: AuthFormProps) {
 
       <div className="relative">
         <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t" />
+          <div className="w-full border-t border-border" />
         </div>
         <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-card px-2 text-muted-foreground">Or Use Email & Password</span>
+          <button
+            type="button"
+            onClick={() => setShowEmailForm(!showEmailForm)}
+            className="flex items-center gap-1.5 bg-background px-3 text-muted-foreground transition-colors hover:text-foreground"
+          >
+            Or Use Email & Password
+            {showEmailForm ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+          </button>
         </div>
       </div>
 
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            name="email"
-            placeholder="yourname@email.com"
-            required
-            type="email"
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="password">Password</Label>
-          <div className="relative">
-            <Input
-              id="password"
-              name="password"
-              required
-              type={showPassword ? "text" : "password"}
-              onChange={(e) => {
-                if (type === 'register') {
-                  const confirmInput = document.querySelector<HTMLInputElement>('input[name="confirmPassword"]');
-                  if (confirmInput?.value) {
-                    setPasswordsMatch(e.target.value === confirmInput.value);
-                  }
-                }
-              }}
-            />
-            <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-muted-foreground" />
-              ) : (
-                <Eye className="h-4 w-4 text-muted-foreground" />
-              )}
-            </Button>
-          </div>
-        </div>
-
-        {type === 'register' && (
+      {showEmailForm && (
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="confirmPassword">Confirm Password</Label>
+            <Label htmlFor="email">Email</Label>
+            <Input
+              id="email"
+              name="email"
+              placeholder="yourname@email.com"
+              required
+              type="email"
+              className="h-12 rounded-xl"
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="password">Password</Label>
             <div className="relative">
               <Input
-                id="confirmPassword"
-                name="confirmPassword"
+                id="password"
+                name="password"
                 required
-                type={showConfirmPassword ? "text" : "password"}
+                type={showPassword ? "text" : "password"}
                 onChange={(e) => {
-                  const passwordInput = document.querySelector<HTMLInputElement>('input[name="password"]');
-                  if (passwordInput?.value) {
-                    setPasswordsMatch(e.target.value === passwordInput.value);
+                  if (type === 'register') {
+                    const confirmInput = document.querySelector<HTMLInputElement>('input[name="confirmPassword"]');
+                    if (confirmInput?.value) {
+                      setPasswordsMatch(e.target.value === confirmInput.value);
+                    }
                   }
                 }}
-                className={!passwordsMatch ? "border-red-500" : ""}
+                className="h-12 rounded-xl"
               />
               <Button
                 type="button"
                 variant="ghost"
                 size="icon"
-                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-1 top-1 h-10 w-10 rounded-lg hover:bg-transparent"
+                onClick={() => setShowPassword(!showPassword)}
               >
-                {showConfirmPassword ? (
+                {showPassword ? (
                   <EyeOff className="h-4 w-4 text-muted-foreground" />
                 ) : (
                   <Eye className="h-4 w-4 text-muted-foreground" />
                 )}
               </Button>
             </div>
-            {!passwordsMatch && (
-              <p className="text-sm text-red-500">Passwords do not match</p>
-            )}
           </div>
-        )}
 
-        {/* {error && (
-          <div className="flex items-center gap-x-2 rounded-md bg-red-50 p-2 text-red-500">
-            <AlertCircle className="size-4" />
-            <p className="text-sm">{error}</p>
-          </div>
-        )} */}
-
-        <Button
-          className="w-full"
-          disabled={loading}
-          type="submit"
-        >
-          {loading ? (
-            <div className="size-5 animate-spin rounded-full border-b-2 border-white" />
-          ) : (
-            type === 'login' ? 'Sign In' : 'Sign Up'
+          {type === 'register' && (
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Confirm Password</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  name="confirmPassword"
+                  required
+                  type={showConfirmPassword ? "text" : "password"}
+                  onChange={(e) => {
+                    const passwordInput = document.querySelector<HTMLInputElement>('input[name="password"]');
+                    if (passwordInput?.value) {
+                      setPasswordsMatch(e.target.value === passwordInput.value);
+                    }
+                  }}
+                  className={`h-12 rounded-xl ${!passwordsMatch ? 'border-red-500' : ''}`}
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1 h-10 w-10 rounded-lg hover:bg-transparent"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-4 w-4 text-muted-foreground" />
+                  ) : (
+                    <Eye className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </Button>
+              </div>
+              {!passwordsMatch && (
+                 <p className="text-sm text-red-500">Passwords do not match</p>
+              )}
+            </div>
           )}
-        </Button>
-      </form>
+
+          <Button
+            className="mt-2 w-full h-12 rounded-xl border-2 border-foreground"
+            disabled={loading}
+            type="submit"
+          >
+            {loading ? (
+              <div className="size-5 animate-spin rounded-full border-b-2 border-background" />
+            ) : (
+              type === 'login' ? 'Sign In' : 'Sign Up'
+            )}
+          </Button>
+        </form>
+      )}
 
       <p className="text-center text-sm text-muted-foreground">
         {type === 'login' ? (
