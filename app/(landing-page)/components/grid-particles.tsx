@@ -220,11 +220,11 @@ export function GridParticles({
         return;
       }
       const r = el.getBoundingClientRect();
-      centerX = r.left + r.width / 2;
-      centerY = r.top + r.height / 2;
+      centerX = width / 2;
+      centerY = height / 2;
       scale = Math.max(r.width, r.height) * 0.85;
-      tileNx = centerX / width;
-      tileNy = centerY / height;
+      tileNx = 0.5;
+      tileNy = 0.5;
     }
 
     function resize() {
@@ -235,7 +235,7 @@ export function GridParticles({
       height = rect.height;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      influenceR = Math.max(160, Math.min(280, Math.min(width, height) * 0.28));
+      influenceR = Math.max(250, Math.min(450, Math.min(width, height) * 0.4));
       updateFocus();
     }
     resize();
@@ -309,8 +309,8 @@ export function GridParticles({
           const dist = Math.hypot(ddx * width, ddy * height);
           if (dist < influenceR) {
             const inf = 1 - dist / influenceR;
-            fxs[i] += ddx * inf * 0.6 * dt;
-            fys[i] += ddy * inf * 0.6 * dt;
+            fxs[i] -= ddx * inf * 3.0 * dt;
+            fys[i] -= ddy * inf * 3.0 * dt;
           }
         }
         if (fxs[i] < -0.06 || fxs[i] > 1.06 || fys[i] < -0.06 || fys[i] > 1.06) {
@@ -359,8 +359,8 @@ export function GridParticles({
           const dist = Math.hypot(ddx, ddy);
           if (dist < influenceR) {
             const inf = 1 - dist / influenceR;
-            wx = ddx * inf * 0.5;
-            wy = ddy * inf * 0.5;
+            wx = -ddx * inf * 3.0;
+            wy = -ddy * inf * 3.0;
           }
         }
         bdx[i] += (wx - bdx[i]) * 0.18;

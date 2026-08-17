@@ -111,8 +111,8 @@ export function GridShapes({
         return;
       }
       const r = el.getBoundingClientRect();
-      centerX = r.left + r.width / 2;
-      centerY = r.top + r.height / 2;
+      centerX = width / 2;
+      centerY = height / 2;
       scale = Math.max(r.width, r.height) * 0.85;
     }
 
@@ -124,7 +124,7 @@ export function GridShapes({
       height = rect.height;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      influenceR = Math.max(160, Math.min(280, Math.min(width, height) * 0.28));
+      influenceR = Math.max(250, Math.min(450, Math.min(width, height) * 0.4));
       updateFocus();
       if (!initialized && width > 0 && height > 0) {
         for (let i = 0; i < N_SHAPES; i++) {
@@ -211,9 +211,9 @@ export function GridShapes({
           const dist = Math.hypot(dx, dy);
           if (dist < influenceR) {
             const inf = 1 - dist / influenceR;
-            spos[i].x -= dx * inf * 1.5 * dt; // repulse
-            spos[i].y -= dy * inf * 1.5 * dt;
-            srot[i] += inf * dt * 5;
+            spos[i].x -= dx * inf * 8.0 * dt; // repulse strongly
+            spos[i].y -= dy * inf * 8.0 * dt;
+            srot[i] += inf * dt * 25;
           }
         }
 

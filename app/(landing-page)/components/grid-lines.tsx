@@ -102,8 +102,8 @@ export function GridLines({
         return;
       }
       const r = el.getBoundingClientRect();
-      centerX = r.left + r.width / 2;
-      centerY = r.top + r.height / 2;
+      centerX = width / 2;
+      centerY = height / 2;
       scale = Math.max(r.width, r.height) * 0.85;
     }
 
@@ -115,7 +115,7 @@ export function GridLines({
       height = rect.height;
       canvas.width = Math.round(width * dpr);
       canvas.height = Math.round(height * dpr);
-      influenceR = Math.max(160, Math.min(280, Math.min(width, height) * 0.28));
+      influenceR = Math.max(250, Math.min(450, Math.min(width, height) * 0.4));
       updateFocus();
       if (!initialized && width > 0 && height > 0) {
         for (let i = 0; i < N_NODES; i++) {
@@ -189,8 +189,8 @@ export function GridLines({
           const dist = Math.hypot(dx, dy);
           if (dist < influenceR) {
             const inf = 1 - dist / influenceR;
-            npos[i].x += dx * inf * 0.5 * dt;
-            npos[i].y += dy * inf * 0.5 * dt;
+            npos[i].x -= dx * inf * 4.0 * dt;
+            npos[i].y -= dy * inf * 4.0 * dt;
           }
         }
       }
