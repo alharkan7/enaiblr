@@ -132,11 +132,13 @@ export function GridParticles({
   }, [resolvedTheme]);
 
   useEffect(() => {
-    const host = hostRef.current;
-    const canvas = canvasRef.current;
-    if (!host || !canvas) return;
-    const context = canvas.getContext('2d');
+    const hostEl = hostRef.current;
+    const canvasEl = canvasRef.current;
+    if (!hostEl || !canvasEl) return;
+    const context = canvasEl.getContext('2d');
     if (!context) return;
+    const host = hostEl;
+    const canvas = canvasEl;
     const ctx = context;
 
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -226,6 +228,7 @@ export function GridParticles({
     }
 
     function resize() {
+      if (!host || !canvas) return;
       const rect = host.getBoundingClientRect();
       if (rect.width < 2 || rect.height < 2) return;
       width = rect.width;
