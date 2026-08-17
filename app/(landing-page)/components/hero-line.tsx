@@ -50,16 +50,18 @@ export function HeroLine({ activeId }: { activeId: ProductId | null }) {
   const research = heroWords[1];
   const creative = heroWords[2];
 
+  const dimmed = activeId !== null;
+
   return (
     <h1 className="shrink-0 text-[2rem] font-medium leading-[1.05] tracking-tight sm:text-5xl md:text-6xl">
       <span className="block md:inline">
         we make{' '}
         <HeroWord productId={learning.productId} text={learning.text} activeId={activeId} />
-        ,
+        <span className={cn('transition-opacity duration-500', dimmed && 'opacity-35')}>,</span>
       </span>{' '}
       <span className="block md:inline">
         <HeroWord productId={research.productId} text={research.text} activeId={activeId} />
-        , and
+        <span className={cn('transition-opacity duration-500', dimmed && 'opacity-35')}>, and</span>
       </span>{' '}
       <span className="block md:inline">
         <HeroWord productId={creative.productId} text={creative.text} activeId={activeId} />{' '}
