@@ -27,7 +27,7 @@ export const products: Product[] = [
   {
     id: 'beeblio',
     name: 'Beeblio',
-    description: 'Democratizing research automation.',
+    description: 'Research automation for everyone.',
     href: null,
     word: 'research',
     icon: FlaskConical,
@@ -37,7 +37,7 @@ export const products: Product[] = [
   {
     id: 'untitled',
     name: 'Bibie',
-    description: 'The home-schooling tools & games.',
+    description: 'The home-schooling & independent learning tools.',
     href: null,
     word: 'learning',
     icon: GraduationCap,
