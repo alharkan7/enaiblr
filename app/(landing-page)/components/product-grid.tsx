@@ -153,10 +153,10 @@ export function ProductGrid({
                       {product.description}
                     </p>
                     <div className="mt-8 flex w-full items-center justify-start">
-                      {!product.href ? (
+                      {product.statusText ? (
                         <div className="flex items-center gap-2.5">
                           <span className="text-sm tracking-wide text-white/80 pointer-events-none">
-                            Coming soon
+                            {product.statusText}
                           </span>
                           <span className="text-sm text-white/40 pointer-events-none">|</span>
                           <button
@@ -167,7 +167,7 @@ export function ProductGrid({
                             }}
                             className="text-sm font-medium tracking-wide outline-none hover:opacity-80 transition-opacity underline decoration-dotted underline-offset-4"
                           >
-                            Register your interest
+                            {product.actionText}
                           </button>
                         </div>
                       ) : (
@@ -179,7 +179,7 @@ export function ProductGrid({
                           }}
                           className="text-sm font-medium tracking-wide outline-none hover:opacity-80 transition-opacity underline decoration-dotted underline-offset-4"
                         >
-                          Open App
+                          {product.actionText}
                         </button>
                       )}
                     </div>
@@ -243,14 +243,14 @@ export function ProductGrid({
                   onActiveIdChange(isActive ? null : product.id);
                 }}
               >
-                {!product.href && (
+                {product.statusText && (
                   <span
                     className={cn(
                       'absolute left-6 top-6 flex h-10 items-center text-xs tracking-wide transition-colors duration-500',
                       isActive ? 'text-white/65' : 'text-muted-foreground',
                     )}
                   >
-                    Coming soon
+                    {product.statusText}
                   </span>
                 )}
                 <button

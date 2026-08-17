@@ -7,6 +7,8 @@ export type Product = {
   name: string;
   description: string;
   href: string | null;
+  statusText?: string;
+  actionText?: string;
   word: 'learning' | 'research' | 'creative';
   icon: LucideIcon;
   color: string;
@@ -19,6 +21,7 @@ export const products: Product[] = [
     name: 'Mograph',
     description: 'Create motion graphics in seconds.',
     href: 'https://mograph.enaiblr.org',
+    actionText: 'Open App',
     word: 'creative',
     icon: Clapperboard,
     color: '#bf5d3b',
@@ -28,7 +31,9 @@ export const products: Product[] = [
     id: 'beeblio',
     name: 'Beeblio',
     description: 'Research automation for everyone.',
-    href: null,
+    href: 'https://apps.raihankalla.id',
+    statusText: 'Work in Progress',
+    actionText: 'Try Beta',
     word: 'research',
     icon: FlaskConical,
     color: '#3a8fa0',
@@ -39,6 +44,8 @@ export const products: Product[] = [
     name: 'Bibie',
     description: 'The home-schooling & independent learning tools.',
     href: null,
+    statusText: 'Coming Soon',
+    actionText: 'Register Your Interest',
     word: 'learning',
     icon: GraduationCap,
     color: '#c1842f',
