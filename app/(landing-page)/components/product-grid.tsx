@@ -51,19 +51,7 @@ export function ProductGrid({
 
   const leaveTimer = useRef<number>(0);
 
-  useEffect(() => {
-    if (!activeId) return;
 
-    function onPointerDown(event: PointerEvent) {
-      if (!(event.target instanceof Element)) return;
-      if (event.target.closest('[data-product-card]')) return;
-      if (event.pointerType === 'mouse') return;
-      onActiveIdChange(null);
-    }
-
-    document.addEventListener('pointerdown', onPointerDown);
-    return () => document.removeEventListener('pointerdown', onPointerDown);
-  }, [activeId, onActiveIdChange]);
 
   useEffect(() => {
     return () => window.clearTimeout(leaveTimer.current);
