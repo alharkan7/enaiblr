@@ -12,25 +12,40 @@ export function LandingHeader({ backstoryContent }: { backstoryContent: string }
 
   useEffect(() => {
     setMounted(true);
+    
+    const syncStateFromUrl = () => {
+      const params = new URLSearchParams(window.location.search);
+      setIsBackstoryOpen(params.get('backstory') === 'true' || params.has('backstory'));
+    };
+
     // Initialize from URL
-    const params = new URLSearchParams(window.location.search);
-    if (params.get('backstory') === 'true' || params.has('backstory')) {
-      setIsBackstoryOpen(true);
-    }
+    syncStateFromUrl();
+
+    // Listen for browser back/forward buttons
+    window.addEventListener('popstate', syncStateFromUrl);
+    return () => window.removeEventListener('popstate', syncStateFromUrl);
   }, []);
 
   const openBackstory = () => {
     setIsBackstoryOpen(true);
     const url = new URL(window.location.href);
     url.searchParams.set('backstory', 'true');
-    window.history.replaceState({}, '', url);
+    // We add state object { modal: 'backstory' } so we know we pushed it
+    window.history.pushState({ modal: 'backstory' }, '', url);
   };
 
   const closeBackstory = () => {
     setIsBackstoryOpen(false);
-    const url = new URL(window.location.href);
-    url.searchParams.delete('backstory');
-    window.history.replaceState({}, '', url);
+    if (window.history.state?.modal === 'backstory') {
+      // We opened it via the button, so we can safely go back in history
+      window.history.back();
+    } else {
+      // The user landed on the URL directly, so going back would leave the site
+      // Instead, we just remove the parameter
+      const url = new URL(window.location.href);
+      url.searchParams.delete('backstory');
+      window.history.replaceState({}, '', url);
+    }
   };
 
   const toggleTheme = () => {

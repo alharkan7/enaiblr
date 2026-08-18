@@ -39,24 +39,24 @@ export function BackstoryModal({ isOpen, onClose, content }: BackstoryModalProps
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 10 }}
           transition={{ duration: 0.3, ease: 'easeOut' }}
-          className="fixed inset-0 z-50 flex flex-col bg-background overflow-hidden"
+          className="fixed inset-0 z-50 bg-background overflow-y-auto scrollbar-thin scrollbar-thumb-muted"
         >
-          <div className="mx-auto w-full max-w-3xl flex justify-end p-5 sm:px-8 sm:py-6 shrink-0">
-            <button
-              onClick={onClose}
-              className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors"
-              aria-label="Close backstory"
-            >
-              <X className="size-5" />
-            </button>
+          <div className="sticky top-0 z-10 flex justify-end p-5 sm:px-8 sm:py-6 shrink-0 pointer-events-none">
+            <div className="mx-auto w-full max-w-3xl flex justify-end">
+              <button
+                onClick={onClose}
+                className="rounded-full p-2 text-muted-foreground hover:bg-muted hover:text-foreground transition-colors pointer-events-auto bg-background/80 backdrop-blur-md"
+                aria-label="Close backstory"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
           </div>
           
-          <div className="flex-1 overflow-y-auto px-5 pb-20 sm:px-8 scrollbar-thin scrollbar-thumb-muted">
-            <div className="mx-auto max-w-3xl prose prose-sm sm:prose-base dark:prose-invert prose-neutral prose-headings:font-normal prose-p:text-muted-foreground prose-headings:text-foreground prose-a:text-foreground prose-a:underline-offset-4 hover:prose-a:text-muted-foreground prose-strong:text-foreground">
-              <ReactMarkdown>
-                {content}
-              </ReactMarkdown>
-            </div>
+          <div className="mx-auto max-w-3xl px-5 pb-20 sm:px-8 prose prose-sm sm:prose-base dark:prose-invert prose-neutral prose-headings:font-normal prose-p:text-muted-foreground prose-headings:text-foreground prose-a:text-foreground prose-a:underline-offset-4 hover:prose-a:text-muted-foreground prose-strong:text-foreground">
+            <ReactMarkdown>
+              {content}
+            </ReactMarkdown>
           </div>
         </motion.div>
       )}
